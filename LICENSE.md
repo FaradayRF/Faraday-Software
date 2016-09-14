@@ -4,7 +4,9 @@ exception following the GNUv3 license.
 
 Bryce Salmi, KB1LQC
 Brenton Salmi, KB1LQD
----------------------------------------------------------------------
+
+----
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -680,7 +682,8 @@ the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
 
-----------------------------------------------------------------------------
+----
+
 FaradayRF Interface Exception
 
 "Network Interface" is defined as a software or hardware interface between
