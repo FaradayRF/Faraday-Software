@@ -87,7 +87,7 @@
 <li><strong>faradaycommands:</strong> Command packet creation toolset and pre-defined common commands</li>
 <li><strong>telemetryparser:</strong> Faraday &#8220;Telemetry&#8221; parsing tool</li>
 </ul>
-<p>The definitiions are &#8220;port&#8221; numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.</p>
+<p>The definitions are &#8220;port&#8221; numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.</p>
 </div>
 <div class="section" id="local-device-and-tool-object-initializations">
 <h2>Local Device And Tool Object Initializations<a class="headerlink" href="#local-device-and-tool-object-initializations" title="Permalink to this headline">¶</a></h2>
@@ -130,20 +130,19 @@
 </div>
 <p>Depending on Faraday telemtry application settings on the CC430 itself there may be no packets waiting to be retrieved from Proxy. The code above detects this condition and uses a predefined command to tell the local Faraday unit to send its Telemetry (Telemetry Packet #3) over UART now. You&#8217;ll notice a new function being used: GETWait(), this function abstracts the GET() function and if no data is waiting to be retrieve the program blocks and loops for the specified duration and returns either the retrieve data or False. This is useful because Faraday obeys the laws of physics and cannot respond at the speed of light and therefor periodically checking for new data allows the program to un-block with data as soon as possible. Using debug modes of GETWait also allow optimizations to the protocol to be measured.</p>
 <p>Data retrieve is returned in JSON format and BASE64 encoded. The code block below shows a return of 4 data packets from a single GET() or GETWait() call.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>       <span class="p">[{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxUrFhIACeAHMzM1Mi40MjExTjExODIyLjYwNDFXMzQuNjIwMDBNMC4yNzAyMC45MAAXYAjcCKgICQetB/IIHQAAAB4LBQAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxQqFhTu&#39;</span><span class="p">,</span>
-         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAADFBgdLQjFMUUSyAAAGByorFhIACeAHMzM1Mi40MjEyTjExODIyLjYwNDBXMzQuNjIwMDBNMC4xNDAyMC45MAAXYAjaCKYIBweoB+0IGwAAAB4LBgAAHCAAAAAAAAAAAEYGB0tCMUxRRGLEAACXIxbe&#39;</span><span class="p">,</span>
-         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQAAMUGBwMsFhIACeAHMzM1Mi40MjA3TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjdCKYICQemB+oIHAAAAB4K/wAAHCAAAAAAAAAAAAAARgYHS0IxTFFEYsQAABbN&#39;</span><span class="p">,</span>
-         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAACgBgdLQjFMUUSyAAAGBxgsFhIACeAHMzM1Mi40MjA2TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjeCKcICAekB+YIHAAAAB8LCAAAHCAAANgGB0tCMUxRRP8AAAYHFiwWEgCXIxeN&#39;</span><span class="p">,</span>
-         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}]</span>
-
-<span class="o">**</span><span class="n">Keys</span><span class="o">**</span>
-<span class="o">*</span> <span class="n">data</span><span class="p">:</span> <span class="n">BASE64</span> <span class="n">encoded</span> <span class="n">data</span> <span class="n">packet</span>
-<span class="o">*</span> <span class="n">port</span><span class="p">:</span> <span class="n">The</span> <span class="n">Faraday</span> <span class="n">Transport</span> <span class="n">Layer</span> <span class="s2">&quot;Port&quot;</span> <span class="n">number</span> <span class="n">the</span> <span class="n">data</span> <span class="n">was</span> <span class="n">retrieved</span> <span class="kn">from</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxUrFhIACeAHMzM1Mi40MjExTjExODIyLjYwNDFXMzQuNjIwMDBNMC4yNzAyMC45MAAXYAjcCKgICQetB/IIHQAAAB4LBQAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxQqFhTu&#39;</span><span class="p">,</span>
+  <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAADFBgdLQjFMUUSyAAAGByorFhIACeAHMzM1Mi40MjEyTjExODIyLjYwNDBXMzQuNjIwMDBNMC4xNDAyMC45MAAXYAjaCKYIBweoB+0IGwAAAB4LBgAAHCAAAAAAAAAAAEYGB0tCMUxRRGLEAACXIxbe&#39;</span><span class="p">,</span>
+  <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQAAMUGBwMsFhIACeAHMzM1Mi40MjA3TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjdCKYICQemB+oIHAAAAB4K/wAAHCAAAAAAAAAAAAAARgYHS0IxTFFEYsQAABbN&#39;</span><span class="p">,</span>
+  <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAACgBgdLQjFMUUSyAAAGBxgsFhIACeAHMzM1Mi40MjA2TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjeCKcICAekB+YIHAAAAB8LCAAAHCAAANgGB0tCMUxRRP8AAAYHFiwWEgCXIxeN&#39;</span><span class="p">,</span>
+  <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}]</span>
 </pre></div>
 </div>
+<p><strong>JSON Data Dictionary Keys</strong>
+* <strong>data</strong>: BASE64 encoded data packet
+* <strong>port</strong>: The Faraday Transport Layer &#8220;Port&#8221; number the data was retrieved from</p>
 </div>
 <div class="section" id="telemetry-datagram-and-packet-decoding">
 <h2>Telemetry Datagram And Packet Decoding<a class="headerlink" href="#telemetry-datagram-and-packet-decoding" title="Permalink to this headline">¶</a></h2>

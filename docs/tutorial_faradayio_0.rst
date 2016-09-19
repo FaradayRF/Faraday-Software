@@ -39,7 +39,7 @@ Several toolset modules were imported and they provide functionality such as:
 * **faradaycommands:** Command packet creation toolset and pre-defined common commands
 * **telemetryparser:** Faraday "Telemetry" parsing tool
 
-The definitiions are "port" numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.
+The definitions are "port" numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.
 
 Local Device And Tool Object Initializations
 --------------------------------------------
@@ -104,9 +104,10 @@ Data retrieve is returned in JSON format and BASE64 encoded. The code block belo
 	 {u'data': u'AwBhS0IxTFFEAACgBgdLQjFMUUSyAAAGBxgsFhIACeAHMzM1Mi40MjA2TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjeCKcICAekB+YIHAAAAB8LCAAAHCAAANgGB0tCMUxRRP8AAAYHFiwWEgCXIxeN',
 	  u'port': 5}]
 
- **Keys**
- * data: BASE64 encoded data packet
- * port: The Faraday Transport Layer "Port" number the data was retrieved from
+	  
+**JSON Data Dictionary Keys**
+* **data**: BASE64 encoded data packet
+* **port**: The Faraday Transport Layer "Port" number the data was retrieved from
   
   
 Telemetry Datagram And Packet Decoding
