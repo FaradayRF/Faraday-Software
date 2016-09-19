@@ -26,7 +26,12 @@ a system with.
 	
 	installation
 	getting-started
+
+.. toctree::
+	:caption: Toolsets
+	:maxdepth: 2
 	
+	faradayio
 License
 -------
 Faraday is licensed under the **GNUv3 with an additional exception for network interfaces**. Read the `license <https://github.com/FaradayRF/Faraday-Software/blob/master/LICENSE.md>`_ to learn more.

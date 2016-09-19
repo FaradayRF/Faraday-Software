@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Faraday IO - Proxy Application Toolset &mdash; Faraday Software 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+    <link rel="prev" title="Getting Started" href="getting-started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="faraday-io-proxy-application-toolset">
+<h1>Faraday IO - Proxy Application Toolset<a class="headerlink" href="#faraday-io-proxy-application-toolset" title="Permalink to this headline">¶</a></h1>
+<p>Faraday IO is a basic Python toolset that can be used to interact with the RESTful API connecting the Faraday Digital Radio to a localhost server. This toolset includes basic input and output functionality along with command and parsing definitions to jumpstart application development.</p>
+<span class="target" id="module-faradaybasicproxyio"></span><dl class="class">
+<dt id="faradaybasicproxyio.proxyio">
+<em class="property">class </em><code class="descclassname">faradaybasicproxyio.</code><code class="descname">proxyio</code><a class="headerlink" href="#faradaybasicproxyio.proxyio" title="Permalink to this definition">¶</a></dt>
+<dd><p>A basic input and output class object to interact with the Faraday proxy server RESTful API</p>
+<dl class="method">
+<dt id="faradaybasicproxyio.proxyio.DecodeJsonItemRaw">
+<code class="descname">DecodeJsonItemRaw</code><span class="sig-paren">(</span><em>jsonitem</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.DecodeJsonItemRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function decodes (BASE64) data from a supplied encoded data packet as received from the GET functions (in JSON format). This function handle 1 packet at a time and returns only the resulting decoded data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>jsonitem</strong> &#8211; BASE64 encoded data packet as expected from the Faraday Proxy GET() functions.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">the supplied data packet decoded.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><p class="first">This example decode a single telemetry packet from BASE64 encoding as received into it&#8217;s original bytestring format.</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">[{u&#39;data&#39;: u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQwNE4GBwYVBhMBCeAHMzM1Mi40MTk3TjExODIyLjYwMzRXMzIuMjAwMDBNMC40NjAyMC45MgAHYAeNBhwFeQVFBSQFAQAAABsK/gAAHCAAAAAARgYHS0IxTFFEAAAABgcoFAYTARQR&#39;,</span>
+<span class="go">  u&#39;port&#39;: 5}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decoded_data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">DecodeJsonItemRaw</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaybasicproxyio.proxyio.FlushRxPort">
+<code class="descname">FlushRxPort</code><span class="sig-paren">(</span><em>local_device_callsign</em>, <em>local_device_id</em>, <em>uart_service_number</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.FlushRxPort" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a dummy retrieval of data from a port with NO return of the data to mimic a &#8220;flushing&#8221; of a port of old data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>local_device_callsign</strong> &#8211; Callsign of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>local_device_id</strong> &#8211; Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>uart_service_number</strong> &#8211; Intended Faraday transport layer service port to direct the supplied data to</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">True if successful and False if error.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><p class="first">This example will flush all received packets currently waiting in UART port 5.</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span><span class="o">.</span><span class="n">FlushRxPort</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaybasicproxyio.proxyio.GET">
+<code class="descname">GET</code><span class="sig-paren">(</span><em>local_device_callsign</em>, <em>local_device_id</em>, <em>uart_service_number</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.GET" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns a dictionary of all data packets waiting a Flask API interface queue as specified by the supplied
+UART Port (Service Number).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>local_device_callsign</strong> &#8211; Callsign of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>local_device_id</strong> &#8211; Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>uart_service_number</strong> &#8211; Intended Faraday transport layer service port to direct the supplied data to</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">A JSON dictionary of all data packets waiting for the specified UART port. False if no data waiting.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All data returned will remain in BASE64 encoding from the proxy. Use the JSON decoding tool for further decoding.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>The example below retrieves two data packets waiting from the &#8220;Telemetry&#8221; UART port (Port 5 in this example).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">)</span>
+<span class="go">[{u&#39;data&#39;: u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQwME4GBzkpFhIACeAHMzM1Mi40MjAxTjExODIyLjYwNDhXMzQuNjIwMDBNMC4yNzAyMC45MgAXYAjdCKoICQe8B/sIFgAAAB4K/gAAHCAAAAAARgYHS0IxTFFEAAAABgcTKRYSABZf&#39;,</span>
+<span class="go">  u&#39;port&#39;: 5},</span>
+<span class="go"> {u&#39;data&#39;: u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/&#39;,</span>
+<span class="go">  u&#39;port&#39;: 5}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaybasicproxyio.proxyio.GETWait">
+<code class="descname">GETWait</code><span class="sig-paren">(</span><em>local_device_callsign</em>, <em>local_device_id</em>, <em>uart_service_number</em>, <em>sec_timeout</em>, <em>debug</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.GETWait" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an abstraction of the <em>GET</em> function that implements a timing funtionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>local_device_callsign</strong> &#8211; Callsign of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>local_device_id</strong> &#8211; Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>uart_service_number</strong> &#8211; Intended Faraday transport layer service port to direct the supplied data to</li>
+<li><strong>sec_timeout</strong> &#8211; Timeout is in seconds and is a float (can be smaller than 1 seconds)</li>
+<li><strong>debug</strong> &#8211; Default=False, True = prints rolling time in wait until data recevied</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">A JSON dictionary of all data packets waiting for the specified UART port. False if no data waiting.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><p class="first">This example will get all data from FARADAY_TELEMETRY_UART_PORT (port 5) and if none</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span><span class="o">.</span><span class="n">GETWait</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="go">[{u&#39;data&#39;: u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQ3M04GBwA5FhIACeAHMzM1Mi40MjEzTjExODIyLjYwMTBXMzEuMTIwMDBNMC4yNzAyMC44OAAXYAjcCKwIGAeFB20H0wAAACALCQAAHCAAAAAA2AYHS0IxTFFE/wAABgciOBYSABb5&#39;,</span>
+<span class="go">  u&#39;port&#39;: 5},</span>
+<span class="go"> {u&#39;data&#39;: u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxU5FhIACeAHMzM1Mi40MjIzTjExODIyLjYwNDFXMzIuMjIwMDBNMC4yNzAyMC44OAAXYAjdCKoIGAeGB2wH1wAAAB4LBQAAHCAAAAAAAADYBgdLQjFMUUT/AAAGByI4FhbL&#39;,</span>
+<span class="go">  u&#39;port&#39;: 5}]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaybasicproxyio.proxyio.POST">
+<code class="descname">POST</code><span class="sig-paren">(</span><em>local_device_callsign</em>, <em>local_device_id</em>, <em>uart_port</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.POST" title="Permalink to this definition">¶</a></dt>
+<dd><p>The POST function is a python function that interacts with the Faraday RESTful API and &#8220;POSTS&#8221; (puts into) data into the transmit queue. Data provided to this function will be transmitted
+to a local Faraday device over UART (as specified by the arguments) over the intended Faraday transport layer &#8220;Service Port.&#8221;</p>
+<p>The POST function performs all needed BASE64 encoding and JSON dictionary creation as needed by the Faraday proxy API.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only a single data item is currently accepted.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>local_device_callsign</strong> &#8211; Callsign of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>local_device_id</strong> &#8211; Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)</li>
+<li><strong>uart_port</strong> &#8211; Intended Faraday transport layer service port to direct the supplied data to</li>
+<li><strong>data</strong> &#8211; Data to be transmitted in string format</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Python FLASK POST status result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Usually the data sent over POST will be a generated bytestring that follows the Faraday protocol stack. Below is an example of sending a command to turn ON LED #1 of the KB1LQD-1 device.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIOLED1On</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+<span class="go">&lt;Response [200]&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="getting-started.html" title="previous chapter">Getting Started</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faradayio.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, FaradayRF.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/faradayio.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
