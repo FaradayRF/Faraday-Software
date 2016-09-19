@@ -19,6 +19,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../Faraday_Proxy_Tools/FaradayIO')) #FaradayIO toolset
+sys.path.insert(0, os.path.abspath('../Tutorials/FaradayIO/Tutorial_0')) #FaradayIO toolset
 
 # -- General configuration ------------------------------------------------
 

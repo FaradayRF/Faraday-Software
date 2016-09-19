@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Basic Input/Output With Faraday IO &mdash; Faraday Software 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+    <link rel="up" title="FaradayIO Toolset Tutorials" href="tutorials_faradayio.html" />
+    <link rel="next" title="Tutorial 1 - Local Command and Control" href="tutorial_faradayio_1.html" />
+    <link rel="prev" title="Configuration and Initialization Of Faraday Proxy" href="tutorial_proxy_config_init.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="basic-input-output-with-faraday-io">
+<h1>Basic Input/Output With Faraday IO<a class="headerlink" href="#basic-input-output-with-faraday-io" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will teach how to perform basic input and output functionality using the FaradayIO toolset. Retrieving data from the telemetry application preinstalled onto faraday is goal of this tutorial.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Ensure that these steps and configurations have been performed prior to using the tutorial.</p>
+<ul class="simple">
+<li><strong>Faraday Proxy Configuration INI File</strong></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>In section [telemetry] set <a href="#id1"><span class="problematic" id="id2">*</span></a>autoretrieve&#8217; = False</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Faraday Proxy</strong></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>Successfully start the proxy service</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="tutorial-example-code">
+<h1>Tutorial Example Code<a class="headerlink" href="#tutorial-example-code" title="Permalink to this headline">¶</a></h1>
+<p>The entire main code of the example is shown below. More in-depth analysis will be explained further below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Basic introduction to proxy interaction with Faraday using Python.</span>
+<span class="c1"># - Getting received data from telemetry</span>
+<span class="c1"># - Parsing received data</span>
+
+<span class="c1">#Imports</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">telemetryparser</span>
+
+<span class="c1">#Definitions</span>
+<span class="n">FARADAY_TELEMETRY_UART_PORT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">FARADAY_CMD_UART_PORT</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">#Variables</span>
+<span class="n">local_device_callsign</span> <span class="o">=</span> <span class="s1">&#39;kb1lqd&#39;</span>
+<span class="n">local_device_node_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">#Start the proxy server after configuring the configuration file correctly</span>
+<span class="c1">#Setup a Faraday IO object</span>
+<span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="n">faraday_parser</span> <span class="o">=</span> <span class="n">telemetryparser</span><span class="o">.</span><span class="n">TelemetryParse</span><span class="p">()</span>
+
+<span class="c1">#Get all waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry packets). Get returns a list of all packets received on port (in JSON dictionary format).</span>
+<span class="k">print</span> <span class="s2">&quot;Getting the latest telemetry from Faraday!&quot;</span>
+<span class="n">rx_telem_data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span> <span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">)</span>
+
+<span class="c1">#Check if no received data waiting in Queue</span>
+<span class="k">if</span><span class="p">(</span><span class="n">rx_telem_data</span> <span class="o">==</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="c1">#No packets recieved yet, command the unit to transmit a UART telemetry packet NOW</span>
+        <span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_CMD_UART_PORT</span><span class="p">,</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalUARTUpdateNow</span><span class="p">())</span>
+
+        <span class="c1">#Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)</span>
+        <span class="n">rx_telem_data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GETWait</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1">#Will block and wait for given time until a packet is recevied</span>
+
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The Recevied data contains &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rx_telem_data</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; packet(s) encoded in BASE64&quot;</span>
+<span class="k">print</span> <span class="n">rx_telem_data</span>
+
+<span class="c1">#Decode the first packet in list from BASE 64 to a RAW bytesting</span>
+<span class="n">rx_telem_pkt_decoded</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">DecodeJsonItemRaw</span><span class="p">(</span><span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The first telemetry packet is:&quot;</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">As Received BASE64:&quot;</span>
+<span class="k">print</span> <span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Decoded:&quot;</span>
+<span class="k">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">rx_telem_pkt_decoded</span><span class="p">)</span>
+
+<span class="c1">#Unpack the telemetry datagram containing the standard &quot;Telemetry Packet #3&quot; packet</span>
+<span class="n">rx_telemetry_datagram</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">UnpackDatagram</span><span class="p">(</span><span class="n">rx_telem_pkt_decoded</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c1">#Debug is ON</span>
+<span class="n">rx_telemetry_packet</span> <span class="o">=</span> <span class="n">rx_telemetry_datagram</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c1">#Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)</span>
+<span class="n">rx_telemetry_packet_extracted</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">ExtractPaddedPacket</span><span class="p">(</span><span class="n">rx_telemetry_packet</span><span class="p">,</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">packet_3_len</span><span class="p">)</span>
+
+<span class="c1">#Parse the Telemetry #3 packet</span>
+<span class="n">rx_telemetry_packet_parsed</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">UnpackPacket_3</span><span class="p">(</span><span class="n">rx_telemetry_packet_extracted</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c1">#Debug ON</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tutorial-example-explaination">
+<h1>Tutorial Example Explaination<a class="headerlink" href="#tutorial-example-explaination" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="toolset-module-imports-and-initializations">
+<h2>Toolset Module Imports And Initializations<a class="headerlink" href="#toolset-module-imports-and-initializations" title="Permalink to this headline">¶</a></h2>
+<p>The first lines of the example perform basic import and setup of the supplied Faraday toolsets. These tools allow easy input/output, predefined command packets and creation functions, and a packet parsing tool.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Imports</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">telemetryparser</span>
+
+<span class="c1">#Definitions</span>
+<span class="n">FARADAY_TELEMETRY_UART_PORT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">FARADAY_CMD_UART_PORT</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Several toolset modules were imported and they provide functionality such as:</p>
+<ul class="simple">
+<li>faradaybasicproxyio: Basic Faraday Proxy GET and POST module for input and output operations</li>
+<li>faradaycommands: Command packet creation toolset and pre-defined common commands</li>
+<li>telemetryparser: Faraday &#8220;Telemetry&#8221; parsing tool</li>
+</ul>
+<p>The definitiions are &#8220;port&#8221; numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.</p>
+<p>The code that follows will define the intended local device parameters (callsign and ID) to identify the intended local device to direct data to and from.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Variables</span>
+<span class="n">local_device_callsign</span> <span class="o">=</span> <span class="s1">&#39;kb1lqd&#39;</span>
+<span class="n">local_device_node_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">#Start the proxy server after configuring the configuration file correctly</span>
+<span class="c1">#Setup a Faraday IO object</span>
+<span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="n">faraday_parser</span> <span class="o">=</span> <span class="n">telemetryparser</span><span class="o">.</span><span class="n">TelemetryParse</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Basic Input/Output With Faraday IO</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tutorial-example-code">Tutorial Example Code</a></li>
+<li><a class="reference internal" href="#tutorial-example-explaination">Tutorial Example Explaination</a><ul>
+<li><a class="reference internal" href="#toolset-module-imports-and-initializations">Toolset Module Imports And Initializations</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tutorials_faradayio.html">FaradayIO Toolset Tutorials</a><ul>
+      <li>Previous: <a href="tutorial_proxy_config_init.html" title="previous chapter">Configuration and Initialization Of Faraday Proxy</a></li>
+      <li>Next: <a href="tutorial_faradayio_1.html" title="next chapter">Tutorial 1 - Local Command and Control</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tutorial_faradayio_0.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, FaradayRF.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/tutorial_faradayio_0.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
