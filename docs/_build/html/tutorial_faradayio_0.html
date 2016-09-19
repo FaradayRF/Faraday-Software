@@ -44,7 +44,7 @@
             
   <div class="section" id="basic-input-output-with-faraday-io">
 <h1>Basic Input/Output With Faraday IO<a class="headerlink" href="#basic-input-output-with-faraday-io" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial will teach how to perform basic input and output functionality using the FaradayIO toolset. Retrieving data from the telemetry application preinstalled onto faraday is goal of this tutorial.</p>
+<p>This tutorial will teach how to perform basic input and output functionality using the FaradayIO toolset. Retrieving data from the telemetry application preinstalled onto faraday is goal of this tutorial. Full example code is available in the GIT repository.</p>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>Ensure that these steps and configurations have been performed prior to using the tutorial.</p>
@@ -66,9 +66,172 @@
 </div></blockquote>
 </div>
 </div>
+<div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="toolset-module-imports-and-initializations">
+<h2>Toolset Module Imports And Initializations<a class="headerlink" href="#toolset-module-imports-and-initializations" title="Permalink to this headline">¶</a></h2>
+<p>The first lines of the example perform basic import and setup of the supplied Faraday toolsets. These tools allow easy input/output, predefined command packets and creation functions, and a packet parsing tool.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Imports</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
+<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">telemetryparser</span>
+
+<span class="c1">#Definitions</span>
+<span class="n">FARADAY_TELEMETRY_UART_PORT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">FARADAY_CMD_UART_PORT</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Several toolset modules were imported and they provide functionality such as:</p>
+<ul class="simple">
+<li><strong>faradaybasicproxyio:</strong> Basic Faraday Proxy GET and POST module for input and output operations</li>
+<li><strong>faradaycommands:</strong> Command packet creation toolset and pre-defined common commands</li>
+<li><strong>telemetryparser:</strong> Faraday &#8220;Telemetry&#8221; parsing tool</li>
+</ul>
+<p>The definitiions are &#8220;port&#8221; numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.</p>
+</div>
+<div class="section" id="local-device-and-tool-object-initializations">
+<h2>Local Device And Tool Object Initializations<a class="headerlink" href="#local-device-and-tool-object-initializations" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Variables</span>
+<span class="n">local_device_callsign</span> <span class="o">=</span> <span class="s1">&#39;kb1lqd&#39;</span>
+<span class="n">local_device_node_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">#Start the proxy server after configuring the configuration file correctly</span>
+<span class="c1">#Setup a Faraday IO object</span>
+<span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
+<span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="n">faraday_parser</span> <span class="o">=</span> <span class="n">telemetryparser</span><span class="o">.</span><span class="n">TelemetryParse</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The code above defines the intended local device parameters (callsign and ID) to identify the intended local device to direct data to and from over the proxy. This allows for multiple local devices to be connected to over a single proxy server and makes learning/testing RF functionality that involved TX and RX easier. Two proxy programs can be run instead and this is handled in a later tutorial until proxy is upgraded.</p>
+<p>Several class objects are then created that are later used to perform the modules intended purposes such as decoding recevied data.</p>
+</div>
+<div class="section" id="retrieve-data-with-the-get-function">
+<h2>Retrieve Data With The GET() Function<a class="headerlink" href="#retrieve-data-with-the-get-function" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Get all waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry packets). Get returns a list of all packets received on port (in JSON dictionary format).</span>
+<span class="k">print</span> <span class="s2">&quot;Getting the latest telemetry from Faraday!&quot;</span>
+<span class="n">rx_telem_data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span> <span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The most basic method on getting data from a Faraday Transport Layer &#8220;port&#8221; is to use the GET() function. The function returns all data packets received and waiting in a queue, if none are waiting the function returns False. The defined local callsign and ID of the device to be interacted with locally are passed along with the intended Faraday Transport port to retrieve data from.</p>
+</div>
+<div class="section" id="retrieve-data-with-the-getwait-function-if-needed">
+<h2>Retrieve Data With The GETWait() Function If Needed<a class="headerlink" href="#retrieve-data-with-the-getwait-function-if-needed" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Check if no received data waiting in Queue</span>
+<span class="k">if</span><span class="p">(</span><span class="n">rx_telem_data</span> <span class="o">==</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="c1">#No packets recieved yet, command the unit to transmit a UART telemetry packet NOW</span>
+        <span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_CMD_UART_PORT</span><span class="p">,</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalUARTUpdateNow</span><span class="p">())</span>
+
+        <span class="c1">#Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)</span>
+        <span class="n">rx_telem_data</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GETWait</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">FARADAY_TELEMETRY_UART_PORT</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1">#Will block and wait for given time until a packet is recevied</span>
+
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The Recevied data contains &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rx_telem_data</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; packet(s) encoded in BASE64&quot;</span>
+<span class="k">print</span> <span class="n">rx_telem_data</span>
+</pre></div>
+</div>
+<p>Depending on Faraday telemtry application settings on the CC430 itself there may be no packets waiting to be retrieved from Proxy. The code above detects this condition and uses a predefined command to tell the local Faraday unit to send its Telemetry (Telemetry Packet #3) over UART now. You&#8217;ll notice a new function being used: GETWait(), this function abstracts the GET() function and if no data is waiting to be retrieve the program blocks and loops for the specified duration and returns either the retrieve data or False. This is useful because Faraday obeys the laws of physics and cannot respond at the speed of light and therefor periodically checking for new data allows the program to un-block with data as soon as possible. Using debug modes of GETWait also allow optimizations to the protocol to be measured.</p>
+<p>Data retrieve is returned in JSON format and BASE64 encoded. The code block below shows a return of 4 data packets from a single GET() or GETWait() call.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>       <span class="p">[{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxUrFhIACeAHMzM1Mi40MjExTjExODIyLjYwNDFXMzQuNjIwMDBNMC4yNzAyMC45MAAXYAjcCKgICQetB/IIHQAAAB4LBQAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxQqFhTu&#39;</span><span class="p">,</span>
+         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAADFBgdLQjFMUUSyAAAGByorFhIACeAHMzM1Mi40MjEyTjExODIyLjYwNDBXMzQuNjIwMDBNMC4xNDAyMC45MAAXYAjaCKYIBweoB+0IGwAAAB4LBgAAHCAAAAAAAAAAAEYGB0tCMUxRRGLEAACXIxbe&#39;</span><span class="p">,</span>
+         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEBXsDBgdLQjFMUUQAAMUGBwMsFhIACeAHMzM1Mi40MjA3TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjdCKYICQemB+oIHAAAAB4K/wAAHCAAAAAAAAAAAAAARgYHS0IxTFFEYsQAABbN&#39;</span><span class="p">,</span>
+         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">u&#39;data&#39;</span><span class="p">:</span> <span class="s1">u&#39;AwBhS0IxTFFEAACgBgdLQjFMUUSyAAAGBxgsFhIACeAHMzM1Mi40MjA2TjExODIyLjYwMzJXMzQuNjIwMDBNMC4yMzAyMC45MAAXYAjeCKcICAekB+YIHAAAAB8LCAAAHCAAANgGB0tCMUxRRP8AAAYHFiwWEgCXIxeN&#39;</span><span class="p">,</span>
+         <span class="s1">u&#39;port&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}]</span>
+
+<span class="o">**</span><span class="n">Keys</span><span class="o">**</span>
+<span class="o">*</span> <span class="n">data</span><span class="p">:</span> <span class="n">BASE64</span> <span class="n">encoded</span> <span class="n">data</span> <span class="n">packet</span>
+<span class="o">*</span> <span class="n">port</span><span class="p">:</span> <span class="n">The</span> <span class="n">Faraday</span> <span class="n">Transport</span> <span class="n">Layer</span> <span class="s2">&quot;Port&quot;</span> <span class="n">number</span> <span class="n">the</span> <span class="n">data</span> <span class="n">was</span> <span class="n">retrieved</span> <span class="kn">from</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="telemetry-datagram-and-packet-decoding">
+<h2>Telemetry Datagram And Packet Decoding<a class="headerlink" href="#telemetry-datagram-and-packet-decoding" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Decode the first packet in list from BASE 64 to a RAW bytesting</span>
+<span class="n">rx_telem_pkt_decoded</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">DecodeJsonItemRaw</span><span class="p">(</span><span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The first telemetry packet is:&quot;</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">As Received BASE64:&quot;</span>
+<span class="k">print</span> <span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Decoded:&quot;</span>
+<span class="k">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">rx_telem_pkt_decoded</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Data received will be in JSON format and the data will be encoded in BASE64. BASE64 is only used on the Proxy to make binary data web-safe and is NOT used over Faraday itself. The code block above shows the first packet (index = 0) data being extracted from the JSON dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The BASE64 encoded data is then decoded using the FaradayIO module tool provided.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">faraday_1</span><span class="o">.</span><span class="n">DecodeJsonItemRaw</span><span class="p">(</span><span class="n">rx_telem_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The code below will finish up the tutorial by parsing the telemtry packet.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Unpack the telemetry datagram containing the standard &quot;Telemetry Packet #3&quot; packet</span>
+<span class="n">rx_telemetry_datagram</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">UnpackDatagram</span><span class="p">(</span><span class="n">rx_telem_pkt_decoded</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c1">#Debug is ON</span>
+<span class="n">rx_telemetry_packet</span> <span class="o">=</span> <span class="n">rx_telemetry_datagram</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c1">#Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)</span>
+<span class="n">rx_telemetry_packet_extracted</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">ExtractPaddedPacket</span><span class="p">(</span><span class="n">rx_telemetry_packet</span><span class="p">,</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">packet_3_len</span><span class="p">)</span>
+
+<span class="c1">#Parse the Telemetry #3 packet</span>
+<span class="n">rx_telemetry_packet_parsed</span> <span class="o">=</span> <span class="n">faraday_parser</span><span class="o">.</span><span class="n">UnpackPacket_3</span><span class="p">(</span><span class="n">rx_telemetry_packet_extracted</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="c1">#Debug ON</span>
+</pre></div>
+</div>
+<p>Telemetry packets are supplied by the &#8220;Telemetry&#8221; application and following the OSI model for network stacks it too has its own packet definition! Every Telemetery packet is encapsulated within a datagram that indicates key parameters such as length, packet type, and a checksum for error detection and correction. It should be noted that for simplicity of the first network stack on Faraday applications handle error detection and correction themselves.</p>
+<p>The 3rd index of the parsed datagram list contains the datagram payload which happens to be the actual telemetry packet we intend to decode. Telemetry packets are simple fixed length datagrams and packets not using the entire size must be extracted (i.e. cut out). The last operation using the Faraday Telemetry Parsing toolset to parse the entire telemetry packet (Telemetry Packet #3) into a list. Using a &#8220;debug&#8221; argument of True forces the parsing tools to print a human readable output of the parsed data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>--- Telemetry Datagram ---
+Telemetry Packet Type: 3
+Telemetry RF Source: 0
+Telemetry Payload Length: 97
+Telemetry Packet 16 Bit Checksum: 5718
+Telemetry Packet Payload Data: &#39;KB1LQD\x05{\x03\x06\x07KB1LQD\x05{\x03\x06\x07\x12\x0b\x06\x13\x01\t\xe0\x073352.4203N11822.6005W34.30000M0.22021.24\x00\x07`\x06\xf8\x05e\x04\xcc\x04\x86\x04\x87\x04s\x00\x00\x00\x1c\x0b\x03\x00\x00\x1c \x00\x00\x00\x00\x00\x00\xd8\x06\x07KB1LQD\xff\x00\x00\x06\x07\x1e\n\x06&#39;
+
+
+--- Telemetry Packet #3 ---
+Index[0]: Source Callsign KB1LQD{
+Index[1]: Source Callsign Length 6
+Index[2]: Source Callsign ID 7
+Index[3]: Destination Callsign KB1LQD{
+Index[4]: Destination Callsign Length 6
+Index[5]: Destination Callsign ID 7
+Index[6]: RTC Second 18
+Index[7]: RTC Minute 11
+Index[8]: RTC Hour 6
+Index[9]: RTC Day 19
+Index[10]: RTC Day Of Week 1
+Index[11]: RTC Month 9
+Index[12]: Year 57351
+Index[13]: GPS Lattitude 3352.4203
+Index[14]: GPS Lattitude Direction N
+Index[15]: GPS Longitude 11822.6005
+Index[16]: GPS Longitude Direction W
+Index[17]: GPS Altitude 34.30000
+Index[18]: GPS Altitude Units M
+Index[19]: GPS Speed 0.220
+Index[20]: GPS Fix 2
+Index[21]: GPS HDOP 1.24
+Index[22]: GPIO State Telemetry 0
+Index[23]: RF State Telemetry 7
+Index[24]: ADC 0 96
+Index[25]: ADC 1 1784
+Index[26]: ADC 2 1381
+Index[27]: ADC 3 1228
+Index[28]: ADC 4 1158
+Index[29]: ADC 5 1159
+Index[30]: ADC 6 1139
+Index[31]: CC430 Temperature 0
+Index[32]: ADC 8 28
+Index[33]: N/A Byte 2819
+Index[34]: HAB Automatic Cutdown Timer State Machine State 0
+Index[35]: HAB Cutdown Event State Machine State 0
+Index[36]: HAB Automatic Cutdown Timer Trigger Time 7200
+Index[37]: HAB Automatic Cutdown Timer Current Time 0
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="tutorial-example-code">
 <h1>Tutorial Example Code<a class="headerlink" href="#tutorial-example-code" title="Permalink to this headline">¶</a></h1>
-<p>The entire main code of the example is shown below. More in-depth analysis will be explained further below.</p>
+<p>The entire main code of the example is shown below.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Basic introduction to proxy interaction with Faraday using Python.</span>
 <span class="c1"># - Getting received data from telemetry</span>
 <span class="c1"># - Parsing received data</span>
@@ -127,42 +290,6 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="tutorial-example-explaination">
-<h1>Tutorial Example Explaination<a class="headerlink" href="#tutorial-example-explaination" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="toolset-module-imports-and-initializations">
-<h2>Toolset Module Imports And Initializations<a class="headerlink" href="#toolset-module-imports-and-initializations" title="Permalink to this headline">¶</a></h2>
-<p>The first lines of the example perform basic import and setup of the supplied Faraday toolsets. These tools allow easy input/output, predefined command packets and creation functions, and a packet parsing tool.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Imports</span>
-<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
-<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
-<span class="kn">from</span> <span class="nn">Basic_Proxy_IO</span> <span class="kn">import</span> <span class="n">telemetryparser</span>
-
-<span class="c1">#Definitions</span>
-<span class="n">FARADAY_TELEMETRY_UART_PORT</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">FARADAY_CMD_UART_PORT</span> <span class="o">=</span> <span class="mi">2</span>
-</pre></div>
-</div>
-<p>Several toolset modules were imported and they provide functionality such as:</p>
-<ul class="simple">
-<li>faradaybasicproxyio: Basic Faraday Proxy GET and POST module for input and output operations</li>
-<li>faradaycommands: Command packet creation toolset and pre-defined common commands</li>
-<li>telemetryparser: Faraday &#8220;Telemetry&#8221; parsing tool</li>
-</ul>
-<p>The definitiions are &#8220;port&#8221; numbers that define the Faraday Transport Layer (Layer 4) port number that ties to the intended application. There is also a predefined list in the class object of faradaybasicproxyio.</p>
-<p>The code that follows will define the intended local device parameters (callsign and ID) to identify the intended local device to direct data to and from.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Variables</span>
-<span class="n">local_device_callsign</span> <span class="o">=</span> <span class="s1">&#39;kb1lqd&#39;</span>
-<span class="n">local_device_node_id</span> <span class="o">=</span> <span class="mi">1</span>
-
-<span class="c1">#Start the proxy server after configuring the configuration file correctly</span>
-<span class="c1">#Setup a Faraday IO object</span>
-<span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span>
-<span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
-<span class="n">faraday_parser</span> <span class="o">=</span> <span class="n">telemetryparser</span><span class="o">.</span><span class="n">TelemetryParse</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
 
 
           </div>
@@ -176,11 +303,15 @@
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tutorial-example-code">Tutorial Example Code</a></li>
-<li><a class="reference internal" href="#tutorial-example-explaination">Tutorial Example Explaination</a><ul>
+<li><a class="reference internal" href="#tutorial">Tutorial</a><ul>
 <li><a class="reference internal" href="#toolset-module-imports-and-initializations">Toolset Module Imports And Initializations</a></li>
+<li><a class="reference internal" href="#local-device-and-tool-object-initializations">Local Device And Tool Object Initializations</a></li>
+<li><a class="reference internal" href="#retrieve-data-with-the-get-function">Retrieve Data With The GET() Function</a></li>
+<li><a class="reference internal" href="#retrieve-data-with-the-getwait-function-if-needed">Retrieve Data With The GETWait() Function If Needed</a></li>
+<li><a class="reference internal" href="#telemetry-datagram-and-packet-decoding">Telemetry Datagram And Packet Decoding</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tutorial-example-code">Tutorial Example Code</a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
