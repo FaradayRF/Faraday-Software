@@ -1,0 +1,605 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>faradaycommands - Command Application Toolset &mdash; Faraday Software 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="FaradayIO Toolset Tutorials" href="tutorials_faradayio.html" />
+    <link rel="prev" title="faradayio - Faraday Proxy Input/Output Toolset" href="faradayio.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="faradaycommands-command-application-toolset">
+<h1>faradaycommands - Command Application Toolset<a class="headerlink" href="#faradaycommands-command-application-toolset" title="Permalink to this headline">¶</a></h1>
+<p>Faraday Commands is a collection of packet creation tools and predefined common commands focused on the command and control functionality that the Faraday &#8220;Commands&#8221; application provides. The application for Commanding contains its own packet format as observed in the OSI layer and this toolset provides easy to use commands and tools to create command packets.</p>
+<span class="target" id="module-faradaycommands"></span><dl class="class">
+<dt id="faradaycommands.faraday_commands">
+<em class="property">class </em><code class="descclassname">faradaycommands.</code><code class="descname">faraday_commands</code><a class="headerlink" href="#faradaycommands.faraday_commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object containing command packet creation tools and predefined command generation functions.</p>
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocal">
+<code class="descname">CommandLocal</code><span class="sig-paren">(</span><em>command_number</em>, <em>command_packet</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocal" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined function that returns a raw command application DATAGRAM that will cause the supplied command to be executed on a local device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command_number</strong> &#8211; Command application command identification number (Identifies a command/command type using 0-255)</li>
+<li><strong>command_packet</strong> &#8211; Pass a pre-generated packet as defined by the intended command.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Returns the complete generated packet as a string of bytes.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocal</span><span class="p">(</span><span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CMD_UPDATERFPOWER</span><span class="p">,</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">commandmodule</span><span class="o">.</span><span class="n">create_update_rf_patable_packet</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalExperimentalRfPacketForward">
+<code class="descname">CommandLocalExperimentalRfPacketForward</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalExperimentalRfPacketForward" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to send the provided packet over a single RF packet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+<li><strong>data</strong> &#8211; The data payload (Text, packet, etc...) that is to transmitted to the remote Faraday device</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The data must be equal or lesser length than the maximum RF packet payload!</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalExperimentalRfPacketForward</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;This is a test message&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalGPIO">
+<code class="descname">CommandLocalGPIO</code><span class="sig-paren">(</span><em>p3_bitmask_on</em>, <em>p4_bitmask_on</em>, <em>p5_bitmask_on</em>, <em>p3_bitmask_off</em>, <em>p4_bitmask_off</em>, <em>p5_bitmask_off</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalGPIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet to create a generic GPIO ON/OFF bitmask command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p3_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p3_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="go">#Turn ON LED 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">(</span><span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">#Turn OFF LED 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">#Turn ON LED 1 &amp; LED 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">(</span><span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span> <span class="o">|</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalGPIOLED1Off">
+<code class="descname">CommandLocalGPIOLED1Off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalGPIOLED1Off" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn OFF the LOCAL Faraday&#8217;s LED #1 using the standard Faraday GPIO commanding packet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalGPIOLED1On">
+<code class="descname">CommandLocalGPIOLED1On</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalGPIOLED1On" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn ON the LOCAL Faraday&#8217;s LED #1 using the standard Faraday GPIO commanding packet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalGPIOLED2Off">
+<code class="descname">CommandLocalGPIOLED2Off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalGPIOLED2Off" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn OFF the LOCAL Faraday&#8217;s LED #2 using the standard Faraday GPIO commanding packet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalGPIOLED2On">
+<code class="descname">CommandLocalGPIOLED2On</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalGPIOLED2On" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn ON the LOCAL Faraday&#8217;s LED #2 using the standard Faraday GPIO commanding packet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalHABActivateCutdownEvent">
+<code class="descname">CommandLocalHABActivateCutdownEvent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalHABActivateCutdownEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and  command packet that commands a LOCAL Faraday device to perform activate it&#8217;s High Altitutde Balloon application
+predefined cutdown event state machine sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalHABDisableAutoCutdownTimer">
+<code class="descname">CommandLocalHABDisableAutoCutdownTimer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalHABDisableAutoCutdownTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to DISABLE it&#8217;s High Altitutde Balloon application
+automatic cutdown timer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalHABResetAutoCutdownTimer">
+<code class="descname">CommandLocalHABResetAutoCutdownTimer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalHABResetAutoCutdownTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to RESET it&#8217;s High Altitutde Balloon application
+automatic cutdown timer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalHABResetCutdownIdle">
+<code class="descname">CommandLocalHABResetCutdownIdle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalHABResetCutdownIdle" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to set it&#8217;s cutdown event state machine to IDLE = 0.</p>
+<p>This command is useful for either stopping an in-progress cutdown event or to reset the cutdown state machine
+to IDLE = 0 if the cutdown event has already occured and it is in IDLE = 255 state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalRFUpdateNow">
+<code class="descname">CommandLocalRFUpdateNow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalRFUpdateNow" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet to command the LOCAL device to transmit is current telemetry packet #3 (normal telemetry) over RF.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalResetDeviceDebugFlash">
+<code class="descname">CommandLocalResetDeviceDebugFlash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalResetDeviceDebugFlash" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that commands the LOCAL Faraday device to RESET it&#8217;s &#8220;Flash Debug Information&#8221; to 0&#8217;s.</p>
+<p>Flash debug information is engineering data that contains information about the devices boot, reset, and error statuses.
+This information is saved in non-volatile flash and will roll over to 0 if 255 is reached.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalSendReadDeviceConfig">
+<code class="descname">CommandLocalSendReadDeviceConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalSendReadDeviceConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function returns a complete command datagram and command packet to read the device flash configuration from the local device. This function implements the memory read Faraday Python routine to read
+memory addresses with predefined arguments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalSendTelemDeviceDebugFlash">
+<code class="descname">CommandLocalSendTelemDeviceDebugFlash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalSendTelemDeviceDebugFlash" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that causes LOCAL Faraday device to transmit it&#8217;s &#8220;Flash Debug Information&#8221; over UART.</p>
+<p>Flash debug information is engineering data that contains information about the devices boot, reset, and error statuses.
+This information is saved in non-volatile flash and will roll over to 0 if 255 is reached.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalSendTelemDeviceSystemSettings">
+<code class="descname">CommandLocalSendTelemDeviceSystemSettings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalSendTelemDeviceSystemSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to command the LOCAL Faraday device to transmit it&#8217;s &#8220;Device System Settings&#8221; over UART.</p>
+<p>Device system settings contain information such as current radio frequency and power levels.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalUARTUpdateNow">
+<code class="descname">CommandLocalUARTUpdateNow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalUARTUpdateNow" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and packet to command the LOCAL device to transmit its current telemetry packet #3 (normal telemetry) over UART.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalUpdatePATable">
+<code class="descname">CommandLocalUpdatePATable</code><span class="sig-paren">(</span><em>ucharPATable_Byte</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalUpdatePATable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a a complete datagram and command packet to update the LOCAL Faraday RF Power Table settings without affecting the default BOOT power level.
+Note that a setting of 152 is the maximum output power, any number higher than 152 will be sent as a value of 152.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ucharPATable_Byte</strong> &#8211; A single byte value for the PA table RF power setting on the CC430</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalUpdateRFFreq">
+<code class="descname">CommandLocalUpdateRFFreq</code><span class="sig-paren">(</span><em>freq_mhz</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalUpdateRFFreq" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a command complete DATAGRAM and packet that will command a change in the LOCAL faraday radio frequency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>freq_mhz</strong> &#8211; The frequency in MHz as an integer or float.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalUpdateRFTelemetryInterval">
+<code class="descname">CommandLocalUpdateRFTelemetryInterval</code><span class="sig-paren">(</span><em>interval</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalUpdateRFTelemetryInterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry RF reporting interval without updating the default BOOT interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interval</strong> &#8211; Time interval in seconds (Is a 2 byte Integer: 0-65535)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandLocalUpdateUARTTelemetryInterval">
+<code class="descname">CommandLocalUpdateUARTTelemetryInterval</code><span class="sig-paren">(</span><em>interval</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandLocalUpdateUARTTelemetryInterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry UART reporting interval without updating the default BOOT interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interval</strong> &#8211; Time interval in seconds (Is a 2 byte Integer: 0-65535)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteGPIO">
+<code class="descname">CommandRemoteGPIO</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em>, <em>p3_bitmask_on</em>, <em>p4_bitmask_on</em>, <em>p5_bitmask_on</em>, <em>p3_bitmask_off</em>, <em>p4_bitmask_off</em>, <em>p5_bitmask_off</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteGPIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to command ALL GPIO&#8217;s avaailable on a REMOTE (RF) Faraday device (see documentation).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please see the Faraday documentation on GPIO for more information about the GPIO bitmask assignments.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+<li><strong>p3_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p3_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="go">#Turn ON LED 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandRemoteGPIO</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">#Turn OFF LED 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandRemoteGPIO</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">#Turn ON LED 1 &amp; LED 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">command_packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandRemoteGPIO</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span> <span class="o">|</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteGPIOLED1Off">
+<code class="descname">CommandRemoteGPIOLED1Off</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteGPIOLED1Off" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn OFF the REMOTE (RF) Faraday&#8217;s LED #1 using the standard Faraday GPIO commanding packet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteGPIOLED1On">
+<code class="descname">CommandRemoteGPIOLED1On</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteGPIOLED1On" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn ON the REMOTE (RF) Faraday&#8217;s LED #1 using the standard Faraday GPIO commanding packet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteGPIOLED2Off">
+<code class="descname">CommandRemoteGPIOLED2Off</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteGPIOLED2Off" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn OFF the REMOTE (RF) Faraday&#8217;s LED #2 using the standard Faraday GPIO commanding packet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteGPIOLED2On">
+<code class="descname">CommandRemoteGPIOLED2On</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteGPIOLED2On" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to turn ON the REMOTE (RF) Faraday&#8217;s LED #2 using the standard Faraday GPIO commanding packet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteHABActivateCutdownEvent">
+<code class="descname">CommandRemoteHABActivateCutdownEvent</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteHABActivateCutdownEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday device to perform activate it&#8217;s High Altitutde Balloon application
+predefined cutdown event state machine sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteHABDisableAutoCutdownTimer">
+<code class="descname">CommandRemoteHABDisableAutoCutdownTimer</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteHABDisableAutoCutdownTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday device to DISABLE it&#8217;s High Altitutde Balloon application
+automatic cutdown timer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteHABResetAutoCutdownTimer">
+<code class="descname">CommandRemoteHABResetAutoCutdownTimer</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteHABResetAutoCutdownTimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday device to RESET it&#8217;s High Altitutde Balloon application
+automatic cutdown timer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteHABResetCutdownIdle">
+<code class="descname">CommandRemoteHABResetCutdownIdle</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteHABResetCutdownIdle" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday device to set it&#8217;s cutdown event state machine to IDLE = 0.
+This command is useful for either stopping an in-progress cutdown event or to reset the cutdown state machine
+to IDLE = 0 if the cutdown event has already occured and it is in IDLE = 255 state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteRFUpdateNow">
+<code class="descname">CommandRemoteRFUpdateNow</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteRFUpdateNow" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to command the REMOTE (RF) device to transmit is current telemetry packet #3 (normal telemetry) over RF.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRemoteUARTUpdateNow">
+<code class="descname">CommandRemoteUARTUpdateNow</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRemoteUARTUpdateNow" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command to return a complete datagram and command packet to command the REMOTE (RF) device to transmit its current telemetry packet #3 (normal telemetry) over UART.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="faradaycommands.faraday_commands.CommandRf">
+<code class="descname">CommandRf</code><span class="sig-paren">(</span><em>remote_callsign</em>, <em>remote_node_id</em>, <em>command_number</em>, <em>command_packet</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaycommands.faraday_commands.CommandRf" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined function that returns a raw command application DATAGRAM that will cause the supplied command to be executed on a remote (RF) device. This is basically and local command inside the payload of a command to transmit a command to a specific RF unit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>remote_callsign</strong> &#8211; The callsign of the remote target Faraday device</li>
+<li><strong>remote_node_id</strong> &#8211; The ID number (0-255) of the remote target Faraday device.</li>
+<li><strong>command_number</strong> &#8211; Command application command identification number (Identifies a command/command type using 0-255)</li>
+<li><strong>command_packet</strong> &#8211; Pass a pre-generated packet as defined by the intended command.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Returns the complete generated packet as a string of bytes.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandRf</span><span class="p">(</span><span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CMD_GPIO</span><span class="p">,</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">commandmodule</span><span class="o">.</span><span class="n">create_gpio_command_packet</span><span class="p">(</span><span class="n">faradaycommands</span><span class="o">.</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="faradayio.html" title="previous chapter">faradayio - Faraday Proxy Input/Output Toolset</a></li>
+      <li>Next: <a href="tutorials_faradayio.html" title="next chapter">FaradayIO Toolset Tutorials</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faradaycommands.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, FaradayRF.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/faradaycommands.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

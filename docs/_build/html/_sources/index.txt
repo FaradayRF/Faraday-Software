@@ -32,6 +32,7 @@ a system with.
 	:maxdepth: 1
 	
 	faradayio
+	faradaycommands
 	
 .. toctree::
 	:caption: Tutorials
