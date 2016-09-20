@@ -74,6 +74,8 @@ class faraday_commands(object):
         A predefined command to return a command complete DATAGRAM and packet that will command a change in the LOCAL faraday radio frequency.
 
         :param freq_mhz: The frequency in MHz as an integer or float.
+
+        :Return: Returns the complete generated packet as a string of bytes.
         """
         packet = commandmodule.create_command_packet(self.CMD_UPDATEFREQUENCY, commandmodule.create_update_rf_frequency_packet(freq_mhz))
         return packet
@@ -81,6 +83,8 @@ class faraday_commands(object):
     def CommandLocalUARTUpdateNow(self):
         """
         A predefined command to return a complete command datagram and packet to command the LOCAL device to transmit its current telemetry packet #3 (normal telemetry) over UART.
+
+        :Return: Returns the complete generated packet as a string of bytes.
         """
         packet = commandmodule.create_command_packet(self.CMD_LOCALTELEMNOW, commandmodule.create_local_telem_update_packet())
         return packet
@@ -88,6 +92,8 @@ class faraday_commands(object):
     def CommandLocalRFUpdateNow(self):
         """
         A predefined command to return a complete command datagram and command packet to command the LOCAL device to transmit is current telemetry packet #3 (normal telemetry) over RF.
+
+        :Return: Returns the complete generated packet as a string of bytes.
         """
         packet = commandmodule.create_command_packet(self.CMD_RFTELEMETRYNOW, commandmodule.create_rf_telem_update_packet())
         return packet
@@ -97,6 +103,8 @@ class faraday_commands(object):
         A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry UART reporting interval without updating the default BOOT interval.
 
         :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
+
+        :Return: Returns the complete generated packet as a string of bytes.
         """
         packet = commandmodule.create_command_packet(self.CMD_UPDATERAMPARAMETER, commandmodule.create_update_telemetry_interval_uart_packet(interval))
         return packet
@@ -106,6 +114,9 @@ class faraday_commands(object):
         A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry RF reporting interval without updating the default BOOT interval.
 
         :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_UPDATERAMPARAMETER, commandmodule.create_update_telemetry_interval_rf_packet(interval))
         return packet
@@ -114,6 +125,9 @@ class faraday_commands(object):
     def CommandLocalGPIOLED1On(self):
         """
         A predefined command to return a complete datagram and command packet to turn ON the LOCAL Faraday's LED #1 using the standard Faraday GPIO commanding packet.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
         return packet
@@ -121,6 +135,9 @@ class faraday_commands(object):
     def CommandLocalGPIOLED1Off(self):
         """
         A predefined command to return a complete datagram and command packet to turn OFF the LOCAL Faraday's LED #1 using the standard Faraday GPIO commanding packet.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
         return packet
@@ -128,6 +145,9 @@ class faraday_commands(object):
     def CommandLocalGPIOLED2On(self):
         """
         A predefined command to return a complete datagram and command packet to turn ON the LOCAL Faraday's LED #2 using the standard Faraday GPIO commanding packet.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
         return packet
@@ -135,6 +155,9 @@ class faraday_commands(object):
     def CommandLocalGPIOLED2Off(self):
         """
         A predefined command to return a complete datagram and command packet to turn OFF the LOCAL Faraday's LED #2 using the standard Faraday GPIO commanding packet.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
         return packet
@@ -145,6 +168,9 @@ class faraday_commands(object):
         Note that a setting of 152 is the maximum output power, any number higher than 152 will be sent as a value of 152.
 
         :param ucharPATable_Byte: A single byte value for the PA table RF power setting on the CC430
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_UPDATERFPOWER, commandmodule.create_update_rf_patable_packet(ucharPATable_Byte))
         return packet
@@ -155,6 +181,9 @@ class faraday_commands(object):
 
         Flash debug information is engineering data that contains information about the devices boot, reset, and error statuses.
         This information is saved in non-volatile flash and will roll over to 0 if 255 is reached.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_DEBUGFLASHRESET, commandmodule.create_reset_device_debug_flash_packet())
         return packet
@@ -165,6 +194,9 @@ class faraday_commands(object):
 
         Flash debug information is engineering data that contains information about the devices boot, reset, and error statuses.
         This information is saved in non-volatile flash and will roll over to 0 if 255 is reached.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_DEBUGFLASHTELEMETRYNOW, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
@@ -174,6 +206,9 @@ class faraday_commands(object):
         A predefined command to return a complete datagram and command packet to command the LOCAL Faraday device to transmit it's "Device System Settings" over UART.
 
         Device system settings contain information such as current radio frequency and power levels.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_DEVICESETTINGSTELEMETRYNOW, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
@@ -182,6 +217,9 @@ class faraday_commands(object):
         """
         A predefined command to return a complete command datagram and  command packet that commands a LOCAL Faraday device to perform activate it's High Altitutde Balloon application
         predefined cutdown event state machine sequence.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_command_packet(self.CMD_APP_HAB_CUTDOWNNOW, commandmodule.create_send_telemetry_device_debug_flash())
@@ -191,6 +229,9 @@ class faraday_commands(object):
         """
         A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to RESET it's High Altitutde Balloon application
         automatic cutdown timer.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_command_packet(self.CMD_APP_HAB_RESETAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
@@ -200,6 +241,9 @@ class faraday_commands(object):
         """
         A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday device to DISABLE it's High Altitutde Balloon application
         automatic cutdown timer.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_command_packet(self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
@@ -211,6 +255,9 @@ class faraday_commands(object):
 
         This command is useful for either stopping an in-progress cutdown event or to reset the cutdown state machine
         to IDLE = 0 if the cutdown event has already occured and it is in IDLE = 255 state.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_command_packet(self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE, commandmodule.create_send_telemetry_device_debug_flash())
@@ -224,11 +271,15 @@ class faraday_commands(object):
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
         :param data: The data payload (Text, packet, etc...) that is to transmitted to the remote Faraday device
 
+        :Return: Returns the complete generated packet as a string of bytes.
+
+
         .. Note:: The data must be equal or lesser length than the maximum RF packet payload!
 
         :Example:
 
         >>> command_packet = faraday_cmd.CommandLocalExperimentalRfPacketForward("KB1LQD", 1, "This is a test message")
+
         """
         packet = commandmodule.create_command_packet(self.CMD_RFPACKETFORWARD, commandmodule.CreatePacketMsgExperimental(0, remote_callsign, remote_node_id, len(data), data))
         return packet
@@ -244,6 +295,9 @@ class faraday_commands(object):
         :param p4_bitmask_off: A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
         :param p5_bitmask_off: A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
 
+        :Return: Returns the complete generated packet as a string of bytes.
+
+
         :Example:
 
         >>> faraday_cmd = faradaycommands.faraday_commands()
@@ -253,6 +307,7 @@ class faraday_commands(object):
         >>> command_packet = faraday_cmd.CommandLocalGPIO(0, 0,0,faradaycommands.gpioallocations.LED_1,0,0)
         #Turn ON LED 1 & LED 2
         >>> command_packet = faraday_cmd.CommandLocalGPIO(faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0,0,0,0,0)
+
         """
         packet = commandmodule.create_command_packet(self.CMD_GPIO, commandmodule.create_gpio_command_packet(p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off))
         return packet
@@ -261,6 +316,9 @@ class faraday_commands(object):
         """
         A function returns a complete command datagram and command packet to read the device flash configuration from the local device. This function implements the memory read Faraday Python routine to read
         memory addresses with predefined arguments.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_command_packet(self.CMD_READMEMORY, commandmodule.create_read_memory_packet(self.FLASHD_MEMORY_LOC, self.FLASHD_LENGTH))
         return packet
@@ -275,6 +333,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_LOCALTELEMNOW, commandmodule.create_local_telem_update_packet())
         return packet
@@ -285,6 +346,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_RFTELEMETRYNOW, commandmodule.create_rf_telem_update_packet())
         return packet
@@ -296,6 +360,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
         return packet
@@ -306,6 +373,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
         return packet
@@ -316,6 +386,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
         return packet
@@ -326,6 +399,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
         return packet
@@ -338,6 +414,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_CUTDOWNNOW, commandmodule.create_send_telemetry_device_debug_flash())
@@ -350,6 +429,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
@@ -362,6 +444,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
@@ -375,6 +460,9 @@ class faraday_commands(object):
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
         """
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE, commandmodule.create_send_telemetry_device_debug_flash())
@@ -395,6 +483,9 @@ class faraday_commands(object):
         :param p3_bitmask_off: A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
         :param p4_bitmask_off: A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
         :param p5_bitmask_off: A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
+
+        :Return: Returns the complete generated packet as a string of bytes.
+
 
         :Example:
 
