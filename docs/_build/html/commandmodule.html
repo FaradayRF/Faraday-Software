@@ -1,0 +1,641 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>commandmodule - Command Application Packet Creator &mdash; Faraday Software 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="commandmodule-command-application-packet-creator">
+<h1>commandmodule - Command Application Packet Creator<a class="headerlink" href="#commandmodule-command-application-packet-creator" title="Permalink to this headline">¶</a></h1>
+<p>The commandmodule Faraday Python module is a collection of packet creation functions that create command application packets.</p>
+<span class="target" id="module-commandmodule"></span><dl class="function">
+<dt id="commandmodule.CreatePacketMsgExperimental">
+<code class="descclassname">commandmodule.</code><code class="descname">CreatePacketMsgExperimental</code><span class="sig-paren">(</span><em>msg_cmd</em>, <em>dest_callsign</em>, <em>dest_device_id</em>, <em>data_len</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.CreatePacketMsgExperimental" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates the command packet expected by the command application routine that forwards a supplied payload over RF to a remote Faraday device. This is a very useful yet simple and un-optimized method of sending abritray data from one unit to another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dest_callsign</strong> &#8211; The callsign of the target Faraday unit</li>
+<li><strong>dest_device_id</strong> &#8211; The device ID number of the target Faraday unit</li>
+<li><strong>data_len</strong> &#8211; The length in bytes of the data payload supplied</li>
+<li><strong>data</strong> &#8211; The data payload to be sent to the remote Faraday device over RF</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first last">A completed packet (string of bytes)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><p class="first">Creates an experiement message packet that sends &#8220;Testing&#8221; to the remote unit.</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CreatePacketMsgExperimental</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;KB1LQD&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Testing&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.calc_radio_freq">
+<code class="descclassname">commandmodule.</code><code class="descname">calc_radio_freq</code><span class="sig-paren">(</span><em>freq0</em>, <em>freq1</em>, <em>freq2</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.calc_radio_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is a reverse frequency calcuation routine that accepts the CC430 RF frequency register bytes and computes the effective frequency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>freq0</strong> &#8211; Frequency byte index 0</li>
+<li><strong>freq1</strong> &#8211; Frequency byte index 1</li>
+<li><strong>freq2</strong> &#8211; Frequency byte index 2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Returns the frequency in MHz as a Float.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">calc_radio_freq</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">173</span><span class="p">)</span>
+<span class="go">915.3498840332031</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_command_datagram">
+<code class="descclassname">commandmodule.</code><code class="descname">create_command_datagram</code><span class="sig-paren">(</span><em>command</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_command_datagram" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a command packet datagram that encapsulates the actual command packets to the parsed. This allows identification of packet &#8220;types&#8221; and modularity within the command system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> &#8211; The command &#8220;number&#8221; that identifies the command packet to be parsed or direct action to be taken</li>
+<li><strong>payload</strong> &#8211; The payload for the specified command packet type. This is usually just commands full &#8220;packet&#8221; structure</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A complete command datagram packet as a string of raw bytes</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This command module has a predefined set of command number definitions for use/reference.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_fixed_length_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_fixed_length_packet</code><span class="sig-paren">(</span><em>data</em>, <em>fixed_legth</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_fixed_length_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple function that accepts a string of databytes and appends padding bytes up to a fixed length.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> &#8211; The string of bytes that will be appdended padding bytes to create the fixed length packet</li>
+<li><strong>fixed_length</strong> &#8211; The length of the fixed length packet in bytes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns the &#8220;data&#8221; padded with additional bytes in the fixed sized specified.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pack_data</span><span class="p">(</span><span class="s2">&quot;Test data message&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="go">&#39;Test data message   &#39;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This should be updated so that the padding byte can be specified as well.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_freq_list">
+<code class="descclassname">commandmodule.</code><code class="descname">create_freq_list</code><span class="sig-paren">(</span><em>freq</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_freq_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates the CC430 list of 3 bytes from a given input frequency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> &#8211; Frequency in MHz as an Integer or Float</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">A list of 3 bytes coresponding to the expected CC430 register settings for the given frequency. The fourth index item is the actual frequency set due to the PLL increment size.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_freq_list</span><span class="p">(</span><span class="mf">915.350</span><span class="p">)</span>
+<span class="go">[35, 52, 173, 915.349884]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_gpio_cmd_bitmask">
+<code class="descclassname">commandmodule.</code><code class="descname">create_gpio_cmd_bitmask</code><span class="sig-paren">(</span><em>bit_number</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_gpio_cmd_bitmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple function that creates a bitmask given the single bit location passed as an argument. This is useful for creating larger bitmasks specifically when creating bitmasks that control the GPIO functionality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bit_number</strong> &#8211; The bit location in the bitmask (MSB)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Returns a bitmask with the signle supplied bit location HIGH.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_gpio_cmd_bitmask</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_gpio_cmd_bitmask</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_gpio_cmd_bitmask</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="n">create_gpio_cmd_bitmask</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">17</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_gpio_command_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_gpio_command_packet</code><span class="sig-paren">(</span><em>port3_on_bitmask</em>, <em>port4_on_bitmask</em>, <em>port5_on_bitmask</em>, <em>port3_off_bitmask</em>, <em>port4_off_bitmask</em>, <em>port5_off_bitmask</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_gpio_command_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A packet generation function to create the command applications &#8220;GPIO&#8221; command packet. This command packet toggles all GPIO&#8217;s (that are allowed) on GPIO ports 3, 4, and 5. Note that a &#8220;0&#8221; within a bitmask will have <em>no affect</em> whereas a &#8220;1&#8221; in a bitmask will perform the HIGH or LOW toggling respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p3_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_on</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p3_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p4_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+<li><strong>p5_bitmask_off</strong> &#8211; A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><p class="first">Returns the complete GPIO command application packet with the supplied bitmasks</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"><p class="first">Example using both the GPIO command bitmask function and an integer input bitmask</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_gpio_command_packet</span><span class="p">(</span><span class="n">create_gpio_cmd_bitmask</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_local_telem_update_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_local_telem_update_packet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_local_telem_update_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command packet generator that provides a payload for the local telemetry update command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A completed packet</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">This should be deprecated into a single &#8220;dummy&#8221; payload function</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_read_memory_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_read_memory_packet</code><span class="sig-paren">(</span><em>dec_address</em>, <em>length</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_read_memory_packet" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>This function returns the command packet that commands the Faraday device to return the memory contents of the specified memory location (CC430) and of specific length</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The length cannout be larger than the maximum transmisible unit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param dec_address:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">the starting locaton memory address (integer) to be returned</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param length:</th><td class="field-body"><p class="first">The length in bytes that are to be read and returned</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><p class="first">A string of bytes that are the values in memory of the specified memory location</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"><div class="first last highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_read_memory_packet</span><span class="p">(</span><span class="mh">0x1800</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="go">&#39; </span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>&#8216;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_reset_device_debug_flash_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_reset_device_debug_flash_packet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_reset_device_debug_flash_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command that causes the flash debug memory values to RESET.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A completed packet (string of bytes)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_rf_command_datagram">
+<code class="descclassname">commandmodule.</code><code class="descname">create_rf_command_datagram</code><span class="sig-paren">(</span><em>dest_callsign</em>, <em>dest_device_id</em>, <em>command</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_rf_command_datagram" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a command packet datagram for commanding REMOTE (RF) Faraday devices. This datagram encapsulates the actual command packets to the passed to the remote device as a payload.</p>
+<p>The important difference between the RF and non RF command packet functions are remote callsign and ID arguments that tell Faraday what devices to target for commanding.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Remote commanding simply calls a specific local command that transmits a &#8220;local&#8221; command packet as a payload to the target Faraday device. Also, This command module has a predefined set of command number definitions for use/reference.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dest_callsign</strong> &#8211; The callsign of the target Faraday unit</li>
+<li><strong>dest_device_id</strong> &#8211; The device ID number of the target Faraday unit</li>
+<li><strong>command</strong> &#8211; The command &#8220;number&#8221; that identifies the command packet to be parsed or direct action to be taken</li>
+<li><strong>payload</strong> &#8211; The payload for the specified command packet type. This is usually just commands full &#8220;packet&#8221; structure</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A complete command datagram packet as a string of raw bytes</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_rf_telem_update_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_rf_telem_update_packet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_rf_telem_update_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command packet generator that provides a payload for the RF telemetry update command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A completed packet</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">This should be deprecated into a single &#8220;dummy&#8221; payload function</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_send_telemetry_device_debug_flash">
+<code class="descclassname">commandmodule.</code><code class="descname">create_send_telemetry_device_debug_flash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_send_telemetry_device_debug_flash" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined command that causes the telemetry application to send its flash debug memory values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A completed packet (string of bytes)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_update_rf_frequency_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_update_rf_frequency_packet</code><span class="sig-paren">(</span><em>frequency_mhz</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_update_rf_frequency_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates the command packet that updates the Faraday CC430 radio frequency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>frequency_mhz</strong> &#8211; The frequency in MHz as an Integer or Float.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body">A completed packet (string of bytes)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.create_update_rf_patable_packet">
+<code class="descclassname">commandmodule.</code><code class="descname">create_update_rf_patable_packet</code><span class="sig-paren">(</span><em>ucharPATable_Setting</em><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.create_update_rf_patable_packet" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates the command packet that updates the Faraday CC430 RF power setting.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A setting of 152 is the maximum output power, any number higher than 152 will be sent as a value of 152.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ucharPATable_Setting</strong> &#8211; The RF power table register setting byte for the CC430.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body">A completed packet (string of bytes)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_gps_reset_disable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_gps_reset_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_gps_reset_disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to DISABLE the GPS RESET GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_gps_reset_enable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_gps_reset_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_gps_reset_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to ENABLE the GPS RESET GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_gps_standby_disable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_gps_standby_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_gps_standby_disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to DISABLE the GPS standby GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_gps_standby_enable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_gps_standby_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_gps_standby_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to ENABLE the GPS standby GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-5">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_led_1_disable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_led_1_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_led_1_disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to DISABLE the LED #1 GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-6">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_led_1_enable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_led_1_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_led_1_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to ENABLE the LED #1 GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-7">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_led_2_disable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_led_2_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_led_2_disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to DISABLE the LED #2 GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-8">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_led_2_enable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_led_2_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_led_2_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to ENABLE the LED #2 GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-9">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_mosfet_disable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_mosfet_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_mosfet_disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to DISABLE the MOSFET GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-10">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="commandmodule.packet_gpio_mosfet_enable">
+<code class="descclassname">commandmodule.</code><code class="descname">packet_gpio_mosfet_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commandmodule.packet_gpio_mosfet_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A predefined funtion that returns the GPIO bitmask to ENABLE the MOSFET GPIO pin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body">A GPIO Bitmask</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-11">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function needs updating to the new create_gpio_command_packet()</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/commandmodule.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, FaradayRF.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/commandmodule.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

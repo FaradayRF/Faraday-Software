@@ -30,9 +30,16 @@ UPDATE_TELEMETRY_INTERVAL_UART_COMMAND = 0
 UPDATE_TELEMETRY_INTERVAL_RF_COMMAND = 1
 RF_CMD_NUMBER = 9
 
-def create_command_packet(command, payload):
+def create_command_datagram(command, payload):
     """
-    Create Command Packet is a function that is used to form a packet intended for the Faraday Command Application to send commands to the local device. Destination callsign and device ID may or may not be needed for local operation but is required for RF commands.
+    This function creates a command packet datagram that encapsulates the actual command packets to the parsed. This allows identification of packet "types" and modularity within the command system.
+
+    :param command: The command "number" that identifies the command packet to be parsed or direct action to be taken
+    :param payload: The payload for the specified command packet type. This is usually just commands full "packet" structure
+
+    :return: A complete command datagram packet as a string of raw bytes
+
+    .. note:: This command module has a predefined set of command number definitions for use/reference.
     """
     #Define packets
     pkt_struct1 = struct.Struct('2B')
@@ -60,7 +67,22 @@ def create_command_packet(command, payload):
         return False
         print "ERROR - Create Command: Payload Too Long!", len(payload)
 
-def create_rf_command_packet(dest_callsign, dest_device_id, command, payload):
+def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
+    """
+    This function creates a command packet datagram for commanding REMOTE (RF) Faraday devices. This datagram encapsulates the actual command packets to the passed to the remote device as a payload.
+
+    The important difference between the RF and non RF command packet functions are remote callsign and ID arguments that tell Faraday what devices to target for commanding.
+
+    .. note:: Remote commanding simply calls a specific local command that transmits a "local" command packet as a payload to the target Faraday device. Also, This command module has a predefined set of command number definitions for use/reference.
+
+    :param dest_callsign: The callsign of the target Faraday unit
+    :param dest_device_id: The device ID number of the target Faraday unit
+    :param command: The command "number" that identifies the command packet to be parsed or direct action to be taken
+    :param payload: The payload for the specified command packet type. This is usually just commands full "packet" structure
+
+    :return: A complete command datagram packet as a string of raw bytes
+
+    """
     #Cheack if callsign is too long
     if(len(dest_callsign)<DEST_CALLSIGN_MAX_LEN):
         payload_len = len(payload)
@@ -86,175 +108,68 @@ def create_rf_command_packet(dest_callsign, dest_device_id, command, payload):
     else:
         print "Error: Callsign too long!"
 
-def pack_data(data, fixed_legth):
+def create_fixed_length_packet(data, fixed_legth):
+        """
+        A simple function that accepts a string of databytes and appends padding bytes up to a fixed length.
+
+        :param data: The string of bytes that will be appdended padding bytes to create the fixed length packet
+        :param fixed_length: The length of the fixed length packet in bytes
+
+        :return: Returns the "data" padded with additional bytes in the fixed sized specified.
+
+        :Example:
+
+            >>> pack_data("Test data message", 20)
+            'Test data message\x00\x00\x00'
+
+        .. note:: This should be updated so that the padding byte can be specified as well.
+        """
         pad_len = fixed_legth-len(data)
         pad = chr(0x00)*pad_len
         pad = pad
         padded_data = data + pad
         return padded_data
 
-def create_fixed_length_packet(data, fixed_length):
-    return pack_data(data, fixed_length)
 
 
 
-######################################################
-## Device Configuration Commands
-######################################################
-class Device_Config_Class:
-    def __init__(self):
-        self.basic_configuration_bitmask = 0
-        self.basic_local_callsign = ''
-        self.basic_local_callsign_len = 0
-        self.basic_local_id = 0
-        self.basic_gpio_p3_bitmask = 0
-        self.basic_gpio_p4_bitmask = 0
-        self.rf_default_boot_freq = {0,0,0}
-        self.rf_PATable = 40 #40 Default
-        self.gps_latitude =''
-        self.gps_latitude_dir = ''
-        self.gps_longitude = ''
-        self.gps_longitude_dir = ''
-        self.gps_altitude = ''
-        self.gps_altitude_units = ''
-        self.gps_boot_bitmask = 0
-        self.telemetry_boot_bitmask = 0
-        self.telemtry_uart_beacon_interval = 0
-        self.telemetry_rf_beacon_interval = 0
 
-        #Definitions
-        self.MAX_CALLSIGN_LEN = 9
-        self.MAX_GPS_LATITUDE_LEN = 9
-        self.MAX_GPS_LATITUDE_DIR_LEN = 1
-        self.MAX_GPS_LONGITUDE_LEN = 10
-        self.MAX_GPS_LONGITUTDE_DIR_LEN = 1
-        self.MAX_ALTITUDE_LEN = 8
-        self.MAX_ALTITUDE_UNITS_LEN = 1
-
-    def update_basic(self, config_bitmask, callsign, id, p3_bitmask, p4_bitmask):
-        if(len(callsign)<=self.MAX_CALLSIGN_LEN):
-            self.basic_configuration_bitmask = config_bitmask
-            self.basic_local_callsign = str(callsign).upper() #Force all uppercase
-            self.basic_local_callsign_len = len(callsign)
-            self.basic_local_id = id
-            self.basic_gpio_p3_bitmask = p3_bitmask
-            self.basic_gpio_p4_bitmask = p4_bitmask
-        else:
-            print "ERROR: Callsign too long!"
-
-    def update_bitmask_configuration(self, device_programmed_bit):
-        bitmask = 0
-        bitmask |= device_programmed_bit << 0
-        #self.basic_configuration_bitmask |= bitx << 1
-        #self.basic_configuration_bitmask |= bitx << 2
-        #self.basic_configuration_bitmask |= bitx << 3
-        #self.basic_configuration_bitmask |= bitx << 4
-        #self.basic_configuration_bitmask |= bitx << 5
-        #self.basic_configuration_bitmask |= bitx << 6
-        #self.basic_configuration_bitmask |= bitx << 7
-        return bitmask
-
-    def update_bitmask_gpio_p3(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
-        bitmask = 0
-        bitmask |= gpio_0 << 0
-        bitmask |= gpio_1 << 1
-        bitmask |= gpio_2 << 2
-        bitmask |= gpio_3 << 3
-        bitmask |= gpio_4 << 4
-        bitmask |= gpio_5 << 5
-        bitmask |= gpio_6 << 6
-        bitmask |= gpio_7 << 7
-        return bitmask
-
-    def update_bitmask_gpio_p4(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
-        bitmask = 0
-        bitmask |= gpio_0 << 0
-        bitmask |= gpio_1 << 1
-        bitmask |= gpio_2 << 2
-        bitmask |= gpio_3 << 3
-        bitmask |= gpio_4 << 4
-        bitmask |= gpio_5 << 5
-        bitmask |= gpio_6 << 6
-        bitmask |= gpio_7 << 7
-        return bitmask
-
-    def update_rf(self, boot_frequency_mhz, PATable_Byte):
-        freq_list = create_freq_list(float(boot_frequency_mhz))
-        self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
-        self.rf_PATable = PATable_Byte
-
-    def update_gps(self, gps_boot_bitmask, latitude_str, latitude_dir_str, longitude_str, longitude_dir_str, altitude_str, altitude_units_str):
-        lat_check = len(latitude_str)<=self.MAX_GPS_LATITUDE_LEN
-        lat_dir_check = len(latitude_dir_str)<=self.MAX_GPS_LATITUDE_DIR_LEN
-        lon_check = len(longitude_str)<=self.MAX_GPS_LONGITUDE_LEN
-        lon_dir_check = len(longitude_dir_str)<=self.MAX_GPS_LONGITUTDE_DIR_LEN
-        alt_check = len(altitude_str)<=self.MAX_ALTITUDE_LEN
-        alt_units_check = len(altitude_units_str)<=self.MAX_ALTITUDE_UNITS_LEN
-
-        if(lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check):
-            self.gps_latitude = latitude_str
-            self.gps_latitude_dir = latitude_dir_str
-            self.gps_longitude = longitude_str
-            self.gps_longitude_dir = longitude_dir_str
-            self.gps_altitude = altitude_str
-            self.gps_altitude_units = altitude_units_str
-        else:
-            print "ERROR: GPS string(s) too long"
-
-    def update_bitmask_gps_boot(self, gps_enable_boot):
-        bitmask = 0
-        self.gps_boot_bitmask |= gps_enable_boot << 0
-        #self.basic_configuration_bitmask |= bitx << 1
-        #self.basic_configuration_bitmask |= bitx << 2
-        #self.basic_configuration_bitmask |= bitx << 3
-        #self.basic_configuration_bitmask |= bitx << 4
-        #self.basic_configuration_bitmask |= bitx << 5
-        #self.basic_configuration_bitmask |= bitx << 6
-        #self.basic_configuration_bitmask |= bitx << 7
-        return bitmask
-
-    def update_telemetry(self, boot_bitmask, uart_interval_seconds, rf_interval_seconds):
-        self.telemetry_boot_bitmask = boot_bitmask
-        self.telemtry_uart_beacon_interval= uart_interval_seconds
-        self.telemetry_rf_beacon_interval = rf_interval_seconds
-
-    def update_bitmask_telemetry_boot(self, rf_beacon_boot, uart_beacon_boot):
-        bitmask = 0
-        bitmask |= uart_beacon_boot << 0
-        bitmask |= rf_beacon_boot << 1
-        #self.basic_configuration_bitmask |= bitx << 2
-        #self.basic_configuration_bitmask |= bitx << 3
-        #self.basic_configuration_bitmask |= bitx << 4
-        #self.basic_configuration_bitmask |= bitx << 5
-        #self.basic_configuration_bitmask |= bitx << 6
-        #self.basic_configuration_bitmask |= bitx << 7
-        return bitmask
-
-    def create_config_packet(self):
-        #Create
-        pkt_struct_config = struct.Struct('<B9sBBBB10s')
-        config = pkt_struct_config.pack(self.basic_configuration_bitmask, self.basic_local_callsign, self.basic_local_callsign_len, self.basic_local_id, self.basic_gpio_p3_bitmask, self.basic_gpio_p4_bitmask, chr(0)*10)
-
-        pkt_struct_rf = struct.Struct('<3B1B21s')
-        rf = pkt_struct_rf.pack(self.rf_default_boot_freq[0], self.rf_default_boot_freq[1], self.rf_default_boot_freq[2], self.rf_PATable, chr(0)*21)
-
-        pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21s')
-        gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir, self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask, chr(0)*21)
-
-        pkt_struct_telemetry = struct.Struct('<BHH10s')
-        telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemtry_uart_beacon_interval, self.telemetry_rf_beacon_interval, chr(0)*10)
-
-        #Return full configuration update packet payload (packet payload for configuration update is just the memory allocation packet to be saved)
-        return config + rf + gps + telem
 
 ######################################################
 ## Misc. Faraday Functions
 ######################################################
 def create_freq_list(freq):
+    """
+    This function creates the CC430 list of 3 bytes from a given input frequency.
+
+    :param freq: Frequency in MHz as an Integer or Float
+
+    :Return: A list of 3 bytes coresponding to the expected CC430 register settings for the given frequency. The fourth index item is the actual frequency set due to the PLL increment size.
+
+    :Example:
+
+        >>> create_freq_list(915.350)
+        [35, 52, 173, 915.349884]
+
+
+    """
     frequency_list = cc430radioconfig.freq0_carrier_calculation(26,freq,0)
     return frequency_list
 
 def calc_radio_freq(freq0, freq1, freq2):
+    """
+    This function is a reverse frequency calcuation routine that accepts the CC430 RF frequency register bytes and computes the effective frequency.
+
+    :param freq0: Frequency byte index 0
+    :param freq1: Frequency byte index 1
+    :param freq2: Frequency byte index 2
+
+    :Return: Returns the frequency in MHz as a Float.
+
+    :Example:
+        >>> calc_radio_freq(35, 52, 173)
+        915.3498840332031
+    """
     frequency = cc430radioconfig.freq0_reverse_carrier_calculation(26, freq0, freq1, freq2, False)
     return frequency
 
@@ -262,11 +177,45 @@ def calc_radio_freq(freq0, freq1, freq2):
 ## GPIO Command
 ######################################################
 def create_gpio_cmd_bitmask(bit_number):
+    """
+    A simple function that creates a bitmask given the single bit location passed as an argument. This is useful for creating larger bitmasks specifically when creating bitmasks that control the GPIO functionality.
+
+    :param bit_number: The bit location in the bitmask (MSB)
+
+    :Return: Returns a bitmask with the signle supplied bit location HIGH.
+
+    :Example:
+
+        >>> create_gpio_cmd_bitmask(0)
+        1
+        >>> create_gpio_cmd_bitmask(4)
+        16
+        >>> create_gpio_cmd_bitmask(0) | create_gpio_cmd_bitmask(4)
+        17
+
+    """
     #This function is a sub-routine to simply create a single byte and bit bitmask.
     #A full bitmask can be made by OR'ing multiple bits to a single byte
     return (1<<bit_number)
 
 def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitmask, port3_off_bitmask, port4_off_bitmask, port5_off_bitmask):
+    """
+    A packet generation function to create the command applications "GPIO" command packet. This command packet toggles all GPIO's (that are allowed) on GPIO ports 3, 4, and 5. Note that a "0" within a bitmask will have *no affect* whereas a "1" in a bitmask will perform the HIGH or LOW toggling respectively.
+
+    :param p3_bitmask_on: A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.
+    :param p4_bitmask_on: A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.
+    :param p5_bitmask_on: A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO HIGH. If bit is LOW it will have no affect on the corresponding GPIO.
+    :param p3_bitmask_off: A 1 byte bitmask for PORT 3 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
+    :param p4_bitmask_off: A 1 byte bitmask for PORT 4 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
+    :param p5_bitmask_off: A 1 byte bitmask for PORT 5 GPIO that if bit HIGH it will toggle the corresponding GPIO LOW. If bit is LOW it will have no affect on the corresponding GPIO.
+
+    :Return: Returns the complete GPIO command application packet with the supplied bitmasks
+
+    :Example: Example using both the GPIO command bitmask function and an integer input bitmask
+
+        >>> create_gpio_command_packet(create_gpio_cmd_bitmask(6), 0, 0, 1, 0, 0)
+
+    """
     #This function is the create a single ON/OFF for all GPIO ports
     #Define Packets Structures
     gpio_cmd_pkt_struct = struct.Struct('6B')
@@ -286,53 +235,126 @@ def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitm
         return gpio_cmd_pkt #create_command_packet(GPIO_COMMAND_NUMBER, gpio_command_packet)
 
 def packet_gpio_gps_standby_enable():
+    """
+    A predefined funtion that returns the GPIO bitmask to ENABLE the GPS standby GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 0)
 
 def packet_gpio_gps_standby_disable():
+    """
+    A predefined funtion that returns the GPIO bitmask to DISABLE the GPS standby GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 1)
 
 def packet_gpio_gps_reset_enable():
+    """
+    A predefined funtion that returns the GPIO bitmask to ENABLE the GPS RESET GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 0)
 
 def packet_gpio_gps_reset_disable():
+    """
+    A predefined funtion that returns the GPIO bitmask to DISABLE the GPS RESET GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 1)
 
 def packet_gpio_mosfet_enable():
+    """
+    A predefined funtion that returns the GPIO bitmask to ENABLE the MOSFET GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 1)
 
 def packet_gpio_mosfet_disable():
+    """
+    A predefined funtion that returns the GPIO bitmask to DISABLE the MOSFET GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 0)
 
 def packet_gpio_led_1_enable():
+    """
+    A predefined funtion that returns the GPIO bitmask to ENABLE the LED #1 GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.LED_1, 1)
 
 def packet_gpio_led_1_disable():
+    """
+    A predefined funtion that returns the GPIO bitmask to DISABLE the LED #1 GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.LED_1, 0)
 
 def packet_gpio_led_2_enable():
+    """
+    A predefined funtion that returns the GPIO bitmask to ENABLE the LED #2 GPIO pin.
+
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
     return create_gpio_command_packet(3, gpio_allocation.LED_2, 1)
 
 def packet_gpio_led_2_disable():
-    return create_gpio_command_packet(3, gpio_allocation.LED_2, 0)
+    """
+    A predefined funtion that returns the GPIO bitmask to DISABLE the LED #2 GPIO pin.
 
-######################################################
-## Read Memory Command
-######################################################
-def get_mem_addr(address, length):
-    try:
-        device.send_cmd_packet(2,2,device.create_memory_read_packet(address, length))
-        starttime = time.time()
-        time.sleep(0.5)
-        data = False
-        print starttime
-    except:
-        print "Fail", data
+    :Return: A GPIO Bitmask
+
+    .. todo:: This function needs updating to the new create_gpio_command_packet()
+    """
+    return create_gpio_command_packet(3, gpio_allocation.LED_2, 0)
 
 ##############
 ## Command = READ MEMORY
 ##############
 
 def create_read_memory_packet(dec_address, length):
+    """
+    This function returns the command packet that commands the Faraday device to return the memory contents of the specified memory location (CC430) and of specific length
+
+    .. note:: The length cannout be larger than the maximum transmisible unit.
+
+    :param dec_address: the starting locaton memory address (integer) to be returned
+    :param length: The length in bytes that are to be read and returned
+
+    :Return: A string of bytes that are the values in memory of the specified memory location
+
+    :Example:
+
+        >>> create_read_memory_packet(0x1800, 10)
+        '\x18\x00\n'
+
+    """
     if(length<=MAX_MEMORY_READ_LEN):
         packet_struct = struct.Struct('>HB')
         packet = packet_struct.pack(dec_address, length)
@@ -345,65 +367,63 @@ def create_read_memory_packet(dec_address, length):
 ## Command = UPDATE DEVICE RAM PARAMETERS
 ##############
 
-def create_ram_update_packet(parameter, data):
-    if(len(data)<MAX_UPDATE_PAYLOAD_LEN):
-            packet_struct = struct.Struct('>B'+ str(MAX_UPDATE_PAYLOAD_LEN) + 's')
-            packet = packet_struct.pack(parameter, data)
-            return packet
-    else:
-        return False
+##def create_ram_update_packet(parameter, data):
+##    if(len(data)<MAX_UPDATE_PAYLOAD_LEN):
+##            packet_struct = struct.Struct('>B'+ str(MAX_UPDATE_PAYLOAD_LEN) + 's')
+##            packet = packet_struct.pack(parameter, data)
+##            return packet
+##    else:
+##        return False
 
-def create_update_callsign_packet(callsign, device_id):
-    callsign_length = len(callsign)
-    if(callsign_length<MAX_CALLSIGN_LEN):
-        packet_struct = struct.Struct('>B9sB')
-        packet = packet_struct.pack(callsign_length, str(callsign).upper(), int(device_id))
-        packet = create_command_packet(0, packet) # 0 - Is callsign update RAM command.
-        return packet
-    else:
-        return False
+##def create_update_callsign_packet(callsign, device_id):
+##    callsign_length = len(callsign)
+##    if(callsign_length<MAX_CALLSIGN_LEN):
+##        packet_struct = struct.Struct('>B9sB')
+##        packet = packet_struct.pack(callsign_length, str(callsign).upper(), int(device_id))
+##        packet = create_command_packet(0, packet) # 0 - Is callsign update RAM command.
+##        return packet
+##    else:
+##        return False
 
 
-def create_update_telemetry_bitmask(bitmask, command):
-    packet_struct = struct.Struct('>2B')
-    return packet_struct.pack(bitmask, command)
-
-def create_update_telemetry_uart_bitmask_enable():
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_UART_BIT,1))
-
-def create_update_telemetry_uart_bitmask_disable():
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_UART_BIT,0))
-
-def create_update_telemetry_rf_bitmask_enable():
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_RF_BIT,1))
-
-def create_update_telemetry_rf_bitmask_disable():
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_RF_BIT,0))
-
-def create_update_telemetry_interval(command, interval):
-    packet_struct = struct.Struct('<BH')
-    return packet_struct.pack(command, int(interval))
-
-def create_update_telemetry_interval_uart_packet(interval):
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_INTERVAL,create_update_telemetry_interval(UPDATE_TELEMETRY_INTERVAL_UART_COMMAND, interval))
-
-def create_update_telemetry_interval_rf_packet(interval):
-    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_INTERVAL,create_update_telemetry_interval(UPDATE_TELEMETRY_INTERVAL_RF_COMMAND, interval))
+##def create_update_telemetry_bitmask(bitmask, command):
+##    packet_struct = struct.Struct('>2B')
+##    return packet_struct.pack(bitmask, command)
+##
+##def create_update_telemetry_uart_bitmask_enable():
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_UART_BIT,1))
+##
+##def create_update_telemetry_uart_bitmask_disable():
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_UART_BIT,0))
+##
+##def create_update_telemetry_rf_bitmask_enable():
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_RF_BIT,1))
+##
+##def create_update_telemetry_rf_bitmask_disable():
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK,create_update_telemetry_bitmask(TELEMETRY_BITMASK_RF_BIT,0))
+##
+##def create_update_telemetry_interval(command, interval):
+##    packet_struct = struct.Struct('<BH')
+##    return packet_struct.pack(command, int(interval))
+##
+##def create_update_telemetry_interval_uart_packet(interval):
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_INTERVAL,create_update_telemetry_interval(UPDATE_TELEMETRY_INTERVAL_UART_COMMAND, interval))
+##
+##def create_update_telemetry_interval_rf_packet(interval):
+##    return create_ram_update_packet(COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_INTERVAL,create_update_telemetry_interval(UPDATE_TELEMETRY_INTERVAL_RF_COMMAND, interval))
 
 ##############
 ## Command = Send Local telemetry UART Data Now
 ##############
 
 def create_local_telem_update_packet():
-    packet_struct = struct.Struct('>B')
-    packet = packet_struct.pack(255)
-    return packet
+    """
+    A predefined command packet generator that provides a payload for the local telemetry update command.
 
-##############
-## Command = Send Local telemetry RF Data Now
-##############
+    :Return: A completed packet
 
-def create_local_telem_update_packet():
+    .. todo:: This should be deprecated into a single "dummy" payload function
+    """
     packet_struct = struct.Struct('>B')
     packet = packet_struct.pack(255)
     return packet
@@ -413,6 +433,13 @@ def create_local_telem_update_packet():
 ##############
 
 def create_rf_telem_update_packet():
+    """
+    A predefined command packet generator that provides a payload for the RF telemetry update command.
+
+    :Return: A completed packet
+
+    .. todo:: This should be deprecated into a single "dummy" payload function
+    """
     packet_struct = struct.Struct('>B')
     packet = packet_struct.pack(255)
     return packet
@@ -421,8 +448,16 @@ def create_rf_telem_update_packet():
 ## Command = Update RF frequency
 ##############
 
-def create_update_rf_frequency_packet(boot_frequency_mhz):
-    freq_list = create_freq_list(float(boot_frequency_mhz))
+def create_update_rf_frequency_packet(frequency_mhz):
+    """
+    This function generates the command packet that updates the Faraday CC430 radio frequency.
+
+    :param frequency_mhz: The frequency in MHz as an Integer or Float.
+
+    :Return: A completed packet (string of bytes)
+
+    """
+    freq_list = create_freq_list(float(frequency_mhz))
     packet_struct = struct.Struct('3B')
     packet = packet_struct.pack(freq_list[0], freq_list[1], freq_list[2])
     return packet
@@ -435,6 +470,16 @@ def create_update_rf_frequency_packet(boot_frequency_mhz):
 
 
 def create_update_rf_patable_packet(ucharPATable_Setting):
+    """
+    This function generates the command packet that updates the Faraday CC430 RF power setting.
+
+    .. note:: A setting of 152 is the maximum output power, any number higher than 152 will be sent as a value of 152.
+
+    :param ucharPATable_Setting: The RF power table register setting byte for the CC430.
+
+    :Return: A completed packet (string of bytes)
+
+    """
     packet_struct = struct.Struct('1B')
     packet = packet_struct.pack(ucharPATable_Setting)
     return packet
@@ -444,6 +489,11 @@ def create_update_rf_patable_packet(ucharPATable_Setting):
 ## Note: Not payload packet needed, returing 1 byte of 0 just for placeholder
 ##############
 def create_reset_device_debug_flash_packet():
+    """
+    A predefined command that causes the flash debug memory values to RESET.
+
+    :Return: A completed packet (string of bytes)
+    """
     packet_struct = struct.Struct('1B')
     packet = packet_struct.pack(0)
     return packet
@@ -454,32 +504,40 @@ def create_reset_device_debug_flash_packet():
 ## Note: Not payload packet needed, returing 1 byte of 0 just for placeholder
 ##############
 def create_send_telemetry_device_debug_flash():
+    """
+    A predefined command that causes the telemetry application to send its flash debug memory values.
+
+    :Return: A completed packet (string of bytes)
+    """
     packet_struct = struct.Struct('1B')
     packet = packet_struct.pack(0)
     return packet
-
-##############
-## Command = Send telemetry UART device system settings
-## Note: Not payload packet needed, returing 1 byte of 0 just for placeholder
-##############
-def create_send_telemetry_device_debug_flash():
-    packet_struct = struct.Struct('1B')
-    packet = packet_struct.pack(0)
-    return packet
-
-##############
-## Command = ECHO payload
-##############
-def create_echo_message(payload):
-    return create_command_packet(1, payload)
 
 
 ##############
 ## EXPERIMENTAL MESSAGE APPLICATION
 ##############
 
-def CreatePacketMsgExperimental(msg_cmd, dest_callsign, dest_id, data_len, data):
+def CreatePacketMsgExperimental(msg_cmd, dest_callsign, dest_device_id, data_len, data):
+    """
+    This function creates the command packet expected by the command application routine that forwards a supplied payload over RF to a remote Faraday device. This is a very useful yet simple and un-optimized method of sending abritray data from one unit to another.
+
+    :param dest_callsign: The callsign of the target Faraday unit
+    :param dest_device_id: The device ID number of the target Faraday unit
+    :param data_len: The length in bytes of the data payload supplied
+    :param data: The data payload to be sent to the remote Faraday device over RF
+
+    :Return: A completed packet (string of bytes)
+
+    .. note: The data payload length cannot be larger than the maximum transmissible unit. Also, data only needs to be a string of bytes so both strings and packed binary data are acceptable.
+
+    :Example: Creates an experiement message packet that sends "Testing" to the remote unit.
+
+        >>> CreatePacketMsgExperimental(0, "KB1LQD", 1, 7, "Testing")
+
+
+    """
     packet_struct = struct.Struct('1B9s2B42s')
-    packet = packet_struct.pack(msg_cmd, dest_callsign, dest_id, data_len, data)
+    packet = packet_struct.pack(msg_cmd, dest_callsign, dest_device_id, data_len, data)
     return packet
 
