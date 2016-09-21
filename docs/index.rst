@@ -33,6 +33,7 @@ a system with.
 	
 	faradayio
 	faradaycommands
+	commandmodule
 	
 .. toctree::
 	:caption: Tutorials
