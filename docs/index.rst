@@ -34,6 +34,11 @@ a system with.
 	faradayio
 	faradaycommands
 	commandmodule
+	cc430radioconfig
+	checksum
+	deviceconfig
+	gpioallocations
+	telemetryparser
 	
 .. toctree::
 	:caption: Tutorials

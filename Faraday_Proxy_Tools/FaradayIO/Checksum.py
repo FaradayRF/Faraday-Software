@@ -5,6 +5,14 @@ import struct
 ##########
 
 def compute_checksum_16(packet, length):
+    """
+    Computes a basic 16 bit checksum of a supplied string of bytes (packet) and length. This is used for error detection purposes.
+
+    :param packet: The packet that the checksum will be computed as a string of bytes
+    :param length: The length of the supplied packet to computer a checksum of. This allows for computing a checksome of a partial packet if needed.
+
+    :return: Returns the 16 bit checksum as an Integer
+    """
     parsed_data = struct.unpack(str(length) + 'B', packet)
     checksum = 0
     #print "TESTING ****", parsed_data

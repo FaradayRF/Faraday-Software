@@ -2,18 +2,19 @@
 
 def freq0_carrier_calculation(fxosc, freq_desired, debug):
     """
-    Calculates the FREQ0, FREQ1, and FREQ2 24 bit word for main carrier frequency
-    Inputs:
-    fxosc = crystal frequency in MHZ
-    freq_desired = desired frequency in MHZ
-    OUTPUT:
-    list = [FREQ2, FREQ1, FREQ0, STR(actual frequency of carrier in MHz)]
-    
-     NOTE: Farday only supports the Amateur Radio 900MHz band.
-     CC430 Frequency range can only be
-     300-348 MHz
-     387-464 MHz
-     779-928 MHz
+    Calculates the FREQ0, FREQ1, and FREQ2 24 bit word for main carrier frequency of the CC430.
+
+    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float)
+    :param freq_desired: Frequency in MHz that is desired to tune to (Integer or float)
+    :param debug: If True then the function will print additional information about the calculation process
+
+    :return: A list\: [FREQ2, FREQ1, FREQ0, STR(actual frequency of carrier in MHz)]
+
+
+    .. note:: The CC430 high frequency crystal for Faraday is 26.0 MHz
+
+
+     .. warning:: Farday only supports the Amateur Radio 900MHz band (902-928MHz).
 
     """
 
@@ -50,6 +51,16 @@ def freq0_carrier_calculation(fxosc, freq_desired, debug):
 def freq0_reverse_carrier_calculation(fxosc, freq0, freq1, freq2, debug):
     """
     This function reverse calculates the CC430 frequency in MHz from the known freq[] bytes in the CC430 radio registers.
+
+    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float)
+    :param freq0: Frequency byte index 0
+    :param freq1: Frequency byte index 1
+    :param freq2: Frequency byte index 2
+    :param debug: If True then the function will print additional information about the calculation process
+
+    :return: Returns the calculated frequency in MHz as a float.
+
+    .. note:: The CC430 high frequency crystal for Faraday is 26.0 MHz
     """
     #Calculate the smallest bit resolution in VC0 based on crystal
     vco_step_float = float(fxosc*10**6)/2**16
