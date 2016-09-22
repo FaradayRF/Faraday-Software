@@ -24,6 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+    <link rel="up" title="FaradayIO Toolset Documentation" href="toolsets-faradayio.html" />
+    <link rel="next" title="FaradayIO Toolset Tutorials" href="tutorials_faradayio.html" />
+    <link rel="prev" title="gpioallocations - Faraday GPIO Port Allocations Definitions" href="gpioallocations.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -76,8 +79,25 @@ a longer padded &#8220;payload&#8221; packet of a frame or encapsulation.</p>
 <dl class="method">
 <dt id="telemetryparser.TelemetryParse.UnpackConfigFlashD">
 <code class="descname">UnpackConfigFlashD</code><span class="sig-paren">(</span><em>packet</em>, <em>debug</em><span class="sig-paren">)</span><a class="headerlink" href="#telemetryparser.TelemetryParse.UnpackConfigFlashD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpacks a Flash memory info segment D &#8220;Packet&#8221; structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-then the function prints information about the packet as received. See Faraday packet definition guide for information.</p>
+<dd><p>This function unpacks a Flash memory info segment D &#8220;Packet&#8221; structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>packet</strong> &#8211; The packet as a string of byte that will be decoded</li>
+<li><strong>debug</strong> &#8211; If True the function will print decoding information during parsing</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns the Python Struct module &#8220;unpack&#8221; function list containing the parsed datagram elements</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 <dl class="docutils">
 <dt>&#8212; RETURNS LIST &#8212;</dt>
 <dd>Index[0]: Flash Config Bitmask
@@ -236,6 +256,10 @@ Index[20]: Default RF Telemetry Interval</dd>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="toolsets-faradayio.html">FaradayIO Toolset Documentation</a><ul>
+      <li>Previous: <a href="gpioallocations.html" title="previous chapter">gpioallocations - Faraday GPIO Port Allocations Definitions</a></li>
+      <li>Next: <a href="tutorials_faradayio.html" title="next chapter">FaradayIO Toolset Tutorials</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

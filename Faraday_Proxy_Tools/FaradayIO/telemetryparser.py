@@ -256,8 +256,14 @@ class TelemetryParse(object):
 
     def UnpackConfigFlashD(self, packet, debug):
         """
-        Unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
+
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
 
         --- RETURNS LIST ---
             Index[0]: Flash Config Bitmask
