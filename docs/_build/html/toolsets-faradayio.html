@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>checksum - A Simple Error Detection Checksum 16 Bit &mdash; Faraday Software 0.1.0 documentation</title>
+    <title>FaradayIO Toolset Documentation &mdash; Faraday Software 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Faraday Software 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="faradayio - Faraday Proxy Input/Output Toolset" href="faradayio.html" />
+    <link rel="prev" title="Getting Started" href="getting-started.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -39,30 +41,22 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="checksum-a-simple-error-detection-checksum-16-bit">
-<h1>checksum - A Simple Error Detection Checksum 16 Bit<a class="headerlink" href="#checksum-a-simple-error-detection-checksum-16-bit" title="Permalink to this headline">¶</a></h1>
-<p>The commandmodule Faraday Python module contains a function(s) that compute a simple 16 bit checksum used for error detection and correct.</p>
-<span class="target" id="module-Checksum"></span><dl class="function">
-<dt id="Checksum.compute_checksum_16">
-<code class="descclassname">Checksum.</code><code class="descname">compute_checksum_16</code><span class="sig-paren">(</span><em>packet</em>, <em>length</em><span class="sig-paren">)</span><a class="headerlink" href="#Checksum.compute_checksum_16" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes a basic 16 bit checksum of a supplied string of bytes (packet) and length. This is used for error detection purposes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>packet</strong> &#8211; The packet that the checksum will be computed as a string of bytes</li>
-<li><strong>length</strong> &#8211; The length of the supplied packet to computer a checksum of. This allows for computing a checksome of a partial packet if needed.</li>
+  <div class="section" id="faradayio-toolset-documentation">
+<h1>FaradayIO Toolset Documentation<a class="headerlink" href="#faradayio-toolset-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The Faraday IO toolset is a collection of Python scripts that perform input/output, packet creation, packet parsing, and other functions that provide a basic level of interaction with a Faraday digital radio. This module is specifically designed to be used in the creation of applications that wish to interact with a Faraday device over the localhost proxy server RESTful API.</p>
+<div class="toctree-wrapper compound" id="toolsets">
+<p class="caption"><span class="caption-text">Toolsets</span><a class="headerlink" href="#toolsets" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faradayio.html">faradayio - Faraday Proxy Input/Output Toolset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faradaycommands.html">faradaycommands - Command Application Toolset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandmodule.html">commandmodule - Command Application Packet Creator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cc430radioconfig.html">cc430radioconfig - CC430 Radio Configuration Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="checksum.html">checksum - A Simple Error Detection Checksum 16 Bit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deviceconfig.html">deviceconfig - Faraday Flash Configuration Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gpioallocations.html">gpioallocations - Faraday GPIO Port Allocations Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telemetryparser.html">telemetryparser - Faraday Telemetry Packet Parser</a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns the 16 bit checksum as an Integer</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -74,13 +68,15 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="getting-started.html" title="previous chapter">Getting Started</a></li>
+      <li>Next: <a href="faradayio.html" title="next chapter">faradayio - Faraday Proxy Input/Output Toolset</a></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/checksum.txt"
+      <li><a href="_sources/toolsets-faradayio.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -106,7 +102,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
-      <a href="_sources/checksum.txt"
+      <a href="_sources/toolsets-faradayio.txt"
           rel="nofollow">Page source</a>
     </div>
 

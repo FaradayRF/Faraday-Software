@@ -20,6 +20,8 @@ retrieved over the UART connection with a "proxy" providing a RESTful interface.
 Subsequent programs interact and provide their own interfaces from which to build up
 a system with.
 
+Quickstart Information
+----------------------
 .. toctree::
 	:caption: Quickstart
 	:maxdepth: 1
@@ -27,24 +29,16 @@ a system with.
 	installation
 	getting-started
 
+Toolset Module Documentation
+----------------------------
 .. toctree::
-	:caption: Toolsets
+	:caption: FaradayIO
 	:maxdepth: 1
 	
-	faradayio
-	faradaycommands
-	commandmodule
-	cc430radioconfig
-	checksum
-	deviceconfig
-	gpioallocations
-	telemetryparser
-	
-.. toctree::
-	:caption: Tutorials
-	:maxdepth: 2
-	
+	toolsets-faradayio
 	tutorials_faradayio
+
+
 	
 License
 -------
