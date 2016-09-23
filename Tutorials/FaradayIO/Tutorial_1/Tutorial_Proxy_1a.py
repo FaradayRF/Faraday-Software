@@ -2,10 +2,10 @@
 # Make sure to turn UART TELEM BOOT Bitmask to 0 to turn OFF telemetry update automatically so that you know telemetry commands are working
 
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-from Basic_Proxy_IO import telemetryparser
-from Basic_Proxy_IO import gpioallocations
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import telemetryparser
+from FaradayIO import gpioallocations
 import time
 #Definitions
 
@@ -47,7 +47,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ###############
 #Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
 originalmsg = "This will ECHO back on UART" #Cannot be longer than max UART payload size!
-command = faradaycommands.commandmodule.create_echo_message(originalmsg)
+command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 #Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).

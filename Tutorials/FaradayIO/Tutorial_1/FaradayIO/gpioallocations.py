@@ -1,14 +1,6 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
-#
-# Author:      Brent
-#
-# Created:     22/05/2016
-# Copyright:   (c) Brent 2016
-# Licence:     <your licence>
-#-------------------------------------------------------------------------------
-
+"""
+This module contains GPIO bitmask allocation definitions for use with the GPIO update commands.
+"""
 #Port 3
 GPS_RESET = 0b00001000
 GPS_STANDBY = 0b00010000
