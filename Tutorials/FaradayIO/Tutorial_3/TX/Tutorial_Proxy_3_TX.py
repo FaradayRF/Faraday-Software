@@ -1,9 +1,7 @@
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-#from Basic_Proxy_IO import telemetryparser
-from Basic_Proxy_IO import gpioallocations
-#from Basic_Proxy_IO import cc430radioconfig
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import gpioallocations
 import time
 
 
@@ -12,8 +10,10 @@ local_device_callsign = 'kb1lqd'
 local_device_node_id = 7
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio()
+faraday_1 = faradaybasicproxyio.proxyio(8099)
 faraday_cmd = faradaycommands.faraday_commands()
+
+print "Connecting to proxy on port:", faraday_1.FLASK_PORT
 #faraday_parser = telemetryparser.TelemetryParse()
 
 # This example will show how to command Faraday using the basic command application.

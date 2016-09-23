@@ -17,9 +17,9 @@ import time
 class proxyio(object):
     """A basic input and output class object to interact with the Faraday proxy server RESTful API"""
 
-    def __init__(self):
+    def __init__(self, port = 80):
         #Definitions
-        self.FLASK_PORT = 80 #TCP port
+        self.FLASK_PORT = port #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
