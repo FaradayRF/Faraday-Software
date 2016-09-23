@@ -15,11 +15,24 @@ import base64
 import time
 
 class proxyio(object):
-    """A basic input and output class object to interact with the Faraday proxy server RESTful API"""
+    """
+    A basic input and output class object to interact with the Faraday proxy server RESTful API
 
-    def __init__(self):
+    :param port: (Optional, default = 80) flask port that the proxy to connect to is running on. This allows easy changing of the port if using multiple proxies at one time.
+
+    :Example:
+
+    >>> #A basic proxy IO object running on default proxy port
+    >>> faraday_1 = proxyio()
+    >>> #A basic proxy IO object running on port 8099 to connect to to proxy
+    >>> faraday_1 = proxyio(8099)
+
+    """
+
+
+    def __init__(self, port = 80):
         #Definitions
-        self.FLASK_PORT = 8099 #TCP port
+        self.FLASK_PORT = port #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
