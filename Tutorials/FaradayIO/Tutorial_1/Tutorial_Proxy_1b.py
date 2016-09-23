@@ -1,9 +1,9 @@
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-from Basic_Proxy_IO import telemetryparser
-from Basic_Proxy_IO import gpioallocations
-from Basic_Proxy_IO import cc430radioconfig
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import telemetryparser
+from FaradayIO import gpioallocations
+from FaradayIO import cc430radioconfig
 import time
 
 
