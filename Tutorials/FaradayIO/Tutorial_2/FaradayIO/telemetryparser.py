@@ -1,6 +1,10 @@
 import struct
 
 class TelemetryParse(object):
+    """
+    This class object contains all the pre-defined values, packet structures, and functions used to interact (mostly parse) data from the Telemetry application. The telemetry application follows the OSI layer standards for a network stack and therfore contains its own packet
+    structure. Please see the documentation for further detail an definitions.
+    """
     def __init__(self):
         self.datagram_struct = struct.Struct('>3B 118s 1H') #Struct format definition for the generice telemetry packet format datagram
         self.flash_config_info_d_struct = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
@@ -15,15 +19,21 @@ class TelemetryParse(object):
 
     def UnpackDatagram(self, packet, debug):
         """
-        Unpacks a telemetry datagram from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry packets are encapsulated by this telemetry datagram.
 
-        --- RETURNS LIST ---
-        Index[0]: Packet Type
-        Index[1]: RF Source
-        Index[2]: Payload Length
-        Index[3]: Payload Data
-        Index[4]: 16 Bit Checksum
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
+
+            --- RETURNS LIST ---
+            Index[0]: Packet Type
+            Index[1]: RF Source
+            Index[2]: Payload Length
+            Index[3]: Payload Data
+            Index[4]: 16 Bit Checksum
         """
         #Unpack the packet
         parsed_packet = self.datagram_struct.unpack(packet)
@@ -43,53 +53,71 @@ class TelemetryParse(object):
         #Return parsed packet list
         return parsed_packet
 
+    def ExtractPaddedPacket(self, packet, packet_len):
+        """
+        This function simply extracts and returns a packet from a longer byte array. This is useful to extract ONLY the intended packet to be parsed from
+        a longer padded "payload" packet of a frame or encapsulation.
 
+        :param packet: The packet as a string of byte that will be decoded
+        :param packet_len: The length of the packet (from first byte) to be extracted
+
+        :return: The truncated packet as a string of bytes
+
+        .. warning:: This function does not ensure that the returned packet is the intended data packet, it only corrects byte array length!
+        """
+        return packet[0:packet_len]
 
 
     def UnpackPacket_3(self, packet, debug):
         """
-        Unpacks a telemetry packet type 3 (Telemetry) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
 
-        --- RETURNS LIST ---
-        Index[0]: Source Callsign
-        Index[1]: Source Callsign Length
-        Index[2]: Source Callsign ID
-        Index[3]: Destination Callsign
-        Index[4]: Destination Callsign Length
-        Index[5]: Destination Callsign ID
-        Index[6]: RTC Second
-        Index[7]: RTC Minute
-        Index[8]: RTC Hour
-        Index[9]: RTC Day
-        Index[10]: RTC Day Of Week
-        Index[11]: RTC Month
-        Index[12]: Year
-        Index[13]: GPS Lattitude
-        Index[14]: GPS Lattitude Direction
-        Index[15]: GPS Longitude
-        Index[16]: GPS Longitude Direction
-        Index[17]: GPS Altitude
-        Index[18]: GPS Altitude Units
-        Index[19]: GPS Speed
-        Index[20]: GPS Fix
-        Index[21]: GPS HDOP
-        Index[22]: GPIO State Telemetry
-        Index[23]: RF State Telemetry
-        Index[24]: ADC 0
-        Index[25]: ADC 1
-        Index[26]: ADC 2
-        Index[27]: ADC 3
-        Index[28]: ADC 4
-        Index[29]: ADC 5
-        Index[30]: ADC 6
-        Index[31]: CC430 Temperature
-        Index[32]: ADC 8
-        Index[33]: N/A Byte
-        Index[34]: HAB Automatic Cutdown Timer State Machine State
-        Index[35]: HAB Cutdown Event State Machine State
-        Index[36]: HAB Automatic Cutdown Timer Trigger Time
-        Index[37]: HAB Automatic Cutdown Timer Current Time
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
+
+            --- RETURNS LIST ---
+            Index[0]: Source Callsign
+            Index[1]: Source Callsign Length
+            Index[2]: Source Callsign ID
+            Index[3]: Destination Callsign
+            Index[4]: Destination Callsign Length
+            Index[5]: Destination Callsign ID
+            Index[6]: RTC Second
+            Index[7]: RTC Minute
+            Index[8]: RTC Hour
+            Index[9]: RTC Day
+            Index[10]: RTC Day Of Week
+            Index[11]: RTC Month
+            Index[12]: Year
+            Index[13]: GPS Lattitude
+            Index[14]: GPS Lattitude Direction
+            Index[15]: GPS Longitude
+            Index[16]: GPS Longitude Direction
+            Index[17]: GPS Altitude
+            Index[18]: GPS Altitude Units
+            Index[19]: GPS Speed
+            Index[20]: GPS Fix
+            Index[21]: GPS HDOP
+            Index[22]: GPIO State Telemetry
+            Index[23]: RF State Telemetry
+            Index[24]: ADC 0
+            Index[25]: ADC 1
+            Index[26]: ADC 2
+            Index[27]: ADC 3
+            Index[28]: ADC 4
+            Index[29]: ADC 5
+            Index[30]: ADC 6
+            Index[31]: CC430 Temperature
+            Index[32]: ADC 8
+            Index[33]: N/A Byte
+            Index[34]: HAB Automatic Cutdown Timer State Machine State
+            Index[35]: HAB Cutdown Event State Machine State
+            Index[36]: HAB Automatic Cutdown Timer Trigger Time
+            Index[37]: HAB Automatic Cutdown Timer Current Time
         """
         #Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
@@ -141,35 +169,32 @@ class TelemetryParse(object):
         #Return parsed packet list
         return parsed_packet
 
-    def ExtractPaddedPacket(self, packet, packet_len):
-        """
-        This function simply extracts and returns a packet from a longer byte array. This is useful to extract ONLY the intended packet to be parsed from
-        a longer padded "payload" packet of a frame or encapsulation.
-
-        WARNING: This function does not ensure that the returned packet is the intended data packet, it only corrects byte array length!
-        """
-        return packet[0:packet_len]
-
     def UnpackPacket_2(self, packet, debug):
         print packet, len(packet)
         """
-        Unpacks a telemetry packet type 2 (Debug Flash) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
 
-        --- RETURNS LIST ---
-        Index[0]: Boot Count
-        Index[1]: Reset Count
-        Index[2]: Brownout reset counter
-        Index[3]: Reset / Non-maskable Interust counter
-        Index[4]: PMM Supervisor Low counter
-        Index[5]: PMM Supervisor High counter
-        Index[6]: PMM Supervisor Low - OVP counter
-        Index[7]: PMM Supervisor High - OVP counter
-        Index[8]: Watchdog timeput counter
-        Index[9]: Flash key violation counter
-        Index[10]: FLL Unlock counter
-        Index[11]: Peripheral / Config counter
-        Index[12]: Access violation counter
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
+
+            --- RETURNS LIST ---
+            Index[0]: Boot Count
+            Index[1]: Reset Count
+            Index[2]: Brownout reset counter
+            Index[3]: Reset / Non-maskable Interust counter
+            Index[4]: PMM Supervisor Low counter
+            Index[5]: PMM Supervisor High counter
+            Index[6]: PMM Supervisor Low - OVP counter
+            Index[7]: PMM Supervisor High - OVP counter
+            Index[8]: Watchdog timeput counter
+            Index[9]: Flash key violation counter
+            Index[10]: FLL Unlock counter
+            Index[11]: Peripheral / Config counter
+            Index[12]: Access violation counter
         """
         #Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
@@ -198,14 +223,20 @@ class TelemetryParse(object):
 
     def UnpackPacket_1(self, packet, debug):
         """
-        Unpacks a telemetry packet type 1 (Faraday System Settings) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
 
-        --- RETURNS LIST ---
-        Index[0]: RF Freq 2
-        Index[1]: RF Freq 1
-        Index[2]: RF Freq 0
-        Index[3]: RF Power Bitmask
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
+
+            --- RETURNS LIST ---
+            Index[0]: RF Freq 2
+            Index[1]: RF Freq 1
+            Index[2]: RF Freq 0
+            Index[3]: RF Power Bitmask
         """
         #Unpack the packet
         parsed_packet = self.packet_1_struct.unpack(packet)
@@ -225,8 +256,14 @@ class TelemetryParse(object):
 
     def UnpackConfigFlashD(self, packet, debug):
         """
-        Unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
-        then the function prints information about the packet as received. See Faraday packet definition guide for information.
+        This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
+
+        :param packet: The packet as a string of byte that will be decoded
+        :param debug: If True the function will print decoding information during parsing
+
+        :return: Returns the Python Struct module "unpack" function list containing the parsed datagram elements
+
+        .. code-block:: python
 
         --- RETURNS LIST ---
             Index[0]: Flash Config Bitmask
