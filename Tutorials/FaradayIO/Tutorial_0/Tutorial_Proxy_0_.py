@@ -3,9 +3,9 @@
 # - Parsing received data
 
 #Imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-from Basic_Proxy_IO import telemetryparser
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import telemetryparser
 
 #Definitions
 FARADAY_TELEMETRY_UART_PORT = 5
