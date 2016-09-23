@@ -1,18 +1,18 @@
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-#from Basic_Proxy_IO import telemetryparser
-from Basic_Proxy_IO import gpioallocations
-#from Basic_Proxy_IO import cc430radioconfig
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import gpioallocations
 import time
 
 
 #Variables
 local_device_callsign = 'kb1lqd'
 local_device_node_id = 7
+transmit_proxy_flask_port = 8099
+
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio()
+faraday_1 = faradaybasicproxyio.proxyio(transmit_proxy_flask_port)
 faraday_cmd = faradaycommands.faraday_commands()
 #faraday_parser = telemetryparser.TelemetryParse()
 
