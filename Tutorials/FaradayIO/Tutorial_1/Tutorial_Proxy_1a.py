@@ -6,7 +6,9 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 from FaradayIO import gpioallocations
+
 import time
+
 #Definitions
 
 
@@ -16,7 +18,7 @@ local_device_node_id = 1
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio()
+faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
 
 
@@ -32,7 +34,6 @@ time.sleep(1)
 command = faraday_cmd.CommandLocalGPIOLED1Off()
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
-
 #Turn LED 2 ON LOCAL
 command = faraday_cmd.CommandLocalGPIOLED2On()
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
@@ -40,6 +41,16 @@ time.sleep(1)
 
 #Turn LED 2 OFF LOCAL
 command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.LED_2, 0, 0) #This examples how the non predefined LED GPIO commanding is created. Multiple GPIO's can be toggled at once using ||'s
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+time.sleep(1) #Delay so it is obvious that both LED's turn on at the same time in the next command
+
+#Turn Both LED 1 and LED 2 ON simultaneously
+command = faraday_cmd.CommandLocalGPIO((gpioallocations.LED_1|gpioallocations.LED_2), 0, 0, 0, 0, 0)
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+time.sleep(1)
+
+#Turn Both LED 1 and LED 2 OFF simultaneously
+command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.LED_1|gpioallocations.LED_2), 0, 0)
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 ###############
@@ -52,7 +63,6 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 
 #Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
 rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, 1, False) #Wait for up to 1 second
-
 
 #Now parse data again
 b64_data = rx_echo_raw[0]['data']
