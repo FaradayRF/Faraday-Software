@@ -49,6 +49,7 @@
 <div class="section" id="tutorial-1a-basic-local-device-io-commands">
 <h1>Tutorial 1a - Basic Local Device IO Commands<a class="headerlink" href="#tutorial-1a-basic-local-device-io-commands" title="Permalink to this headline">¶</a></h1>
 <p>Perfoming basic input and output commanding involves very few operations, this is made simpler by common actions such as toggling and LED have had pre-defined command functions created for them. Lets begin with importing and configuring FaradayIO module that connects to the proxy server.</p>
+<p><a class="reference external" href="https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1a.py">https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1a.py</a></p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#imports</span>
 <span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
 <span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
@@ -135,6 +136,89 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="tutorial-1b-commanding-and-parsing-all-telemetry-packets">
+<h1>Tutorial 1b - Commanding And Parsing All Telemetry Packets<a class="headerlink" href="#tutorial-1b-commanding-and-parsing-all-telemetry-packets" title="Permalink to this headline">¶</a></h1>
+<p><strong>Tutorial Example Script:</strong> <a class="reference external" href="https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1b.py">https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1b.py</a></p>
+<p>The purpose of this tutorial is to command a local Faraday unit to transmit all 3 current types of telemetry packets and how to use the supplied parsing tools to decode them.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure that Faraday Proxy is successfully running prior to running the example script!</p>
+</div>
+<ul>
+<li><dl class="first docutils">
+<dt>Command transmisson of different telemetry packets</dt>
+<dd><ul class="first last simple">
+<li>Packet Type #1: System Settings (i.e. Frequency, RF power...)</li>
+<li>Packet Type #2: Device Debug Information (Boot counter, reset counters, error flags, etc...)</li>
+<li>Packet Type #3: Standard Faraday Telemetry (ADC, GPIO, GPS, etc...)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Using FaradayIO parsing tools to decode received telemetry packets from the proxy server</dt>
+<dd><ul class="first last simple">
+<li>Introduce the &#8220;Flush&#8221; function in FaradayIO</li>
+<li>Extracting smaller packets from larger datagram payloads</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Overview of the telemetry packet formats and data available</p>
+</li>
+</ul>
+<div class="section" id="example-notes">
+<h2>Example Notes<a class="headerlink" href="#example-notes" title="Permalink to this headline">¶</a></h2>
+<p><strong>Telemtry Packet #3 - Standard Telemetry</strong></p>
+<p>This telemetry packet is the main telemetry that most people will want from a Faraday as it contains the ADC, GPIO, GPS, and other information.</p>
+<p>Below is an example of output data when the the debug argument is equal to True thus printing parsing information for educational purposes. This function otherwise returns a list of parsed elements using the standard python Struct module.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;</span>
+<span class="go">--- Telemetry Packet #3 ---</span>
+<span class="go">Index[0]: Source Callsign KB1LQD“*</span>
+<span class="go">Index[1]: Source Callsign Length 6</span>
+<span class="go">Index[2]: Source Callsign ID 7</span>
+<span class="go">Index[3]: Destination Callsign KB1LQD</span>
+<span class="go">Index[4]: Destination Callsign Length 6</span>
+<span class="go">Index[5]: Destination Callsign ID 7</span>
+<span class="go">Index[6]: RTC Second 14</span>
+<span class="go">Index[7]: RTC Minute 30</span>
+<span class="go">Index[8]: RTC Hour 17</span>
+<span class="go">Index[9]: RTC Day 23</span>
+<span class="go">Index[10]: RTC Day Of Week 5</span>
+<span class="go">Index[11]: RTC Month 9</span>
+<span class="go">Index[12]: Year 57351</span>
+<span class="go">Index[13]: GPS Lattitude 3352.4159</span>
+<span class="go">Index[14]: GPS Lattitude Direction N</span>
+<span class="go">Index[15]: GPS Longitude 11822.6014</span>
+<span class="go">Index[16]: GPS Longitude Direction W</span>
+<span class="go">Index[17]: GPS Altitude 40.26000</span>
+<span class="go">Index[18]: GPS Altitude Units M</span>
+<span class="go">Index[19]: GPS Speed 0.190</span>
+<span class="go">Index[20]: GPS Fix 2</span>
+<span class="go">Index[21]: GPS HDOP 0.94</span>
+<span class="go">Index[22]: GPIO State Telemetry 0</span>
+<span class="go">Index[23]: RF State Telemetry 7</span>
+<span class="go">Index[24]: ADC 0 96</span>
+<span class="go">Index[25]: ADC 1 2237</span>
+<span class="go">Index[26]: ADC 2 2041</span>
+<span class="go">Index[27]: ADC 3 2023</span>
+<span class="go">Index[28]: ADC 4 1928</span>
+<span class="go">Index[29]: ADC 5 1934</span>
+<span class="go">Index[30]: ADC 6 1878</span>
+<span class="go">Index[31]: CC430 Temperature 0</span>
+<span class="go">Index[32]: ADC 8 29</span>
+<span class="go">Index[33]: N/A Byte 2816</span>
+<span class="go">Index[34]: HAB Automatic Cutdown Timer State Machine State 0</span>
+<span class="go">Index[35]: HAB Cutdown Event State Machine State 0</span>
+<span class="go">Index[36]: HAB Automatic Cutdown Timer Trigger Time 7200</span>
+<span class="go">Index[37]: HAB Automatic Cutdown Timer Current Time 0</span>
+<span class="go">(&#39;KB1LQD\x93*\x00&#39;, 6, 7, &#39;KB1LQD\x00\x02\x00&#39;, 6, 7, 14, 30, 17, 23, 5, 9, 57351, &#39;3352.4159&#39;, &#39;N&#39;, &#39;11822.6014&#39;, &#39;W&#39;, &#39;40.26000&#39;, &#39;M&#39;, &#39;0.190&#39;, &#39;2&#39;, &#39;0.94&#39;, 0, 7, 96, 2237, 2041, 2023, 1928, 1934, 1878, 0, 29, 2816, 0, 0, 7200, 0)</span>
+<span class="go"> 14</span>
+</pre></div>
+</div>
+<p>Below are excerpts and explainations of key points to understand from this</p>
+</div>
+</div>
 
 
           </div>
@@ -146,6 +230,10 @@
   <ul>
 <li><a class="reference internal" href="#">Tutorial 1 - Local Command and Control</a></li>
 <li><a class="reference internal" href="#tutorial-1a-basic-local-device-io-commands">Tutorial 1a - Basic Local Device IO Commands</a></li>
+<li><a class="reference internal" href="#tutorial-1b-commanding-and-parsing-all-telemetry-packets">Tutorial 1b - Commanding And Parsing All Telemetry Packets</a><ul>
+<li><a class="reference internal" href="#example-notes">Example Notes</a></li>
+</ul>
+</li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
