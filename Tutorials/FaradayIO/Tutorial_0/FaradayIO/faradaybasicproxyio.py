@@ -19,7 +19,7 @@ class proxyio(object):
 
     def __init__(self):
         #Definitions
-        self.FLASK_PORT = 8099 #TCP port
+        self.FLASK_PORT = 80 #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
