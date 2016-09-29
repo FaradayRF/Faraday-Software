@@ -45,88 +45,45 @@
   <div class="section" id="tutorial-1-local-command-and-control">
 <h1>Tutorial 1 - Local Command and Control<a class="headerlink" href="#tutorial-1-local-command-and-control" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial will walk you through basic local device command and control as well as remote device command and control over RF. It is important to note that this tutorial&#8217;s command and control is provided by an &#8220;application&#8221; operating on the Faraday CC430 and we are issuing packets that invoke actions to occure.</p>
+<blockquote>
+<div><p><strong>Key Points</strong>
+- Basic command application usage</p>
+<blockquote>
+<div><ul class="simple">
+<li>Toggle LED GPIOs using both &#8220;FaradayIO&#8221; predefined commands and the generic GPIO function</li>
+<li>Send and &#8220;ECHO&#8221; command and recevied, decode, and display the resulting echo&#8217;d message</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p>Tutorial Example/Source Code: <a class="reference external" href="https://github.com/FaradayRF/Faraday-Software/tree/master/Tutorials/FaradayIO/Tutorial_1">https://github.com/FaradayRF/Faraday-Software/tree/master/Tutorials/FaradayIO/Tutorial_1</a></p>
 </div>
 <div class="section" id="tutorial-1a-basic-local-device-io-commands">
 <h1>Tutorial 1a - Basic Local Device IO Commands<a class="headerlink" href="#tutorial-1a-basic-local-device-io-commands" title="Permalink to this headline">¶</a></h1>
-<p>Perfoming basic input and output commanding involves very few operations, this is made simpler by common actions such as toggling and LED have had pre-defined command functions created for them. Lets begin with importing and configuring FaradayIO module that connects to the proxy server.</p>
-<p><a class="reference external" href="https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1a.py">https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1a.py</a></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#imports</span>
-<span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">faradaybasicproxyio</span>
-<span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">faradaycommands</span>
-<span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">telemetryparser</span>
-<span class="kn">from</span> <span class="nn">FaradayIO</span> <span class="kn">import</span> <span class="n">gpioallocations</span>
-
-<span class="kn">import</span> <span class="nn">time</span>
-
-<span class="c1">#Definitions</span>
-
-
-<span class="c1">#Variables</span>
-<span class="n">local_device_callsign</span> <span class="o">=</span> <span class="s1">&#39;kb1lqd&#39;</span>
-<span class="n">local_device_node_id</span> <span class="o">=</span> <span class="mi">1</span>
-
-<span class="c1">#Start the proxy server after configuring the configuration file correctly</span>
-<span class="c1">#Setup a Faraday IO object</span>
-<span class="n">faraday_1</span> <span class="o">=</span> <span class="n">faradaybasicproxyio</span><span class="o">.</span><span class="n">proxyio</span><span class="p">()</span> <span class="c1">#default proxy port</span>
-<span class="n">faraday_cmd</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">faraday_commands</span><span class="p">()</span>
-</pre></div>
+<p>This simple example tutorial shows the use of the command application&#8217;s GPIO control functions. The code is well commented and should be self-document.</p>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>&#8216;faradaycommands&#8217;_</p>
 </div>
-<p>toggling LED 1 and LED 2 on and off using both predefined command creation functions and implementing the base GPIO bitmask command function. Using the bitmask command function allows multiple GPIO&#8217;s to be toggled in a single command.</p>
-<p>The command application <em>contains its own OSI layer packet protocol</em> and this is defined in the supplied documentation. Each command is encapsulated in a &#8220;datagram&#8221; and the corresponding packet type indicated in the datagram will tell Faraday how to decode the payload supplied. This allows functions to both perform a simple action and pass data along with the command in various configurations.</p>
+<div class="section" id="notable-key-points">
+<h2>Notable Key Points<a class="headerlink" href="#notable-key-points" title="Permalink to this headline">¶</a></h2>
+<p>Turning ON a GPIO (such as an LED) using the pre-defined functions is very simple as shown below. Note that the &#8220;local_device_callsign&#8221; and &#8220;local_device_node_id&#8221; are identifiers to command a specific unit attached to a single computer with multiple Faraday units connected. This will be more useful in later tutorials.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Turn LED 1 ON LOCAL</span>
 <span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIOLED1On</span><span class="p">()</span>
 <span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">#Turn LED 1 OFF LOCAL</span>
-<span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIOLED1Off</span><span class="p">()</span>
-<span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-
-<span class="c1">#Turn LED 2 ON LOCAL</span>
-<span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIOLED2On</span><span class="p">()</span>
-<span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">#Turn LED 2 OFF LOCAL</span>
-<span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#This examples how the non predefined LED GPIO commanding is created. Multiple GPIO&#39;s can be toggled at once using ||&#39;s</span>
-<span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Delay so it is obvious that both LED&#39;s turn on at the same time in the next command</span>
-
-<span class="c1">#Turn Both LED 1 and LED 2 ON simultaneously</span>
-<span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">((</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="o">|</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_2</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">#Turn Both LED 1 and LED 2 OFF simultaneously</span>
+</pre></div>
+</div>
+<p>The pre-defined functions simply invoke the base GPIO toggling function below. The key point to learn is that a value of LOW (0) performs <em>no action</em> and a value of HIGH (1) <em>performs either a TOGGLE HIGH or TOGGLE LOW</em> depending on the function arguments. You cannot attempt to toggle HIGH and LOW in a single command. A GPIO header file is provided (gpioallocations.py) that maps the pins on  the CC430 to Faraday functions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Turn Both LED 1 and LED 2 OFF simultaneously</span>
 <span class="n">command</span> <span class="o">=</span> <span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CommandLocalGPIO</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_1</span><span class="o">|</span><span class="n">gpioallocations</span><span class="o">.</span><span class="n">LED_2</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Sending a command to turn GPIO&#8217;s on and off is pretty straightforward. What if we wanted to simply send data to Faraday and ECHO that data back?</p>
-<p>Using the defined &#8220;ECHO&#8221; command all payload bytes are re-transmitted over UART (and subsequently the proxy server) back to the originating proxy.</p>
-<p>The first step is to create the data message to be sent, in this example it is text but it could be raw binary data if desired.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Use the general command library to send a text message to the Faraday UART &quot;ECHO&quot; command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)</span>
-<span class="n">originalmsg</span> <span class="o">=</span> <span class="s2">&quot;This will ECHO back on UART&quot;</span> <span class="c1">#Cannot be longer than max UART payload size!</span>
-<span class="n">command</span> <span class="o">=</span> <span class="n">faradaycommands</span><span class="o">.</span><span class="n">commandmodule</span><span class="o">.</span><span class="n">create_command_datagram</span><span class="p">(</span><span class="n">faraday_cmd</span><span class="o">.</span><span class="n">CMD_ECHO</span><span class="p">,</span> <span class="n">originalmsg</span><span class="p">)</span>
-<span class="n">faraday_1</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The command application uses its own &#8220;Faraday Transport Layer Port Number&#8221; and operates in a different set of FIFO queues than the telemetry application used in the last tutorial. Allowing applications a basic isolation like this is a powerful tool that seperates all programs into their own packet &#8220;streams&#8221; without worry of conflicting with other programs packets.</p>
-<p>Once the command is transmitted the ECHO&#8217;d packet will be ready to recieve from the proxy server shortly. As Faraday is optimized the delay between command and reception (or actions in general) will be improved. Using the &#8220;GetWait()&#8221; function is an ideal method to block until the data is received (only if the queue is empty).</p>
+<p>After transmitting a command &#8220;ECHO&#8221; packet with a supplied payload (that will be echo&#8217;d) Faraday takes a non-zero amount of time to respond. this is typically slower than the very powerful computer running the Python code and the GetWait() function blocks the script until a data message is received (assumed to be the message inteded).</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).</span>
 <span class="n">rx_echo_raw</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">GETWait</span><span class="p">(</span><span class="n">local_device_callsign</span><span class="p">,</span> <span class="n">local_device_node_id</span><span class="p">,</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">CMD_UART_PORT</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1">#Wait for up to 1 second</span>
-
-<span class="c1">#Now parse data again</span>
-<span class="n">b64_data</span> <span class="o">=</span> <span class="n">rx_echo_raw</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
-<span class="n">echo_decoded</span> <span class="o">=</span> <span class="n">faraday_1</span><span class="o">.</span><span class="n">DecodeJsonItemRaw</span><span class="p">(</span><span class="n">b64_data</span><span class="p">)</span>
-
-<span class="c1">#Display information</span>
-<span class="k">print</span> <span class="s2">&quot;Original Message: &quot;</span><span class="p">,</span> <span class="n">originalmsg</span>
-<span class="k">print</span> <span class="s2">&quot;RAW Received BASE64 ECHO&#39;d Message:&quot;</span><span class="p">,</span> <span class="n">b64_data</span>
-<span class="k">print</span> <span class="s2">&quot;Decoded received ECHO&#39;d Message:&quot;</span><span class="p">,</span> <span class="n">echo_decoded</span> <span class="c1">#Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.</span>
 </pre></div>
 </div>
-<p>Running this example in PyScripter produces the output:</p>
+<p>Running this example toggles the LED&#8217;s on Faraday and produces the following output:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="o">***</span> <span class="n">Remote</span> <span class="n">Interpreter</span> <span class="n">Reinitialized</span>  <span class="o">***</span>
 <span class="o">&gt;&gt;&gt;</span>
 <span class="n">Original</span> <span class="n">Message</span><span class="p">:</span>  <span class="n">This</span> <span class="n">will</span> <span class="n">ECHO</span> <span class="n">back</span> <span class="n">on</span> <span class="n">UART</span>
@@ -136,9 +93,9 @@
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="tutorial-1b-commanding-and-parsing-all-telemetry-packets">
 <h1>Tutorial 1b - Commanding And Parsing All Telemetry Packets<a class="headerlink" href="#tutorial-1b-commanding-and-parsing-all-telemetry-packets" title="Permalink to this headline">¶</a></h1>
-<p><strong>Tutorial Example Script:</strong> <a class="reference external" href="https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1b.py">https://github.com/FaradayRF/Faraday-Software/blob/master/Tutorials/FaradayIO/Tutorial_1/Tutorial_Proxy_1b.py</a></p>
 <p>The purpose of this tutorial is to command a local Faraday unit to transmit all 3 current types of telemetry packets and how to use the supplied parsing tools to decode them.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -229,7 +186,11 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Tutorial 1 - Local Command and Control</a></li>
-<li><a class="reference internal" href="#tutorial-1a-basic-local-device-io-commands">Tutorial 1a - Basic Local Device IO Commands</a></li>
+<li><a class="reference internal" href="#tutorial-1a-basic-local-device-io-commands">Tutorial 1a - Basic Local Device IO Commands</a><ul>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#notable-key-points">Notable Key Points</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tutorial-1b-commanding-and-parsing-all-telemetry-packets">Tutorial 1b - Commanding And Parsing All Telemetry Packets</a><ul>
 <li><a class="reference internal" href="#example-notes">Example Notes</a></li>
 </ul>
