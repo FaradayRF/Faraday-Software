@@ -32,11 +32,18 @@ Quickstart Information
 Toolset Module Documentation
 ----------------------------
 .. toctree::
+	:caption Proxy
+	:maxdepth: 1
+	
+	proxy-api
+	
+.. toctree::
 	:caption: FaradayIO
 	:maxdepth: 1
 	
 	toolsets-faradayio
 	tutorials_faradayio
+
 
 
 	

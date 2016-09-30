@@ -10,6 +10,14 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
+"""
+Proxy is meant to communicate with a Faraday Radio over USB UART via a serial
+port. It has a thread which continuously checks for data over USB and places it
+into a thread safe dequeue. The Flask server returns requested data from this
+queue with a GET request or adds to it with a POST request via an IP address and
+port specified in the configuration file proxy.ini.
+"""
+
 from flask import Flask
 from flask import request
 import logging
@@ -19,6 +27,7 @@ import threading
 from collections import deque
 import base64
 import json
+import ConfigParser
 
 # Faraday specific modules
 from faraday_uart_stack import layer_4_service
@@ -27,14 +36,18 @@ from faraday_uart_stack import layer_4_service
 logging.config.fileConfig('loggingConfig.ini')
 logger = logging.getLogger('Proxy')
 
+# Load Proxy Configuration
+proxyConfig = ConfigParser.RawConfigParser()
+proxyConfig.read('proxy.ini')
+
 #make one global dictionaries
 queDict = {}
 queDict2 = []
 portDict = {}
 postDict = {}
 
-#Create threaded worker definition for RX
 def uart_worker(modem,que):
+    """ Check Faraday ports available for data, append to dictionary if found."""
     logger.info('Starting uart_worker thread')
 
     #start an infinit loop
@@ -90,6 +103,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def proxy():
+    """ Provides a RESTful interface to the USB UART on URL '/'."""
     if request.method == "POST":
         logger.debug("POST")
         return "POST", 200
@@ -165,10 +179,17 @@ def proxy():
 
 @app.errorhandler(404)
 def pageNotFound(error):
+    """ Returns a string indicating the page was not found and an HTTP 404 response."""
     return "HTTP 404: Page not found", 404
 
 def main():
+    """ Main function which reads configuration files and starts threads + Flask."""
     logger.info('Starting proxy server')
+
+    # Load serial port configuration
+    proxyCOM = proxyConfig.get("serial", "com")
+    proxyBaud = proxyConfig.getint("serial", "baudrate")
+    proxyTimeout = proxyConfig.getint("serial", "timeout")
 
     # Initialize local variables
     threads = []
@@ -176,19 +197,23 @@ def main():
     while(1):
         # Initialize a Faraday Radio device
         try:
-            faradayUART1 = layer_4_service.faraday_uart_object('COM7',115200,5)
+            faradayUART1 = layer_4_service.faraday_uart_object(proxyCOM,proxyBaud,proxyTimeout)
             logger.info("Connected to Faraday")
             break
             time.sleep(1)
         except:
-            logger.warn("COM port not detected") #make dynamic
+            logger.error("%s not detected",proxyCOM) #make dynamic
+            time.sleep(1)
 
     t = threading.Thread(target=uart_worker, args=(faradayUART1,queDict))
     threads.append(t)
     t.start()
 
     # Start the flask server on localhost:8000
-    app.run(host='127.0.0.1', port=8000)
+    proxyHost = proxyConfig.get("flask","host")
+    proxyPort = proxyConfig.getint("flask","port")
+
+    app.run(host=proxyHost, port=proxyPort)
 
 if __name__ == '__main__':
     main()
