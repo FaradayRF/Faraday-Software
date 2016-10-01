@@ -40,7 +40,11 @@ class Msg_State_Machine_Tx(object):
         return frag_cnt
 
     def FragmentMsg(self, msg):
-        list_Message_Fragments = textwrap.wrap(msg, self.MAX_MSG_DATA_LENGTH)
+        #list_Message_Fragments = textwrap.wrap(msg, self.MAX_MSG_DATA_LENGTH)
+        list_Message_Fragments = [msg[i:i+self.MAX_MSG_DATA_LENGTH] for i in range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
+        for item in list_Message_Fragments:
+            print item, "Frag Length", len(item)
+        print repr(list_Message_Fragments)
         return list_Message_Fragments
 
     def CreateMsgPackets(self, src_call, src_id, msg):
