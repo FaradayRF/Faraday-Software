@@ -1,0 +1,31 @@
+<html>
+
+<head>
+	<title>MSP430 BSL Checksum Script Test Page</title>
+</head>
+
+<body>
+
+	<h1>MSP430 BSL Checksum Script Test Page</h1>
+
+	<script type="text/javascript" src="msp430bsl_checksum_calc.js"> </script>
+
+	<form>
+
+		<p> MSP430 BSL Type:
+		<br/><input type="radio" name="bsl_type" value="ROM" checked/>ROM based BSL (1xx, 2xx, 4xx devices)
+		<br/><input type="radio" name="bsl_type" value="Flash" />Flash based BSL (5xx, 6xx, FR5xx devices)
+
+		<p> MSP430 BSL packet bytes (in hexadecimal format without "0x" prefix):
+		<br> # For ROM based BSL, this includes everybyte from the header (0x80), for the Flash based BSL this only includes the core command bytes
+		<br/><textarea name="bsl_packet_bytes" cols="40" rows="5"></textarea><br/>
+
+		<p><input name="submit" type=button value="Calculate BSL" onClick="MSP430BslChksmCalc(form.bsl_type, form.bsl_packet_bytes)">
+		
+	</form>
+
+</body>
+
+
+
+</html>
