@@ -10,7 +10,7 @@
 import cc430radioconfig
 import struct
 import gpioallocations
-import Checksum as checksum
+import checksum
 
 COMMAND_DATAGRAM_LEN = 123
 COMMAND_DATAGRAM_ERROR_DETECTION_LEN = 2
