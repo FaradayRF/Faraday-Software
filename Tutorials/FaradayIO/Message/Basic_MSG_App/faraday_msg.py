@@ -1,12 +1,8 @@
 # imports
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
 
-import time
 import struct
-import textwrap
-
 
 class Msg_State_Machine_Tx(object):
     def __init__(self):
@@ -41,7 +37,6 @@ class Msg_State_Machine_Tx(object):
         return frag_cnt
 
     def FragmentMsg(self, msg):
-        # list_Message_Fragments = textwrap.wrap(msg, self.MAX_MSG_DATA_LENGTH)
         list_Message_Fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
                                   range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
         for item in list_Message_Fragments:
