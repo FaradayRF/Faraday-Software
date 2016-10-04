@@ -1,12 +1,17 @@
 import struct
 
+
 class TelemetryParse(object):
     """
-    This class object contains all the pre-defined values, packet structures, and functions used to interact (mostly parse) data from the Telemetry application. The telemetry application follows the OSI layer standards for a network stack and therfore contains its own packet
-    structure. Please see the documentation for further detail an definitions.
+    This class object contains all the pre-defined values, packet structures, and functions used to
+    interact (mostly parse) data from the Telemetry application. The telemetry application follows the OSI layer
+    standards for a network stack and therefore contains its own packet structure. Please see the documentation
+    for further detail an definitions.
     """
+
     def __init__(self):
-        self.datagram_struct = struct.Struct('>3B 118s 1H') #Struct format definition for the generice telemetry packet format datagram
+        self.datagram_struct = struct.Struct(
+            '>3B 118s 1H')  # Struct format definition for the generic telemetry packet format datagram
         self.flash_config_info_d_struct = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
         self.flash_config_info_d_struct_len = 116
         self.packet_1_struct = struct.Struct('4B')
@@ -16,10 +21,10 @@ class TelemetryParse(object):
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
 
-
     def UnpackDatagram(self, packet, debug):
         """
-        This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry packets are encapsulated by this telemetry datagram.
+        This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry
+        packets are encapsulated by this telemetry datagram.
 
         :param packet: The packet as a string of byte that will be decoded
         :param debug: If True the function will print decoding information during parsing
@@ -35,11 +40,11 @@ class TelemetryParse(object):
             Index[3]: Payload Data
             Index[4]: 16 Bit Checksum
         """
-        #Unpack the packet
+        # Unpack the packet
         parsed_packet = self.datagram_struct.unpack(packet)
 
-        #Perform debug actions if needed
-        if(debug == True):
+        # Perform debug actions if needed
+        if debug is True:
             print "\n--- Telemetry Datagram ---"
             print "Telemetry Packet Type:", parsed_packet[0]
             print "Telemetry RF Source:", parsed_packet[1]
@@ -50,27 +55,28 @@ class TelemetryParse(object):
         else:
             pass
 
-        #Return parsed packet list
+        # Return parsed packet list
         return parsed_packet
 
     def ExtractPaddedPacket(self, packet, packet_len):
         """
-        This function simply extracts and returns a packet from a longer byte array. This is useful to extract ONLY the intended packet to be parsed from
-        a longer padded "payload" packet of a frame or encapsulation.
+        This function simply extracts and returns a packet from a longer byte array. This is useful to extract ONLY
+        the intended packet to be parsed from a longer padded "payload" packet of a frame or encapsulation.
 
         :param packet: The packet as a string of byte that will be decoded
         :param packet_len: The length of the packet (from first byte) to be extracted
 
         :return: The truncated packet as a string of bytes
 
-        .. warning:: This function does not ensure that the returned packet is the intended data packet, it only corrects byte array length!
+        .. warning:: This function does not ensure that the returned packet is the intended data packet, it only
+            corrects byte array length!
         """
         return packet[0:packet_len]
 
-
     def UnpackPacket_3(self, packet, debug):
         """
-        This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
+        This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the
+        function argument.
 
         :param packet: The packet as a string of byte that will be decoded
         :param debug: If True the function will print decoding information during parsing
@@ -93,8 +99,8 @@ class TelemetryParse(object):
             Index[10]: RTC Day Of Week
             Index[11]: RTC Month
             Index[12]: Year
-            Index[13]: GPS Lattitude
-            Index[14]: GPS Lattitude Direction
+            Index[13]: GPS Latitude
+            Index[14]: GPS Latitude Direction
             Index[15]: GPS Longitude
             Index[16]: GPS Longitude Direction
             Index[17]: GPS Altitude
@@ -114,16 +120,16 @@ class TelemetryParse(object):
             Index[31]: CC430 Temperature
             Index[32]: ADC 8
             Index[33]: N/A Byte
-            Index[34]: HAB Automatic Cutdown Timer State Machine State
-            Index[35]: HAB Cutdown Event State Machine State
-            Index[36]: HAB Automatic Cutdown Timer Trigger Time
-            Index[37]: HAB Automatic Cutdown Timer Current Time
+            Index[34]: HAB Automatic Cut-down Timer State Machine State
+            Index[35]: HAB Cut-down Event State Machine State
+            Index[36]: HAB Automatic Cut-down Timer Trigger Time
+            Index[37]: HAB Automatic Cut-down Timer Current Time
         """
-        #Unpack the packet
+        # Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
 
-        #Perform debug actions if needed
-        if(debug == True):
+        # Perform debug actions if needed
+        if debug is True:
             print "--- Telemetry Packet #3 ---"
             print "Index[0]: Source Callsign", parsed_packet[0]
             print "Index[1]: Source Callsign Length", parsed_packet[1]
@@ -138,8 +144,8 @@ class TelemetryParse(object):
             print "Index[10]: RTC Day Of Week", parsed_packet[10]
             print "Index[11]: RTC Month", parsed_packet[11]
             print "Index[12]: Year", parsed_packet[12]
-            print "Index[13]: GPS Lattitude", parsed_packet[13]
-            print "Index[14]: GPS Lattitude Direction", parsed_packet[14]
+            print "Index[13]: GPS Latitude", parsed_packet[13]
+            print "Index[14]: GPS Latitude Direction", parsed_packet[14]
             print "Index[15]: GPS Longitude", parsed_packet[15]
             print "Index[16]: GPS Longitude Direction", parsed_packet[16]
             print "Index[17]: GPS Altitude", parsed_packet[17]
@@ -159,20 +165,21 @@ class TelemetryParse(object):
             print "Index[31]: CC430 Temperature", parsed_packet[31]
             print "Index[32]: ADC 8", parsed_packet[32]
             print "Index[33]: N/A Byte", parsed_packet[33]
-            print "Index[34]: HAB Automatic Cutdown Timer State Machine State", parsed_packet[34]
-            print "Index[35]: HAB Cutdown Event State Machine State", parsed_packet[35]
-            print "Index[36]: HAB Automatic Cutdown Timer Trigger Time", parsed_packet[36]
-            print "Index[37]: HAB Automatic Cutdown Timer Current Time", parsed_packet[37]
+            print "Index[34]: HAB Automatic Cut-down Timer State Machine State", parsed_packet[34]
+            print "Index[35]: HAB Cut-down Event State Machine State", parsed_packet[35]
+            print "Index[36]: HAB Automatic Cut-down Timer Trigger Time", parsed_packet[36]
+            print "Index[37]: HAB Automatic Cut-down Timer Current Time", parsed_packet[37]
         else:
             pass
 
-        #Return parsed packet list
+        # Return parsed packet list
         return parsed_packet
 
     def UnpackPacket_2(self, packet, debug):
         print packet, len(packet)
         """
-        This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
+        This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the
+        function argument.
 
         :param packet: The packet as a string of byte that will be decoded
         :param debug: If True the function will print decoding information during parsing
@@ -185,32 +192,32 @@ class TelemetryParse(object):
             Index[0]: Boot Count
             Index[1]: Reset Count
             Index[2]: Brownout reset counter
-            Index[3]: Reset / Non-maskable Interust counter
+            Index[3]: Reset / Non-maskable Interrupt counter
             Index[4]: PMM Supervisor Low counter
             Index[5]: PMM Supervisor High counter
             Index[6]: PMM Supervisor Low - OVP counter
             Index[7]: PMM Supervisor High - OVP counter
-            Index[8]: Watchdog timeput counter
+            Index[8]: Watchdog timeout counter
             Index[9]: Flash key violation counter
             Index[10]: FLL Unlock counter
             Index[11]: Peripheral / Config counter
             Index[12]: Access violation counter
         """
-        #Unpack the packet
+        # Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
 
-        #Perform debug actions if needed
-        if(debug == True):
+        # Perform debug actions if needed
+        if debug is True:
             print "--- Telemetry Packet #2 ---"
             print "Index[0]: Boot Count", parsed_packet[0]
             print "Index[1]: Reset Count", parsed_packet[1]
             print "Index[2]: Brownout reset counter", parsed_packet[2]
-            print "Index[3]: Reset / Non-maskable Interust counter", parsed_packet[3]
+            print "Index[3]: Reset / Non-maskable Interrupt counter", parsed_packet[3]
             print "Index[4]: PMM Supervisor Low counter", parsed_packet[4]
             print "Index[5]: PMM Supervisor High counter", parsed_packet[5]
             print "Index[6]: PMM Supervisor Low - OVP counter", parsed_packet[6]
             print "Index[7]: PMM Supervisor High - OVP counter", parsed_packet[7]
-            print "Index[8]: Watchdog timeput counter", parsed_packet[8]
+            print "Index[8]: Watchdog timeout counter", parsed_packet[8]
             print "Index[9]: Flash key violation counter", parsed_packet[9]
             print "Index[10]: FLL Unlock counter", parsed_packet[10]
             print "Index[11]: Peripheral / Config counter", parsed_packet[11]
@@ -218,12 +225,13 @@ class TelemetryParse(object):
         else:
             pass
 
-        #Return parsed packet list
+        # Return parsed packet list
         return parsed_packet
 
     def UnpackPacket_1(self, packet, debug):
         """
-        This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
+        This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the
+        function argument.
 
         :param packet: The packet as a string of byte that will be decoded
         :param debug: If True the function will print decoding information during parsing
@@ -238,11 +246,11 @@ class TelemetryParse(object):
             Index[2]: RF Freq 0
             Index[3]: RF Power Bitmask
         """
-        #Unpack the packet
+        # Unpack the packet
         parsed_packet = self.packet_1_struct.unpack(packet)
 
-        #Perform debug actions if needed
-        if(debug == True):
+        # Perform debug actions if needed
+        if debug is True:
             print "--- Telemetry Packet #1 ---"
             print "Index[0]: RF Freq 2", parsed_packet[0]
             print "Index[1]: RF Freq 1", parsed_packet[1]
@@ -251,12 +259,13 @@ class TelemetryParse(object):
         else:
             pass
 
-        #Return parsed packet list
+        # Return parsed packet list
         return parsed_packet
 
     def UnpackConfigFlashD(self, packet, debug):
         """
-        This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
+        This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volatile
+        defaults) from the raw packet supplied in the function argument.
 
         :param packet: The packet as a string of byte that will be decoded
         :param debug: If True the function will print decoding information during parsing
@@ -277,8 +286,8 @@ class TelemetryParse(object):
             Index[8]: Default Boot Frequency [1]
             Index[9]: Default Boot Frequency [2]
             Index[10]: Default RF Power Amplifier Setting (PA Table)
-            Index[11]: Default GPS Lattitude
-            Index[12]: Default GPS Lattitude Direction
+            Index[11]: Default GPS Latitude
+            Index[12]: Default GPS Latitude Direction
             Index[13]: Default GPS Longitude
             Index[14]: Default GPS Longitude Direction
             Index[15]: Default GPS Altitude
@@ -288,11 +297,11 @@ class TelemetryParse(object):
             Index[19]: Default UART Telemetry Interval
             Index[20]: Default RF Telemetry Interval
         """
-        #Unpack the packet
+        # Unpack the packet
         parsed_packet = self.flash_config_info_d_struct.unpack(packet)
 
-        #Perform debug actions if needed
-        if(debug == True):
+        # Perform debug actions if needed
+        if debug is True:
             print "--- Flash Information Segment D ---"
             print "Index[0]: Flash Config Bitmask", format(parsed_packet[0], '#010b')
             print "Index[1]: Local Callsign", parsed_packet[1]
@@ -305,8 +314,8 @@ class TelemetryParse(object):
             print "Index[8]: Default Boot Frequency [1]", parsed_packet[8]
             print "Index[9]: Default Boot Frequency [2]", parsed_packet[9]
             print "Index[10]: Default RF Power Amplifier Setting (PA Table)", parsed_packet[10]
-            print "Index[11]: Default GPS Lattitude", parsed_packet[11]
-            print "Index[12]: Default GPS Lattitude Direction", parsed_packet[12]
+            print "Index[11]: Default GPS Latitude", parsed_packet[11]
+            print "Index[12]: Default GPS Latitude Direction", parsed_packet[12]
             print "Index[13]: Default GPS Longitude", parsed_packet[13]
             print "Index[14]: Default GPS Longitude Direction", parsed_packet[14]
             print "Index[15]: Default GPS Altitude", parsed_packet[15]
@@ -318,5 +327,5 @@ class TelemetryParse(object):
         else:
             pass
 
-        #Return parsed packet list
+        # Return parsed packet list
         return parsed_packet
