@@ -1,8 +1,8 @@
-from FaradayIO import commandmodule
-from FaradayIO import gpioallocations
+import commandmodule
+import gpioallocations
 
 
-class faraday_commands(object):
+class FaradayCommands(object):
     """
     An object containing command packet creation tools and predefined command generation functions.
     """
@@ -44,6 +44,7 @@ class faraday_commands(object):
 
         :Example:
 
+            >>> import faradaycommands
             >>> faraday_cmd = faradaycommands.faraday_commands()
             >>> packet = faraday_cmd.CommandLocal(faraday_cmd.CMD_UPDATERFPOWER, faradaycommands.commandmodule.create_update_rf_patable_packet(50))
         """
@@ -65,8 +66,9 @@ class faraday_commands(object):
 
         :Example:
 
+            >>> import faradaycommands
             >>> faraday_cmd = faradaycommands.faraday_commands()
-            >>> packet = faraday_cmd.CommandRf("KB1LQD", 1, faraday_cmd.CMD_GPIO, faradaycommands.commandmodule.create_gpio_command_packet(faradaycommands.gpioallocations.LED_1, 0,0,0,0,0))
+            >>> packet = faraday_cmd.CommandRf("KB1LQD", 1, faraday_cmd.CMD_GPIO, faradaycommands.commandmodule.create_gpio_command_packet(faradaycommands.gpioallocations.LED_1, 0, 0, 0, 0, 0))
         """
         packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, command_number,
                                                           command_packet)
@@ -111,34 +113,33 @@ class faraday_commands(object):
                                                        commandmodule.create_rf_telem_update_packet())
         return packet
 
-    def CommandLocalUpdateUARTTelemetryInterval(self, interval):
-        """
-        A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry
-        UART reporting interval without updating the default BOOT interval.
-
-        :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
-
-        :Return: Returns the complete generated packet as a string of bytes.
-        """
-        packet = commandmodule.create_command_datagram(self.CMD_UPDATERAMPARAMETER,
-                                                       commandmodule.create_update_telemetry_interval_uart_packet(
-                                                           interval))
-        return packet
-
-    def CommandLocalUpdateRFTelemetryInterval(self, interval):
-        """
-        A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry
-        RF reporting interval without updating the default BOOT interval.
-
-        :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
-
-        :Return: Returns the complete generated packet as a string of bytes.
-
-        """
-        packet = commandmodule.create_command_datagram(self.CMD_UPDATERAMPARAMETER,
-                                                       commandmodule.create_update_telemetry_interval_rf_packet(
-                                                           interval))
-        return packet
+    # def CommandLocalUpdateUARTTelemetryInterval(self, interval):
+    #     """
+    #     A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry
+    #     UART reporting interval without updating the default BOOT interval.
+    #
+    #     :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
+    #
+    #     :Return: Returns the complete generated packet as a string of bytes.
+    #     """
+    #     packet = commandmodule.create_command_datagram(self.CMD_UPDATERAMPARAMETER,
+    #                                                    commandmodule.create_update_telemetry_interval_uart_packet(interval))
+    #     return packet
+    #
+    # def CommandLocalUpdateRFTelemetryInterval(self, interval):
+    #     """
+    #     A predefined command to return a complete command datagram and command packet to update the LOCAL telemetry
+    #     RF reporting interval without updating the default BOOT interval.
+    #
+    #     :param interval: Time interval in seconds (Is a 2 byte Integer: 0-65535)
+    #
+    #     :Return: Returns the complete generated packet as a string of bytes.
+    #
+    #     """
+    #     packet = commandmodule.create_command_datagram(self.CMD_UPDATERAMPARAMETER,
+    #                                                    commandmodule.create_update_telemetry_interval_rf_packet(
+    #                                                        interval))
+    #     return packet
 
     def CommandLocalGPIOLED1On(self):
         """
@@ -164,7 +165,8 @@ class faraday_commands(object):
                                                        commandmodule.create_gpio_command_packet(0,
                                                                                                 0,
                                                                                                 0,
-                                                                                                int(gpioallocations.LED_1),
+                                                                                                int(
+                                                                                                    gpioallocations.LED_1),
                                                                                                 0,
                                                                                                 0))
         return packet
@@ -192,24 +194,25 @@ class faraday_commands(object):
         packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0,
                                                                                                                0,
                                                                                                                0,
-                                                                                                               int(gpioallocations.LED_2),
+                                                                                                               int(
+                                                                                                                   gpioallocations.LED_2),
                                                                                                                0,
                                                                                                                0))
         return packet
 
-    def CommandLocalUpdatePATable(self, ucharPATable_Byte):
+    def CommandLocalUpdatePATable(self, uchar_pa_table_byte):
         """
         A predefined command to return a a complete datagram and command packet to update the LOCAL Faraday RF Power
         Table settings without affecting the default BOOT power level. Note that a setting of 152 is the maximum output
         power, any number higher than 152 will be sent as a value of 152.
 
-        :param ucharPATable_Byte: A single byte value for the PA table RF power setting on the CC430
+        :param uchar_pa_table_byte: A single byte value for the PA table RF power setting on the CC430
 
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
         packet = commandmodule.create_command_datagram(self.CMD_UPDATERFPOWER,
-                                                       commandmodule.create_update_rf_patable_packet(ucharPATable_Byte))
+                                                       commandmodule.create_update_rf_patable_packet(uchar_pa_table_byte))
         return packet
 
     def CommandLocalResetDeviceDebugFlash(self):
@@ -259,7 +262,7 @@ class faraday_commands(object):
     def CommandLocalHABActivateCutdownEvent(self):
         """
         A predefined command to return a complete command datagram and  command packet that commands a LOCAL Faraday
-        device to perform activate it's High Altitutde Balloon application predefined cutdown event state
+        device to perform activate it's High Altitude Balloon application predefined cut-down event state
         machine sequence.
 
         :Return: Returns the complete generated packet as a string of bytes.
@@ -273,7 +276,7 @@ class faraday_commands(object):
     def CommandLocalHABResetAutoCutdownTimer(self):
         """
         A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday
-        device to RESET it's High Altitutde Balloon application automatic cutdown timer.
+        device to RESET it's High Altitude Balloon application automatic cut-down timer.
 
         :Return: Returns the complete generated packet as a string of bytes.
 
@@ -286,7 +289,7 @@ class faraday_commands(object):
     def CommandLocalHABDisableAutoCutdownTimer(self):
         """
         A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday
-        device to DISABLE it's High Altitutde Balloon application automatic cutdown timer.
+        device to DISABLE it's High Altitude Balloon application automatic cut-down timer.
 
         :Return: Returns the complete generated packet as a string of bytes.
 
@@ -299,10 +302,10 @@ class faraday_commands(object):
     def CommandLocalHABResetCutdownIdle(self):
         """
         A predefined command to return a complete command datagram and command packet that commands a LOCAL Faraday
-        device to set it's cutdown event state machine to IDLE = 0.
+        device to set it's cut-down event state machine to IDLE = 0.
 
-        This command is useful for either stopping an in-progress cutdown event or to reset the cutdown state machine
-        to IDLE = 0 if the cutdown event has already occured and it is in IDLE = 255 state.
+        This command is useful for either stopping an in-progress cut-down event or to reset the cut-down state machine
+        to IDLE = 0 if the cut-down event has already occurred and it is in IDLE = 255 state.
 
         :Return: Returns the complete generated packet as a string of bytes.
 
@@ -328,6 +331,7 @@ class faraday_commands(object):
 
         :Example:
 
+            >>> faraday_cmd = FaradayCommands()
             >>> command_packet = faraday_cmd.CommandLocalExperimentalRfPacketForward("KB1LQD", 1, "This is a test message")
 
         """
@@ -361,13 +365,14 @@ class faraday_commands(object):
 
         :Example:
 
+            >>> import faradaycommands
             >>> faraday_cmd = faradaycommands.faraday_commands()
             #Turn ON LED 1
-            >>> command_packet = faraday_cmd.CommandLocalGPIO(faradaycommands.gpioallocations.LED_1, 0,0,0,0,0)
+            >>> command_packet = faraday_cmd.CommandLocalGPIO(faradaycommands.gpioallocations.LED_1, 0, 0, 0, 0, 0)
             #Turn OFF LED 1
-            >>> command_packet = faraday_cmd.CommandLocalGPIO(0, 0,0,faradaycommands.gpioallocations.LED_1,0,0)
+            >>> command_packet = faraday_cmd.CommandLocalGPIO(0, 0, 0, faradaycommands.gpioallocations.LED_1, 0, 0)
             #Turn ON LED 1 & LED 2
-            >>> command_packet = faraday_cmd.CommandLocalGPIO(faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0,0,0,0,0)
+            >>> command_packet = faraday_cmd.CommandLocalGPIO(faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0, 0, 0, 0, 0)
 
         """
         packet = commandmodule.create_command_datagram(self.CMD_GPIO,
@@ -493,7 +498,7 @@ class faraday_commands(object):
     def CommandRemoteHABActivateCutdownEvent(self, remote_callsign, remote_node_id):
         """
         A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday
-        device to perform activate it's High Altitutde Balloon application predefined cutdown event state
+        device to perform activate it's High Altitude Balloon application predefined cut-down event state
         machine sequence.
 
         :param remote_callsign: The callsign of the remote target Faraday device
@@ -510,7 +515,7 @@ class faraday_commands(object):
     def CommandRemoteHABResetAutoCutdownTimer(self, remote_callsign, remote_node_id):
         """
         A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday
-        device to RESET it's High Altitutde Balloon application automatic cutdown timer.
+        device to RESET it's High Altitude Balloon application automatic cut-down timer.
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
@@ -527,7 +532,7 @@ class faraday_commands(object):
     def CommandRemoteHABDisableAutoCutdownTimer(self, remote_callsign, remote_node_id):
         """
         A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday
-        device to DISABLE it's High Altitutde Balloon application automatic cutdown timer.
+        device to DISABLE it's High Altitude Balloon application automatic cut-down timer.
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
@@ -544,9 +549,9 @@ class faraday_commands(object):
     def CommandRemoteHABResetCutdownIdle(self, remote_callsign, remote_node_id):
         """
         A predefined command to return a complete datagram and command packet that commands a REMOTE (RF) Faraday
-        device to set it's cutdown event state machine to IDLE = 0. This command is useful for either stopping an
-        in-progress cutdown event or to reset the cutdown state machine to IDLE = 0 if the cut-down event has already
-        occured and it is in IDLE = 255 state.
+        device to set it's cut-down event state machine to IDLE = 0. This command is useful for either stopping an
+        in-progress cut-down event or to reset the cut-down state machine to IDLE = 0 if the cut-down event has already
+        occurred and it is in IDLE = 255 state.
 
         :param remote_callsign: The callsign of the remote target Faraday device
         :param remote_node_id: The ID number (0-255) of the remote target Faraday device.
@@ -563,7 +568,7 @@ class faraday_commands(object):
     def CommandRemoteGPIO(self, remote_callsign, remote_node_id, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on,
                           p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
         """
-        A predefined command to return a complete datagram and command packet to command ALL GPIO's avaailable on a
+        A predefined command to return a complete datagram and command packet to command ALL GPIO's available on a
         REMOTE (RF) Faraday device (see documentation).
 
         .. Note:: Please see the Faraday documentation on GPIO for more information about the GPIO bitmask assignments.
@@ -588,13 +593,14 @@ class faraday_commands(object):
 
         :Example:
 
+            >>> import faradaycommands
             >>> faraday_cmd = faradaycommands.faraday_commands()
             #Turn ON LED 1
-            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, faradaycommands.gpioallocations.LED_1, 0,0,0,0,0)
+            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, faradaycommands.gpioallocations.LED_1, 0, 0, 0, 0, 0)
             #Turn OFF LED 1
-            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, 0, 0,0,faradaycommands.gpioallocations.LED_1,0,0)
+            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, 0, 0,0,faradaycommands.gpioallocations.LED_1, 0, 0)
             #Turn ON LED 1 & LED 2
-            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0,0,0,0,0)
+            >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0, 0, 0, 0, 0)
 
         """
         packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO,
