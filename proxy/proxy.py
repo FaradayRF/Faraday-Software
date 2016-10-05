@@ -111,7 +111,52 @@ def proxy():
     raw bytes.
     """
     if request.method == "POST":
-        logger.debug("POST")
+        try:
+            callsign = str(request.args.get("callsign", "NONE"))
+            nodeid = int(request.args.get("nodeid", 0))
+            port = int(request.args.get("port"))
+            data = request.get_json(force=False)
+
+        except StandardError as e:
+            logger.warn("StandardError: " +  str(e))
+            return e, 400
+
+        except ValueError as e:
+            logger.warn("ValueError: " +  str(e))
+            return e, 400
+
+        except TypeError as e:
+            logger.warn("ValueError: " +  str(e))
+            return e, 400
+
+        # Find COM Port
+        for station in units:
+            if units[station][0] == callsign and int(units[station][1]) == nodeid:
+                com = units[station][2] #do something with this!!!
+
+        # Does not actually use multi-node COM port!
+        for item in data['data']:
+            try:
+                postDict[port].append(str(item))
+            except:
+                postDict[port] = deque([], maxlen=100)
+                postDict[port].append(str(item))
+
+        try:
+            if(len(data)>0):
+                return ' ', 200
+
+            else:
+                return ' ', 204
+
+        except KeyError as e:
+            # Service port has never been used and has no data in it
+            logger.warn("KeyError: " +  str(e))
+            return ' ', 204
+
+        except StandardError as e:
+            logger.warn("StandardError: " +  str(e))
+
         return "POST", 200
     else:
         port = request.args.get("port")
@@ -119,8 +164,7 @@ def proxy():
         logger.debug("GET Request: port=%s limit=%s", port, limit)
 
         if port is None:
-            logger.warn("Port value required for GET request")
-            return '', 400
+            return 'Port value required for GET request', 400
         else:
             port = int(port)
         logger.debug(limit)
@@ -190,6 +234,21 @@ def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
     return "HTTP 404: Not found", 404
 
+def callsign2COM():
+    """ Associate configuration callsigns with serial COM ports"""
+    local = {}
+    num = int(proxyConfig.get('proxy', 'units'))
+    units = range(0, num)
+
+    for unit in units:
+        item = "UNIT" + str(unit)
+        callsign = proxyConfig.get(item, "callsign")
+        nodeid = proxyConfig.get(item, "nodeid")
+        com = proxyConfig.get(item, "com")
+        local[str(item)] = [callsign, nodeid, com]
+
+    local = json.dumps(local)
+    return json.loads(local)
 
 def main():
     """Main function which starts UART Worker thread + Flask server."""
@@ -199,6 +258,11 @@ def main():
     proxyCOM = proxyConfig.get("serial", "com")
     proxyBaud = proxyConfig.getint("serial", "baudrate")
     proxyTimeout = proxyConfig.getint("serial", "timeout")
+
+    # Associate serial ports with callsigns
+    global units
+    units = callsign2COM()
+    logger.info(str(units))
 
     # Initialize local variables
     threads = []
