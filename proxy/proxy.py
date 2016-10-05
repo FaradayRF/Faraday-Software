@@ -35,9 +35,10 @@ proxyConfig.read('proxy.ini')
 queDict = {}
 portDict = {}
 postDict = {}
+POSTdicts = {}
 
 
-def uart_worker(modem, que):
+def uart_worker(modem, que, units):
     """
     Interface Faraday ports over USB UART
 
@@ -46,6 +47,13 @@ def uart_worker(modem, que):
     queues for send and receive directions.
     """
     logger.info('Starting uart_worker thread')
+
+    # Iterate through dictionary of each unit in the dictionary creating a
+    # deque for each item
+    for key, values in units.iteritems():
+        POSTdicts[str(values["callsign"]) +
+        "-" + str(values["nodeid"])] = deque()
+    logger.info(POSTdicts)
     while(1):
         # Place data into the FIFO coming from UART
         try:
@@ -55,6 +63,8 @@ def uart_worker(modem, que):
                     item = {}
                     item["port"] = port
                     item["data"] = base64.b64encode(modem.GET(port))
+                    # Use new buffers
+
                     try:
                         que[port].append(item)
                     except:
@@ -76,6 +86,8 @@ def uart_worker(modem, que):
 
         time.sleep(0.01)
         # Check for data in the POST FIFO queue
+        # This needs to check for COM ports and create the necessary buffers
+        # on the fly.
         try:
             for port in range(0, 255):
                 try:
@@ -132,7 +144,9 @@ def proxy():
         # Find COM Port
         for station in units:
             if units[station][0] == callsign and int(units[station][1]) == nodeid:
-                com = units[station][2] #do something with this!!!
+                com = units[station][2] # do something with this!!!
+                logger.info(str(com))
+
 
         # Does not actually use multi-node COM port!
         for item in data['data']:
@@ -245,7 +259,12 @@ def callsign2COM():
         callsign = proxyConfig.get(item, "callsign")
         nodeid = proxyConfig.get(item, "nodeid")
         com = proxyConfig.get(item, "com")
-        local[str(item)] = [callsign, nodeid, com]
+        local[str(item)] =\
+            {
+            "callsign": callsign,
+            "nodeid": nodeid,
+            "com": com
+            }
 
     local = json.dumps(local)
     return json.loads(local)
@@ -260,9 +279,9 @@ def main():
     proxyTimeout = proxyConfig.getint("serial", "timeout")
 
     # Associate serial ports with callsigns
-    global units
+    #global units
     units = callsign2COM()
-    logger.info(str(units))
+    #logger.info(str(units))
 
     # Initialize local variables
     threads = []
@@ -281,7 +300,7 @@ def main():
             logger.error("%s not detected", proxyCOM)
             time.sleep(1)
 
-    t = threading.Thread(target=uart_worker, args=(faradayUART1, queDict))
+    t = threading.Thread(target=uart_worker, args=(faradayUART1, queDict, units))
     threads.append(t)
     t.start()
 
