@@ -2,7 +2,12 @@
 # - Getting received data from telemetry
 # - Parsing received data
 
-#Imports
+#Imports - General
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
+
+#Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
