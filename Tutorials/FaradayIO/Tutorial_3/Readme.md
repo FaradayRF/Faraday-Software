@@ -1,5 +1,5 @@
 
-# Tutorial 0 Overview
+# Tutorial 3 Overview
 
 This tutorial shows the  basic usage of a simple single packet experimental RF transmission command. This functionality provided by the built-in command application running on Faraday's CC430 provides a simple way to experiments with generic RF packets between two Faraday units.
 

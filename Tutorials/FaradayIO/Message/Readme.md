@@ -1,5 +1,5 @@
 
-# FaradayIO Module Overview
+# Tutorial - Message
 
 This tutorial implements a basic version of the core messaging application using the command application experimental RF packet forward functionality.
  

@@ -1,5 +1,5 @@
 
-# Tutorial 0 Overview
+# Tutorial 2 Overview
 
 This tutorial is a basic introduction to commanding a remote unit over RF using the FaradayIO module.
 
