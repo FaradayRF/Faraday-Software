@@ -19,7 +19,7 @@ local_device_node_id = 1
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
-faraday_cmd = faradaycommands.faraday_commands()
+faraday_cmd = faradaycommands.FaradayCommands()
 
 
 ##############
