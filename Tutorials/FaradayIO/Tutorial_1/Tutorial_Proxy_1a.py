@@ -1,7 +1,12 @@
 # This example will show how to command Faraday using the basic command application.
 # Make sure to turn UART TELEM BOOT Bitmask to 0 to turn OFF telemetry update automatically so that you know telemetry commands are working
 
-#imports
+#Imports - General
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
+
+#Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
@@ -19,7 +24,7 @@ local_device_node_id = 1
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
-faraday_cmd = faradaycommands.faraday_commands()
+faraday_cmd = faradaycommands.FaradayCommands()
 
 
 ##############

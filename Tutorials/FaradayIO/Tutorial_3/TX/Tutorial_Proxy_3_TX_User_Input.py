@@ -1,8 +1,11 @@
-#imports
+#Imports - General
+
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
+
+#Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-import time
 
 
 #Variables
@@ -13,7 +16,7 @@ transmit_proxy_flask_port = 8099
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio(transmit_proxy_flask_port)
-faraday_cmd = faradaycommands.faraday_commands()
+faraday_cmd = faradaycommands.FaradayCommands()
 #faraday_parser = telemetryparser.TelemetryParse()
 
 # This example will show how to command Faraday using the basic command application.
