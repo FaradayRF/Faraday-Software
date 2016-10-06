@@ -13,7 +13,7 @@ transmit_proxy_flask_port = 8099
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio(transmit_proxy_flask_port)
-faraday_cmd = faradaycommands.faraday_commands()
+faraday_cmd = faradaycommands.FaradayCommands()
 #faraday_parser = telemetryparser.TelemetryParse()
 
 # This example will show how to command Faraday using the basic command application.
