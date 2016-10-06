@@ -36,9 +36,11 @@ queDict = {}
 portDict = {}
 postDict = {}
 POSTdicts = {}
+getDicts = {}
+unitDict = {}
 
 
-def uart_worker(modem, que, units):
+def uart_worker(modem, getDicts, units):
     """
     Interface Faraday ports over USB UART
 
@@ -51,60 +53,63 @@ def uart_worker(modem, que, units):
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
     for key, values in units.iteritems():
-        POSTdicts[str(values["callsign"]) +
-        "-" + str(values["nodeid"])] = deque()
-    logger.info(POSTdicts)
+        POSTdicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
+        getDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
+
+    # Loop through each unit checking for data, if True place into deque
     while(1):
         # Place data into the FIFO coming from UART
-        try:
-            for port in range(0, 255):
-                if(modem.RxPortHasItem(port)):
-                    # Data is available, convert to BASE64 and place in queue
-                    item = {}
-                    item["port"] = port
-                    item["data"] = base64.b64encode(modem.GET(port))
-                    # Use new buffers
+        for unit, com in modem.iteritems():
+            try:
+                for port in range(0, 255):
+                    if(com.RxPortHasItem(port)):
+                        # Data is available, convert to BASE64 and place in queue
+                        item = {}
+                        item["data"] = base64.b64encode(com.GET(port))
+                        # Use new buffers
+                        try:
+                            #que[port].append(item)
+                            getDicts[unit][port].append(item)
+                        except:
+                            # Port qeue does not exist, create one
+                            #que[port] = deque([], maxlen=100)
+                            #que[port].append(item)
+                            getDicts[unit][port] = deque([], maxlen=100)
+                            getDicts[unit][port].append(item)
 
+            except StandardError as e:
+                logger.error("StandardError: " + str(e))
+
+            except ValueError as e:
+                logger.error("ValueError: " + str(e))
+
+            except IndexError as e:
+                logger.error("IndexError: " + str(e))
+
+            except KeyError as e:
+                logger.error("KeyError: " + str(e))
+
+            time.sleep(0.01)
+            # Check for data in the POST FIFO queue
+            # This needs to check for COM ports and create the necessary buffers
+            # on the fly.
+            try:
+                for port in range(0, 255):
                     try:
-                        que[port].append(item)
+                        postDict[port]
                     except:
-                        # Port qeue does not exist, create one
-                        que[port] = deque([], maxlen=100)
-                        que[port].append(item)
-
-        except StandardError as e:
-            logger.error("StandardError: " + str(e))
-
-        except ValueError as e:
-            logger.error("ValueError: " + str(e))
-
-        except IndexError as e:
-            logger.error("IndexError: " + str(e))
-
-        except KeyError as e:
-            logger.error("KeyError: " + str(e))
-
-        time.sleep(0.01)
-        # Check for data in the POST FIFO queue
-        # This needs to check for COM ports and create the necessary buffers
-        # on the fly.
-        try:
-            for port in range(0, 255):
-                try:
-                    postDict[port]
-                except:
-                    pass
-                else:
-                    for num in range(len(postDict[port])):
-                        # Data is available, convert to BASE64, place in queue
-                        message = postDict[port].popleft()
-                        message = base64.b64decode(message)
-                        modem.POST(port, len(message), message)
-        except:
-            # Need to implement some error catching functionality here
-            pass
-        # Slow down while loop to something reasonable
-        time.sleep(0.01)
+                        pass
+                    else:
+                        for num in range(len(postDict[port])):
+                            # Data is available, convert to BASE64, place in queue
+                            message = postDict[port].popleft()
+                            message = base64.b64decode(message)
+                            com.POST(port, len(message), message)
+            except:
+                # Need to implement some error catching functionality here
+                pass
+            # Slow down while loop to something reasonable
+            time.sleep(0.01)
 
 # Initialize Flask microframework
 app = Flask(__name__)
@@ -173,74 +178,87 @@ def proxy():
 
         return "POST", 200
     else:
-        port = request.args.get("port")
-        limit = request.args.get("limit")
-        logger.debug("GET Request: port=%s limit=%s", port, limit)
+        # This is the GET routine to return data to the user
+        try:
+            port = int(request.args.get("port"))
+            limit = int(request.args.get("limit", 100))
+            callsign = str(request.args.get("callsign")).upper()
+            nodeid = int(request.args.get("nodeid"))
 
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            return str(e), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return str(e), 400
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return str(e), 400
+
+        # Check to see that required parameters are present
         if port is None:
             return 'Port value required for GET request', 400
-        else:
-            port = int(port)
-        logger.debug(limit)
+        if callsign is None:
+            return 'Callsign value required for GET request', 400
+        if nodeid is None:
+            return 'NodeID value required for GET request', 400
+
         if limit is None:
             try:
                 limit = len(queDict[port])
 
-            except StandardError as e:
-                logger.error("GET StandardError: " + str(e))
-                return ' ', 500
             except ValueError as e:
                 logger.error("GET ValueError: " + str(e))
-                return ' ', 500
+                return "GET ValueError, Queue length: " + str(e), 500
             except IndexError as e:
                 logger.error("GET IndexError: " + str(e))
-                return ' ', 500
+                return "GET IndexError, Queue length: " + str(e), 500
             except KeyError as e:
                 logger.error("GET KeyError: " + str(e))
-                return ' ', 400
+                return "GET KeyError, Queue length: " + str(e), 500
+
         else:
             limit = int(limit)
 
+        # Return data from queue to RESTapi
         try:
             # Check if there is a queue for the specified service port
-            if (len(queDict[port]) > 0):
+            if (len(getDicts[str(callsign) + "-" + str(nodeid)][port]) > 0):
                 queryTime = time.asctime(time.localtime(time.time()))
                 data = []
                 try:
                     # NEVER CHECKS FOR LIMIT, FIX!
-                    while queDict[port]:
-                        data.append(queDict[port].popleft())
+                    while getDicts[str(callsign) + "-" + str(nodeid)][port]:
+                        data.append(getDicts[str(callsign) +
+                            "-" + str(nodeid)][port].popleft())
                         if limit == 1:
                             break
-                    logger.info("GET returned %s items from queue", len(data))
                     return json.dumps(data, indent=4),\
                         200,\
                         {'Content-Type': 'application/json'}
 
-                except StandardError as e:
-                    logger.error("GET StandardError: " + str(e))
-                    return ' ', 500
                 except ValueError as e:
                     logger.error("GET ValueError: " + str(e))
-                    return ' ', 500
+                    return "GET ValueError, Queue pop/dump: " + str(e), 500
                 except IndexError as e:
                     logger.error("GET IndexError: " + str(e))
-                    return ' ', 500
+                    return "GET IndexError, Queue pop/dump: " + str(e), 500
                 except KeyError as e:
                     logger.error("GET KeyError: " + str(e))
-                    return ' ', 400
-
+                    return "GET KeyError, Queue pop/dump: " + str(e), 500
             else:
                 # No data in service port, but port is being used
                 return ' ', 204
 
+        except ValueError as e:
+            logger.error("GET ValueError: " + str(e))
+            return "GET ValueError: " + str(e), 500
+        except IndexError as e:
+            logger.error("GET IndexError: " + str(e))
+            return "GET IndexError: " + str(e), 500
         except KeyError as e:
-            # Service port has never been used and has no data in it
-            print "KeyError: ", e
-            return ' ', 204
-
-        except StandardError as e:
-            print e
+            logger.error("GET KeyError: " + str(e))
+            return "GET KeyError: " + str(e), 500
 
 
 @app.errorhandler(404)
@@ -259,11 +277,15 @@ def callsign2COM():
         callsign = proxyConfig.get(item, "callsign")
         nodeid = proxyConfig.get(item, "nodeid")
         com = proxyConfig.get(item, "com")
+        baudrate = proxyConfig.getint(item, "baudrate")
+        timeout = proxyConfig.getint(item, "timeout")
         local[str(item)] =\
             {
             "callsign": callsign,
             "nodeid": nodeid,
-            "com": com
+            "com": com,
+            "baudrate": baudrate,
+            "timeout": timeout
             }
 
     local = json.dumps(local)
@@ -286,21 +308,45 @@ def main():
     # Initialize local variables
     threads = []
 
+    # Obtain number of Faraday units connected to Proxy
+    numUnits = int(proxyConfig.get('proxy', 'units'))
+
     while(1):
         # Initialize a Faraday Radio device
         try:
-            faradayUART1 = \
-                layer_4_service.faraday_uart_object(proxyCOM,
-                                                    proxyBaud,
-                                                    proxyTimeout)
+            for key,values in units.iteritems():
+                unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
+                    layer_4_service.faraday_uart_object(str(values["com"]),
+                                                        int(values["baudrate"]),
+                                                        int(values["timeout"]))
+
+            #faradayUART1 = \
+            #    layer_4_service.faraday_uart_object(proxyCOM,
+            #                                        proxyBaud,
+            #                                        proxyTimeout)
+            #unitDict["UART0"] = faradayUART1
+            #logger.info(unitDict)
             logger.info("Connected to Faraday")
             break
             time.sleep(1)
-        except:
-            logger.error("%s not detected", proxyCOM)
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
             time.sleep(1)
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            time.sleep(1)
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            time.sleep(1)
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            time.sleep(1)
+##        except:
+##            logger.error("%s not detected", proxyCOM)
+##            time.sleep(1)
 
-    t = threading.Thread(target=uart_worker, args=(faradayUART1, queDict, units))
+    #t = threading.Thread(target=uart_worker, args=(faradayUART1, queDict, units))
+    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units))
     threads.append(t)
     t.start()
 
