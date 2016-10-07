@@ -1,8 +1,8 @@
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-from Basic_Proxy_IO import telemetryparser
-from Basic_Proxy_IO import faradayconfig
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import telemetryparser
+from FaradayIO import deviceconfig
 
 #Variables
 local_device_callsign = 'kb1lqd'

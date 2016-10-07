@@ -1,7 +1,7 @@
 #imports
-from Basic_Proxy_IO import faradaybasicproxyio
-from Basic_Proxy_IO import faradaycommands
-from Basic_Proxy_IO import gpioallocations
+from FaradayIO import faradaybasicproxyio
+from FaradayIO import faradaycommands
+from FaradayIO import gpioallocations
 import time
 
 

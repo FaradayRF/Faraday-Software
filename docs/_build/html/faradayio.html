@@ -47,8 +47,24 @@
 <p>Faraday IO is a basic Python toolset that can be used to interact with the RESTful API connecting the Faraday Digital Radio to a localhost server. This toolset includes basic input and output functionality along with command and parsing definitions to jumpstart application development.</p>
 <span class="target" id="module-faradaybasicproxyio"></span><dl class="class">
 <dt id="faradaybasicproxyio.proxyio">
-<em class="property">class </em><code class="descclassname">faradaybasicproxyio.</code><code class="descname">proxyio</code><a class="headerlink" href="#faradaybasicproxyio.proxyio" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">faradaybasicproxyio.</code><code class="descname">proxyio</code><span class="sig-paren">(</span><em>port=80</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio" title="Permalink to this definition">¶</a></dt>
 <dd><p>A basic input and output class object to interact with the Faraday proxy server RESTful API</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>port</strong> &#8211; (Optional, default = 80) flask port that the proxy to connect to is running on. This allows easy changing of the port if using multiple proxies at one time.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#A basic proxy IO object running on default proxy port</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">proxyio</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#A basic proxy IO object running on port 8099 to connect to to proxy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">faraday_1</span> <span class="o">=</span> <span class="n">proxyio</span><span class="p">(</span><span class="mi">8099</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="faradaybasicproxyio.proxyio.DecodeJsonItemRaw">
 <code class="descname">DecodeJsonItemRaw</code><span class="sig-paren">(</span><em>jsonitem</em><span class="sig-paren">)</span><a class="headerlink" href="#faradaybasicproxyio.proxyio.DecodeJsonItemRaw" title="Permalink to this definition">¶</a></dt>

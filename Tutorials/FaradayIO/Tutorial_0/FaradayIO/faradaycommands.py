@@ -62,7 +62,7 @@ class faraday_commands(object):
         >>> faraday_cmd = faradaycommands.faraday_commands()
         >>> packet = faraday_cmd.CommandRf("KB1LQD", 1, faraday_cmd.CMD_GPIO, faradaycommands.commandmodule.create_gpio_command_packet(faradaycommands.gpioallocations.LED_1, 0,0,0,0,0))
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, command_number, command_packet)
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, command_number, command_packet)
         return packet
 
     ###############################
@@ -337,7 +337,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_LOCALTELEMNOW, commandmodule.create_local_telem_update_packet())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_LOCALTELEMNOW, commandmodule.create_local_telem_update_packet())
         return packet
 
     def CommandRemoteRFUpdateNow(self, remote_callsign, remote_node_id):
@@ -350,7 +350,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_RFTELEMETRYNOW, commandmodule.create_rf_telem_update_packet())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_RFTELEMETRYNOW, commandmodule.create_rf_telem_update_packet())
         return packet
 
 
@@ -364,7 +364,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
         return packet
 
     def CommandRemoteGPIOLED1Off(self, remote_callsign, remote_node_id):
@@ -377,7 +377,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
         return packet
 
     def CommandRemoteGPIOLED2On(self, remote_callsign, remote_node_id):
@@ -390,7 +390,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
         return packet
 
     def CommandRemoteGPIOLED2Off(self, remote_callsign, remote_node_id):
@@ -403,7 +403,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
         return packet
 
 
@@ -419,7 +419,7 @@ class faraday_commands(object):
 
         """
         #Don't care what the payload is as long as it is at least 1 byte long
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_CUTDOWNNOW, commandmodule.create_send_telemetry_device_debug_flash())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_APP_HAB_CUTDOWNNOW, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
 
     def CommandRemoteHABResetAutoCutdownTimer(self, remote_callsign, remote_node_id):
@@ -434,7 +434,7 @@ class faraday_commands(object):
 
         """
         #Don't care what the payload is as long as it is at least 1 byte long
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
 
     def CommandRemoteHABDisableAutoCutdownTimer(self, remote_callsign, remote_node_id):
@@ -449,7 +449,7 @@ class faraday_commands(object):
 
         """
         #Don't care what the payload is as long as it is at least 1 byte long
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
 
     def CommandRemoteHABResetCutdownIdle(self, remote_callsign, remote_node_id):
@@ -465,7 +465,7 @@ class faraday_commands(object):
 
         """
         #Don't care what the payload is as long as it is at least 1 byte long
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE, commandmodule.create_send_telemetry_device_debug_flash())
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
 
 
@@ -498,5 +498,5 @@ class faraday_commands(object):
         >>> command_packet = faraday_cmd.CommandRemoteGPIO("KB1LQD", 1, faradaycommands.gpioallocations.LED_1 | faradaycommands.gpioallocations.LED_2, 0,0,0,0,0)
 
         """
-        packet = commandmodule.create_rf_command_packet(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off))
         return packet
