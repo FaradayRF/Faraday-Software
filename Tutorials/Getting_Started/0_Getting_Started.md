@@ -21,3 +21,25 @@ This tutorial series will encompass:
   * Messaging
   * File Transfer
   * APRS-IS Interconnect
+  
+  
+# References
+
+The inforamtion below is a collection of useful resources for understanding the CC430 (MSP430 + CC1101), Python/C programing, and data communications fundamentals.
+
+## CC430 Programming (MSP430 - Embedded C)
+
+Note: The CC430 contains a higher level MSp430 than the original launchpad. The programming tools, style, and general topology are identical but specifics in register settings and other details are different.
+
+* [TI Launchpad MSP430](http://www.ti.com/tool/MSP-EXP430G2)
+  * A very inexpensive and well support MSP430 development board that needs only a USB cable to program.
+* [MSP430 Science Blog - Tutorials](http://mspsci.blogspot.com)
+  * One of the best MSP430 learning series
+
+## Python
+
+## Data Communications Fundamentals
+
+* Basics
+  *[Serial Data Framing](http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications)
+  
