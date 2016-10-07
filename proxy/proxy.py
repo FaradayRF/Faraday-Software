@@ -63,17 +63,14 @@ def uart_worker(modem, getDicts, units):
             try:
                 for port in range(0, 255):
                     if(com.RxPortHasItem(port)):
-                        # Data is available, convert to BASE64 and place in queue
+                        # Data is available
+                        # convert to BASE64 and place in queue
                         item = {}
                         item["data"] = base64.b64encode(com.GET(port))
                         # Use new buffers
                         try:
-                            #que[port].append(item)
                             getDicts[unit][port].append(item)
                         except:
-                            # Port qeue does not exist, create one
-                            #que[port] = deque([], maxlen=100)
-                            #que[port].append(item)
                             getDicts[unit][port] = deque([], maxlen=100)
                             getDicts[unit][port].append(item)
 
@@ -91,8 +88,8 @@ def uart_worker(modem, getDicts, units):
 
             time.sleep(0.01)
             # Check for data in the POST FIFO queue
-            # This needs to check for COM ports and create the necessary buffers
-            # on the fly.
+            # This needs to check for COM ports and
+            # create the necessary buffers on the fly.
             try:
                 for port in range(0, 255):
                     try:
@@ -101,7 +98,8 @@ def uart_worker(modem, getDicts, units):
                         pass
                     else:
                         for num in range(len(postDict[port])):
-                            # Data is available, convert to BASE64, place in queue
+                            # Data is available, convert to BASE64
+                            # and place in queue
                             message = postDict[port].popleft()
                             message = base64.b64decode(message)
                             com.POST(port, len(message), message)
@@ -135,23 +133,16 @@ def proxy():
             data = request.get_json(force=False)
 
         except StandardError as e:
-            logger.warn("StandardError: " +  str(e))
+            logger.warn("StandardError: " + str(e))
             return e, 400
 
         except ValueError as e:
-            logger.warn("ValueError: " +  str(e))
+            logger.warn("ValueError: " + str(e))
             return e, 400
 
         except TypeError as e:
-            logger.warn("ValueError: " +  str(e))
+            logger.warn("ValueError: " + str(e))
             return e, 400
-
-        # Find COM Port
-        for station in units:
-            if units[station][0] == callsign and int(units[station][1]) == nodeid:
-                com = units[station][2] # do something with this!!!
-                logger.info(str(com))
-
 
         # Does not actually use multi-node COM port!
         for item in data['data']:
@@ -162,7 +153,7 @@ def proxy():
                 postDict[port].append(str(item))
 
         try:
-            if(len(data)>0):
+            if(len(data) > 0):
                 return ' ', 200
 
             else:
@@ -170,11 +161,11 @@ def proxy():
 
         except KeyError as e:
             # Service port has never been used and has no data in it
-            logger.warn("KeyError: " +  str(e))
+            logger.warn("KeyError: " + str(e))
             return ' ', 204
 
         except StandardError as e:
-            logger.warn("StandardError: " +  str(e))
+            logger.warn("StandardError: " + str(e))
 
         return "POST", 200
     else:
@@ -229,8 +220,8 @@ def proxy():
                 try:
                     # NEVER CHECKS FOR LIMIT, FIX!
                     while getDicts[str(callsign) + "-" + str(nodeid)][port]:
-                        data.append(getDicts[str(callsign) +
-                            "-" + str(nodeid)][port].popleft())
+                        data.append(
+                            getDicts[str(callsign) + "-" + str(nodeid)][port].popleft())
                         if limit == 1:
                             break
                     return json.dumps(data, indent=4),\
@@ -266,6 +257,7 @@ def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
     return "HTTP 404: Not found", 404
 
+
 def callsign2COM():
     """ Associate configuration callsigns with serial COM ports"""
     local = {}
@@ -291,6 +283,7 @@ def callsign2COM():
     local = json.dumps(local)
     return json.loads(local)
 
+
 def main():
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -301,9 +294,8 @@ def main():
     proxyTimeout = proxyConfig.getint("serial", "timeout")
 
     # Associate serial ports with callsigns
-    #global units
+    # global units
     units = callsign2COM()
-    #logger.info(str(units))
 
     # Initialize local variables
     threads = []
@@ -314,21 +306,15 @@ def main():
     while(1):
         # Initialize a Faraday Radio device
         try:
-            for key,values in units.iteritems():
+            for key, values in units.iteritems():
                 unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
-                    layer_4_service.faraday_uart_object(str(values["com"]),
-                                                        int(values["baudrate"]),
-                                                        int(values["timeout"]))
-
-            #faradayUART1 = \
-            #    layer_4_service.faraday_uart_object(proxyCOM,
-            #                                        proxyBaud,
-            #                                        proxyTimeout)
-            #unitDict["UART0"] = faradayUART1
-            #logger.info(unitDict)
+                    layer_4_service.faraday_uart_object(
+                        str(values["com"]),
+                        int(values["baudrate"]),
+                        int(values["timeout"]))
             logger.info("Connected to Faraday")
             break
-            time.sleep(1)
+
         except StandardError as e:
             logger.error("StandardError: " + str(e))
             time.sleep(1)
@@ -341,11 +327,7 @@ def main():
         except KeyError as e:
             logger.error("KeyError: " + str(e))
             time.sleep(1)
-##        except:
-##            logger.error("%s not detected", proxyCOM)
-##            time.sleep(1)
 
-    #t = threading.Thread(target=uart_worker, args=(faradayUART1, queDict, units))
     t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units))
     threads.append(t)
     t.start()
