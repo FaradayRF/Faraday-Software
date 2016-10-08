@@ -32,10 +32,8 @@ proxyConfig = ConfigParser.RawConfigParser()
 proxyConfig.read('proxy.ini')
 
 # Create and initialize dictionary queues
-queDict = {}
-portDict = {}
 postDict = {}
-POSTdicts = {}
+postDicts = {}
 getDicts = {}
 unitDict = {}
 
@@ -53,7 +51,7 @@ def uart_worker(modem, getDicts, units):
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
     for key, values in units.iteritems():
-        POSTdicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
+        postDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
         getDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
 
     # Loop through each unit checking for data, if True place into deque
@@ -86,7 +84,7 @@ def uart_worker(modem, getDicts, units):
             except KeyError as e:
                 logger.error("KeyError: " + str(e))
 
-            time.sleep(0.01)
+            time.sleep(0.001)
             # Check for data in the POST FIFO queue
             # This needs to check for COM ports and
             # create the necessary buffers on the fly.
@@ -107,7 +105,7 @@ def uart_worker(modem, getDicts, units):
                 # Need to implement some error catching functionality here
                 pass
             # Slow down while loop to something reasonable
-            time.sleep(0.01)
+            time.sleep(0.001)
 
 # Initialize Flask microframework
 app = Flask(__name__)
@@ -134,15 +132,15 @@ def proxy():
 
         except StandardError as e:
             logger.warn("StandardError: " + str(e))
-            return e, 400
+            return {error: str(e)}, 400
 
         except ValueError as e:
             logger.warn("ValueError: " + str(e))
-            return e, 400
+            return {error: str(e)}, 400
 
         except TypeError as e:
             logger.warn("ValueError: " + str(e))
-            return e, 400
+            return {error: str(e)}, 400
 
         # Does not actually use multi-node COM port!
         for item in data['data']:
@@ -154,108 +152,137 @@ def proxy():
 
         try:
             if(len(data) > 0):
-                return ' ', 200
+                return {status: "POSTED"}, 200
 
             else:
-                return ' ', 204
+                return {status: "EMPTY"}, 204
 
         except KeyError as e:
             # Service port has never been used and has no data in it
             logger.warn("KeyError: " + str(e))
-            return ' ', 204
+            return {error: str(e)}, 400
 
         except StandardError as e:
             logger.warn("StandardError: " + str(e))
+            return {error: str(e)}, 400
 
-        return "POST", 200
     else:
         # This is the GET routine to return data to the user
         try:
-            port = int(request.args.get("port"))
-            limit = int(request.args.get("limit", 100))
-            callsign = str(request.args.get("callsign")).upper()
-            nodeid = int(request.args.get("nodeid"))
+            port = request.args.get("port")
+            limit = request.args.get("limit", 100)
+            callsign = request.args.get("callsign")
+            nodeid = request.args.get("nodeid")
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
-            return str(e), 400
+            return {error: str(e)}, 400
         except IndexError as e:
             logger.error("IndexError: " + str(e))
-            return str(e), 400
+            return {error: str(e)}, 400
         except KeyError as e:
             logger.error("KeyError: " + str(e))
-            return str(e), 400
+            return {error: str(e)}, 400
 
         # Check to see that required parameters are present
-        if port is None:
-            return 'Port value required for GET request', 400
-        if callsign is None:
-            return 'Callsign value required for GET request', 400
-        if nodeid is None:
-            return 'NodeID value required for GET request', 400
-
-        if limit is None:
-            try:
-                limit = len(queDict[port])
-
-            except ValueError as e:
-                logger.error("GET ValueError: " + str(e))
-                return "GET ValueError, Queue length: " + str(e), 500
-            except IndexError as e:
-                logger.error("GET IndexError: " + str(e))
-                return "GET IndexError, Queue length: " + str(e), 500
-            except KeyError as e:
-                logger.error("GET KeyError: " + str(e))
-                return "GET KeyError, Queue length: " + str(e), 500
-
-        else:
-            limit = int(limit)
-
-        # Return data from queue to RESTapi
         try:
-            # Check if there is a queue for the specified service port
+            if port is None:
+                # Required
+                raise StandardError("Missing 'Port' parameter")
+            else:
+                # Ensure port value is an Integer
+                port = int(port)
+                # Check to see if the port is in the valid range
+                if port > 255 or port < 0:
+                    raise ValueError(
+                        "Faraday Ports valid integer between 0-255")
+            if callsign is None:
+                # Required
+                raise StandardError("Missing 'Callsign' parameter")
+            else:
+                # Ensure callsign value is a string and all uppercase
+                callsign = str(callsign).upper()
+            if nodeid is None:
+                # Required
+                raise StandardError("Missing 'NodeId' parameter")
+            else:
+                nodeid = int(nodeid)
+                # Check to see if the Node ID is in the valid range
+                if nodeid > 255 or nodeid < 0:
+                    raise ValueError(
+                        "Faraday Node ID's valid integer between 0-255")
+
+            # Make sure port exists before checking it's contents and length
+            try:
+                getDicts[str(callsign) + "-" + str(nodeid)][port]
+            except KeyError as e:
+                station = str(callsign) + "-" + str(nodeid)
+                message = "KeyError: " +\
+                     "Callsign '{0}' or Port '{1}' does not exist"\
+                     .format(station, port)
+                logger.error(message)
+                return json.dumps({"Error": message}), 400
+
+            if limit is None:
+                # Optional
+                limit = len(queDict[port])
+            else:
+                limit = int(limit)
+                # Check if limit is longer than queue, if so, just set limit to
+                # length of queue to return the entire queue
+
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
+        # Return data from queue to RESTapi
+        # If data is in port queu, turn it into JSON and return
+        try:
             if (len(getDicts[str(callsign) + "-" + str(nodeid)][port]) > 0):
                 queryTime = time.asctime(time.localtime(time.time()))
                 data = []
-                try:
-                    # NEVER CHECKS FOR LIMIT, FIX!
-                    while getDicts[str(callsign) + "-" + str(nodeid)][port]:
-                        data.append(
-                            getDicts[str(callsign) + "-" + str(nodeid)][port].popleft())
-                        if limit == 1:
-                            break
-                    return json.dumps(data, indent=4),\
-                        200,\
-                        {'Content-Type': 'application/json'}
+                while getDicts[str(callsign) + "-" + str(nodeid)][port]:
+                    packet = \
+                        getDicts[
+                            str(callsign) + "-" + str(nodeid)][port].popleft()
+                    data.append(packet)
+                    if len(data) >= limit:
+                        break
 
-                except ValueError as e:
-                    logger.error("GET ValueError: " + str(e))
-                    return "GET ValueError, Queue pop/dump: " + str(e), 500
-                except IndexError as e:
-                    logger.error("GET IndexError: " + str(e))
-                    return "GET IndexError, Queue pop/dump: " + str(e), 500
-                except KeyError as e:
-                    logger.error("GET KeyError: " + str(e))
-                    return "GET KeyError, Queue pop/dump: " + str(e), 500
+                return json.dumps(data, indent=1), 200,\
+                    {'Content-Type': 'application/json'}
             else:
                 # No data in service port, but port is being used
-                return ' ', 204
+                logger.info("Empty buffer for port %d", port)
+                return '', 204  # HTTP 204 response cannot have message data
 
         except ValueError as e:
-            logger.error("GET ValueError: " + str(e))
-            return "GET ValueError: " + str(e), 500
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
         except IndexError as e:
-            logger.error("GET IndexError: " + str(e))
-            return "GET IndexError: " + str(e), 500
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
         except KeyError as e:
-            logger.error("GET KeyError: " + str(e))
-            return "GET KeyError: " + str(e), 500
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+            return json.dumps({"Error": str(e)}), 400
 
 
 @app.errorhandler(404)
 def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
-    return "HTTP 404: Not found", 404
+    logger.error("Error: " + str(error))
+    return json.dumps({"Error": "HTTP " + str(error)}), 404
 
 
 def callsign2COM():
