@@ -15,7 +15,7 @@ API Documentation
 ==================
 Send/Receive Faraday Data
 --------------------
-Checks the proxy queue for the specified port to receive any data packets that may be present. If present the packets are returned as a JSON dictionary as an HTTP response. Additionally, the POST call will add packets to the POST queue which are sent to Faraday on a periodica basis.
+Checks the proxy queue for the specified port. If packets are present in the qeue they are returned as a JSON dictionary as an HTTP response. Additionally, the POST method will add packets to the POST queue which are sent to Faraday on a periodica basis. Invalid parameters are responded with appropriate HTTP responses and relevant warning messages.
 
 * **http://localhost:8000/**
 	Port 8000 of localhost (127.0.0.1)
@@ -31,39 +31,38 @@ Checks the proxy queue for the specified port to receive any data packets that m
 	
 	**Optional**
 		* ``Limit=[Integer]``
+
 * **Data Params**
 	When making a POST request Proxy expects to receive JSON data in the body with an object containing a string "data" and value being an array of BASE64 encoded strings each 163 characters long. The header of the POST request must specify the content type as application/json. Only a data array of 100 packets is accepted.
 	
+	
+	
 * **Success Response**
 	GET
-	* **Code**: 200
-	* **Content**: ``JSON response, {'Content-Type': 'application/json'}``
 	
-	*OR*
+	* **Code**: 200
+		**Content**: ``[{"data": "<163 Characters of BASE64>"},{"data": "<163 Characters of BASE64>"},...]``
+	
+	
+	* **Code**: 204
+		**Content**: Empty string
 	
 	POST
+	
 	* **Code**: 200
-	* **Content**: ``{ status : "POSTED" }``
-	
-	*OR*
-	
-	* **Code**: 204
-	* **Content**: ``{ status : "EMPTY" }``
-	
-* ** Error Response**
-	GET
-	* **Code**: 204
-	* **Content**: ``{ error : "NO QUEUE DATA" }``
-	
-	*OR*
-	
-	* **Code**: 400
-	* **Content**: ``{ error : PYTHON EXCEPTION STRING }``
-	
-	*OR*
-	
-	* **Code**: 400
-	* **Content**: ``{ error : "MISSING URL PARAMETER" }``
-	
+		**Content**: ``{ status : "POSTED" }``
 
 	
+	* **Code**: 204
+		**Content**: Empty String
+	
+* **Error Response**
+	GET
+
+	* **Code**: 400
+		**Content**: ``{ "error" : "<Python exception string>" }``
+		
+	POST
+
+	* **Code**: 400
+		**Content**: ``{ "error" : "<Python exception string>" }``

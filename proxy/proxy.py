@@ -88,17 +88,21 @@ def uart_worker(modem, getDicts, units):
             # Check for data in the POST FIFO queue
             # This needs to check for COM ports and
             # create the necessary buffers on the fly.
+
             try:
                 for port in range(0, 255):
                     try:
-                        postDict[port]
+                        postDicts[unit][port]
                     except:
                         pass
                     else:
-                        for num in range(len(postDict[port])):
+                        #logger.error(len(postDicts[unit][port]))
+                        # never gets inside for loop...
+                        for num in range(len(postDict[unit][port])):
+                            logger.error(num)
                             # Data is available, convert to BASE64
                             # and place in queue
-                            message = postDict[port].popleft()
+                            message = postDicts[unit][port].popleft()
                             message = base64.b64decode(message)
                             com.POST(port, len(message), message)
             except:
@@ -125,46 +129,48 @@ def proxy():
     """
     if request.method == "POST":
         try:
-            callsign = str(request.args.get("callsign", "NONE"))
-            nodeid = int(request.args.get("nodeid", 0))
+            data = request.get_json(force=False)  # Requires HTTP JSON header
             port = int(request.args.get("port"))
-            data = request.get_json(force=False)
-
-        except StandardError as e:
-            logger.warn("StandardError: " + str(e))
-            return {error: str(e)}, 400
+            callsign = request.args.get("callsign")
+            nodeid = request.args.get("nodeid")
 
         except ValueError as e:
-            logger.warn("ValueError: " + str(e))
-            return {error: str(e)}, 400
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
 
-        except TypeError as e:
-            logger.warn("ValueError: " + str(e))
-            return {error: str(e)}, 400
+        station = str(callsign) + "-" + str(nodeid)
 
         # Does not actually use multi-node COM port!
         for item in data['data']:
+
             try:
-                postDict[port].append(str(item))
+                postDicts[station][port].append(item)
             except:
-                postDict[port] = deque([], maxlen=100)
-                postDict[port].append(str(item))
+                postDicts[station][port] = deque([], maxlen=100)
+                postDicts[station][port].append(item)
 
         try:
             if(len(data) > 0):
-                return {status: "POSTED"}, 200
+                return json.dumps({"status": "posted"}), 200
 
             else:
-                return {status: "EMPTY"}, 204
-
+                return json.dumps({"status": "empty"}), 204
+            #logging.warn("test")
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
         except KeyError as e:
-            # Service port has never been used and has no data in it
-            logger.warn("KeyError: " + str(e))
-            return {error: str(e)}, 400
-
-        except StandardError as e:
-            logger.warn("StandardError: " + str(e))
-            return {error: str(e)}, 400
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
 
     else:
         # This is the GET routine to return data to the user
@@ -176,13 +182,13 @@ def proxy():
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
-            return {error: str(e)}, 400
+            return json.dumps({"error": str(e)}), 400
         except IndexError as e:
             logger.error("IndexError: " + str(e))
-            return {error: str(e)}, 400
+            return json.dumps({"error": str(e)}), 400
         except KeyError as e:
             logger.error("KeyError: " + str(e))
-            return {error: str(e)}, 400
+            return json.dumps({"error": str(e)}), 400
 
         # Check to see that required parameters are present
         try:
@@ -213,15 +219,15 @@ def proxy():
                         "Faraday Node ID's valid integer between 0-255")
 
             # Make sure port exists before checking it's contents and length
+            station = str(callsign) + "-" + str(nodeid)
             try:
-                getDicts[str(callsign) + "-" + str(nodeid)][port]
+                getDicts[station][port]
             except KeyError as e:
-                station = str(callsign) + "-" + str(nodeid)
                 message = "KeyError: " +\
                      "Callsign '{0}' or Port '{1}' does not exist"\
                      .format(station, port)
                 logger.error(message)
-                return json.dumps({"Error": message}), 400
+                return json.dumps({"error": message}), 400
 
             if limit is None:
                 # Optional
@@ -231,20 +237,20 @@ def proxy():
                 # Check for less than or equal to zero case
                 if limit <= 0:
                     message = "Error: Limit '{0}' is invalid".format(limit)
-                    return json.dumps({"Error": message}), 400
+                    return json.dumps({"error": message}), 400
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except IndexError as e:
             logger.error("IndexError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except KeyError as e:
             logger.error("KeyError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except StandardError as e:
             logger.error("StandardError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         # Return data from queue to RESTapi
         # If data is in port queu, turn it into JSON and return
         try:
@@ -268,23 +274,23 @@ def proxy():
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except IndexError as e:
             logger.error("IndexError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except KeyError as e:
             logger.error("KeyError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
         except StandardError as e:
             logger.error("StandardError: " + str(e))
-            return json.dumps({"Error": str(e)}), 400
+            return json.dumps({"error": str(e)}), 400
 
 
 @app.errorhandler(404)
 def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
     logger.error("Error: " + str(error))
-    return json.dumps({"Error": "HTTP " + str(error)}), 404
+    return json.dumps({"error": "HTTP " + str(error)}), 404
 
 
 def callsign2COM():
