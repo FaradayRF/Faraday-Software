@@ -228,8 +228,10 @@ def proxy():
                 limit = len(queDict[port])
             else:
                 limit = int(limit)
-                # Check if limit is longer than queue, if so, just set limit to
-                # length of queue to return the entire queue
+                # Check for less than or equal to zero case
+                if limit <= 0:
+                    message = "Error: Limit '{0}' is invalid".format(limit)
+                    return json.dumps({"Error": message}), 400
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
