@@ -33,13 +33,13 @@ Checks the proxy queue for the specified port. If packets are present in the qeu
 		* ``Limit=[Integer]``
 
 * **Data Params**
-	When making a POST request Proxy expects to receive JSON data in the body with an object containing a string "data" and value being an array of BASE64 encoded strings each 163 characters long. The header of the POST request must specify the content type as application/json. Only a data array of 100 packets is accepted.
+	When making a POST request Proxy expects to receive JSON data in the body with an object containing a string "data" and value being an array of BASE64 encoded strings each 164 characters long. The header of the POST request must specify the content type as application/json. Only a data array of 100 packets is accepted.
 	
 * **Success Response**
 	GET
 	
 	* **Code**: 200 OK
-		**Content**: ``[{"data": "<163 Characters of BASE64>"},{"data": "<163 Characters of BASE64>"},...]``
+		**Content**: ``[{"data": "<164 Characters of BASE64>"},{"data": "<164 Characters of BASE64>"},...]``
 	
 	
 	* **Code**: 204 NO CONTENT
