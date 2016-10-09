@@ -74,40 +74,30 @@ def uart_worker(modem, getDicts, units):
 
             except StandardError as e:
                 logger.error("StandardError: " + str(e))
-
             except ValueError as e:
                 logger.error("ValueError: " + str(e))
-
             except IndexError as e:
                 logger.error("IndexError: " + str(e))
-
             except KeyError as e:
                 logger.error("KeyError: " + str(e))
 
             time.sleep(0.001)
-            # Check for data in the POST FIFO queue
-            # This needs to check for COM ports and
-            # create the necessary buffers on the fly.
+            # Check for data in the POST FIFO queue. This needs to check for
+            # COM ports and create the necessary buffers on the fly
+            for port in range(0, 255):
+                try:
+                    count = len(postDicts[unit][port])
+                except:
+                    # Port simply doesn't exist so don't bother
+                    pass
+                else:
+                    for num in range(count):
+                        # Data is available, pop off [unit][port] queue
+                        # and convert to BASE64 before sending to UART
+                        message = postDicts[unit][port].popleft()
+                        message = base64.b64decode(message)
+                        com.POST(port, len(message), message)
 
-            try:
-                for port in range(0, 255):
-                    try:
-                        postDicts[unit][port]
-                    except:
-                        pass
-                    else:
-                        #logger.error(len(postDicts[unit][port]))
-                        # never gets inside for loop...
-                        for num in range(len(postDict[unit][port])):
-                            logger.error(num)
-                            # Data is available, convert to BASE64
-                            # and place in queue
-                            message = postDicts[unit][port].popleft()
-                            message = base64.b64decode(message)
-                            com.POST(port, len(message), message)
-            except:
-                # Need to implement some error catching functionality here
-                pass
             # Slow down while loop to something reasonable
             time.sleep(0.001)
 
@@ -130,38 +120,41 @@ def proxy():
     if request.method == "POST":
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
-            port = int(request.args.get("port"))
+            port = request.args.get("port")
             callsign = request.args.get("callsign")
             nodeid = request.args.get("nodeid")
 
-        except ValueError as e:
-            logger.error("ValueError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
-        except IndexError as e:
-            logger.error("IndexError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
-        except KeyError as e:
-            logger.error("KeyError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
+            # Check for parameters and ensure all required are present and of
+            # acceptable values
 
-        station = str(callsign) + "-" + str(nodeid)
-
-        # Does not actually use multi-node COM port!
-        for item in data['data']:
-
-            try:
-                postDicts[station][port].append(item)
-            except:
-                postDicts[station][port] = deque([], maxlen=100)
-                postDicts[station][port].append(item)
-
-        try:
-            if(len(data) > 0):
-                return json.dumps({"status": "posted"}), 200
-
+            if port is None:
+                # Required
+                raise StandardError("Missing 'port' parameter")
             else:
-                return json.dumps({"status": "empty"}), 204
-            #logging.warn("test")
+                # Ensure port value is an Integer
+                port = int(port)
+                # Check to see if the port is in the valid range
+                if port > 255 or port < 0:
+                    raise ValueError(
+                        "Faraday Ports valid integer between 0-255")
+
+            if callsign is None:
+                # Required
+                raise StandardError("Missing 'callsign' parameter")
+            else:
+                # Ensure callsign value is a string and all uppercase
+                callsign = str(callsign).upper()
+
+            if nodeid is None:
+                # Required
+                raise StandardError("Missing 'nodeid' parameter")
+            else:
+                nodeid = int(nodeid)
+                # Check to see if the Node ID is in the valid range
+                if nodeid > 255 or nodeid < 0:
+                    raise ValueError(
+                        "Faraday Node ID's valid integer between 0-255")
+
         except ValueError as e:
             logger.error("ValueError: " + str(e))
             return json.dumps({"error": str(e)}), 400
@@ -171,6 +164,44 @@ def proxy():
         except KeyError as e:
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+
+        # Create station name and check for presents of postDicts queue.
+        # Error if not present since this means unit not in proxy.ini configs
+        station = str(callsign) + "-" + str(nodeid)
+        try:
+            postDicts[station]
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+
+        # Iterate through items in the data["data"] array. If port isn't
+        # present, create port queue for it and append data to that queue
+        try:
+            data["data"]
+        except:
+            logger.error("Error: No 'data' key in dictionary")
+            return json.dumps(
+                {"error": "Error: No 'data' key in dictionary"}), 400
+        else:
+            total = len(data["data"])
+            sent = 0
+            for item in data['data']:
+                if len(item) != 164:
+                    logger.warning("Packet not 164 characters long!")
+                    logger.warning(str(item))
+                else:
+                    # Correct length packet, lets send it by putting on the queue!
+                    try:
+                        postDicts[station][port].append(item)
+                    except:
+                        postDicts[station][port] = deque([], maxlen=100)
+                        postDicts[station][port].append(item)
+                    sent += 1
+            return json.dumps(
+                {"status": "Posted {0} of {1} Packet(s)".format(sent,total)}), 200
 
     else:
         # This is the GET routine to return data to the user
@@ -194,7 +225,7 @@ def proxy():
         try:
             if port is None:
                 # Required
-                raise StandardError("Missing 'Port' parameter")
+                raise StandardError("Missing 'port' parameter")
             else:
                 # Ensure port value is an Integer
                 port = int(port)
@@ -204,13 +235,13 @@ def proxy():
                         "Faraday Ports valid integer between 0-255")
             if callsign is None:
                 # Required
-                raise StandardError("Missing 'Callsign' parameter")
+                raise StandardError("Missing 'callsign' parameter")
             else:
                 # Ensure callsign value is a string and all uppercase
                 callsign = str(callsign).upper()
             if nodeid is None:
                 # Required
-                raise StandardError("Missing 'NodeId' parameter")
+                raise StandardError("Missing 'nodeid' parameter")
             else:
                 nodeid = int(nodeid)
                 # Check to see if the Node ID is in the valid range
