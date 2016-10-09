@@ -142,6 +142,7 @@ def proxy():
                 # Required
                 raise StandardError("Missing 'callsign' parameter")
             else:
+
                 # Ensure callsign value is a string and all uppercase
                 callsign = str(callsign).upper()
 
@@ -193,7 +194,7 @@ def proxy():
                     logger.warning("Packet not 164 characters long!")
                     logger.warning(str(item))
                 else:
-                    # Correct length packet, lets send it by putting on the queue!
+                    # Correct length packet, send it by putting on the queue!
                     try:
                         postDicts[station][port].append(item)
                     except:
@@ -201,7 +202,8 @@ def proxy():
                         postDicts[station][port].append(item)
                     sent += 1
             return json.dumps(
-                {"status": "Posted {0} of {1} Packet(s)".format(sent,total)}), 200
+                {"status": "Posted {0} of {1} Packet(s)"
+                    .format(sent, total)}), 200
 
     else:
         # This is the GET routine to return data to the user
@@ -402,7 +404,7 @@ def main():
     proxyHost = proxyConfig.get("flask", "host")
     proxyPort = proxyConfig.getint("flask", "port")
 
-    app.run(host=proxyHost, port=proxyPort)
+    app.run(host=proxyHost, port=proxyPort, threaded=True)
 
 if __name__ == '__main__':
     main()
