@@ -13,6 +13,15 @@ This document contains information relavent to anyone wishing to contribute the 
 
 [How To Contribute](#how_to_contribute)
 
+* [Bug Reports](#bug_reporting)
+* [Suggesting Enhancements](#enhancement_suggestions)
+* [Beginner Contributions](#beginner_contributions)
+* [Pull Requests](#pull_requests)
+
+[Styleguides](#styleguides)
+
+* [Documentaion](#documentation)
+* [Python - PEP8](#pep8)
 
 #What Should I Know Before I Get Started <a name="get_started"></a>
 ---
@@ -88,6 +97,7 @@ If you are not sure how to start off contributing to the project browse the tagg
  
 
 #Styleguides <a name="styleguides"></a>
+---
 
 ## Python PEP8 <a name="pep8"></a>
 
