@@ -142,7 +142,7 @@ def proxy():
                 # Required
                 raise StandardError("Missing 'callsign' parameter")
             else:
-     # Ensure callsign value is a string and all uppercase
+                # Ensure callsign value is a string and all uppercase
                 callsign = str(callsign).upper()
 
             if nodeid is None:
