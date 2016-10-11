@@ -355,11 +355,6 @@ def main():
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
 
-    # Load serial port configuration
-    proxyCOM = proxyConfig.get("serial", "com")
-    proxyBaud = proxyConfig.getint("serial", "baudrate")
-    proxyTimeout = proxyConfig.getint("serial", "timeout")
-
     # Associate serial ports with callsigns
     # global units
     units = callsign2COM()
