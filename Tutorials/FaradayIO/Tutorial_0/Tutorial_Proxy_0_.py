@@ -18,7 +18,7 @@ FARADAY_CMD_UART_PORT = 2
 
 #Variables
 local_device_callsign = 'kb1lqd'
-local_device_node_id = 1
+local_device_node_id = 22
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -39,7 +39,6 @@ if(rx_telem_data == False):
     rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, FARADAY_TELEMETRY_UART_PORT, 1, False) #Will block and wait for given time until a packet is recevied
 
 print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
-print rx_telem_data
 
 #Decode the first packet in list from BASE 64 to a RAW bytesting
 rx_telem_pkt_decoded = faraday_1.DecodeJsonItemRaw(rx_telem_data[0]['data'])

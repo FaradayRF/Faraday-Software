@@ -30,7 +30,7 @@ class proxyio(object):
     """
 
 
-    def __init__(self, port = 80):
+    def __init__(self, port = 8000):
         #Definitions
         self.FLASK_PORT = port #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
@@ -79,7 +79,7 @@ class proxyio(object):
 
 
             #POST data to UART service port
-            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/post?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
+            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
 
             #Return
             return status
@@ -110,7 +110,7 @@ class proxyio(object):
           u'port': 5}]
         """
         try:
-            flask_obj = requests.get('http://127.0.0.1:' + str(self.FLASK_PORT) + '/faraday/' + str(uart_service_number)) #calling IP address directly is much faster than localhost lookup
+            flask_obj = requests.get('http://127.0.0.1:' + str(self.FLASK_PORT) + "/?" + "port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)) #calling IP address directly is much faster than localhost lookup
             return json.loads(flask_obj.text)
         except:
             return False
