@@ -65,7 +65,7 @@ def telemetry_worker(config):
         nodeid = config.get("telemetry", "unit" + str(num) + "id")
         stations["UNIT" + str(num) + "CALL"] = callsign
         stations["UNIT" + str(num) + "ID"] = nodeid
-        getDicts[str(callsign) + str(nodeid)] = deque([], maxlen=10)
+        getDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
 
     # check for data on telemetry port, if True place into deque
     while(1):
@@ -78,9 +78,25 @@ def telemetry_worker(config):
             if data != None:
                 for item in data:
                     getDicts[str(callsign) + str(nodeid)].append(item)
-            print getDicts
+            #print getDicts
 
          time.sleep(0.5) # should slow down
+
+# Initialize Flask microframework
+app = Flask(__name__)
+
+
+@app.route('/', methods=['GET'])
+def proxy():
+    """
+    Provides a RESTful interface to the decoded telemetry '/'
+
+    Starts a flask server on port 8001 (default) which serves data from the
+    requested Faraday via it's proxy interface on localhost URL "/".
+    """
+    if request.method == "GET":  # Needed?
+        pass
+        return str(getDicts), 200
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
@@ -93,7 +109,11 @@ def main():
     threads.append(t)
     t.start()
 
-    #telemetry_worker(telemetryConfig);
+    # Start the flask server on localhost:8001
+    telemetryHost = telemetryConfig.get("flask", "host")
+    telemetryPort = telemetryConfig.getint("flask", "port")
+
+    app.run(host=telemetryHost, port=telemetryPort, threaded=True)
 
 if __name__ == '__main__':
     main()
