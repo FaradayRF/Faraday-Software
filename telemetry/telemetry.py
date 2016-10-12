@@ -69,9 +69,7 @@ def telemetry_worker(config):
 
     # check for data on telemetry port, if True place into deque
     while(1):
-        pass
-
-        for radio in range(count):
+         for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
@@ -80,8 +78,9 @@ def telemetry_worker(config):
             if data != None:
                 for item in data:
                     getDicts[str(callsign) + str(nodeid)].append(item)
+            print getDicts
 
-        time.sleep(0.5) # should slow down
+         time.sleep(0.5) # should slow down
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
@@ -90,10 +89,11 @@ def main():
     # Initialize local variables
     threads = []
 
-    # Get configuration parameters
-    numUnits = telemetryConfig.getint("telemetry", "units")
+    t = threading.Thread(target=telemetry_worker, args=(telemetryConfig,))
+    threads.append(t)
+    t.start()
 
-    telemetry_worker(telemetryConfig);
+    #telemetry_worker(telemetryConfig);
 
 if __name__ == '__main__':
     main()
