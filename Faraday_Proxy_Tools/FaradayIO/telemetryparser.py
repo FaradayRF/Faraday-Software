@@ -122,12 +122,12 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
 
-        dictionaryData = {  'source_callsign': parsed_packet[0],
-                            'source_callsign_len': parsed_packet[1],
-                            'source_id': parsed_packet[2],
-                            'destination_callsign': parsed_packet[3],
-                            'destination_callsign_len': parsed_packet[4],
-                            'destination_id': parsed_packet[5],
+        dictionaryData = {  'sourcecallsign': parsed_packet[0],
+                            'sourcecallsignlen': parsed_packet[1],
+                            'sourceid': parsed_packet[2],
+                            'destinationcallsign': parsed_packet[3],
+                            'destinationcallsignlen': parsed_packet[4],
+                            'destinationid': parsed_packet[5],
                             'rtcsec': parsed_packet[6],
                             'rtcmin': parsed_packet[7],
                             'rtchour': parsed_packet[8],

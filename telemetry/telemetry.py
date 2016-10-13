@@ -17,6 +17,7 @@ import ConfigParser
 from collections import deque
 import os
 import sys
+import sqlite3
 
 from flask import Flask
 from flask import request
@@ -57,6 +58,10 @@ def telemetry_worker(config):
 
     # Initialize Faraday parser
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
+
+    # Open configuration file
+    dbFilename = config.get("database", "filename")
+    print dbFilename
 
     # Pragmatically create descriptors for each Faraday connected to Proxy
     count = config.getint("telemetry", "units")
@@ -100,6 +105,12 @@ def telemetry_worker(config):
                         logger.error("KeyError: " + str(e))
 
                     else:
+
+                        conn = sqlite3.connect(dbFilename)
+                        c = conn.cursor()
+                        sqlInsert(c,parsedTelemetry)
+                        print conn
+                        conn.close()
                         # Unpacking and parsing was successful, add to queue
                         getDicts[str(callsign) + str(nodeid)].append([parsedTelemetry])
 
@@ -119,7 +130,38 @@ def proxy():
     """
     if request.method == "GET":  # Needed?
         pass
-        return str(getDicts), 200
+
+        dbFilename = telemetryConfig.get("database", "filename")
+        conn = sqlite3.connect(dbFilename)
+        #print conn
+
+        return '', 200
+
+# Database Functions
+def initDB():
+    # Obtain configuration filenames
+    dbFilename = telemetryConfig.get("database", "filename")
+    dbSchema = telemetryConfig.get("database", "schemaname")
+
+    # Check if database exists
+    if os.path.isfile(dbFilename):
+        pass
+    else:
+        # Open database schema SQL file and execute the SQL
+        with open(dbSchema, 'rt') as f:
+            schema = f.read()
+        conn = sqlite3.connect(dbFilename)
+        conn.executescript(schema)
+        conn.close()
+
+def sqlInsert(cursor, data):
+    sql = ''
+    table = 'INSERT INTO TELEMETRY VALUES (?)'
+    #columns = "(test)"
+    #values = "VALUES (test);"
+    sql = table
+    cursor.execute(sql, 'kb1lqc')
+    #cursor.commit()
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
@@ -127,6 +169,9 @@ def main():
 
     # Initialize local variables
     threads = []
+
+    # Open or create database if it doesn't exist
+    initDB()
 
     t = threading.Thread(target=telemetry_worker, args=(telemetryConfig,))
     threads.append(t)

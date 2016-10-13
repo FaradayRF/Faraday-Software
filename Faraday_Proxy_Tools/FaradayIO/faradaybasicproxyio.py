@@ -239,9 +239,3 @@ class proxyio(object):
         data_packet = jsonitem
         decoded_data_packet = base64.b64decode(data_packet)
         return decoded_data_packet
-
-
-
-
-
-
