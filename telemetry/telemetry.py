@@ -75,18 +75,35 @@ def telemetry_worker(config):
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
 
-            # Iterate through each packet and append to station dictionary
+            # Iterate through each packet and unpack into dictionary
             if data != None:
                 for item in data:
-                    unPackedItem = proxy.DecodeJsonItemRaw(item["data"])
-                    datagram = faradayParser.UnpackDatagram(unPackedItem,False)
-                    paddedPacket = datagram[3]
-                    telemetryData = faradayParser.ExtractPaddedPacket(paddedPacket,faradayParser.packet_3_len)
-                    parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
-                    getDicts[str(callsign) + str(nodeid)].append([parsedTelemetry])
-            #print getDicts["KB1LQD22"][0]
+                    try:
+                        # Decode BASE64 JSON data packet into
+                        unPackedItem = proxy.DecodeRawPacket(item["data"])
+                        # Unpack packet into datagram elements
+                        datagram = faradayParser.UnpackDatagram(unPackedItem,False)
+                        # Grab the payload of the datagram
+                        paddedPacket = datagram[3]
+                        # Extract the payload length from payload since padding could be used
+                        telemetryData = faradayParser.ExtractPaddedPacket(paddedPacket,faradayParser.packet_3_len)
+                        # Unpack payload and return a dictionary of telemetry
+                        parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
 
-         time.sleep(0.5) # should slow down
+                    except StandardError as e:
+                        logger.error("StandardError: " + str(e))
+                    except ValueError as e:
+                        logger.error("ValueError: " + str(e))
+                    except IndexError as e:
+                        logger.error("IndexError: " + str(e))
+                    except KeyError as e:
+                        logger.error("KeyError: " + str(e))
+
+                    else:
+                        # Unpacking and parsing was successful, add to queue
+                        getDicts[str(callsign) + str(nodeid)].append([parsedTelemetry])
+
+         time.sleep(1) # should slow down
 
 # Initialize Flask microframework
 app = Flask(__name__)

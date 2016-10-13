@@ -219,7 +219,7 @@ class proxyio(object):
             except:
                 return False
 
-    def DecodeJsonItemRaw(self, jsonitem):
+    def DecodeRawPacket(self, jsonitem):
         """
         This function decodes (BASE64) data from a supplied encoded data packet as received from the GET functions (in JSON format). This function handle 1 packet at a time and returns only the resulting decoded data
 
