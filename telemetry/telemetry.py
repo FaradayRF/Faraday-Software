@@ -52,10 +52,11 @@ def telemetry_worker(config):
     # initialize variables
     stations = {}
 
-
-
     # Initialize proxy object
     proxy = faradaybasicproxyio.proxyio()
+
+    # Initialize Faraday parser
+    faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
     # Pragmatically create descriptors for each Faraday connected to Proxy
     count = config.getint("telemetry", "units")
@@ -77,8 +78,13 @@ def telemetry_worker(config):
             # Iterate through each packet and append to station dictionary
             if data != None:
                 for item in data:
-                    getDicts[str(callsign) + str(nodeid)].append(item)
-            #print getDicts
+                    unPackedItem = proxy.DecodeJsonItemRaw(item["data"])
+                    datagram = faradayParser.UnpackDatagram(unPackedItem,False)
+                    paddedPacket = datagram[3]
+                    telemetryData = faradayParser.ExtractPaddedPacket(paddedPacket,faradayParser.packet_3_len)
+                    parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
+                    getDicts[str(callsign) + str(nodeid)].append([parsedTelemetry])
+            #print getDicts["KB1LQD22"][0]
 
          time.sleep(0.5) # should slow down
 

@@ -122,6 +122,48 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
 
+        dictionaryData = {  'source_callsign': parsed_packet[0],
+                            'source_callsign_len': parsed_packet[1],
+                            'source_id': parsed_packet[2],
+                            'destination_callsign': parsed_packet[3],
+                            'destination_callsign_len': parsed_packet[4],
+                            'destination_id': parsed_packet[5],
+                            'rtcsec': parsed_packet[6],
+                            'rtcmin': parsed_packet[7],
+                            'rtchour': parsed_packet[8],
+                            'rtcday': parsed_packet[9],
+                            'rtcdow': parsed_packet[10],
+                            'rtcmonth': parsed_packet[11],
+                            'rtcyear': parsed_packet[12],
+                            'gpslatitude': parsed_packet[13],
+                            'gpslatitudedir': parsed_packet[14],
+                            'gpslongitude': parsed_packet[15],
+                            'gpslongitudedir': parsed_packet[16],
+                            'gpsaltitude': parsed_packet[17],
+                            'gpsaltitudeunits': parsed_packet[18],
+                            'gpsspeed': parsed_packet[19],
+                            'gpsfix': parsed_packet[20],
+                            'gpshdop': parsed_packet[21],
+                            'gpiostate': parsed_packet[22],
+                            'rfstate': parsed_packet[23],
+                            'adc0': parsed_packet[24],
+                            'adc1': parsed_packet[25],
+                            'adc2': parsed_packet[26],
+                            'adc3': parsed_packet[27],
+                            'adc4': parsed_packet[28],
+                            'adc5': parsed_packet[29],
+                            'adc6': parsed_packet[30],
+                            'boardtemp': parsed_packet[31],
+                            'adc8': parsed_packet[32],
+                            'unused': parsed_packet[33],
+                            'habtimerstate': parsed_packet[34],
+                            'habcutdownstate': parsed_packet[35],
+                            'habtriggertime': parsed_packet[36],
+                            'habtimer': parsed_packet[37]
+                        }
+
+        #print dictionaryData
+
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #3 ---"
@@ -167,7 +209,7 @@ class TelemetryParse(object):
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
     def UnpackPacket_2(self, packet, debug):
         print packet, len(packet)
