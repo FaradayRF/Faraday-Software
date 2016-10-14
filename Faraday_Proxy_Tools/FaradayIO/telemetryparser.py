@@ -119,50 +119,65 @@ class TelemetryParse(object):
             Index[36]: HAB Automatic Cutdown Timer Trigger Time
             Index[37]: HAB Automatic Cutdown Timer Current Time
         """
+        # '>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H'
+        #SOMETHING SEEMS OFF ABOUT THIS, COULD HAVE BUG IN PARSING
         #Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
 
-        dictionaryData = {  'sourcecallsign': parsed_packet[0],
-                            'sourcecallsignlen': parsed_packet[1],
-                            'sourceid': parsed_packet[2],
-                            'destinationcallsign': parsed_packet[3],
-                            'destinationcallsignlen': parsed_packet[4],
-                            'destinationid': parsed_packet[5],
-                            'rtcsec': parsed_packet[6],
-                            'rtcmin': parsed_packet[7],
-                            'rtchour': parsed_packet[8],
-                            'rtcday': parsed_packet[9],
-                            'rtcdow': parsed_packet[10],
-                            'rtcmonth': parsed_packet[11],
-                            'rtcyear': parsed_packet[12],
-                            'gpslatitude': parsed_packet[13],
-                            'gpslatitudedir': parsed_packet[14],
-                            'gpslongitude': parsed_packet[15],
-                            'gpslongitudedir': parsed_packet[16],
-                            'gpsaltitude': parsed_packet[17],
-                            'gpsaltitudeunits': parsed_packet[18],
-                            'gpsspeed': parsed_packet[19],
-                            'gpsfix': parsed_packet[20],
-                            'gpshdop': parsed_packet[21],
-                            'gpiostate': parsed_packet[22],
-                            'rfstate': parsed_packet[23],
-                            'adc0': parsed_packet[24],
-                            'adc1': parsed_packet[25],
-                            'adc2': parsed_packet[26],
-                            'adc3': parsed_packet[27],
-                            'adc4': parsed_packet[28],
-                            'adc5': parsed_packet[29],
-                            'adc6': parsed_packet[30],
-                            'boardtemp': parsed_packet[31],
-                            'adc8': parsed_packet[32],
-                            'unused': parsed_packet[33],
-                            'habtimerstate': parsed_packet[34],
-                            'habcutdownstate': parsed_packet[35],
-                            'habtriggertime': parsed_packet[36],
-                            'habtimer': parsed_packet[37]
+        # Change tuple into list so we can modify it
+        telemetryList = list(parsed_packet)
+
+        # Use original tuple values to replace callsigns with exact strings
+        telemetryList[0] = parsed_packet[0][:parsed_packet[1]]
+        telemetryList[3] = parsed_packet[3][:parsed_packet[4]]
+
+        # Delete the callsign length fields, removes two index values!
+        del telemetryList[1] # Source callsign length index
+        del telemetryList[3] # Destination callsign length index - 1
+        del telemetryList[31] # N/A Byte is not needed
+        telemetryList = tuple(telemetryList)
+
+
+
+
+        dictionaryData = {  'SOURCECALLSIGN': str(parsed_packet[0]),
+                            'SOURCEID': int(parsed_packet[1]),
+                            'DESTINATIONCALLSIGN': parsed_packet[2],
+                            'DESTINATIONID': parsed_packet[3],
+                            'RTCSEC': parsed_packet[4],
+                            'RTCMIN': parsed_packet[5],
+                            'RTCHOUR': parsed_packet[6],
+                            'RTCDAY': parsed_packet[7],
+                            'RTCDOW': parsed_packet[8],
+                            'RTCMONTH': parsed_packet[9],
+                            'RTCYEAR': parsed_packet[10],
+                            'GPSLATITUDE': parsed_packet[11],
+                            'GPSLATITUDEDIR': parsed_packet[12],
+                            'GPSLONGITUDE': parsed_packet[13],
+                            'GPSLONGITUDEDIR': parsed_packet[14],
+                            'GPSALTITUDE': parsed_packet[15],
+                            'GPSALTITUDEUNITS': parsed_packet[16],
+                            'GPSSPEED': parsed_packet[17],
+                            'GPSFIX': parsed_packet[18],
+                            'GPSHDOP': parsed_packet[19],
+                            'GPIOSTATE': parsed_packet[20],
+                            'RFSTATE': parsed_packet[21],
+                            'ADC0': parsed_packet[22],
+                            'ADC1': parsed_packet[23],
+                            'ADC2': parsed_packet[24],
+                            'ADC3': parsed_packet[25],
+                            'ADC4': parsed_packet[26],
+                            'ADC5': parsed_packet[27],
+                            'ADC6': parsed_packet[28],
+                            'BOARDTEMP': parsed_packet[29],
+                            'ADC8': parsed_packet[30],
+                            'HABTIMERSTATE': parsed_packet[31],
+                            'HABCUTDOWNSTATE': parsed_packet[32],
+                            'HABTRIGGERTIME': parsed_packet[33],
+                            'HABTIMER': parsed_packet[34]
                         }
 
-        #print dictionaryData
+        #print dictionaryData["ADC8"]
 
         #Perform debug actions if needed
         if(debug == True):
@@ -209,7 +224,7 @@ class TelemetryParse(object):
             pass
 
         #Return parsed packet list
-        return dictionaryData
+        return [telemetryList,dictionaryData]
 
     def UnpackPacket_2(self, packet, debug):
         print packet, len(packet)

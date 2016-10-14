@@ -61,7 +61,6 @@ def telemetry_worker(config):
 
     # Open configuration file
     dbFilename = config.get("database", "filename")
-    print dbFilename
 
     # Pragmatically create descriptors for each Faraday connected to Proxy
     count = config.getint("telemetry", "units")
@@ -92,7 +91,7 @@ def telemetry_worker(config):
                         paddedPacket = datagram[3]
                         # Extract the payload length from payload since padding could be used
                         telemetryData = faradayParser.ExtractPaddedPacket(paddedPacket,faradayParser.packet_3_len)
-                        # Unpack payload and return a dictionary of telemetry
+                        # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
                         parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
 
                     except StandardError as e:
@@ -106,13 +105,8 @@ def telemetry_worker(config):
 
                     else:
 
-                        conn = sqlite3.connect(dbFilename)
-                        c = conn.cursor()
-                        sqlInsert(c,parsedTelemetry)
-                        print conn
-                        conn.close()
-                        # Unpacking and parsing was successful, add to queue
-                        getDicts[str(callsign) + str(nodeid)].append([parsedTelemetry])
+                        sqlInsert(dbFilename,parsedTelemetry[0])
+                        getDicts[str(callsign) + str(nodeid)].append(parsedTelemetry[1])
 
          time.sleep(1) # should slow down
 
@@ -135,7 +129,7 @@ def proxy():
         conn = sqlite3.connect(dbFilename)
         #print conn
 
-        return '', 200
+        return str(conn), 200
 
 # Database Functions
 def initDB():
@@ -151,17 +145,35 @@ def initDB():
         with open(dbSchema, 'rt') as f:
             schema = f.read()
         conn = sqlite3.connect(dbFilename)
-        conn.executescript(schema)
+        cur = conn.cursor()
+        cur.executescript(schema)
         conn.close()
 
-def sqlInsert(cursor, data):
-    sql = ''
-    table = 'INSERT INTO TELEMETRY VALUES (?)'
-    #columns = "(test)"
-    #values = "VALUES (test);"
-    sql = table
-    cursor.execute(sql, 'kb1lqc')
-    #cursor.commit()
+def sqlInsert(db, data):
+    """Takes in database filename and data tuple and inserts data into table"""
+    data = (None,) + data  # Add a null to tuple for KEYID
+
+    # Create parameter substitute "?" string for SQL query
+    numKeys = len(data)
+    paramSubs = "?" * (numKeys)
+    paramSubs = ",".join(paramSubs)
+
+    # Connect to database, create SQL query, execute query, and close database
+    try:
+        conn = sqlite3.connect(db)
+        sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
+        conn.execute(sql,data)
+        conn.commit()
+        conn.close()
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
