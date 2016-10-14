@@ -18,6 +18,7 @@ from collections import deque
 import os
 import sys
 import sqlite3
+import json
 
 from flask import Flask
 from flask import request
@@ -37,7 +38,7 @@ telemetryConfig = ConfigParser.RawConfigParser()
 telemetryConfig.read('telemetry.ini')
 
 # Create and initialize dictionary queues
-getDicts = {}
+telemetryDicts = {}
 
 
 def telemetry_worker(config):
@@ -70,7 +71,7 @@ def telemetry_worker(config):
         nodeid = config.get("telemetry", "unit" + str(num) + "id")
         stations["UNIT" + str(num) + "CALL"] = callsign
         stations["UNIT" + str(num) + "ID"] = nodeid
-        getDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
+        telemetryDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
 
     # check for data on telemetry port, if True place into deque
     while(1):
@@ -106,7 +107,7 @@ def telemetry_worker(config):
                     else:
 
                         sqlInsert(dbFilename,parsedTelemetry[0])
-                        getDicts[str(callsign) + str(nodeid)].append(parsedTelemetry[1])
+                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry[1])
 
          time.sleep(1) # should slow down
 
@@ -115,7 +116,7 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
-def proxy():
+def telemetry():
     """
     Provides a RESTful interface to the decoded telemetry '/'
 
@@ -130,6 +131,58 @@ def proxy():
         #print conn
 
         return str(conn), 200
+
+@app.route('/raw', methods=['GET'])
+def rawTelemetry():
+    """
+    Provides a RESTful interface to the decoded raw telemetry '/raw'
+
+    Starts a flask server on port 8001 (default) which serves data from the
+    requested Faraday via it's proxy interface on localhost URL "/".
+    """
+    if request.method == "GET":  # Needed?
+
+        # Initialize variables
+
+
+        callsign = request.args.get("callsign")
+        nodeid = request.args.get("nodeid")
+        limit = request.args.get("limit")
+
+        # Convert to corrent datatypes to work with expected types
+        # Might want to consider checking values for correct ranges
+        callsign = str(callsign).upper()
+        nodeid = int(nodeid)
+        limit = int(limit)
+
+        data = []
+        try:
+            if (len(telemetryDicts[str(callsign) + str(nodeid)]) > 0):
+                data = []
+                while telemetryDicts[str(callsign) + str(nodeid)]:
+                    packet = \
+                        telemetryDicts[
+                            str(callsign) + str(nodeid)].popleft()
+                    data.append(packet)
+                    if len(data) >= limit:
+                        break
+
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+
+        return json.dumps(data, indent=1), 200,\
+                {'Content-Type': 'application/json'}
+
 
 # Database Functions
 def initDB():
