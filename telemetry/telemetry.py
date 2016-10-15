@@ -114,22 +114,51 @@ def telemetry_worker(config):
 # Initialize Flask microframework
 app = Flask(__name__)
 
-
 @app.route('/', methods=['GET'])
-def telemetry():
+def dbTelemetry():
     """
-    Provides a RESTful interface to the decoded telemetry '/'
+    Provides a RESTful interface to telemetry in the SQLite database at URL '/'
 
-    Starts a flask server on port 8001 (default) which serves data from the
-    requested Faraday via it's proxy interface on localhost URL "/".
+    Serves JSON responses to the "/" URL containing output of SQLite queries.
+    Specific SQLite queries can return data from specified ranges and source
+    stations as
     """
 
-    pass
+    try:
+        # Obtain URL parameters
+        callsign = request.args.get("callsign", None)
+        nodeid = request.args.get("nodeid", None)
+        direction = request.args.get("dir", 0)
+        limit = request.args.get("limit", 100)
+        epochStart = request.args.get("startepoch", None)
+        epochEnd = request.args.get("endepoch", None)
+        timespan = request.args.get("timespan", None)
 
-    dbFilename = telemetryConfig.get("database", "filename")
-    conn = sqlite3.connect(dbFilename)
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
 
-    return str(conn), 200
+    # Create list of parameters
+    parameters = [  callsign,
+                    nodeid,
+                    direction,
+                    limit,
+                    epochStart,
+                    epochEnd,
+                    timespan]
+
+    queryResults = queryDb(parameters)
+
+
+    return json.dumps(queryResults, indent=1), 200,\
+            {'Content-Type': 'application/json'}
+
 
 @app.route('/raw', methods=['GET'])
 def rawTelemetry():
@@ -264,10 +293,11 @@ def sqlInsert(db, data):
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(db)
+        cursor = conn.cursor()
         sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
-        conn.execute(sql,data)
-        conn.commit()
-        conn.close()
+        # Use connection as context manager to rollback automatically if error
+        with conn:
+            conn.execute(sql,data)
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
@@ -277,6 +307,63 @@ def sqlInsert(db, data):
         logger.error("IndexError: " + str(e))
     except KeyError as e:
         logger.error("KeyError: " + str(e))
+
+    # Completed INSERT, close database
+    conn.close()
+
+def queryDb(parameters):
+    """Takes in parameters to query the SQLite database, returns the results"""
+    print parameters
+    # Initialize variables
+    results = []
+
+    # Open configuration file
+    dbFilename = telemetryConfig.get("database", "filename")
+
+    # Connect to database, create SQL query, execute query, and close database
+    try:
+        conn = sqlite3.connect(dbFilename)
+        conn.row_factory = sqlite3.Row
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+
+    cur = conn.cursor()
+    sql = "SELECT * FROM TELEMETRY"
+
+    try:
+        cur.execute(sql)
+        results = cur.fetchall()
+        #for r in results:
+        #print tuple(results.keys())
+        sqlData = []
+        rowData = {}
+
+        for r in results:
+            for channel in r.keys():
+                rowData[channel] = r[channel]
+            sqlData.append(rowData)
+        #print sqlData
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+
+    # Completed query, close database
+    conn.close()
+
+    return sqlData
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
