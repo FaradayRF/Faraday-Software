@@ -123,66 +123,116 @@ def telemetry():
     Starts a flask server on port 8001 (default) which serves data from the
     requested Faraday via it's proxy interface on localhost URL "/".
     """
-    if request.method == "GET":  # Needed?
-        pass
 
-        dbFilename = telemetryConfig.get("database", "filename")
-        conn = sqlite3.connect(dbFilename)
-        #print conn
+    pass
 
-        return str(conn), 200
+    dbFilename = telemetryConfig.get("database", "filename")
+    conn = sqlite3.connect(dbFilename)
+
+    return str(conn), 200
 
 @app.route('/raw', methods=['GET'])
 def rawTelemetry():
     """
-    Provides a RESTful interface to the decoded raw telemetry '/raw'
+    Provides a RESTful interface to the decoded raw telemetry at URL '/raw'
 
     Starts a flask server on port 8001 (default) which serves data from the
-    requested Faraday via it's proxy interface on localhost URL "/".
+    requested Faraday via it's proxy interface on localhost URL "/". Callsign
+    and nodeid of the Faraday radio connected via USB is required.
     """
-    if request.method == "GET":  # Needed?
 
-        # Initialize variables
-
-
+    try:
+        # Obtain URL parameters
         callsign = request.args.get("callsign")
         nodeid = request.args.get("nodeid")
-        limit = request.args.get("limit")
+        limit = request.args.get("limit", None)
 
-        # Convert to corrent datatypes to work with expected types
-        # Might want to consider checking values for correct ranges
-        callsign = str(callsign).upper()
-        nodeid = int(nodeid)
-        limit = int(limit)
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
 
-        data = []
-        try:
-            if (len(telemetryDicts[str(callsign) + str(nodeid)]) > 0):
-                data = []
-                while telemetryDicts[str(callsign) + str(nodeid)]:
-                    packet = \
-                        telemetryDicts[
-                            str(callsign) + str(nodeid)].popleft()
-                    data.append(packet)
-                    if len(data) >= limit:
-                        break
 
-        except ValueError as e:
-            logger.error("ValueError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
-        except IndexError as e:
-            logger.error("IndexError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
-        except KeyError as e:
-            logger.error("KeyError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
-        except StandardError as e:
-            logger.error("StandardError: " + str(e))
-            return json.dumps({"error": str(e)}), 400
 
-        return json.dumps(data, indent=1), 200,\
-                {'Content-Type': 'application/json'}
 
+    # Check to see that required parameters are present
+    try:
+        if callsign is None:
+            # Required
+            raise StandardError("Missing 'callsign' parameter")
+        else:
+            # Ensure callsign value is a string and all uppercase
+            callsign = str(callsign).upper()
+        if nodeid is None:
+            # Required
+            raise StandardError("Missing 'nodeid' parameter")
+        else:
+            nodeid = int(nodeid)
+            # Check to see if the Node ID is in the valid range
+            if nodeid > 255 or nodeid < 0:
+                raise ValueError(
+                    "Faraday Node ID's valid integer between 0-255")
+        if limit is None:
+            # Optional
+            limit = len(telemetryDicts[str(callsign) + str(nodeid)])
+        else:
+            limit = int(limit)
+            # Check for less than or equal to zero case
+            if limit <= 0:
+                message = "Error: Limit '{0}' is invalid".format(limit)
+                return json.dumps({"error": message}), 400
+
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+
+    # Pop data off of the queue
+    try:
+        if (len(telemetryDicts[str(callsign) + str(nodeid)]) > 0):
+            data = []
+            while telemetryDicts[str(callsign) + str(nodeid)]:
+                packet = \
+                    telemetryDicts[
+                        str(callsign) + str(nodeid)].popleft()
+                data.append(packet)
+                if len(data) >= limit:
+                    break
+
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+
+    return json.dumps(data, indent=1), 200,\
+            {'Content-Type': 'application/json'}
+
+@app.errorhandler(404)
+def pageNotFound(error):
+    """HTTP 404 response for incorrect URL"""
+    logger.error("Error: " + str(error))
+    return json.dumps({"error": "HTTP " + str(error)}), 404
 
 # Database Functions
 def initDB():
