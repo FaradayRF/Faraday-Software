@@ -126,10 +126,14 @@ def dbTelemetry():
 
     try:
         # Obtain URL parameters
-        callsign = request.args.get("callsign", None)
-        nodeid = request.args.get("nodeid", None)
-        direction = request.args.get("dir", 0)
+        callsign = request.args.get("callsign", "%")
+        callsign = str(callsign).upper()
+        nodeid = request.args.get("nodeid", "%")
+        nodeid = str(nodeid)
+        direction = request.args.get("direction", 0)
+        direction = int(direction)
         limit = request.args.get("limit", 100)
+        limit = int(limit)
         epochStart = request.args.get("startepoch", None)
         epochEnd = request.args.get("endepoch", None)
         timespan = request.args.get("timespan", None)
@@ -184,6 +188,7 @@ def rawTelemetry():
         callsign = request.args.get("callsign")
         nodeid = request.args.get("nodeid")
         limit = request.args.get("limit", None)
+
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -322,13 +327,16 @@ def sqlInsert(db, data):
 
 def queryDb(parameters):
     """Takes in parameters to query the SQLite database, returns the results"""
-
     print parameters
-    print parameters["LIMIT"]
     if parameters["DIRECTION"] == 0:
         print "source"
+        sqlWhereCall = "WHERE SOURCECALLSIGN LIKE ? "
+        sqlWhereID = "AND SOURCEID LIKE ? "
+
     else:
         print "dest"
+        sqlWhereCall = "WHERE DESTINATIONCALLSIGN LIKE ? "
+        sqlWhereID = "AND DESTINATIONID LIKE ? "
 
     # Initialize variables
     results = []
@@ -351,10 +359,14 @@ def queryDb(parameters):
         logger.error("KeyError: " + str(e))
 
     cur = conn.cursor()
-    sql = "SELECT * FROM TELEMETRY ORDER BY KEYID DESC LIMIT ?"
+    sqlBeg = "SELECT * FROM TELEMETRY "
+    sqlEnd = "ORDER BY KEYID DESC LIMIT ?"
+    sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEnd
+    print sql
     parameters["LIMIT"] = 5
+    print parameters["NODEID"]
     try:
-        cur.execute(sql,(parameters["LIMIT"],))
+        cur.execute(sql,(parameters["CALLSIGN"].upper(),parameters["NODEID"],parameters["LIMIT"],))
         rows = cur.fetchall()
 
         sqlData = []
