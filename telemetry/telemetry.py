@@ -144,14 +144,23 @@ def dbTelemetry():
         logger.error("KeyError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    # Create list of parameters
-    parameters = [  callsign,
-                    nodeid,
-                    direction,
-                    limit,
-                    epochStart,
-                    epochEnd,
-                    timespan]
+    # Create tuple of parameters for SQLite3
+    parameters = {}
+    parameters["CALLSIGN"] = callsign
+    parameters["NODEID"] = nodeid
+    parameters["DIRECTION"] = direction
+    parameters["LIMIT"] = limit
+    parameters["STARTEPOCH"] = epochStart
+    parameters["ENDEPOCH"] = epochEnd
+    parameters["TIMESPAN"] = timespan
+
+##    parameters = (  callsign,
+##                    nodeid,
+##                    direction,
+##                    limit,
+##                    epochStart,
+##                    epochEnd,
+##                    timespan)
 
     queryResults = queryDb(parameters)
 
@@ -313,7 +322,14 @@ def sqlInsert(db, data):
 
 def queryDb(parameters):
     """Takes in parameters to query the SQLite database, returns the results"""
+
     print parameters
+    print parameters["LIMIT"]
+    if parameters["DIRECTION"] == 0:
+        print "source"
+    else:
+        print "dest"
+
     # Initialize variables
     results = []
 
@@ -335,21 +351,18 @@ def queryDb(parameters):
         logger.error("KeyError: " + str(e))
 
     cur = conn.cursor()
-    sql = "SELECT * FROM TELEMETRY"
-
+    sql = "SELECT * FROM TELEMETRY ORDER BY KEYID DESC LIMIT ?"
+    parameters["LIMIT"] = 5
     try:
-        cur.execute(sql)
-        results = cur.fetchall()
-        #for r in results:
-        #print tuple(results.keys())
-        sqlData = []
-        rowData = {}
+        cur.execute(sql,(parameters["LIMIT"],))
+        rows = cur.fetchall()
 
-        for r in results:
-            for channel in r.keys():
-                rowData[channel] = r[channel]
+        sqlData = []
+        for row in rows:
+            rowData = {}
+            for parameter in row.keys():
+                rowData[parameter] = row[parameter]
             sqlData.append(rowData)
-        #print sqlData
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
