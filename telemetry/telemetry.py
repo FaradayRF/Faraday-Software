@@ -133,7 +133,7 @@ def dbTelemetry():
         direction = request.args.get("direction", 0)
         direction = int(direction)
         limit = request.args.get("limit", 100)
-        limit = int(limit)
+        limit = str(limit)
         epochStart = request.args.get("startepoch", None)
         epochEnd = request.args.get("endepoch", None)
         timespan = request.args.get("timespan", None)
@@ -271,6 +271,44 @@ def rawTelemetry():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
+@app.route('/stations', methods=['GET'])
+def stations():
+    """
+    Provides a RESTful interface to station queries at URL '/stations'
+
+    Starts a flask server on port 8001 (default) which serves data from the
+    requested Faraday via it's proxy interface on localhost URL "/stations".
+    """
+
+    try:
+        # Obtain URL parameters
+        timespan = request.args.get("timespan", 15*60)
+        startEpoch = request.args.get("startepoch")
+        endEpoch = request.args.get("endepoch")
+
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
+
+    parameters = {}
+    parameters["TIMESPAN"] = timespan
+    parameters["STARTEPOCH"] = startEpoch
+    parameters["ENDEPOCH"] = endEpoch
+
+    data = queryStationsDb(parameters)
+
+    return json.dumps(data, indent=1), 200,\
+            {'Content-Type': 'application/json'}
+
 @app.errorhandler(404)
 def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
@@ -311,6 +349,7 @@ def sqlInsert(db, data):
         sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
         # Use connection as context manager to rollback automatically if error
         with conn:
+            print data
             conn.execute(sql,data)
 
     except StandardError as e:
@@ -338,6 +377,7 @@ def queryDb(parameters):
         sqlWhereCall = "WHERE DESTINATIONCALLSIGN LIKE ? "
         sqlWhereID = "AND DESTINATIONID LIKE ? "
 
+
     # Initialize variables
     results = []
 
@@ -363,8 +403,8 @@ def queryDb(parameters):
     sqlEnd = "ORDER BY KEYID DESC LIMIT ?"
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEnd
     print sql
-    parameters["LIMIT"] = 5
-    print parameters["NODEID"]
+    #parameters["LIMIT"] = 5
+    print parameters["LIMIT"]
     try:
         cur.execute(sql,(parameters["CALLSIGN"].upper(),parameters["NODEID"],parameters["LIMIT"],))
         rows = cur.fetchall()
@@ -389,6 +429,69 @@ def queryDb(parameters):
     conn.close()
 
     return sqlData
+
+def queryStationsDb(parameters):
+    """Takes in parameters to query the SQLite database, returns the results"""
+    print parameters
+
+
+    # Initialize variables
+    results = []
+    currentTime = time.time()
+    try:
+        startTime = float(currentTime) - float(parameters["TIMESPAN"])
+    except:
+        print "fail"
+
+    # Open configuration file
+    dbFilename = telemetryConfig.get("database", "filename")
+
+    # Connect to database, create SQL query, execute query, and close database
+    try:
+        conn = sqlite3.connect(dbFilename)
+        conn.row_factory = sqlite3.Row
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+
+    cur = conn.cursor()
+    #sqlBeg = "SELECT DISTINCT SOURCECALLSIGN, SOURCEID FROM TELEMETRY WHERE EPOCH >= ? "
+    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH >= ? "
+    sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC LIMIT ?"
+    sql = sqlBeg + sqlEnd
+    print sql
+    parameters["LIMIT"] = 5
+    try:
+        cur.execute(sql,(str(startTime),parameters["LIMIT"]))
+        rows = cur.fetchall()
+
+        sqlData = []
+        for row in rows:
+            rowData = {}
+            for parameter in row.keys():
+                rowData[parameter] = row[parameter]
+            sqlData.append(rowData)
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+    except ValueError as e:
+        logger.error("ValueError: " + str(e))
+    except IndexError as e:
+        logger.error("IndexError: " + str(e))
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+
+    # Completed query, close database
+    conn.close()
+
+    return sqlData
+
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
