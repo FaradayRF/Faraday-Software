@@ -6,3 +6,7 @@ __pycache__/
 
 # Sphinx documentation
 docs/_build/
+
+# Telemetry database
+telemetry/telemetry.db
+telemetry/telemetry.db-journal

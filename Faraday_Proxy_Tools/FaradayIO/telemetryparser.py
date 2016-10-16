@@ -1,4 +1,5 @@
 import struct
+import time
 
 class TelemetryParse(object):
     """
@@ -119,8 +120,67 @@ class TelemetryParse(object):
             Index[36]: HAB Automatic Cutdown Timer Trigger Time
             Index[37]: HAB Automatic Cutdown Timer Current Time
         """
+        # '>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H'
+        #SOMETHING SEEMS OFF ABOUT THIS, COULD HAVE BUG IN PARSING
         #Unpack the packet
         parsed_packet = self.packet_3_struct.unpack(packet)
+
+        # Change tuple into list so we can modify it
+        telemetryList = list(parsed_packet)
+
+        # Use original tuple values to replace callsigns with exact strings
+        telemetryList[0] = parsed_packet[0][:parsed_packet[1]]
+        telemetryList[3] = parsed_packet[3][:parsed_packet[4]]
+
+        # Delete the callsign length fields, removes two index values!
+        del telemetryList[1] # Source callsign length index
+        del telemetryList[3] # Destination callsign length index - 1
+        del telemetryList[31] # N/A Byte is not needed
+        telemetryList.append(time.time())
+        telemetryList = tuple(telemetryList)
+
+
+
+
+        dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
+                            'SOURCEID': int(telemetryList[1]),
+                            'DESTINATIONCALLSIGN': telemetryList[2],
+                            'DESTINATIONID': telemetryList[3],
+                            'RTCSEC': telemetryList[4],
+                            'RTCMIN': telemetryList[5],
+                            'RTCHOUR': telemetryList[6],
+                            'RTCDAY': telemetryList[7],
+                            'RTCDOW': telemetryList[8],
+                            'RTCMONTH': telemetryList[9],
+                            'RTCYEAR': telemetryList[10],
+                            'GPSLATITUDE': telemetryList[11],
+                            'GPSLATITUDEDIR': telemetryList[12],
+                            'GPSLONGITUDE': telemetryList[13],
+                            'GPSLONGITUDEDIR': telemetryList[14],
+                            'GPSALTITUDE': telemetryList[15],
+                            'GPSALTITUDEUNITS': telemetryList[16],
+                            'GPSSPEED': telemetryList[17],
+                            'GPSFIX': telemetryList[18],
+                            'GPSHDOP': telemetryList[19],
+                            'GPIOSTATE': telemetryList[20],
+                            'RFSTATE': telemetryList[21],
+                            'ADC0': telemetryList[22],
+                            'ADC1': telemetryList[23],
+                            'ADC2': telemetryList[24],
+                            'ADC3': telemetryList[25],
+                            'ADC4': telemetryList[26],
+                            'ADC5': telemetryList[27],
+                            'ADC6': telemetryList[28],
+                            'BOARDTEMP': telemetryList[29],
+                            'ADC8': telemetryList[30],
+                            'HABTIMERSTATE': telemetryList[31],
+                            'HABCUTDOWNSTATE': telemetryList[32],
+                            'HABTRIGGERTIME': telemetryList[33],
+                            'HABTIMER': telemetryList[34],
+                            'EPOCH': telemetryList[35]
+                        }
+
+        #print dictionaryData["ADC8"]
 
         #Perform debug actions if needed
         if(debug == True):
@@ -167,7 +227,7 @@ class TelemetryParse(object):
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return [telemetryList,dictionaryData]
 
     def UnpackPacket_2(self, packet, debug):
         print packet, len(packet)
