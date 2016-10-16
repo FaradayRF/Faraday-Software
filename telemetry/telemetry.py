@@ -127,16 +127,18 @@ def dbTelemetry():
     try:
         # Obtain URL parameters
         callsign = request.args.get("callsign", "%")
-        callsign = str(callsign).upper()
         nodeid = request.args.get("nodeid", "%")
-        nodeid = str(nodeid)
         direction = request.args.get("direction", 0)
+        #limit = request.args.get("limit", 100)
+        startTime = request.args.get("starttime", None)
+        endTime = request.args.get("endtime", None)
+        timespan = request.args.get("timespan", 5*60)
+
+        #limit = str(limit)
+        nodeid = str(nodeid)
         direction = int(direction)
-        limit = request.args.get("limit", 100)
-        limit = str(limit)
-        epochStart = request.args.get("startepoch", None)
-        epochEnd = request.args.get("endepoch", None)
-        timespan = request.args.get("timespan", None)
+        callsign = str(callsign).upper()
+
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -153,25 +155,14 @@ def dbTelemetry():
     parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeid
     parameters["DIRECTION"] = direction
-    parameters["LIMIT"] = limit
-    parameters["STARTEPOCH"] = epochStart
-    parameters["ENDEPOCH"] = epochEnd
+    parameters["STARTTIME"] = startTime
+    parameters["ENDTIME"] = endTime
     parameters["TIMESPAN"] = timespan
-
-##    parameters = (  callsign,
-##                    nodeid,
-##                    direction,
-##                    limit,
-##                    epochStart,
-##                    epochEnd,
-##                    timespan)
 
     queryResults = queryDb(parameters)
 
-
     return json.dumps(queryResults, indent=1), 200,\
             {'Content-Type': 'application/json'}
-
 
 @app.route('/raw', methods=['GET'])
 def rawTelemetry():
@@ -283,8 +274,10 @@ def stations():
     try:
         # Obtain URL parameters
         timespan = request.args.get("timespan", 15*60)
-        startTime = request.args.get("starttime")
-        endTime = request.args.get("endtime")
+        startTime = request.args.get("starttime", None)
+        endTime = request.args.get("endtime", None)
+
+        timespan = int(timespan)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -365,19 +358,20 @@ def sqlInsert(db, data):
 
 def queryDb(parameters):
     """Takes in parameters to query the SQLite database, returns the results"""
-    print parameters
-
-    timeFmt = "%Y-%m-%dT%H:%M:%S"
+    print "PARAMS: ", parameters
+    timeTuple = generateStartStopTimes(parameters)
 
     if parameters["DIRECTION"] == 0:
         print "source"
         sqlWhereCall = "WHERE SOURCECALLSIGN LIKE ? "
         sqlWhereID = "AND SOURCEID LIKE ? "
+        sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
 
     else:
         print "dest"
         sqlWhereCall = "WHERE DESTINATIONCALLSIGN LIKE ? "
         sqlWhereID = "AND DESTINATIONID LIKE ? "
+        sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
 
 
     # Initialize variables
@@ -402,13 +396,13 @@ def queryDb(parameters):
 
     cur = conn.cursor()
     sqlBeg = "SELECT * FROM TELEMETRY "
-    sqlEnd = "ORDER BY KEYID DESC LIMIT ?"
-    sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEnd
+    sqlEnd = "ORDER BY KEYID DESC"
+    sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
     print sql
     #parameters["LIMIT"] = 5
-    print parameters["LIMIT"]
+    #print parameters["LIMIT"]
     try:
-        cur.execute(sql,(parameters["CALLSIGN"].upper(),parameters["NODEID"],parameters["LIMIT"],))
+        cur.execute(sql,(parameters["CALLSIGN"].upper(),parameters["NODEID"], str(timeTuple[0]), str(timeTuple[1])))
         rows = cur.fetchall()
 
         sqlData = []
@@ -437,9 +431,15 @@ def queryStationsDb(parameters):
     print parameters
 
     if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
-        epochDict = iso8601ToEpoch(parameters["STARTTIME"],parameters["ENDTIME"])
-        print epochDict
-
+        # Start end end times provided, ignore timespan
+        startTime = str(parameters["STARTTIME"])
+        endTime = str(parameters["ENDTIME"])
+        timeTuple = iso8601ToEpoch(startTime,endTime)
+    else:
+        # We should use the timespan provided to generate start and stop times
+        endEpoch = time.time()
+        startEpoch = endEpoch - float(parameters["TIMESPAN"])
+        timeTuple = (startEpoch, endEpoch)
 
     # Initialize variables
     results = []
@@ -467,15 +467,12 @@ def queryStationsDb(parameters):
         logger.error("KeyError: " + str(e))
 
     cur = conn.cursor()
-    #sqlBeg = "SELECT DISTINCT SOURCECALLSIGN, SOURCEID FROM TELEMETRY WHERE EPOCH >= ? "
-    #sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH >= ? "
-    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH BETWEEN ? AND ? "
-    sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC LIMIT ?"
-    sql = sqlBeg + sqlEnd
-    print sql
-    parameters["LIMIT"] = 5
+    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY "
+    sqlWhere = "WHERE EPOCH BETWEEN ? AND ? "
+    sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
+    sql = sqlBeg + sqlWhere + sqlEnd
     try:
-        cur.execute(sql,(str(epochDict["STARTEPOCH"]),str(epochDict["ENDEPOCH"]),parameters["LIMIT"]))
+        cur.execute(sql,timeTuple)
         rows = cur.fetchall()
 
         sqlData = []
@@ -499,22 +496,39 @@ def queryStationsDb(parameters):
 
     return sqlData
 
+def generateStartStopTimes(parameters):
+    if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
+        # Start end end times provided, ignore timespan
+        startTime = str(parameters["STARTTIME"])
+        endTime = str(parameters["ENDTIME"])
+        timeTuple = iso8601ToEpoch(startTime,endTime)
+
+    else:
+        # We should use the timespan provided to generate start and stop times
+        endEpoch = time.time()
+        startEpoch = endEpoch - float(parameters["TIMESPAN"])
+        timeTuple = (int(startEpoch), int(endEpoch))
+        print timeTuple
+
+    return timeTuple
+
+
+
 def iso8601ToEpoch(startTime, endTime):
+    # Date format is ISO 8601
     fmt = "%Y-%m-%dT%H:%M:%S"
+
+    # Generate start and stop time tuples
     start = time.strptime(startTime,fmt)
     end = time.strptime(endTime,fmt)
 
-    #print start, end
-
+    # Convert time tuples to epoch times
     startEpoch = time.mktime(start)
     endEpoch = time.mktime(end)
 
-    #print startEpoch, endEpoch
-
-    timeDict = {"STARTEPOCH": startEpoch,"ENDEPOCH": endEpoch}
-    #print timeDict
-
-    return timeDict
+    # Create a tuple of the start and stop time, return it
+    timeTuple = (startEpoch, endEpoch)
+    return timeTuple
 
 
 def main():
