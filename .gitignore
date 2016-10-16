@@ -8,5 +8,5 @@ __pycache__/
 docs/_build/
 
 # Telemetry database
-telemetry/telemetry.db
-telemetry/telemetry.db-journal
+telemetry/*.db
+telemetry/*.db-journal
