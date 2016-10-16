@@ -1,4 +1,5 @@
 import struct
+import time
 
 class TelemetryParse(object):
     """
@@ -135,6 +136,7 @@ class TelemetryParse(object):
         del telemetryList[1] # Source callsign length index
         del telemetryList[3] # Destination callsign length index - 1
         del telemetryList[31] # N/A Byte is not needed
+        telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
 
 
@@ -174,7 +176,8 @@ class TelemetryParse(object):
                             'HABTIMERSTATE': telemetryList[31],
                             'HABCUTDOWNSTATE': telemetryList[32],
                             'HABTRIGGERTIME': telemetryList[33],
-                            'HABTIMER': telemetryList[34]
+                            'HABTIMER': telemetryList[34],
+                            'EPOCH': telemetryList[35]
                         }
 
         #print dictionaryData["ADC8"]
