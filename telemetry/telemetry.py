@@ -273,9 +273,11 @@ def stations():
 
     try:
         # Obtain URL parameters
-        timespan = request.args.get("timespan", 15*60)
+        timespan = request.args.get("timespan", 5*60)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
+        callsign = request.args.get("callsign", None)
+        nodeId = request.args.get("nodeid", "%")
 
         timespan = int(timespan)
 
@@ -296,6 +298,8 @@ def stations():
     parameters["TIMESPAN"] = timespan
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
+    parameters["CALLSIGN"] = callsign
+    parameters["NODEID"] = nodeId
 
     data = queryStationsDb(parameters)
 
@@ -441,6 +445,21 @@ def queryStationsDb(parameters):
         startEpoch = endEpoch - float(parameters["TIMESPAN"])
         timeTuple = (startEpoch, endEpoch)
 
+    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY "
+    sqlWhere = "WHERE EPOCH BETWEEN ? AND ? "
+    sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
+
+    # detect if callsign/nodeid provided, return the last time it was heard
+    if parameters["CALLSIGN"] != None:
+        print "limit to one!"
+        timeTuple = (0, time.time())
+        sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ? AND SOURCEID LIKE ? "
+        sqlEnd = sqlEnd + " LIMIT 1"
+        paramTuple = timeTuple + (str(parameters["CALLSIGN"]), parameters["NODEID"])
+        print paramTuple
+    else:
+        paramTuple = timeTuple
+
     # Initialize variables
     results = []
     currentTime = time.time()
@@ -467,12 +486,11 @@ def queryStationsDb(parameters):
         logger.error("KeyError: " + str(e))
 
     cur = conn.cursor()
-    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY "
-    sqlWhere = "WHERE EPOCH BETWEEN ? AND ? "
-    sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
+
     sql = sqlBeg + sqlWhere + sqlEnd
+    print sql
     try:
-        cur.execute(sql,timeTuple)
+        cur.execute(sql,paramTuple)
         rows = cur.fetchall()
 
         sqlData = []
