@@ -283,8 +283,8 @@ def stations():
     try:
         # Obtain URL parameters
         timespan = request.args.get("timespan", 15*60)
-        startEpoch = request.args.get("startepoch")
-        endEpoch = request.args.get("endepoch")
+        startTime = request.args.get("starttime")
+        endTime = request.args.get("endtime")
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -301,8 +301,8 @@ def stations():
 
     parameters = {}
     parameters["TIMESPAN"] = timespan
-    parameters["STARTEPOCH"] = startEpoch
-    parameters["ENDEPOCH"] = endEpoch
+    parameters["STARTTIME"] = startTime
+    parameters["ENDTIME"] = endTime
 
     data = queryStationsDb(parameters)
 
@@ -349,7 +349,6 @@ def sqlInsert(db, data):
         sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
         # Use connection as context manager to rollback automatically if error
         with conn:
-            print data
             conn.execute(sql,data)
 
     except StandardError as e:
@@ -367,6 +366,9 @@ def sqlInsert(db, data):
 def queryDb(parameters):
     """Takes in parameters to query the SQLite database, returns the results"""
     print parameters
+
+    timeFmt = "%Y-%m-%dT%H:%M:%S"
+
     if parameters["DIRECTION"] == 0:
         print "source"
         sqlWhereCall = "WHERE SOURCECALLSIGN LIKE ? "
@@ -434,6 +436,10 @@ def queryStationsDb(parameters):
     """Takes in parameters to query the SQLite database, returns the results"""
     print parameters
 
+    if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
+        epochDict = iso8601ToEpoch(parameters["STARTTIME"],parameters["ENDTIME"])
+        print epochDict
+
 
     # Initialize variables
     results = []
@@ -462,13 +468,14 @@ def queryStationsDb(parameters):
 
     cur = conn.cursor()
     #sqlBeg = "SELECT DISTINCT SOURCECALLSIGN, SOURCEID FROM TELEMETRY WHERE EPOCH >= ? "
-    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH >= ? "
+    #sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH >= ? "
+    sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY WHERE EPOCH BETWEEN ? AND ? "
     sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC LIMIT ?"
     sql = sqlBeg + sqlEnd
     print sql
     parameters["LIMIT"] = 5
     try:
-        cur.execute(sql,(str(startTime),parameters["LIMIT"]))
+        cur.execute(sql,(str(epochDict["STARTEPOCH"]),str(epochDict["ENDEPOCH"]),parameters["LIMIT"]))
         rows = cur.fetchall()
 
         sqlData = []
@@ -491,6 +498,23 @@ def queryStationsDb(parameters):
     conn.close()
 
     return sqlData
+
+def iso8601ToEpoch(startTime, endTime):
+    fmt = "%Y-%m-%dT%H:%M:%S"
+    start = time.strptime(startTime,fmt)
+    end = time.strptime(endTime,fmt)
+
+    #print start, end
+
+    startEpoch = time.mktime(start)
+    endEpoch = time.mktime(end)
+
+    #print startEpoch, endEpoch
+
+    timeDict = {"STARTEPOCH": startEpoch,"ENDEPOCH": endEpoch}
+    #print timeDict
+
+    return timeDict
 
 
 def main():
