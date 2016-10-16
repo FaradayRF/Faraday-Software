@@ -177,9 +177,8 @@ def rawTelemetry():
     try:
         # Obtain URL parameters
         callsign = request.args.get("callsign")
-        nodeid = request.args.get("nodeid")
+        nodeId = request.args.get("nodeid")
         limit = request.args.get("limit", None)
-
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -194,26 +193,31 @@ def rawTelemetry():
 
 
 
+
     # Check to see that required parameters are present
     try:
-        if callsign is None:
-            # Required
-            raise StandardError("Missing 'callsign' parameter")
+        if callsign is not None:
+            if nodeId is None:
+                callsign = str(callsign).upper()
+                # Required if callsing is present
+                raise StandardError("Missing 'nodeid' parameter")
+            else:
+                nodeId = int(nodeId)
+                # Check to see if the Node ID is in the valid range
+                if nodeId > 255 or nodeId < 0:
+                    raise ValueError(
+                        "Faraday Node ID's valid integer between 0-255")
         else:
-            # Ensure callsign value is a string and all uppercase
-            callsign = str(callsign).upper()
-        if nodeid is None:
-            # Required
-            raise StandardError("Missing 'nodeid' parameter")
-        else:
-            nodeid = int(nodeid)
-            # Check to see if the Node ID is in the valid range
-            if nodeid > 255 or nodeid < 0:
-                raise ValueError(
-                    "Faraday Node ID's valid integer between 0-255")
+            # Don't change anythin
+           pass
+
         if limit is None:
-            # Optional
-            limit = len(telemetryDicts[str(callsign) + str(nodeid)])
+            # Optional, set limit to largest value of any radio queue size
+            temp = []
+            for key, value in telemetryDicts.iteritems():
+                temp.append(len(value))
+            limit = int(max(temp))
+
         else:
             limit = int(limit)
             # Check for less than or equal to zero case
@@ -236,15 +240,34 @@ def rawTelemetry():
 
     # Pop data off of the queue
     try:
-        if (len(telemetryDicts[str(callsign) + str(nodeid)]) > 0):
-            data = []
-            while telemetryDicts[str(callsign) + str(nodeid)]:
-                packet = \
-                    telemetryDicts[
-                        str(callsign) + str(nodeid)].popleft()
-                data.append(packet)
-                if len(data) >= limit:
-                    break
+        data = []
+        if callsign == None and nodeId == None:
+            for key, value in telemetryDicts.iteritems():
+                if (len(value) > 0):
+                    stationData = []
+                    station = {}
+                    while value:
+                        packet = []
+                        packet = value.pop()
+                        if len(stationData) >= limit:
+                            break
+                        stationData.append(packet)
+                    station[key] = stationData
+            data.append(station)
+        else:
+            print callsign, nodeId
+            stationData = []
+            station = {}
+            if (len(telemetryDicts[str(callsign) + str(nodeId)]) > 0):
+                while telemetryDicts[str(callsign) + str(nodeId)]:
+                    packet = \
+                        telemetryDicts[
+                            str(callsign) + str(nodeId)].pop()  # JSON latest first
+                    stationData.append(packet)
+                    if len(stationData) >= limit:
+                        break
+                    station[str(callsign) + str(nodeId)] = stationData
+                    data.append(station)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
