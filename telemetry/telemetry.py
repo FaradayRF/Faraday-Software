@@ -264,10 +264,11 @@ def rawTelemetry():
                         telemetryDicts[
                             str(callsign) + str(nodeId)].pop()  # JSON latest first
                     stationData.append(packet)
+                    print "LEN ", len(stationData)
+                    station[str(callsign) + str(nodeId)] = stationData
                     if len(stationData) >= limit:
                         break
-                    station[str(callsign) + str(nodeId)] = stationData
-                    data.append(station)
+                data.append(station)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
