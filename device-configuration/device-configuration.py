@@ -26,17 +26,16 @@ logger = logging.getLogger('deviceconfiguration')
 deviceConfig = ConfigParser.RawConfigParser()
 deviceConfig.read('deviceconfiguration.ini')
 
+# Initialize proxy object
+proxy = faradaybasicproxyio.proxyio()
+
 # Initialize Flask microframework
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def getconfig():
     """
-    Provides a RESTful interface to telemetry in the SQLite database at URL '/'
-
-    Serves JSON responses to the "/" URL containing output of SQLite queries.
-    Specific SQLite queries can return data from specified ranges and source
-    stations as
+    Provides a RESTful interface to device-configuration at URL '/'
     """
 
     try:
@@ -57,7 +56,13 @@ def getconfig():
         logger.error("KeyError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    data= 'Brent is awesome!'
+
+    #data = callsign, nodeid
+
+    data = proxy.GET(str(callsign), str(nodeid), 5)
+
+    print "DATA:", data
+
 
     # Check if data returned, if not, return HTTP 204
     if len(data) <= 0:
@@ -70,7 +75,7 @@ def getconfig():
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
-    logger.info('Starting device configration server')
+    logger.info('Starting device configuration server')
 
 
     # Start the flask server on localhost:8001
