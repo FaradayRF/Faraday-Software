@@ -34,43 +34,53 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def getconfig():
-    """
-    Provides a RESTful interface to device-configuration at URL '/'
-    """
-
-    try:
+    if request.method == "POST":
         # Obtain URL parameters
         callsign = request.args.get("callsign", "%")
         nodeid = request.args.get("nodeid", "%")
 
         callsign = str(callsign).upper()
         nodeid = str(nodeid)
+        proxy.POST(callsign, nodeid, 2, 'Testing new application!')
+        print "Testing POST"
+        return '', 204
+    else: #If a GET command
+        """
+            Provides a RESTful interface to device-configuration at URL '/'
+            """
+        try:
+            # Obtain URL parameters
+            callsign = request.args.get("callsign", "%")
+            nodeid = request.args.get("nodeid", "%")
 
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
+            callsign = str(callsign).upper()
+            nodeid = str(nodeid)
+
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+            return json.dumps({"error": str(e)}), 400
+
+        # data = callsign, nodeid
+
+        data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
+
+        print "DATA:", data
+
+        # Check if data returned, if not, return HTTP 204
+        if len(data) <= 0:
+            logger.info("No station data in last %d seconds", timespan)
+            return '', 204  # HTTP 204 response cannot have message data
+
+        return json.dumps(data, indent=1), 200, \
+               {'Content-Type': 'application/json'}
 
 
-    #data = callsign, nodeid
-
-    data = proxy.GET(str(callsign), str(nodeid), 5)
-
-    print "DATA:", data
-
-
-    # Check if data returned, if not, return HTTP 204
-    if len(data) <= 0:
-        logger.info("No station data in last %d seconds", timespan)
-        return '', 204  # HTTP 204 response cannot have message data
-
-    return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
 
 
 def main():
