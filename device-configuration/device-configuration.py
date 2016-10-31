@@ -16,6 +16,7 @@ from flask import request
 sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
+from FaradayIO import faradaycommands
 
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
@@ -29,6 +30,9 @@ deviceConfig.read('deviceconfiguration.ini')
 # Initialize proxy object
 proxy = faradaybasicproxyio.proxyio()
 
+#Initialize faraday command module
+faradayCmd = faradaycommands.faraday_commands()
+
 # Initialize Flask microframework
 app = Flask(__name__)
 
@@ -41,7 +45,10 @@ def getconfig():
 
         callsign = str(callsign).upper()
         nodeid = str(nodeid)
-        proxy.POST(callsign, nodeid, 2, 'Testing new application!')
+
+        command_send = faradayCmd.CommandLocal(9, "Test")
+
+        proxy.POST(callsign, nodeid, 2, command_send)
         print "Testing POST"
         return '', 204
     else: #If a GET command

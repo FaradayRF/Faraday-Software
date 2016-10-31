@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="da89b619-5919-4078-a0db-7b329ca4a25c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/device-configuration.py" afterPath="$PROJECT_DIR$/device-configuration/device-configuration.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/proxy/proxy.ini" afterPath="$PROJECT_DIR$/proxy/proxy.ini" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/proxy/proxy.py" afterPath="$PROJECT_DIR$/proxy/proxy.py" />
     </list>
     <ignored path="Faraday-Software.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -53,11 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="device-configuration.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="device-configuration.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="47" column="11" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="11" />
+            <state relative-caret-position="447">
+              <caret line="46" column="28" selection-start-line="46" selection-start-column="28" selection-end-line="46" selection-end-column="28" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -65,14 +63,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="proxy.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/proxy/proxy.py">
+      <file leaf-file-name="faradaycommands.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaycommands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="194" column="23" selection-start-line="194" selection-start-column="23" selection-end-line="194" selection-end-column="23" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <element signature="e#444#455#0" expanded="true" />
+                <element signature="e#0#35#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="commandmodule.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/commandmodule.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1550">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -103,8 +111,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/telemetry/telemetry.py" />
-        <option value="$PROJECT_DIR$/device-configuration/device-configuration.py" />
         <option value="$PROJECT_DIR$/proxy/proxy.py" />
+        <option value="$PROJECT_DIR$/device-configuration/device-configuration.py" />
       </list>
     </option>
   </component>
@@ -468,13 +476,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/commandmodule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="47" column="11" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="11" />
-          <folding>
-            <element signature="e#1#12#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1550">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -484,6 +490,26 @@
           <caret line="194" column="23" selection-start-line="194" selection-start-column="23" selection-end-line="194" selection-end-column="23" />
           <folding>
             <element signature="e#444#455#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaycommands.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="46" column="28" selection-start-line="46" selection-start-column="28" selection-end-line="46" selection-end-column="28" />
+          <folding>
+            <element signature="e#1#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
