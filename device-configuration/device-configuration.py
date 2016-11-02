@@ -18,6 +18,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 from FaradayIO import faradaycommands
+from FaradayIO import deviceconfig
 
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
@@ -46,13 +47,6 @@ def getconfig():
 
         callsign = str(callsign).upper()
         nodeid = str(nodeid)
-
-        telemetryConfig = ConfigParser.RawConfigParser()
-        telemetryConfig.read('faraday_config.ini')
-
-        callsign_ini = str(telemetryConfig.get("identification", "callsign")).upper()
-
-        print callsign_ini
 
         command_send = faradayCmd.CommandLocal(9, callsign_ini)
 
@@ -96,26 +90,41 @@ def getconfig():
                {'Content-Type': 'application/json'}
 
 
-@app.route('/printconfig', methods=['GET'])
+@app.route('/printconfig', methods=['GET', "POST"])
 def printconfig():
     if request.method == "POST":
         # Read configuration file
-        device_config_dict = dict(telemetryConfig.items("Config"))
-        device_identification_dict = dict(telemetryConfig.items("Identification"))
+        telemetryConfig = ConfigParser.RawConfigParser()
+        telemetryConfig.read('faraday_config.ini')
+
+        #device_config_dict = dict(telemetryConfig.items("Config"))
+        #device_identification_dict = dict(telemetryConfig.items("Identification"))
         device_basic_dict = dict(telemetryConfig.items("Basic"))
         device_rf_dict = dict(telemetryConfig.items("RF"))
         device_gps_dict = dict(telemetryConfig.items("GPS"))
         device_telemetry_dict = dict(telemetryConfig.items("Telemetry"))
 
-        print device_config_dict
-        print device_identification_dict
+        #print device_config_dict
+        #print device_identification_dict
         print device_basic_dict
         print device_rf_dict
         print device_gps_dict
         print device_telemetry_dict
 
+        device_config_object = deviceconfig.Device_Config_Class()
+
+        device_config_object.update_bitmask_configuration(int(device_basic_dict['configbootbitmask']))
+        device_config_object.update_basic(int(1), str(device_basic_dict['callsign']), int(device_basic_dict['id']), int(device_basic_dict['gpio_p3']), int(device_basic_dict['gpio_p4']), int(device_basic_dict['gpio_p5']))
+        device_config_object.update_rf(float(device_rf_dict['boot_frequency_mhz']), int(device_rf_dict['boot_rf_power']))
+        device_config_object.update_gps(device_config_object.update_bitmask_gps_boot(int(device_gps_dict['gps_boot_bit'])), device_gps_dict['default_lattitude'], device_gps_dict['default_lattitude_direction'], device_gps_dict['default_longitude'], device_gps_dict['default_longitude_direction'], device_gps_dict['default_altitude'], device_gps_dict['default_altitude_units'])
+        device_config_object.update_telemetry(device_config_object.update_bitmask_telemetry_boot(int(device_telemetry_dict['rf_telemetry_boot_bit']), int(device_telemetry_dict['uart_telemetry_boot_bit'])), int(device_telemetry_dict['telemetry_default_uart_interval']), int(device_telemetry_dict['telemetry_default_rf_interval']))
+
+        test = device_config_object.create_config_packet()
+
+        print "Callsign:", test #device_config_object.telemetry_boot_bitmask
+
         #proxy.POST(callsign, nodeid, 2, command_send)
-        print "Testing POST"
+
         return '', 204
     else: #If a GET command
         """

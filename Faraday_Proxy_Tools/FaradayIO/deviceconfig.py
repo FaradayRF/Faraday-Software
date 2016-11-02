@@ -1,3 +1,5 @@
+import struct
+import cc430radioconfig
 ######################################################
 ## Device Configuration Commands
 ######################################################
@@ -12,6 +14,7 @@ class Device_Config_Class:
         self.basic_local_id = 0
         self.basic_gpio_p3_bitmask = 0
         self.basic_gpio_p4_bitmask = 0
+        self.basic_gpio_p5_bitmask = 0
         self.rf_default_boot_freq = {0,0,0}
         self.rf_PATable = 40 #40 Default
         self.gps_latitude =''
@@ -30,11 +33,11 @@ class Device_Config_Class:
         self.MAX_GPS_LATITUDE_LEN = 9
         self.MAX_GPS_LATITUDE_DIR_LEN = 1
         self.MAX_GPS_LONGITUDE_LEN = 10
-        self.MAX_GPS_LONGITUTDE_DIR_LEN = 1
+        self.MAX_GPS_LONGITUDE_DIR_LEN = 1
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
 
-    def update_basic(self, config_bitmask, callsign, id, p3_bitmask, p4_bitmask):
+    def update_basic(self, config_bitmask, callsign, id, p3_bitmask, p4_bitmask, p5_bitmask):
         """
         A sub routine that allows modification of only the basic unit parameters (see the arguments). This function updates the class object variables.
 
@@ -56,6 +59,7 @@ class Device_Config_Class:
             self.basic_local_id = id
             self.basic_gpio_p3_bitmask = p3_bitmask
             self.basic_gpio_p4_bitmask = p4_bitmask
+            self.basic_gpio_p5_bitmask = p5_bitmask
         else:
             print "ERROR: Callsign too long!"
 
@@ -79,18 +83,19 @@ class Device_Config_Class:
         #self.basic_configuration_bitmask |= bitx << 7
         return bitmask
 
-    def update_bitmask_gpio_p3(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
+    def update_bitmask_gpio(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
         """
-        A sub routine that allows modification of default Port 3 GPIO boot states. This function updates the class object variables.
+        A sub routine that allows modification of default Port X GPIO boot states. This function updates the class
+        object variables.
 
-        :param gpio_7: Boolean value indicating Port 3 BIT 7 GPIO boot state
-        :param gpio_6: Boolean value indicating Port 3 BIT 6 GPIO boot state
-        :param gpio_5: Boolean value indicating Port 3 BIT 5 GPIO boot state
-        :param gpio_4: Boolean value indicating Port 3 BIT 4 GPIO boot state
-        :param gpio_3: Boolean value indicating Port 3 BIT 3 GPIO boot state
-        :param gpio_2: Boolean value indicating Port 3 BIT 2 GPIO boot state
-        :param gpio_1: Boolean value indicating Port 3 BIT 1 GPIO boot state
-        :param gpio_0: Boolean value indicating Port 3 BIT 0 GPIO boot state
+        :param gpio_7: Boolean value indicating Port X BIT 7 GPIO boot state
+        :param gpio_6: Boolean value indicating Port X BIT 6 GPIO boot state
+        :param gpio_5: Boolean value indicating Port X BIT 5 GPIO boot state
+        :param gpio_4: Boolean value indicating Port X BIT 4 GPIO boot state
+        :param gpio_3: Boolean value indicating Port X BIT 3 GPIO boot state
+        :param gpio_2: Boolean value indicating Port X BIT 2 GPIO boot state
+        :param gpio_1: Boolean value indicating Port X BIT 1 GPIO boot state
+        :param gpio_0: Boolean value indicating Port X BIT 0 GPIO boot state
 
         :return: Nothing
         """
@@ -105,31 +110,58 @@ class Device_Config_Class:
         bitmask |= gpio_7 << 7
         return bitmask
 
-    def update_bitmask_gpio_p4(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
-        """
-        A sub routine that allows modification of default Port 4 GPIO boot states. This function updates the class object variables.
-
-        :param gpio_7: Boolean value indicating Port 4 BIT 7 GPIO boot state
-        :param gpio_6: Boolean value indicating Port 4 BIT 6 GPIO boot state
-        :param gpio_5: Boolean value indicating Port 4 BIT 5 GPIO boot state
-        :param gpio_4: Boolean value indicating Port 4 BIT 4 GPIO boot state
-        :param gpio_3: Boolean value indicating Port 4 BIT 3 GPIO boot state
-        :param gpio_2: Boolean value indicating Port 4 BIT 2 GPIO boot state
-        :param gpio_1: Boolean value indicating Port 4 BIT 1 GPIO boot state
-        :param gpio_0: Boolean value indicating Port 4 BIT 0 GPIO boot state
-
-        :return: Nothing
-        """
-        bitmask = 0
-        bitmask |= gpio_0 << 0
-        bitmask |= gpio_1 << 1
-        bitmask |= gpio_2 << 2
-        bitmask |= gpio_3 << 3
-        bitmask |= gpio_4 << 4
-        bitmask |= gpio_5 << 5
-        bitmask |= gpio_6 << 6
-        bitmask |= gpio_7 << 7
-        return bitmask
+    # def update_bitmask_gpio_p4(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
+    #     """
+    #     A sub routine that allows modification of default Port 4 GPIO boot states. This function updates the class object variables.
+    #
+    #     :param gpio_7: Boolean value indicating Port 4 BIT 7 GPIO boot state
+    #     :param gpio_6: Boolean value indicating Port 4 BIT 6 GPIO boot state
+    #     :param gpio_5: Boolean value indicating Port 4 BIT 5 GPIO boot state
+    #     :param gpio_4: Boolean value indicating Port 4 BIT 4 GPIO boot state
+    #     :param gpio_3: Boolean value indicating Port 4 BIT 3 GPIO boot state
+    #     :param gpio_2: Boolean value indicating Port 4 BIT 2 GPIO boot state
+    #     :param gpio_1: Boolean value indicating Port 4 BIT 1 GPIO boot state
+    #     :param gpio_0: Boolean value indicating Port 4 BIT 0 GPIO boot state
+    #
+    #     :return: Nothing
+    #     """
+    #     bitmask = 0
+    #     bitmask |= gpio_0 << 0
+    #     bitmask |= gpio_1 << 1
+    #     bitmask |= gpio_2 << 2
+    #     bitmask |= gpio_3 << 3
+    #     bitmask |= gpio_4 << 4
+    #     bitmask |= gpio_5 << 5
+    #     bitmask |= gpio_6 << 6
+    #     bitmask |= gpio_7 << 7
+    #     return bitmask
+    #
+    # def update_bitmask_gpio_p5(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
+    #     """
+    #     A sub routine that allows modification of default Port 5 GPIO boot states. This function updates the class
+    #     object variables.
+    #
+    #     :param gpio_7: Boolean value indicating Port 4 BIT 7 GPIO boot state
+    #     :param gpio_6: Boolean value indicating Port 4 BIT 6 GPIO boot state
+    #     :param gpio_5: Boolean value indicating Port 4 BIT 5 GPIO boot state
+    #     :param gpio_4: Boolean value indicating Port 4 BIT 4 GPIO boot state
+    #     :param gpio_3: Boolean value indicating Port 4 BIT 3 GPIO boot state
+    #     :param gpio_2: Boolean value indicating Port 4 BIT 2 GPIO boot state
+    #     :param gpio_1: Boolean value indicating Port 4 BIT 1 GPIO boot state
+    #     :param gpio_0: Boolean value indicating Port 4 BIT 0 GPIO boot state
+    #
+    #     :return: Nothing
+    #     """
+    #     bitmask = 0
+    #     bitmask |= gpio_0 << 0
+    #     bitmask |= gpio_1 << 1
+    #     bitmask |= gpio_2 << 2
+    #     bitmask |= gpio_3 << 3
+    #     bitmask |= gpio_4 << 4
+    #     bitmask |= gpio_5 << 5
+    #     bitmask |= gpio_6 << 6
+    #     bitmask |= gpio_7 << 7
+    #     return bitmask
 
     def update_rf(self, boot_frequency_mhz, PATable_Byte):
         """
@@ -140,7 +172,7 @@ class Device_Config_Class:
 
         :return: Nothing
         """
-        freq_list = create_freq_list(float(boot_frequency_mhz))
+        freq_list = cc430radioconfig.freq0_carrier_calculation(26, boot_frequency_mhz, False) #create_freq_list(float(boot_frequency_mhz))
         self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
         self.rf_PATable = PATable_Byte
 
@@ -163,7 +195,7 @@ class Device_Config_Class:
         lat_check = len(latitude_str)<=self.MAX_GPS_LATITUDE_LEN
         lat_dir_check = len(latitude_dir_str)<=self.MAX_GPS_LATITUDE_DIR_LEN
         lon_check = len(longitude_str)<=self.MAX_GPS_LONGITUDE_LEN
-        lon_dir_check = len(longitude_dir_str)<=self.MAX_GPS_LONGITUTDE_DIR_LEN
+        lon_dir_check = len(longitude_dir_str)<=self.MAX_GPS_LONGITUDE_DIR_LEN
         alt_check = len(altitude_str)<=self.MAX_ALTITUDE_LEN
         alt_units_check = len(altitude_units_str)<=self.MAX_ALTITUDE_UNITS_LEN
 
