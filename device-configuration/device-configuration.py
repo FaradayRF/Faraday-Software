@@ -41,21 +41,11 @@ faradayCmd = faradaycommands.faraday_commands()
 # Initialize Flask microframework
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/getconfig', methods=['GET'])
 def getconfig():
     if request.method == "POST":
-        # Obtain URL parameters
-        callsign = request.args.get("callsign", "%")
-        nodeid = request.args.get("nodeid", "%")
+        return '', 204 #Success but nothing to return
 
-        callsign = str(callsign).upper()
-        nodeid = str(nodeid)
-
-        command_send = faradayCmd.CommandLocal(9, callsign_ini)
-
-        proxy.POST(callsign, nodeid, 2, command_send)
-        print "Testing POST"
-        return '', 204
     else: #If a GET command
         """
             Provides a RESTful interface to device-configuration at URL '/'
@@ -68,6 +58,19 @@ def getconfig():
             callsign = str(callsign).upper()
             nodeid = str(nodeid)
 
+            proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
+                       faradayCmd.CommandLocalSendReadDeviceConfig())
+
+            time.sleep(2)
+
+            data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
+
+            # Decode BASE64 JSON data packet into
+            data = proxy.DecodeRawPacket(data[0]["data"]) # Get first item
+
+
+            print data
+
         except ValueError as e:
             logger.error("ValueError: " + str(e))
             return json.dumps({"error": str(e)}), 400
@@ -78,23 +81,16 @@ def getconfig():
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
 
-        # data = callsign, nodeid
+        #return '', 204  # HTTP 204 response cannot have message data
 
-        data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
-
-        print "DATA:", data
-
-        # Check if data returned, if not, return HTTP 204
-        if len(data) <= 0:
-            logger.info("No station data in last %d seconds", timespan)
-            return '', 204  # HTTP 204 response cannot have message data
+        data = "Device information..."
 
         return json.dumps(data, indent=1), 200, \
                {'Content-Type': 'application/json'}
 
 
 @app.route('/sendconfig', methods=["POST"])
-def printconfig():
+def sendconfig():
     if request.method == "POST":
         try:
             # Obtain URL parameters (for local unit device callsign/ID assignment)
