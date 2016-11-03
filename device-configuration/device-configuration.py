@@ -93,6 +93,11 @@ def getconfig():
 @app.route('/printconfig', methods=['GET', "POST"])
 def printconfig():
     if request.method == "POST":
+
+        # Obtain URL parameters (for local unit device callsign/ID assignment)
+        callsign = request.args.get("callsign", "%")
+        nodeid = request.args.get("nodeid", "%")
+
         # Read configuration file
         telemetryConfig = ConfigParser.RawConfigParser()
         telemetryConfig.read('faraday_config.ini')
@@ -123,7 +128,10 @@ def printconfig():
 
         print "Callsign:", test #device_config_object.telemetry_boot_bitmask
 
-        #proxy.POST(callsign, nodeid, 2, command_send)
+        print "test:", faradayCmd.CommandLocal(255, test)
+
+        proxy.POST(str(callsign), int(nodeid), 2, faradayCmd.CommandLocal(255, test))
+
 
         return '', 204
     else: #If a GET command
