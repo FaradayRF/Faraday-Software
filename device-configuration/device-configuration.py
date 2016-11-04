@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import ConfigParser
+import struct
 
 from flask import Flask
 from flask import request
@@ -65,11 +66,16 @@ def getconfig():
 
             data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
 
+            # Create device configuration module object
+            device_config_object = deviceconfig.Device_Config_Class()
+
             # Decode BASE64 JSON data packet into
             data = proxy.DecodeRawPacket(data[0]["data"]) # Get first item
 
+            data = data[0:116]
 
-            print data
+            print data, len(data)
+            parsed_config_dict = device_config_object.parse_config_packet(data)
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
@@ -85,7 +91,7 @@ def getconfig():
 
         data = "Device information..."
 
-        return json.dumps(data, indent=1), 200, \
+        return json.dumps(parsed_config_dict, indent=1), 200, \
                {'Content-Type': 'application/json'}
 
 

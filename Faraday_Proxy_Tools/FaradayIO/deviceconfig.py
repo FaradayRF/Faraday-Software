@@ -1,5 +1,6 @@
 import struct
 import cc430radioconfig
+import json
 ######################################################
 ## Device Configuration Commands
 ######################################################
@@ -36,6 +37,9 @@ class Device_Config_Class:
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
+
+        #Packet Definitions
+        self.config_pkt_struct_config = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
 
     def update_basic(self, config_bitmask, callsign, id, p3_bitmask, p4_bitmask, p5_bitmask):
         """
@@ -269,17 +273,50 @@ class Device_Config_Class:
         :return: A complete Flash Info Segment D configuration payload as a string of bytes
         """
         #Create
-        pkt_struct_config = struct.Struct('<B9sBBBB10s')
-        config = pkt_struct_config.pack(self.basic_configuration_bitmask, self.basic_local_callsign, self.basic_local_callsign_len, self.basic_local_id, self.basic_gpio_p3_bitmask, self.basic_gpio_p4_bitmask, chr(0)*10)
+        pkt_struct_config = struct.Struct('<B9s5B9x')
+        config = pkt_struct_config.pack(self.basic_configuration_bitmask, self.basic_local_callsign, self.basic_local_callsign_len, self.basic_local_id, self.basic_gpio_p3_bitmask, self.basic_gpio_p4_bitmask, self.basic_gpio_p5_bitmask, chr(0)*10)
 
-        pkt_struct_rf = struct.Struct('<3B1B21s')
+        pkt_struct_rf = struct.Struct('<3B1B21x')
         rf = pkt_struct_rf.pack(self.rf_default_boot_freq[0], self.rf_default_boot_freq[1], self.rf_default_boot_freq[2], self.rf_PATable, chr(0)*21)
 
-        pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21s')
+        pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21x')
         gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir, self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask, chr(0)*21)
 
-        pkt_struct_telemetry = struct.Struct('<BHH10s')
+        pkt_struct_telemetry = struct.Struct('<BHH10x')
         telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemtry_uart_beacon_interval, self.telemetry_rf_beacon_interval, chr(0)*10)
 
         #Return full configuration update packet payload (packet payload for configuration update is just the memory allocation packet to be saved)
         return config + rf + gps + telem
+
+    def parse_config_packet(self, packet):
+        # Create parsing dictionary
+        dict_config_parse = {}
+
+        # Parse supplied config packet bytearray
+        parsed_packet = self.config_pkt_struct_config.unpack(packet)
+
+        dict_config_parse['configuration_bitmask'] = parsed_packet[0]
+        dict_config_parse['local_callsign'] = parsed_packet[1]
+        dict_config_parse['local_callsign_length'] = parsed_packet[2]
+        dict_config_parse['local_callsign_id'] = parsed_packet[3]
+        dict_config_parse['default_gpio_port_3_bitmask'] = parsed_packet[4]
+        dict_config_parse['default_gpio_port_4_bitmask'] = parsed_packet[5]
+        dict_config_parse['default_gpio_port_5_bitmask'] = parsed_packet[6]
+        dict_config_parse['default_boot_freq_2'] = parsed_packet[7]
+        dict_config_parse['default_boot_freq_1'] = parsed_packet[8]
+        dict_config_parse['default_boot_freq_0'] = parsed_packet[9]
+        dict_config_parse['default_rf_power'] = parsed_packet[10]
+        dict_config_parse['default_gps_lattitude'] = parsed_packet[11]
+        dict_config_parse['default_gps_lattitude_dir'] = parsed_packet[12]
+        dict_config_parse['default_longitude'] = parsed_packet[13]
+        dict_config_parse['default_longitude_dir'] = parsed_packet[14]
+        dict_config_parse['default_altitude'] = parsed_packet[15]
+        dict_config_parse['default_altitude_units'] = parsed_packet[16]
+        dict_config_parse['gps_boot_bitmask'] = parsed_packet[17]
+        dict_config_parse['telemetry_boot_bitmask'] = parsed_packet[18]
+        dict_config_parse['default_telemetry_uart_beacon_interval'] = parsed_packet[19]
+        dict_config_parse['default_telemetry_rf_beacon_interval'] = parsed_packet[20]
+
+
+        # Return parsed packet
+        return dict_config_parse
