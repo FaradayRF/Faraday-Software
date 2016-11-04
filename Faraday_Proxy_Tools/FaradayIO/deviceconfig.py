@@ -1,9 +1,10 @@
 import struct
 import cc430radioconfig
-import json
+
 ######################################################
 ## Device Configuration Commands
 ######################################################
+
 class Device_Config_Class:
     """
     This class object provides a single object to load, create, and modify an entire Flash D device systems settings packet in one location. Default values are provided along side broken out common update functions that avoid the need to update all fields in one giant function call.
@@ -37,9 +38,22 @@ class Device_Config_Class:
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
+        self.CONFIG_PACKET_LENGTH = 116
 
         #Packet Definitions
         self.config_pkt_struct_config = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
+
+    def extract_config_packet(self, packet):
+        """
+            A sub routine that extracts the device configuration packet from a larger packet.
+
+            :param packet: The supplied larger packet that encapsulates the device configuration packet to be extracted
+
+            :return: packet[0:self.CONFIG_PACKET_LENGTH]
+
+            """
+        return packet[0:self.CONFIG_PACKET_LENGTH]
+
 
     def update_basic(self, config_bitmask, callsign, id, p3_bitmask, p4_bitmask, p5_bitmask):
         """
@@ -50,10 +64,9 @@ class Device_Config_Class:
         :param id: The ID number of the local device (0-255)
         :param p3_bitmask: Boot bitmask of the Port 3 GPIO default states
         :param p4_bitmask: Boot bitmask of the Port 4 GPIO default states
+        :param p5_bitmask: Boot bitmask of the Port 5 GPIO default states
 
         :return: Nothing
-
-        .. todo:: Add in Port 5 default GPIO states on boot!
 
         """
         if(len(callsign)<=self.MAX_CALLSIGN_LEN):
@@ -274,16 +287,16 @@ class Device_Config_Class:
         """
         #Create
         pkt_struct_config = struct.Struct('<B9s5B9x')
-        config = pkt_struct_config.pack(self.basic_configuration_bitmask, self.basic_local_callsign, self.basic_local_callsign_len, self.basic_local_id, self.basic_gpio_p3_bitmask, self.basic_gpio_p4_bitmask, self.basic_gpio_p5_bitmask, chr(0)*10)
+        config = pkt_struct_config.pack(self.basic_configuration_bitmask, self.basic_local_callsign, self.basic_local_callsign_len, self.basic_local_id, self.basic_gpio_p3_bitmask, self.basic_gpio_p4_bitmask, self.basic_gpio_p5_bitmask)
 
         pkt_struct_rf = struct.Struct('<3B1B21x')
-        rf = pkt_struct_rf.pack(self.rf_default_boot_freq[0], self.rf_default_boot_freq[1], self.rf_default_boot_freq[2], self.rf_PATable, chr(0)*21)
+        rf = pkt_struct_rf.pack(self.rf_default_boot_freq[0], self.rf_default_boot_freq[1], self.rf_default_boot_freq[2], self.rf_PATable)
 
         pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21x')
-        gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir, self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask, chr(0)*21)
+        gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir, self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask)
 
         pkt_struct_telemetry = struct.Struct('<BHH10x')
-        telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemtry_uart_beacon_interval, self.telemetry_rf_beacon_interval, chr(0)*10)
+        telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemtry_uart_beacon_interval, self.telemetry_rf_beacon_interval)
 
         #Return full configuration update packet payload (packet payload for configuration update is just the memory allocation packet to be saved)
         return config + rf + gps + telem

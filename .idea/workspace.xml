@@ -4,6 +4,7 @@
     <list default="true" id="da89b619-5919-4078-a0db-7b329ca4a25c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py" afterPath="$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/device-configuration.py" afterPath="$PROJECT_DIR$/device-configuration/device-configuration.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/faraday_config.ini" afterPath="$PROJECT_DIR$/device-configuration/faraday_config.ini" />
     </list>
     <ignored path="Faraday-Software.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,7 +44,7 @@
       <file leaf-file-name="telemetry.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/telemetry/telemetry.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
+            <state relative-caret-position="-165">
               <caret line="95" column="39" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="39" />
               <folding>
                 <element signature="e#432#443#0" expanded="true" />
@@ -55,8 +56,8 @@
       <file leaf-file-name="device-configuration.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="800">
-              <caret line="93" column="44" selection-start-line="93" selection-start-column="44" selection-end-line="93" selection-end-column="44" />
+            <state relative-caret-position="25">
+              <caret line="44" column="21" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -77,8 +78,8 @@
       <file leaf-file-name="deviceconfig.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="854">
-              <caret line="321" column="32" selection-start-line="321" selection-start-column="32" selection-end-line="321" selection-end-column="32" />
+            <state relative-caret-position="350">
+              <caret line="289" column="235" selection-start-line="289" selection-start-column="235" selection-end-line="289" selection-end-column="235" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -441,7 +442,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22222222" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21308017" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
@@ -537,9 +538,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="289" column="235" selection-start-line="289" selection-start-column="235" selection-end-line="289" selection-end-column="235" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/telemetry/telemetry.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
+        <state relative-caret-position="-165">
           <caret line="95" column="39" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="39" />
           <folding>
             <element signature="e#432#443#0" expanded="true" />
@@ -547,20 +558,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="854">
-          <caret line="321" column="32" selection-start-line="321" selection-start-column="32" selection-end-line="321" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="800">
-          <caret line="93" column="44" selection-start-line="93" selection-start-column="44" selection-end-line="93" selection-end-column="44" />
+        <state relative-caret-position="25">
+          <caret line="44" column="21" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
           <folding>
             <element signature="e#1#12#0" expanded="true" />
           </folding>
