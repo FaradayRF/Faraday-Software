@@ -8,7 +8,7 @@ import ConfigParser
 from flask import Flask
 from flask import request
 
-#Add Faraday proxy tools directory to path
+# Add Faraday proxy tools directory to path
 sys.path.append(os.path.join(os.path.dirname(__file__),
                              "../Faraday_Proxy_Tools/"))  # Append path to common tutorial FaradayIO module
 
@@ -40,7 +40,14 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def getconfig():
+def unitconfig():
+    """
+    This function is called when the RESTful API GET or POST call is made to the '/' of the operating port. Querying a
+    GET will command the local and queried unit's device configuration in Flash memory and return the information as a
+    JSON dictionary. Issuing a POST will cause the local .INI file configuration to be loaded into the respective units
+    Flash memory device configuration.
+
+    """
     if request.method == "POST":
         try:
             # Obtain URL parameters (for local unit device callsign/ID assignment)
@@ -58,7 +65,7 @@ def getconfig():
             device_telemetry_dict = dict(telemetryconfig.items("Telemetry"))
 
             # Create device configuration module object to use for programming packet creation
-            device_config_object = deviceconfig.Device_Config_Class()
+            device_config_object = deviceconfig.DeviceConfigClass()
 
             # Update the device configuration object with the fields obtained from the INI configuration files loaded
             device_config_object.update_bitmask_configuration(int(device_basic_dict['configbootbitmask']))
@@ -69,7 +76,7 @@ def getconfig():
                                            int(device_rf_dict['boot_rf_power']))
             device_config_object.update_gps(
                 device_config_object.update_bitmask_gps_boot(int(device_gps_dict['gps_boot_bit'])),
-                device_gps_dict['default_lattitude'], device_gps_dict['default_lattitude_direction'],
+                device_gps_dict['default_latitude'], device_gps_dict['default_latitude_direction'],
                 device_gps_dict['default_longitude'], device_gps_dict['default_longitude_direction'],
                 device_gps_dict['default_altitude'], device_gps_dict['default_altitude_units'])
             device_config_object.update_telemetry(device_config_object.update_bitmask_telemetry_boot(
@@ -114,13 +121,13 @@ def getconfig():
             proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
                        faradayCmd.CommandLocalSendReadDeviceConfig())
 
-            #Wait enough time for Faraday to respond to commanded memory read.
+            # Wait enough time for Faraday to respond to commanded memory read.
             time.sleep(2)
 
             data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
 
             # Create device configuration module object
-            device_config_object = deviceconfig.Device_Config_Class()
+            device_config_object = deviceconfig.DeviceConfigClass()
 
             # Decode BASE64 JSON data packet into
             data = proxy.DecodeRawPacket(data[0]["data"])  # Get first item
@@ -144,7 +151,7 @@ def getconfig():
 
 
 def main():
-    """Main function which starts telemery worker thread + Flask server."""
+    """Main function which starts telemetry worker thread + Flask server."""
     logger.info('Starting device configuration server')
 
     # Start the flask server on localhost:8001
