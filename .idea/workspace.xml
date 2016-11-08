@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AnalysisUIOptions">
-    <option name="SCOPE_TYPE" value="8" />
+    <option name="SCOPE_TYPE" value="3" />
     <option name="CUSTOM_SCOPE_NAME" value="Current File" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da89b619-5919-4078-a0db-7b329ca4a25c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/README.md" afterPath="$PROJECT_DIR$/device-configuration/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py" afterPath="$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/device-configuration.py" afterPath="$PROJECT_DIR$/device-configuration/device-configuration.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/device-configuration/faraday_config.ini" afterPath="$PROJECT_DIR$/device-configuration/faraday_config.ini" />
     </list>
     <ignored path="Faraday-Software.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,29 +29,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/device-configuration/README.md">
-          <provider editor-type-id="MarkdownFxPreviewEditor">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-            <state split_layout="FIRST">
-              <first_editor relative-caret-position="525">
-                <caret line="18" column="45" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
-                <folding />
-              </first_editor>
-              <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="telemetry.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/telemetry/telemetry.py">
+      <file leaf-file-name="deviceconfig.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2075">
-              <caret line="95" column="39" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="39" />
+            <state relative-caret-position="825">
+              <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
               <folding>
-                <element signature="e#432#443#0" expanded="true" />
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -58,65 +44,11 @@
       <file leaf-file-name="device-configuration.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="725">
-              <caret line="129" column="79" selection-start-line="129" selection-start-column="79" selection-end-line="129" selection-end-column="79" />
+            <state relative-caret-position="273">
+              <caret line="38" column="21" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cc430radioconfig.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/cc430radioconfig.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="6" column="32" selection-start-line="6" selection-start-column="32" selection-end-line="6" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deviceconfig.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7200">
-              <caret line="289" column="235" selection-start-line="289" selection-start-column="235" selection-end-line="289" selection-end-column="235" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="faradaycommands.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaycommands.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7825">
-              <caret line="314" column="40" selection-start-line="314" selection-start-column="8" selection-end-line="314" selection-end-column="40" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="commandmodule.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/commandmodule.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="9" column="23" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="faradaybasicproxyio.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaybasicproxyio.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1100">
-              <caret line="49" column="8" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="75" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -138,9 +70,9 @@
       <list>
         <option value="$PROJECT_DIR$/proxy/proxy.py" />
         <option value="$PROJECT_DIR$/telemetry/telemetry.py" />
+        <option value="$PROJECT_DIR$/device-configuration/README.md" />
         <option value="$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py" />
         <option value="$PROJECT_DIR$/device-configuration/device-configuration.py" />
-        <option value="$PROJECT_DIR$/device-configuration/README.md" />
       </list>
     </option>
   </component>
@@ -149,6 +81,25 @@
     <option name="y" value="-11" />
     <option name="width" value="2902" />
     <option name="height" value="1582" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Python</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>PyRedundantParenthesesInspection</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -248,6 +199,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Faraday_Proxy_Tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FaradayIO" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -550,14 +505,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.ini" />
-    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaybasicproxyio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1100">
-          <caret line="49" column="8" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="75" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/proxy/proxy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -565,14 +512,6 @@
           <folding>
             <element signature="e#444#455#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/commandmodule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="9" column="23" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -594,19 +533,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
+    <entry file="file://$PROJECT_DIR$/device-configuration/README.md">
+      <provider editor-type-id="MarkdownFxPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="650">
+            <caret line="22" column="7" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/commandmodule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7200">
-          <caret line="289" column="235" selection-start-line="289" selection-start-column="235" selection-end-line="289" selection-end-column="235" />
+        <state relative-caret-position="175">
+          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#226#249#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/faradaybasicproxyio.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/telemetry/telemetry.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2075">
+        <state relative-caret-position="2375">
           <caret line="95" column="39" selection-start-line="95" selection-start-column="24" selection-end-line="95" selection-end-column="39" />
           <folding>
             <element signature="e#432#443#0" expanded="true" />
@@ -616,25 +577,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/device-configuration/device-configuration.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="725">
-          <caret line="129" column="79" selection-start-line="129" selection-start-column="79" selection-end-line="129" selection-end-column="79" />
+        <state relative-caret-position="273">
+          <caret line="38" column="21" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/device-configuration/README.md">
-      <provider editor-type-id="MarkdownFxPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="525">
-            <caret line="18" column="45" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
-            <folding />
-          </first_editor>
-          <second_editor />
+    <entry file="file://$PROJECT_DIR$/Faraday_Proxy_Tools/FaradayIO/deviceconfig.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
