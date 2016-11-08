@@ -39,7 +39,7 @@ faradayCmd = faradaycommands.faraday_commands()
 app = Flask(__name__)
 
 
-@app.route('/getconfig', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def getconfig():
     if request.method == "POST":
         try:
