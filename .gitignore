@@ -10,3 +10,6 @@ docs/_build/
 # Telemetry database
 telemetry/*.db
 telemetry/*.db-journal
+
+#IDE (Pycharm)
+.idea/*
