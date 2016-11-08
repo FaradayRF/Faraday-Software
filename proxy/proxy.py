@@ -187,19 +187,15 @@ def proxy():
                 {"error": "Error: No 'data' key in dictionary"}), 400
         else:
             total = len(data["data"])
+            print "length:", total
             sent = 0
             for item in data['data']:
-                if len(item) != 164:
-                    logger.warning("Packet not 164 characters long!")
-                    logger.warning(str(item))
-                else:
-                    # Correct length packet, send it by putting on the queue!
-                    try:
-                        postDicts[station][port].append(item)
-                    except:
-                        postDicts[station][port] = deque([], maxlen=100)
-                        postDicts[station][port].append(item)
-                    sent += 1
+                try:
+                    postDicts[station][port].append(item)
+                except:
+                    postDicts[station][port] = deque([], maxlen=100)
+                    postDicts[station][port].append(item)
+                sent += 1
             return json.dumps(
                 {"status": "Posted {0} of {1} Packet(s)"
                     .format(sent, total)}), 200
