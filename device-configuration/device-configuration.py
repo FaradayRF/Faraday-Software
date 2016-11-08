@@ -1,21 +1,17 @@
-
 import time
-import logging
 import logging.config
-import threading
-import ConfigParser
-from collections import deque
 import os
 import sys
 import json
 import ConfigParser
-import struct
 
 from flask import Flask
 from flask import request
 
-# Can we clean this up?
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
+#Add Faraday proxy tools directory to path
+sys.path.append(os.path.join(os.path.dirname(__file__),
+                             "../Faraday_Proxy_Tools/"))  # Append path to common tutorial FaradayIO module
+
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 from FaradayIO import faradaycommands
@@ -36,11 +32,12 @@ deviceConfig.read('deviceconfiguration.ini')
 # Initialize proxy object
 proxy = faradaybasicproxyio.proxyio()
 
-#Initialize faraday command module
+# Initialize faraday command module
 faradayCmd = faradaycommands.faraday_commands()
 
 # Initialize Flask microframework
 app = Flask(__name__)
+
 
 @app.route('/getconfig', methods=['GET', 'POST'])
 def getconfig():
@@ -51,14 +48,14 @@ def getconfig():
             nodeid = request.args.get("nodeid", "%")
 
             # Read configuration file
-            telemetryConfig = ConfigParser.RawConfigParser()
-            telemetryConfig.read('faraday_config.ini')
+            telemetryconfig = ConfigParser.RawConfigParser()
+            telemetryconfig.read('faraday_config.ini')
 
             # Create dictionaries of each config section
-            device_basic_dict = dict(telemetryConfig.items("Basic"))
-            device_rf_dict = dict(telemetryConfig.items("RF"))
-            device_gps_dict = dict(telemetryConfig.items("GPS"))
-            device_telemetry_dict = dict(telemetryConfig.items("Telemetry"))
+            device_basic_dict = dict(telemetryconfig.items("Basic"))
+            device_rf_dict = dict(telemetryconfig.items("RF"))
+            device_gps_dict = dict(telemetryconfig.items("GPS"))
+            device_telemetry_dict = dict(telemetryconfig.items("Telemetry"))
 
             # Create device configuration module object to use for programming packet creation
             device_config_object = deviceconfig.Device_Config_Class()
@@ -78,8 +75,8 @@ def getconfig():
             device_config_object.update_telemetry(device_config_object.update_bitmask_telemetry_boot(
                 int(device_telemetry_dict['rf_telemetry_boot_bit']),
                 int(device_telemetry_dict['uart_telemetry_boot_bit'])),
-                                                  int(device_telemetry_dict['telemetry_default_uart_interval']),
-                                                  int(device_telemetry_dict['telemetry_default_rf_interval']))
+                int(device_telemetry_dict['telemetry_default_uart_interval']),
+                int(device_telemetry_dict['telemetry_default_rf_interval']))
 
             # Create the raw device configuration packet to send to unit
             device_config_packet = device_config_object.create_config_packet()
@@ -102,7 +99,7 @@ def getconfig():
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
 
-    else: #If a GET command
+    else:  # If a GET command
         """
             Provides a RESTful interface to device-configuration at URL '/'
             """
@@ -117,6 +114,7 @@ def getconfig():
             proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
                        faradayCmd.CommandLocalSendReadDeviceConfig())
 
+            #Wait enough time for Faraday to respond to commanded memory read.
             time.sleep(2)
 
             data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
@@ -125,11 +123,10 @@ def getconfig():
             device_config_object = deviceconfig.Device_Config_Class()
 
             # Decode BASE64 JSON data packet into
-            data = proxy.DecodeRawPacket(data[0]["data"]) # Get first item
+            data = proxy.DecodeRawPacket(data[0]["data"])  # Get first item
 
             data = device_config_object.extract_config_packet(data)
 
-            print data, len(data)
             parsed_config_dict = device_config_object.parse_config_packet(data)
 
         except ValueError as e:
@@ -142,25 +139,20 @@ def getconfig():
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
 
-        #return '', 204  # HTTP 204 response cannot have message data
-
-        data = "Device information..."
-
         return json.dumps(parsed_config_dict, indent=1), 200, \
                {'Content-Type': 'application/json'}
-
 
 
 def main():
     """Main function which starts telemery worker thread + Flask server."""
     logger.info('Starting device configuration server')
 
-
     # Start the flask server on localhost:8001
-    telemetryHost = deviceConfig.get("flask", "host")
-    telemetryPort = deviceConfig.getint("flask", "port")
+    telemetryhost = deviceConfig.get("flask", "host")
+    telemetryport = deviceConfig.getint("flask", "port")
 
-    app.run(host=telemetryHost, port=telemetryPort, threaded=True)
+    app.run(host=telemetryhost, port=telemetryport, threaded=True)
+
 
 if __name__ == '__main__':
     main()
