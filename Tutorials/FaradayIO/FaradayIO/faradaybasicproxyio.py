@@ -144,7 +144,7 @@ class proxyio(object):
             self._logger.error("KeyError: " + str(e))
 
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug):
+    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug = False):
         """
         This is an abstraction of the *GET* function that implements a timing funtionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
@@ -171,9 +171,9 @@ class proxyio(object):
         #Start timer "Start Time" and configure function variables to initial state
         starttime = time.time()
         timedelta = 0
-        rx_data = False
+        rx_data = None
 
-        while((rx_data == False) and (timedelta<sec_timeout)):
+        while((rx_data == None) and (timedelta<sec_timeout)):
             #Update new timedelta
             timedelta = time.time()-starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
