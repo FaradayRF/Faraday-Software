@@ -4,7 +4,7 @@
 
 #Imports - General
 
-import os, sys, time
+import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -51,8 +51,6 @@ try:
 
     #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
     rx_telemetry_datagram = faraday_parser.UnpackDatagram(rx_telem_pkt_decoded, debug = True) #Debug is ON
-    print rx_telemetry_datagram
-
     #Extract just the data packet portion of the JSON dictionary
     rx_telemetry_packet = rx_telemetry_datagram[3]
     print "\nThe Decoded Data Within The Packet Is:\n"
