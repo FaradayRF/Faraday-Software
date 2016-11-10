@@ -18,7 +18,7 @@ local_device_node_id = 1
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
-faraday_cmd = faradaycommands.FaradayCommands()
+faraday_cmd = faradaycommands.faraday_commands()
 faraday_parser = telemetryparser.TelemetryParse()
 
 ############
@@ -35,7 +35,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id,faraday_1.TELEMETRY_PORT, 1, False) #Will block and wait for given time until a packet is recevied
 
 #Decode the first packet in list from BASE 64 to a RAW bytesting
-rx_telem_pkt_decoded = faraday_1.DecodeJsonItemRaw(rx_telem_data[0]['data'])
+rx_telem_pkt_decoded = faraday_1.DecodeRawPacket(rx_telem_data[0]['data'])
 
 #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
 rx_telemetry_datagram = faraday_parser.UnpackDatagram(rx_telem_pkt_decoded, False) #Debug is ON
@@ -62,7 +62,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 rx_debug_data = faraday_1.GETWait(local_device_callsign, local_device_node_id,faraday_1.TELEMETRY_PORT, 1, False) #Will block and wait for given time until a packet is recevied
 
 #Decode the first packet in list from BASE 64 to a RAW bytesting
-rx_debug_data_pkt_decoded = faraday_1.DecodeJsonItemRaw(rx_debug_data[0]['data'])
+rx_debug_data_pkt_decoded = faraday_1.DecodeRawPacket(rx_debug_data[0]['data'])
 
 #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
 rx_debug_data_datagram = faraday_parser.UnpackDatagram(rx_debug_data_pkt_decoded, False) #Debug is ON
@@ -88,7 +88,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 rx_settings_data = faraday_1.GETWait(local_device_callsign, local_device_node_id,faraday_1.TELEMETRY_PORT, 1, False) #Will block and wait for given time until a packet is recevied
 
 #Decode the first packet in list from BASE 64 to a RAW bytesting
-rx_settings_pkt_decoded = faraday_1.DecodeJsonItemRaw(rx_settings_data[0]['data'])
+rx_settings_pkt_decoded = faraday_1.DecodeRawPacket(rx_settings_data[0]['data'])
 
 #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
 rx_settings_datagram = faraday_parser.UnpackDatagram(rx_settings_pkt_decoded, False) #Debug is ON
