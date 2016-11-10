@@ -47,11 +47,15 @@ try:
     print "\nAs Received BASE64:"
     print rx_telem_data[0]['data']
     print "\nDecoded:"
-    print repr(rx_telem_pkt_decoded)
+    print repr(rx_telem_data)
 
     #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
     rx_telemetry_datagram = faraday_parser.UnpackDatagram(rx_telem_pkt_decoded) #Debug is ON
+    print rx_telemetry_datagram
+
+    #Extract just the data packet portion of the JSON dictionary
     rx_telemetry_packet = rx_telemetry_datagram[3]
+    print rx_telemetry_datagram[3]
 
     #Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)
     rx_telemetry_packet_extracted = faraday_parser.ExtractPaddedPacket(rx_telemetry_packet, faraday_parser.packet_3_len)
