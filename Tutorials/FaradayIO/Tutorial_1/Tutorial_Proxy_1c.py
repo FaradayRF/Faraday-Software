@@ -5,6 +5,7 @@
 import os
 import sys
 import requests
+import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../")) #Append path to common tutorial FaradayIO module
@@ -46,9 +47,10 @@ current_update_config = faraday_parser.UnpackConfigFlashD(rx_flashd_decoded_extr
 #########################################################################################
 
 try:
-    r = requests.post('localhost:8002', params={'callsign':"kb1lqd", 'nodeid':1})
-    print r
-except:
-    print "Fail:", r
+    requests.post('http://127.0.0.1:8002', params={'callsign':"kb1lqd", 'nodeid':1})
+except requests.exceptions.RequestException as e:  # This is the correct syntax
+    print e
+
+
 
 
