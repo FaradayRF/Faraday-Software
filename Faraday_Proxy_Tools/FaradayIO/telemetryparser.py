@@ -18,7 +18,7 @@ class TelemetryParse(object):
         self.packet_3_len = 97
 
 
-    def UnpackDatagram(self, packet, debug):
+    def UnpackDatagram(self, packet, debug = False):
         """
         This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry packets are encapsulated by this telemetry datagram.
 
