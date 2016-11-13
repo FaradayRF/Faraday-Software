@@ -118,19 +118,25 @@ def unitconfig():
             callsign = str(callsign).upper()
             nodeid = str(nodeid)
 
+            # Flush all old data from recieve buffer of local unit
+            proxy.FlushRxPort(callsign, nodeid, proxy.CMD_UART_PORT)
+
             proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
                        faradayCmd.CommandLocalSendReadDeviceConfig())
 
             # Wait enough time for Faraday to respond to commanded memory read.
             time.sleep(2)
 
-            data = proxy.GET(str(callsign), str(nodeid), proxy.CMD_UART_PORT)
+
+            # Retrieve the next device configuration read packet to arrive
+            data = proxy.GETWait(str(callsign), str(nodeid), proxy.CMD_UART_PORT, 2)
 
             # Create device configuration module object
             device_config_object = deviceconfig.DeviceConfigClass()
 
             # Decode BASE64 JSON data packet into
             data = proxy.DecodeRawPacket(data[0]["data"])  # Get first item
+
 
             data = device_config_object.extract_config_packet(data)
 

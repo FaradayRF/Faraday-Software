@@ -17,7 +17,7 @@ import time
 
 
 #Variables
-local_device_callsign = 'kb1lqd'
+local_device_callsign = 'kb1lqc'
 local_device_node_id = 1
 
 #Start the proxy server after configuring the configuration file correctly

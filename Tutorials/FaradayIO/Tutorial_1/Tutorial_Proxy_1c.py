@@ -16,7 +16,7 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'kb1lqd'
+local_device_callsign = 'kb1lqc'
 local_device_node_id = 1
 
 #Start the proxy server after configuring the configuration file correctly
@@ -32,14 +32,20 @@ faraday_parser = telemetryparser.TelemetryParse()
 #Display current device configuration prior to configuration flash update (Send UART telemetry update now command)
 #Send the command to read the entire Flash Memory Info D allocations
 
+
 try:
-    r = requests.get("http://127.0.0.1:8002", params={'callsign': "kb1lqd", 'nodeid':1})
+    r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
 #Print JSON dictionary device data from unit
-print r.json()
+print r
+raw_unit_json = r.json()
+print "************************************"
+print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
+print "RAW Unit JSON Data:", raw_unit_json
 
+print "************************************"
 #########################################################################################
 ###Update configuration using INI file as defined by Faraday device object and functions
 #########################################################################################
@@ -47,19 +53,27 @@ print r.json()
 time.sleep(1) # Sleep to allow unit to process, polling and slow
 
 try:
-    r = requests.post('http://127.0.0.1:8002', params={'callsign':"kb1lqd", 'nodeid':1})
+    r = requests.post('http://127.0.0.1:8002', params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
 time.sleep(5) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
 
+#Flush old data from UART service port
+faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
+
 try:
-    r = requests.get("http://127.0.0.1:8002", params={'callsign': "kb1lqd", 'nodeid':1})
+    r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
 #Print JSON dictionary device data from unit
-print r.json()
+raw_unit_json = r.json()
+print "************************************"
+print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
+print "RAW Unit JSON Data:", raw_unit_json
+
+print "************************************"
 
 
 
