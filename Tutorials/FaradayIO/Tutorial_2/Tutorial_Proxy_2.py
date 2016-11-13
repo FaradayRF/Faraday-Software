@@ -12,7 +12,7 @@ import time
 
 #Variables
 local_device_callsign = 'kb1lqd'
-local_device_node_id = 7
+local_device_node_id = 1
 
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
