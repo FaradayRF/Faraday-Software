@@ -1,18 +1,19 @@
 #-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+# Name:        /Faraday_Proxy_Tools/FaradayIO.py
+# Purpose:      Abstracted interface to Faraday Proxy
 #
-# Author:      Brent
+# Author:      Brent Salmi
 #
 # Created:     23/08/2016
-# Copyright:   (c) Brent 2016
-# Licence:     <your licence>
+# Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import json
+import json # probably don't need if using requests .json()
 import requests
 import base64
 import time
+import logging
+import sys
 
 class proxyio(object):
     """
@@ -30,12 +31,19 @@ class proxyio(object):
     """
 
 
-    def __init__(self, port = 8000):
+    def __init__(self, port = 8000, logger = None):
         #Definitions
         self.FLASK_PORT = port #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
+
+        if logger != None:
+            self._logger = logger
+        else:
+            self._logger = logging.getLogger("FaradayBasicProxyIO")
+            self._logger.setLevel(logging.WARNING)
+
 
     #Functions
 
@@ -84,7 +92,7 @@ class proxyio(object):
             #Return
             return status
 
-    def GET(self, local_device_callsign, local_device_id, uart_service_number):
+    def GET(self, local_device_callsign, local_device_id, uart_service_number, limit=None):
         """
         This function returns a dictionary of all data packets waiting a Flask API interface queue as specified by the supplied
         UART Port (Service Number).
@@ -92,6 +100,7 @@ class proxyio(object):
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
+        :param limit: Number of data packets to pop off and return in dictionary from proxy
 
 
         :Return: A JSON dictionary of all data packets waiting for the specified UART port. False if no data waiting.
@@ -109,13 +118,33 @@ class proxyio(object):
          {u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/',
           u'port': 5}]
         """
-        try:
-            flask_obj = requests.get('http://127.0.0.1:' + str(self.FLASK_PORT) + "/?" + "port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)) #calling IP address directly is much faster than localhost lookup
-            return json.loads(flask_obj.text)
-        except:
-            return False
+        url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug):
+        # If limit is provided, check that it's positive and add to url
+        if limit != None:
+            if int(limit) >= 0:
+                url = url + "&limit=" + str(limit)
+
+        try:
+            response = requests.get(url) #calling IP address directly is much faster than localhost lookup
+            if response.status_code == 204:
+                # No data received
+                return None
+            else:
+                # Data received, return JSON
+                return response.json()
+
+        except StandardError as e:
+            self._logger.error("StandardError: " + str(e))
+        except ValueError as e:
+            self._logger.error("ValueError: " + str(e))
+        except IndexError as e:
+            self._logger.error("IndexError: " + str(e))
+        except KeyError as e:
+            self._logger.error("KeyError: " + str(e))
+
+
+    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug = False):
         """
         This is an abstraction of the *GET* function that implements a timing funtionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
@@ -142,9 +171,9 @@ class proxyio(object):
         #Start timer "Start Time" and configure function variables to initial state
         starttime = time.time()
         timedelta = 0
-        rx_data = False
+        rx_data = None
 
-        while((rx_data == False) and (timedelta<sec_timeout)):
+        while((rx_data == None) and (timedelta<sec_timeout)):
             #Update new timedelta
             timedelta = time.time()-starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
@@ -190,7 +219,7 @@ class proxyio(object):
             except:
                 return False
 
-    def DecodeJsonItemRaw(self, jsonitem):
+    def DecodeRawPacket(self, jsonitem):
         """
         This function decodes (BASE64) data from a supplied encoded data packet as received from the GET functions (in JSON format). This function handle 1 packet at a time and returns only the resulting decoded data
 
@@ -210,9 +239,3 @@ class proxyio(object):
         data_packet = jsonitem
         decoded_data_packet = base64.b64decode(data_packet)
         return decoded_data_packet
-
-
-
-
-
-

@@ -14,7 +14,7 @@ local_device_node_id = 7
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio(8099)
-faraday_cmd = faradaycommands.FaradayCommands()
+faraday_cmd = faradaycommands.faraday_commands()
 
 print "Connecting to proxy on port:", faraday_1.FLASK_PORT
 #faraday_parser = telemetryparser.TelemetryParse()

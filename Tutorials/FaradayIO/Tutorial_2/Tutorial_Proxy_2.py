@@ -16,7 +16,7 @@ local_device_node_id = 7
 
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
-faraday_cmd = faradaycommands.FaradayCommands()
+faraday_cmd = faradaycommands.faraday_commands()
 
 # This example will show how to command Faraday using the basic command application.
 # Make sure to turn UART TELEM BOOT Bitmask to 0 to turn OFF telemetry update automatically

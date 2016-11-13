@@ -9,7 +9,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import telemetryparser
 from FaradayIO import gpioallocations
 
 import time
@@ -24,7 +23,7 @@ local_device_node_id = 1
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
-faraday_cmd = faradaycommands.FaradayCommands()
+faraday_cmd = faradaycommands.faraday_commands()
 
 
 ##############
@@ -71,7 +70,7 @@ rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, far
 
 #Now parse data again
 b64_data = rx_echo_raw[0]['data']
-echo_decoded = faraday_1.DecodeJsonItemRaw(b64_data)
+echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
 print "Original Message: ", originalmsg
