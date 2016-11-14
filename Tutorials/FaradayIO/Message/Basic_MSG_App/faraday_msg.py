@@ -1,8 +1,12 @@
 # imports
+import struct
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 
-import struct
+
 
 class Msg_State_Machine_Tx(object):
     def __init__(self):
@@ -93,12 +97,12 @@ class message_app_Tx(object):
         """
         # Identification Variables
         self.local_device_callsign = 'kb1lqd'
-        self.local_device_node_id = 7
-        self.transmit_proxy_flask_port = 8099
-        self.remote_callsign = 'KB1LQC'  # case independant
+        self.local_device_node_id = 1
+        #self.transmit_proxy_flask_port = 8099
+        self.remote_callsign = 'kb1lqc'  # case independant
         self.remote_id = 1
         # Initialize objects
-        self.faraday_1 = faradaybasicproxyio.proxyio(self.transmit_proxy_flask_port)
+        self.faraday_1 = faradaybasicproxyio.proxyio()
         self.faraday_cmd = faradaycommands.faraday_commands()
         # Initialize variables
         self.destination_callsign = ''
@@ -177,13 +181,10 @@ class message_app_Rx(object):
         The message application object contains all the functions, definitions, and state machines needed to implement a bare-bones text message application using the Faraday command application "experimental RF Packet Forward" functionality."
         """
         # Identification Variables
-        self.local_device_callsign = 'kb1lqd'
-        self.local_device_node_id = 7
-        self.transmit_proxy_flask_port = 8099
-        self.receive_proxy_flask_port = 80
+        self.local_device_callsign = 'kb1lqc'
+        self.local_device_node_id = 1
         # Initialize objects
-        self.faraday_Tx = faradaybasicproxyio.proxyio(self.transmit_proxy_flask_port)
-        self.faraday_Rx = faradaybasicproxyio.proxyio(self.receive_proxy_flask_port)
+        self.faraday_Rx = faradaybasicproxyio.proxyio()
         self.faraday_Rx_SM = Msg_State_Machine_Rx()
         # Initialize variables
         # Frame Definitions (Should be combined later with TX?)
@@ -220,11 +221,11 @@ class message_app_Rx(object):
             print "Fail:", packet, len(packet)
 
     def RxMsgLoop(self):
-        data = False
-        data = self.faraday_Rx.GETWait('kb1lqd', 7, 3, 1, False)
-        if (data != False):
+        data = None
+        data = self.faraday_Rx.GETWait('KB1LQC', 1, 3, 1)
+        if (data != None) and (not 'error' in data):
             for item in data:
-                datagram = self.faraday_Rx.DecodeJsonItemRaw(item['data'])
+                datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
                 datagram = datagram[
                            0:42]  # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
                 self.ParsePacketFromDatagram(datagram)

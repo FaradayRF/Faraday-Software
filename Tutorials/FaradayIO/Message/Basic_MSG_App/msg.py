@@ -1,11 +1,17 @@
 #imports
+import time
+import struct
+import textwrap
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
+
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import gpioallocations
 
-import time
-import struct
-import textwrap
+
 
 class Msg_State_Machine_Tx(object):
     def __init__(self):
