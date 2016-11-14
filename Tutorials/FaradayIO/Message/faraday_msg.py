@@ -2,7 +2,7 @@
 import struct
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 
