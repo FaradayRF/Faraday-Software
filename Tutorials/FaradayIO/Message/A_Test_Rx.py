@@ -13,11 +13,11 @@ uart_service_port_application_number = 3
 GETWAIT_TIMEOUT = 2
 
 # Create receiver application object
-faraday_rx_msg_object = faraday_msg.message_app_Rx()
+faraday_rx_msg_object = faraday_msg.MessageAppRx()
 
 # Loop continuously through the faraday experimental RF command message application RX routine
 while 1:
-    rx_message_dict = faraday_rx_msg_object.RxMsgLoop(local_device_callsign, local_device_node_id, uart_service_port_application_number, GETWAIT_TIMEOUT)
+    rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, uart_service_port_application_number, GETWAIT_TIMEOUT)
     if rx_message_dict != None:
         print '***************************************'
         print "FROM:", rx_message_dict['source_callsign']

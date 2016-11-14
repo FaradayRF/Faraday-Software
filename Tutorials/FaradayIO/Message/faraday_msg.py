@@ -2,13 +2,15 @@
 import struct
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))  # Append path to common tutorial FaradayIO module
+# noinspection PyPep8
 from FaradayIO import faradaybasicproxyio
+# noinspection PyPep8
 from FaradayIO import faradaycommands
 
 
-
-class Msg_State_Machine_Tx(object):
+class MsgStateMachineTx(object):
     def __init__(self):
         """
         A state machine that handles the functionality needed to create and transmit a message
@@ -33,78 +35,80 @@ class Msg_State_Machine_Tx(object):
         self.pkt_data = struct.Struct('2B 38s')  # Variable  Data Length
         self.pkt_end = struct.Struct('1B')  # Fixed
 
-    def FragmentCount(self, msg_len):
+    def fragmentcount(self, msg_len):
         # Determine fragment count
         frag_cnt = msg_len / self.MAX_MSG_DATA_LENGTH
-        if (msg_len % self.MAX_MSG_DATA_LENGTH > 0):
+        if msg_len % self.MAX_MSG_DATA_LENGTH > 0:
             frag_cnt += 1
         return frag_cnt
 
-    def FragmentMsg(self, msg):
-        list_Message_Fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
+    def fragmentmsg(self, msg):
+        list_message_fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
                                   range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
-        for item in list_Message_Fragments:
+        for item in list_message_fragments:
             print item, "Frag Length", len(item)
-        print repr(list_Message_Fragments)
-        return list_Message_Fragments
+        print repr(list_message_fragments)
+        return list_message_fragments
 
-    def CreateMsgPackets(self, src_call, src_id, msg):
+    def createmsgpackets(self, src_call, src_id, msg):
         # Ensure callsign and ID are formatted correctly
         src_call = str(src_call).upper()
         src_id = int(src_id)
 
         # Create START Packet
-        msg_start = self.CreateStartFrame(src_call, src_id, len(msg))
+        msg_start = self.createstartframe(src_call, src_id, len(msg))
         msg_start = self.pkt_datagram_frame.pack(self.MSG_START, msg_start)
 
         # Create END Packet
-        msg_end = self.CreateEndFrame(len(msg))
+        msg_end = self.createendframe(len(msg))
         msg_end = self.pkt_datagram_frame.pack(self.MSG_END, msg_end)
 
         # Create DATA Packet(s)
-        list_msg_fragments = self.FragmentMsg(msg)
+        list_msg_fragments = self.fragmentmsg(msg)
         list_data_packets = []
 
-        del list_data_packets[:] # Remove all old indexes
+        del list_data_packets[:]  # Remove all old indexes
         for i in range(0, len(list_msg_fragments), 1):
-            data_packet = self.CreateDataFrame(i, list_msg_fragments[i])
+            data_packet = self.createdataframe(i, list_msg_fragments[i])
             print "Pre-Pack:", repr(data_packet), len(data_packet)
             data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
             print "Post-Pack:", repr(data_packet), len(data_packet)
             list_data_packets.append(data_packet)
         # Insert all packets into final packet list in order of transmission
-        self.list_packets = [] # Reset any old packet fragments
-        del self.list_packets[:] # Remove all old indexes
+        self.list_packets = []  # Reset any old packet fragments
+        del self.list_packets[:]  # Remove all old indexes
         self.list_packets.append(msg_start)
         for i in range(0, len(list_data_packets), 1):
             self.list_packets.append(list_data_packets[i])
         self.list_packets.append(msg_end)
 
-    def CreateStartFrame(self, src_call, src_id, msg_len):
+    def createstartframe(self, src_call, src_id, msg_len):
         # Calculate the number of fragmented packets
-        frag_cnt = self.FragmentCount(msg_len)
+        frag_cnt = self.fragmentcount(msg_len)
         print frag_cnt
         # Create packet
         packet = self.pkt_start.pack(src_call, len(src_call), src_id, frag_cnt)
         # Return packet created
         return packet
 
-    def CreateDataFrame(self, sequence, data):
+    def createdataframe(self, sequence, data):
         print "create:", repr(data), len(data)
         packet = self.pkt_data.pack(sequence, len(data), data)
         print "created:", repr(packet), len(packet)
         return packet
 
-    def CreateEndFrame(self, msg_len):
-        frag_cnt = self.FragmentCount(msg_len)
+    def createendframe(self, msg_len):
+        frag_cnt = self.fragmentcount(msg_len)
         packet = self.pkt_end.pack(frag_cnt)
         return packet
 
 
-class message_app_Tx(object):
+class MessageAppTx(object):
     def __init__(self, local_callsign, local_callsign_id, destination_callsign, destination_id):
         """
-        The message application object contains all the functions, definitions, and state machines needed to implement a bare-bones text message application using the Faraday command application "experimental RF Packet Forward" functionality."
+        The message application object contains all the functions, definitions, and state machines needed to implement
+        a bare-bones text message application using the Faraday command application "experimental RF Packet
+        Forward" functionality."
         """
         # Identification Variables
         self.local_device_callsign = str(local_callsign).upper()
@@ -121,14 +125,15 @@ class message_app_Tx(object):
         self.destination_id = 0
         self.command = ''
 
-    def UpdateDestinationStation(self, dest_callsign, dest_id):
+    def updatedestinationstation(self, dest_callsign, dest_id):
         """
-        Update the destination station callsign and id to direct the message data packets to. Watch out for max callsign lengths!
+        Update the destination station callsign and id to direct the message data packets to. Watch out for max
+        callsign lengths!
         """
-        self.destination_callsign = str(dest_callsign).upper() #  Ensure callsign is always uppercase
+        self.destination_callsign = str(dest_callsign).upper()  # Ensure callsign is always uppercase
         self.destination_id = int(dest_id)
 
-    def TransmitFrame(self, payload):
+    def transmitframe(self, payload):
         """
         A basic function to transmit a raw payload to the intended destination unit.
         """
@@ -140,7 +145,7 @@ class message_app_Tx(object):
                             self.command)
 
 
-class Msg_State_Machine_Rx(object):
+class MsgStateMachineRx(object):
     def __init__(self):
         """
         A state machine that handles the functionality needed to reassemble a message
@@ -159,49 +164,49 @@ class Msg_State_Machine_Rx(object):
         self.message = ''
         self.rx_station = ''
 
-    def ChangeState(self, state):
+    def changestate(self, state):
         self.currentstate = state
 
-    def FrameAssembler(self, frame_type, data):
+    def frameassembler(self, frame_type, data):
         # Not a true state machine yet, but working to it!
         # Start
-        if (frame_type == self.MSG_START):
-            self.ChangeState(self.STATE_RX_INIT)
+        if frame_type == self.MSG_START:
+            self.changestate(self.STATE_RX_INIT)
             self.message = ''
             callsign_len = int(data[1])
-            fragments = data[3]
+            #fragments = data[3]
             self.rx_station = str(data[0][0:callsign_len]) + '-' + str(data[2])
         # Data
-        elif (frame_type == self.MSG_DATA):
-            self.ChangeState(self.STATE_RX_FRAGMENT)
-            data_sequence = data[0]
+        elif frame_type == self.MSG_DATA:
+            self.changestate(self.STATE_RX_FRAGMENT)
+            #data_sequence = data[0]
             data_len = data[1]
             data_data = str(data[2])[0:data_len]
             self.message += data_data
         # Stop
-        elif (frame_type == self.MSG_END):
-            self.ChangeState(self.STATE_RX_END)
-            fragments = data[0]
-            message_assembled = {}
-            message_assembled['source_callsign'] = self.rx_station
-            message_assembled['message'] = self.message
+        elif frame_type == self.MSG_END:
+            self.changestate(self.STATE_RX_END)
+            #fragments = data[0]
+            message_assembled = {'source_callsign': self.rx_station, 'message': self.message}
             return message_assembled
         # Else Type (Error)
         else:
             print "Incorrect frame type:", frame_type, repr(data)
 
 
-class message_app_Rx(object):
+class MessageAppRx(object):
     def __init__(self):
         """
-        The message application object contains all the functions, definitions, and state machines needed to implement a bare-bones text message application using the Faraday command application "experimental RF Packet Forward" functionality."
+        The message application object contains all the functions, definitions, and state machines needed to implement
+        a bare-bones text message application using the Faraday command application "experimental RF Packet Forward"
+        functionality."
         """
         # Identification Variables
         self.local_device_callsign = 'kb1lqc'
         self.local_device_node_id = 1
         # Initialize objects
         self.faraday_Rx = faradaybasicproxyio.proxyio()
-        self.faraday_Rx_SM = Msg_State_Machine_Rx()
+        self.faraday_Rx_SM = MsgStateMachineRx()
         # Initialize variables
         # Frame Definitions (Should be combined later with TX?)
         self.pkt_datagram_frame = struct.Struct('1B 41s')  # Fixed
@@ -209,47 +214,49 @@ class message_app_Rx(object):
         self.pkt_data = struct.Struct('2B 39s')  # Variable  Data Length
         self.pkt_end = struct.Struct('1B')  # Fixed
 
-    def GetNextFrame(self):
+    def getnextframe(self):
         print repr(self.faraday_Rx.GETWait(self.local_device_callsign, self.local_device_node_id,
                                            self.faraday_Rx.CMD_UART_PORT, 1, False))
 
-    def ParsePacketFromDatagram(self, datagram):
+    def parsepacketfromdatagram(self, datagram):
         unpacked_datagram = self.pkt_datagram_frame.unpack(datagram)
         packet_identifier = unpacked_datagram[0]
         packet = unpacked_datagram[1]
         try:
             # Start Packet
-            if (packet_identifier == 255):
+            if packet_identifier == 255:
                 unpacked_packet = self.pkt_start.unpack(packet[0:12])
                 # print unpacked_packet
-                self.faraday_Rx_SM.FrameAssembler(255, unpacked_packet)
+                self.faraday_Rx_SM.frameassembler(255, unpacked_packet)
                 return None
             # Data Packet
-            if (packet_identifier == 254):
+            if packet_identifier == 254:
                 unpacked_packet = self.pkt_data.unpack(packet[0:41])
                 # print unpacked_packet
-                self.faraday_Rx_SM.FrameAssembler(254, unpacked_packet)
+                self.faraday_Rx_SM.frameassembler(254, unpacked_packet)
                 return None
             # END Packet
-            if (packet_identifier == 253):
+            if packet_identifier == 253:
                 unpacked_packet = self.pkt_end.unpack(packet[0])
                 # print unpacked_packet
-                message_assembled = self.faraday_Rx_SM.FrameAssembler(253, unpacked_packet)
+                message_assembled = self.faraday_Rx_SM.frameassembler(253, unpacked_packet)
                 return message_assembled
-        except:
-            print "Fail:", packet, len(packet)
+        except Exception, err:
+            print "Fail - Exception", Exception, err
 
-    def RxMsgLoop(self, local_callsign, local_callsign_id,  uart_service_port_application_number, GETWAIT_TIMEOUT):
+    def rxmsgloop(self, local_callsign, local_callsign_id, uart_service_port_application_number, getwaittimeout):
         data = None
-        data = self.faraday_Rx.GETWait(str(local_callsign).upper(), int(local_callsign_id), uart_service_port_application_number, GETWAIT_TIMEOUT)
-        if (data != None) and (not 'error' in data):
+        data = self.faraday_Rx.GETWait(str(local_callsign).upper(),
+                                       int(local_callsign_id),
+                                       uart_service_port_application_number,
+                                       getwaittimeout)
+        if (data is not None) and ('error' not in data):
             for item in data:
                 datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
                 # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
                 datagram = datagram[0:42]
-                message_status = self.ParsePacketFromDatagram(datagram)
-                if message_status == None:
+                message_status = self.parsepacketfromdatagram(datagram)
+                if message_status is None:
                     return None  # Partial fragmented packet, still receiving
                 else:
-                    return message_status # Full packet relieved!
-
+                    return message_status  # Full packet relieved!
