@@ -174,7 +174,10 @@ class Msg_State_Machine_Rx(object):
         elif (frame_type == self.MSG_END):
             self.ChangeState(self.STATE_RX_END)
             fragments = data[0]
-            print self.rx_station + ': ' + self.message
+            message_assembled = {}
+            message_assembled['source_callsign'] = self.rx_station
+            message_assembled['message'] = self.message
+            return message_assembled
         # Else Type (Error)
         else:
             print "Incorrect frame type:", frame_type, repr(data)
@@ -221,16 +224,22 @@ class message_app_Rx(object):
             if (packet_identifier == 253):
                 unpacked_packet = self.pkt_end.unpack(packet[0])
                 # print unpacked_packet
-                self.faraday_Rx_SM.FrameAssembler(253, unpacked_packet)
+                message_assembled = self.faraday_Rx_SM.FrameAssembler(253, unpacked_packet)
+                print '***************************************'
+                print "FROM:", message_assembled['source_callsign']
+                print '\n'
+                print message_assembled['message']
+
+                print '\n***************************************'
         except:
             print "Fail:", packet, len(packet)
 
-    def RxMsgLoop(self):
+    def RxMsgLoop(self, local_callsign, local_callsign_id,  uart_service_port_application_number, GETWAIT_TIMEOUT):
         data = None
-        data = self.faraday_Rx.GETWait('KB1LQC', 1, 3, 1)
+        data = self.faraday_Rx.GETWait(str(local_callsign).upper(), int(local_callsign_id), uart_service_port_application_number, GETWAIT_TIMEOUT)
         if (data != None) and (not 'error' in data):
             for item in data:
                 datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
-                datagram = datagram[
-                           0:42]  # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
+                # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
+                datagram = datagram[0:42]
                 self.ParsePacketFromDatagram(datagram)
