@@ -1,7 +1,9 @@
 #Imports - General
 
-import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -10,12 +12,11 @@ from FaradayIO import faradaycommands
 
 #Variables
 local_device_callsign = 'kb1lqd'
-local_device_node_id = 7
-transmit_proxy_flask_port = 8099
+local_device_node_id = 1
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio(transmit_proxy_flask_port)
+faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 #faraday_parser = telemetryparser.TelemetryParse()
 
@@ -28,7 +29,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 ##############
 
 #Remote device information
-remote_callsign = 'KB1LQC' #case independant
+remote_callsign = 'kb1lqc'
 remote_id = 1
 
 #NOTE: This TX program MUST operate on a different proxy TCP port than RX
