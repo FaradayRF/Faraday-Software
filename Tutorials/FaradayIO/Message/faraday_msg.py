@@ -49,6 +49,10 @@ class Msg_State_Machine_Tx(object):
         return list_Message_Fragments
 
     def CreateMsgPackets(self, src_call, src_id, msg):
+        # Ensure callsign and ID are formatted correctly
+        src_call = str(src_call).upper()
+        src_id = int(src_id)
+
         # Create START Packet
         msg_start = self.CreateStartFrame(src_call, src_id, len(msg))
         msg_start = self.pkt_datagram_frame.pack(self.MSG_START, msg_start)
@@ -113,8 +117,8 @@ class message_app_Tx(object):
         """
         Update the destination station callsign and id to direct the message data packets to. Watch out for max callsign lengths!
         """
-        self.destination_callsign = dest_callsign
-        self.destination_id = dest_id
+        self.destination_callsign = str(dest_callsign).upper() #  Ensure callsign is always uppercase
+        self.destination_id = int(dest_id)
 
     def TransmitFrame(self, payload):
         """
