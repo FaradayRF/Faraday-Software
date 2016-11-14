@@ -14,11 +14,11 @@ faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 
 #Variables
-local_device_callsign = 'kb1lqc'
+local_device_callsign = 'kb1lqd'
 local_device_node_id = 1
 
 #Remote device information
-remote_callsign = 'kb1lqd'
+remote_callsign = 'kb1lqc'.upper() # Uppercase required.. BUG!
 remote_id = 1
 
 print "Connecting to proxy on PROXY device:", local_device_callsign + '-' + str(local_device_node_id)

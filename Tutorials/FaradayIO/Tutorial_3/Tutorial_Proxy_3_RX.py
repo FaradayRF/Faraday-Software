@@ -11,7 +11,7 @@ from FaradayIO import faradaycommands
 
 
 #Variables
-local_device_callsign = 'kb1lqd'
+local_device_callsign = 'kb1lqc'
 local_device_node_id = 1
 
 #Start the proxy server after configuring the configuration file correctly
@@ -48,7 +48,7 @@ while(1):
     data = faraday_1.GETWait(local_device_callsign, local_device_node_id, PROXY_MESSAGE_EXPERIMENTAL_PORT, 2, False)
 
     #Check if data is False (False means that the Get() function timed out), if not then display new data
-    if not 'error' in data:
+    if (data != None) and (not 'error' in data):
         #print "Received Message RAW", repr(data[0]['data'])
         print "Received Message Decoded:", faraday_1.DecodeRawPacket(data[0]['data'])
 
