@@ -538,6 +538,6 @@ def CreatePacketMsgExperimental(msg_cmd, dest_callsign, dest_device_id, data_len
 
     """
     packet_struct = struct.Struct('1B9s2B42s')
-    packet = packet_struct.pack(msg_cmd, dest_callsign, dest_device_id, data_len, data)
+    packet = packet_struct.pack(msg_cmd, str(dest_callsign).upper(), dest_device_id, data_len, data)
     return packet
 
