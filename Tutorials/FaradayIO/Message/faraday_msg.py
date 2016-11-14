@@ -28,7 +28,7 @@ class Msg_State_Machine_Tx(object):
         # Variables
         self.list_packets = []
         # Frame Definitions
-        self.pkt_datagram_frame = struct.Struct('1B 39s')  # Fixed
+        self.pkt_datagram_frame = struct.Struct('1B 40s')  # Fixed
         self.pkt_start = struct.Struct('9s 3B')  # Fixed
         self.pkt_data = struct.Struct('2B 38s')  # Variable  Data Length
         self.pkt_end = struct.Struct('1B')  # Fixed
@@ -56,16 +56,21 @@ class Msg_State_Machine_Tx(object):
         # Create START Packet
         msg_start = self.CreateStartFrame(src_call, src_id, len(msg))
         msg_start = self.pkt_datagram_frame.pack(self.MSG_START, msg_start)
+
         # Create END Packet
         msg_end = self.CreateEndFrame(len(msg))
         msg_end = self.pkt_datagram_frame.pack(self.MSG_END, msg_end)
+
         # Create DATA Packet(s)
         list_msg_fragments = self.FragmentMsg(msg)
         list_data_packets = []
+
         del list_data_packets[:] # Remove all old indexes
         for i in range(0, len(list_msg_fragments), 1):
             data_packet = self.CreateDataFrame(i, list_msg_fragments[i])
+            print "Pre-Pack:", repr(data_packet), len(data_packet)
             data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
+            print "Post-Pack:", repr(data_packet), len(data_packet)
             list_data_packets.append(data_packet)
         # Insert all packets into final packet list in order of transmission
         self.list_packets = [] # Reset any old packet fragments
@@ -85,7 +90,9 @@ class Msg_State_Machine_Tx(object):
         return packet
 
     def CreateDataFrame(self, sequence, data):
+        print "create:", repr(data), len(data)
         packet = self.pkt_data.pack(sequence, len(data), data)
+        print "created:", repr(packet), len(packet)
         return packet
 
     def CreateEndFrame(self, msg_len):
@@ -126,8 +133,9 @@ class message_app_Tx(object):
         A basic function to transmit a raw payload to the intended destination unit.
         """
         self.command = self.faraday_cmd.CommandLocalExperimentalRfPacketForward(self.destination_callsign,
-                                                                                self.destination_id, payload)
-        print "Transmitting message:", repr(payload)
+                                                                                self.destination_id,
+                                                                                payload)
+        print "Transmitting message:", repr(payload), "length:", len(payload)
         self.faraday_1.POST(self.local_device_callsign, self.local_device_node_id, self.faraday_1.CMD_UART_PORT,
                             self.command)
 
@@ -215,22 +223,19 @@ class message_app_Rx(object):
                 unpacked_packet = self.pkt_start.unpack(packet[0:12])
                 # print unpacked_packet
                 self.faraday_Rx_SM.FrameAssembler(255, unpacked_packet)
+                return None
             # Data Packet
             if (packet_identifier == 254):
                 unpacked_packet = self.pkt_data.unpack(packet[0:41])
                 # print unpacked_packet
                 self.faraday_Rx_SM.FrameAssembler(254, unpacked_packet)
+                return None
             # END Packet
             if (packet_identifier == 253):
                 unpacked_packet = self.pkt_end.unpack(packet[0])
                 # print unpacked_packet
                 message_assembled = self.faraday_Rx_SM.FrameAssembler(253, unpacked_packet)
-                print '***************************************'
-                print "FROM:", message_assembled['source_callsign']
-                print '\n'
-                print message_assembled['message']
-
-                print '\n***************************************'
+                return message_assembled
         except:
             print "Fail:", packet, len(packet)
 
@@ -242,4 +247,9 @@ class message_app_Rx(object):
                 datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
                 # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
                 datagram = datagram[0:42]
-                self.ParsePacketFromDatagram(datagram)
+                message_status = self.ParsePacketFromDatagram(datagram)
+                if message_status == None:
+                    return None  # Partial fragmented packet, still receiving
+                else:
+                    return message_status # Full packet relieved!
+

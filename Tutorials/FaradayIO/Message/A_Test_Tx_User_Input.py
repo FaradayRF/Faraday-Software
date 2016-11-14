@@ -2,12 +2,12 @@ import faraday_msg
 
 
 #Variables
-local_device_callsign = 'kb1lqc'
-local_device_node_id = 1
+local_device_callsign = 'kb1lqc'# Callsign of the local unit to connect to (COM port assignment)
+local_device_node_id = 1  # Callsign ID of the local unit to connect to (COM port assignment)
 
 #Remote device information
-remote_callsign = 'kb1lqd'
-remote_id = 1
+remote_callsign = 'kb1lqd'  # Callsign of the remote unit to transmit to
+remote_id = 1  # Callsign ID of the remote unit to connect to transmit to
 
 # Create messaging application objects needed for transmissions
 faraday_tx_msg_sm = faraday_msg.Msg_State_Machine_Tx()  # Transmit state machine object used to fragment data

@@ -7,14 +7,23 @@ import time
 #from FaradayIO import faradaybasicproxyio
 
 #Variables
-local_device_callsign = 'kb1lqc'
-local_device_node_id = 1
+local_device_callsign = 'kb1lqc'  # Callsign of the local unit to connect to (COM port assignment)
+local_device_node_id = 1  # Callsign ID of the local unit to connect to (COM port assignment)
 uart_service_port_application_number = 3
 GETWAIT_TIMEOUT = 2
 
+# Create receiver application object
 faraday_rx_msg_object = faraday_msg.message_app_Rx()
-#faraday_rx_msg_sm = faraday_msg.Msg_State_Machine_Tx()
-#faraday_io = faradaybasicproxyio.proxyio()
 
+# Loop continuously through the faraday experimental RF command message application RX routine
 while 1:
-    faraday_rx_msg_object.RxMsgLoop(local_device_callsign, local_device_node_id, uart_service_port_application_number, GETWAIT_TIMEOUT)
+    rx_message_dict = faraday_rx_msg_object.RxMsgLoop(local_device_callsign, local_device_node_id, uart_service_port_application_number, GETWAIT_TIMEOUT)
+    if rx_message_dict != None:
+        print '***************************************'
+        print "FROM:", rx_message_dict['source_callsign']
+        print '\n'
+        print rx_message_dict['message']
+        print '\n***************************************'
+        rx_message_dict = None
+    else:
+        pass # No messages received
