@@ -86,16 +86,15 @@ class Msg_State_Machine_Tx(object):
         return packet
 
 class message_app(object):
-    def __init__(self):
+    def __init__(self, local_callsign, local_callsign_id, destination_callsign, destination_id):
         """
         The message application object contains all the functions, definitions, and state machines needed to implement a bare-bones text message application using the Faraday command application "experimental RF Packet Forward" functionality."
         """
         #Identification Variables
-        self.local_device_callsign = 'kb1lqd'
-        self.local_device_node_id = 7
-        self.transmit_proxy_flask_port = 8099
-        self.remote_callsign = 'KB1LQC' #case independant
-        self.remote_id = 1
+        self.local_device_callsign = str(local_callsign).upper()
+        self.local_device_node_id = int(local_callsign_id)
+        self.remote_callsign = str(destination_callsign).upper()
+        self.remote_id = int(destination_id)
         #Initialize objects
         self.faraday_1 = faradaybasicproxyio.proxyio(self.transmit_proxy_flask_port)
         self.faraday_cmd = faradaycommands.faraday_commands()
