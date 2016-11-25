@@ -12,8 +12,31 @@ The architecture of the applications interacting with Faraday are contained in s
 
 **External Interface: ** Programs that interact with applications to provide a user interface or API to the applications functionality. These provide a modular interface to faraday functionallity and are highly desired but not always neccessary. 
 
-![Faraday proxy and application block diagram](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Tutorials/Tutorials/1-Basic Proxy Interactions And Programming/0-Proxy_Basics/Images/FaradayProxyBlocks.jpg "Faraday Proxy and Application Architecture")
+![Faraday proxy and application block diagram](Images/FaradayProxyBlocks.jpg "Faraday Proxy and Application Architecture")
 
+This tutorial will focus on the interactions with Proxy directly without any applications by using POST/GET to retrieve data from a local Farday device. Understanding how to interact with Proxy as a programmer is essential to programming applications.
+
+# Tutorial Code Overview
+
+The example tutorial code shows how to:
+
+* Import Faraday's Python module for Proxy interaction
+* Configure the proxy tool to conenct to a local Faraday device
+* Retrieve waiting data from a UART "service port" (PORT 5 - Telemetry)
+  * If no data is waiting the program commands the local unit to send telemetry information to retrieve
+* Parse the retrieved telemetry packet 
+
+
+### Code - Python Module Imports
+
+Several Python module tools are provided to make interacting with the proxy server easier. Importing these allow predefined functions to handle the functionallity of retrieving and sending data to the local Faraday device.
+
+**faradaybasicproxyio: ** A simple class object used to "connect" to a local device over proxy and allow the retrieval and transmission of data.
+
+**faradaycommands: ** A predefined list of commands that control a Faraday device. These functions return a completed packet ready for transmission over the proxy interface.
+
+**telemetryparser: ** A tool used to decode and parse retrived telemetry application packets from a Faraday device.
+ 
 
 ```python
 #Imports - General
@@ -26,6 +49,11 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
+```
+
+### Code - ProxyIO Tool Configuration/Initialization
+
+```python
 #Definitions
 FARADAY_TELEMETRY_UART_PORT = 5
 FARADAY_CMD_UART_PORT = 2
@@ -40,6 +68,12 @@ faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 faraday_parser = telemetryparser.TelemetryParse()
 
+```
+
+### Code - Retrieve Data From Proxy
+
+```python
+
 #Get all waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry packets). Get returns a list of all packets received on port (in JSON dictionary format).
 print "Getting the latest telemetry from Faraday!"
 rx_telem_data = faraday_1.GET( local_device_callsign, local_device_node_id, FARADAY_TELEMETRY_UART_PORT)
@@ -50,7 +84,11 @@ if(rx_telem_data == None):
     faraday_1.POST(local_device_callsign, local_device_node_id, FARADAY_CMD_UART_PORT, faraday_cmd.CommandLocalUARTUpdateNow())
     #Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
     rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, FARADAY_TELEMETRY_UART_PORT, 1, True) #Will block and wait for given time until a packet is recevied
+```
 
+### Code - Parsing Retrieve Data From Proxy
+
+```python
 try:
     print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
 
