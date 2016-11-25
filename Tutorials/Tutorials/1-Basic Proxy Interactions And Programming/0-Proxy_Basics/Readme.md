@@ -31,11 +31,16 @@ The example tutorial code shows how to:
 
 Several Python module tools are provided to make interacting with the proxy server easier. Importing these allow predefined functions to handle the functionallity of retrieving and sending data to the local Faraday device.
 
+The Faraday Python module tools are imported using a relative PATH and to do so the PATH must be assigned using `sys.path.append()`
+
+The Faraday tools provided:
+
 **faradaybasicproxyio:** A simple class object used to "connect" to a local device over proxy and allow the retrieval and transmission of data.
 
 **faradaycommands:** A predefined list of commands that control a Faraday device. These functions return a completed packet ready for transmission over the proxy interface.
 
 **telemetryparser:** A tool used to decode and parse retrived telemetry application packets from a Faraday device.
+
  
 
 ```python
@@ -51,7 +56,14 @@ from FaradayIO import telemetryparser
 
 ```
 
-### Code - ProxyIO Tool Configuration/Initialization
+### Code - ProxyIO Tool Configuration and Program Variables
+
+To connect to a local Faraday device the class object of `faradaybasicproxyio.proxyio()` must be created. The local callsign and ID is respective to the *assigned proxy callsign and ID relative to the COM ports* and may not match the current device configuration.
+
+Proxy can be connected to multiple Faraday devices at once (this is configured when starting proxy) and the `local_device_callsign` and `local_device_node_id` variables are variables used to interact with the intended device connected. The `FARADAY_TELEMETRY_UART_PORT` and other constants are defined here for clarity but as shown later are avaiable predefined in the tool modules. 
+
+The Python class objects are initialized and ready to provide their functionalities further in the program.
+
 
 ```python
 #Definitions
@@ -71,6 +83,13 @@ faraday_parser = telemetryparser.TelemetryParse()
 ```
 
 ### Code - Retrieve Data From Proxy
+
+
+This code block attempts to retrieve data from the Telemetry application port over UART (PORT 5 - UART Layer 4). The proxy buffers packets sent from a local Faraday device into FIFO's and retrieving data from the proxy is simply retrieving data from these FIFO's. If not data is waiting to be retrieved then the value `None` is returned. The telemetry from a device is transmitted over UART at specific intervals set by the device configuration, it is possible to stop all interval transmissions.
+
+If no data is able to be retrieved the program sends a command to the Faraday device forcing it to transmit over UART it's latest Telemetry packet (using the COMMAND port on UART Layer 4). After commanding the device will take some undefined time to process and send this data, using `faraday_1.GET()` will likley return `None` again due to the data having not yet been sent from the device.
+
+`faraday_1.GETWait()` is used to wait (blocking) until data is available from the UART service port up to a specified timeout time. Note that this function will trigger on ANY data received and not neccessarally the intended data being waited for. In this example the only data being sent is the intended telemetry.
 
 ```python
 
