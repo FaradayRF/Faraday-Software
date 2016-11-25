@@ -5,12 +5,12 @@ This tutorial will introduce key concepts and interactions with the Faraday UART
 
 The architecture of the applications interacting with Faraday are contained in several layers
 
-**Proxy Interface: **is always the low level interface to the actual device. Applications. Proxy provides an API for the physical Faraday device.
+**Proxy Interface:**is always the low level interface to the actual device. Applications. Proxy provides an API for the physical Faraday device.
 
-**Applications: ** Programs that interact with the Proxy Interface and provide functionalities using a Faraday device locally connected to the host computer. Applications utilize the Proxy RESTful interface while also providing (ideally) another RESTful interface for higher level programs to provide user interfaces.
+**Applications:** Programs that interact with the Proxy Interface and provide functionalities using a Faraday device locally connected to the host computer. Applications utilize the Proxy RESTful interface while also providing (ideally) another RESTful interface for higher level programs to provide user interfaces.
 
 
-**External Interface: ** Programs that interact with applications to provide a user interface or API to the applications functionality. These provide a modular interface to faraday functionallity and are highly desired but not always neccessary. 
+**External Interface:** Programs that interact with applications to provide a user interface or API to the applications functionality. These provide a modular interface to faraday functionallity and are highly desired but not always neccessary. 
 
 ![Faraday proxy and application block diagram](Images/FaradayProxyBlocks.jpg "Faraday Proxy and Application Architecture")
 
@@ -31,11 +31,11 @@ The example tutorial code shows how to:
 
 Several Python module tools are provided to make interacting with the proxy server easier. Importing these allow predefined functions to handle the functionallity of retrieving and sending data to the local Faraday device.
 
-**faradaybasicproxyio: ** A simple class object used to "connect" to a local device over proxy and allow the retrieval and transmission of data.
+**faradaybasicproxyio:** A simple class object used to "connect" to a local device over proxy and allow the retrieval and transmission of data.
 
-**faradaycommands: ** A predefined list of commands that control a Faraday device. These functions return a completed packet ready for transmission over the proxy interface.
+**faradaycommands:** A predefined list of commands that control a Faraday device. These functions return a completed packet ready for transmission over the proxy interface.
 
-**telemetryparser: ** A tool used to decode and parse retrived telemetry application packets from a Faraday device.
+**telemetryparser:** A tool used to decode and parse retrived telemetry application packets from a Faraday device.
  
 
 ```python
