@@ -13,7 +13,7 @@ The example tutorial code focuses on how to:
 NOTE: All commands are checked for curruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
 
 ## Command Application (CC430)
-An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple application layer (layer 7) packet protocol.
+An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple [application layer (layer 7) packet protocol](https://en.wikipedia.org/wiki/OSI_model#Layer_7:_Application_Layer).
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
 
@@ -90,6 +90,10 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ```
 ## Code - Command ECHO
 
+A simple ECHO like command is programmed into Farday's command program that will simply send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
+
+This command example is pretty self explaining and simply sends the string `"This will ECHO back on UART"` to the local Faraday device and retrieves, parses, and displays the ECHO'd packet. Note the padding bytes likely visible due to fixed length UART transport packet formatting appended to the original message. Also, this command accepts binary data values (not just ASCII string text)!
+
 ```python
 ###############
 ## ECHO MESSAGE
@@ -116,8 +120,18 @@ print "Decoded received ECHO'd Message:", echo_decoded #Note that ECHO sends bac
 
 ## Tutorial Output Example
 
-below is a screenshot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Note that some data is blacked out of this image (GPS).
+below is a screenshot of the partial output of the tutorial script when run in a python interpreter (PyCharm).
 
+
+![Output from the Commanding - Local Tutorial](Images/Output.png "Output from the Commanding - Local Tutorial")
+
+The padding bytes are clearly visible appended to the end of the returned ECHO'd string. 
+
+#Bonus Excersize
+
+* Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
+* Can you do this variably given any string length?
+  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
 
 #See Also
 
