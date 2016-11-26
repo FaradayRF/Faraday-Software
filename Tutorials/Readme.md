@@ -13,6 +13,8 @@ This series does not yet contain tutorials covering programming the CC430 itself
 
 * **Introduction To Faraday**
   * What is Faraday and what can you do with it out of the box?
+* **Configuring Proxy**
+  * The proxy interface program is the main program needed to interact with Faraday on a Host computer. Learn how to set-up the program to properly connect to Faraday digital radio(s).
 * **Saying Hello!**
   * How to connect a Faraday digital radio to a host computer and use built in applications.
 * **Where Are You?**
