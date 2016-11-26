@@ -26,7 +26,7 @@ This series does not yet contain tutorials covering programming the CC430 itself
 
 * **[Hello World - Proxy 101](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/0-Proxy_Basics/)**
   * Interacting with proxy as a programmer and the basics of the GET/POST API.
-* **[Commanding - Local](/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/)**
+* **[Commanding - Local](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/)**
   * How to send commands to a locally connected Faraday digital radio.
 * **Commanding - Remote (RF)**
   * How to send commands to a remote Faraday device over RF.
