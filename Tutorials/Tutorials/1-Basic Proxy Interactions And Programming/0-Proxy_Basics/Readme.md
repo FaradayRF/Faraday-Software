@@ -111,10 +111,10 @@ All data retrieved from the Proxy Interface is BASE64 encoded and must be decode
 
 When data is retrieved from the proxy (currently) ALL items in the FIFO are returned as a JSON object. The `rx_telem_data` variable holds this returned data and for the purposes of this tutorial only the first index item is being used: `rx_telem_data[0]['data']`. The JSON field `['data']` is the BASE64 encoded data of index item `[0]` returned.
 
+`faraday_parser.UnpackDatagram()` parses the telemetry packet data from the main Telemetry application packet that is used to encapsulate and identify the several telemetry packet types. Index `[3]` is the raw telemetry packet to be parsed that contains the information fields desired. the main Telemetry packet is a fixed length packet and packets contain within the data field may be shorter and thus padded. To removed the padded `faraday_parser.ExtractPaddedPacket()` is used.
 
 ![Telemetry Main Packet Datagram](Images/Telemetry_Datagram_Packet.png "Telemetry Main Packet Datagram")
 
-`faraday_parser.UnpackDatagram()` parses the telemetry packet data from the main Telemetry application packet that is used to encapsulate and identify the several telemetry packet types. Index `[3]` is the raw telemetry packet to be parsed that contains the information fields desired. the main Telemetry packet is a fixed length packet and packets contain within the data field may be shorter and thus padded. To removed the padded `faraday_parser.ExtractPaddedPacket()` is used.
 
 Although we could query the main telemetry packet fields for the packet type we know that packet will be of "Packet Type 3" and `faraday_parser.UnpackPacket_3()` is used to parse it. This parsing function will return the individual fields of data present within the Telemetry Packet Type 3 retrieved from the local Faraday Device. Details on the Telemetry packet format and parsing are covered in a later turorial.
 
