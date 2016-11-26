@@ -1,5 +1,5 @@
 
-# Tutorial - Proxy Basics
+# Tutorial - Proxy Interaction Basics
 
 This tutorial will introduce key concepts and interactions with the Faraday UART proxy that allows communication between a host computer and local Faraday devices. The supplied proxy program is the main method of interaction with Faraday's over a local computer host connection and provides this functionality over a RESTful API on localhost.
 
@@ -16,8 +16,6 @@ The architecture of the applications interacting with Faraday are contained in s
 
 This tutorial will focus on the interactions with Proxy directly without any applications by using POST/GET to retrieve data from a local Farday device. Understanding how to interact with Proxy as a programmer is essential to programming applications.
 
-# Tutorial Code Overview
-
 The example tutorial code shows how to:
 
 * Import Faraday's Python module for Proxy interaction
@@ -27,7 +25,7 @@ The example tutorial code shows how to:
 * Parse the retrieved telemetry packet 
 
 
-### Code - Python Module Imports
+## Code - Python Module Imports
 
 Several Python module tools are provided to make interacting with the proxy server easier. Importing these allow predefined functions to handle the functionallity of retrieving and sending data to the local Faraday device.
 
@@ -56,7 +54,7 @@ from FaradayIO import telemetryparser
 
 ```
 
-### Code - ProxyIO Tool Configuration and Program Variables
+## Code - ProxyIO Tool Configuration and Program Variables
 
 To connect to a local Faraday device the class object of `faradaybasicproxyio.proxyio()` must be created. The local callsign and ID is respective to the *assigned proxy callsign and ID relative to the COM ports* and may not match the current device configuration.
 
@@ -82,7 +80,7 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 ```
 
-### Code - Retrieve Data From Proxy
+## Code - Retrieve Data From Proxy
 
 
 This code block attempts to retrieve data from the Telemetry application port over UART (PORT 5 - UART Layer 4). The proxy buffers packets sent from a local Faraday device into FIFO's and retrieving data from the proxy is simply retrieving data from these FIFO's. If not data is waiting to be retrieved then the value `None` is returned. The telemetry from a device is transmitted over UART at specific intervals set by the device configuration, it is possible to stop all interval transmissions.
@@ -105,7 +103,7 @@ if(rx_telem_data == None):
     rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, FARADAY_TELEMETRY_UART_PORT, 1, True) #Will block and wait for given time until a packet is recevied
 ```
 
-### Code - Parsing Retrieve Data From Proxy
+## Code - Parsing Retrieve Data From Proxy
 
 All data retrieved from the Proxy Interface is BASE64 encoded and must be decoded. BASE64 encoding in ONLY used between the proxy and applications to ensure localhost network encoding compatibility. The `faraday_1.DecodeRawPacket()` function is used to decode a BASE64 encoded proxy item into its original format.
 
@@ -113,11 +111,12 @@ All data retrieved from the Proxy Interface is BASE64 encoded and must be decode
 
 When data is retrieved from the proxy (currently) ALL items in the FIFO are returned as a JSON object. The `rx_telem_data` variable holds this returned data and for the purposes of this tutorial only the first index item is being used: `rx_telem_data[0]['data']`. The JSON field `['data']` is the BASE64 encoded data of index item `[0]` returned.
 
-***To-Do*** Add table/image of telemetry packet format
+
+![Telemetry Main Packet Datagram](Images/Telemetry_Datagram_Packet.png "Telemetry Main Packet Datagram")
 
 `faraday_parser.UnpackDatagram()` parses the telemetry packet data from the main Telemetry application packet that is used to encapsulate and identify the several telemetry packet types. Index `[3]` is the raw telemetry packet to be parsed that contains the information fields desired. the main Telemetry packet is a fixed length packet and packets contain within the data field may be shorter and thus padded. To removed the padded `faraday_parser.ExtractPaddedPacket()` is used.
 
-Although we could query the main telemetry packet fields for the packet type we know that packet will be of "Packet Type 3" and `faraday_parser.UnpackPacket_3()` is used to parse it. This parsing function will return the individual fields of data present within the Telemetry Packet Type 3 retrieved from the local Faraday Device.
+Although we could query the main telemetry packet fields for the packet type we know that packet will be of "Packet Type 3" and `faraday_parser.UnpackPacket_3()` is used to parse it. This parsing function will return the individual fields of data present within the Telemetry Packet Type 3 retrieved from the local Faraday Device. Details on the Telemetry packet format and parsing are covered in a later turorial.
 
 
 ```python
@@ -148,3 +147,15 @@ try:
 except:
     print "Failed to get data."
 ```
+
+## Tutorial Output Example
+
+below is a screenshot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Note that some data is blacked out of this image (GPS).
+
+![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
+
+#See Also
+
+* [Proxy Tool - FaradayIO](http://faraday-software.readthedocs.io/en/latest/faradayio.html)
+* [Proxy Tool - TelemetryParser](http://faraday-software.readthedocs.io/en/latest/telemetryparser.html)
+
