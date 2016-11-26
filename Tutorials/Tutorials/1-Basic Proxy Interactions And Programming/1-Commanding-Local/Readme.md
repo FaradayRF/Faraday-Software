@@ -10,42 +10,23 @@ The example tutorial code focuses on how to:
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
+NOTE: All commands are checked for curruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
 
-## Code - Python Module Imports
+## Command Application (CC430)
+An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple application layer (layer 7) packet protocol.
 
-Several Python module tools are provided to make interacting with the proxy server easier. Importing these allow predefined functions to handle the functionallity of retrieving and sending data to the local Faraday device.
+## Code - Toggle GPIO's (LEDs) Predefined Functions
+
+The Faraday command module object predefines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
+
+`faraday_cmd.CommandLocalGPIOLED1On()` returns a completed command packet ready to be sent to the local device over the proxy interface (UART) and must be sent over the correct UART service port (PORT 2) for the command application running on Faraday's CC430. This is predefined as the class variable `faraday_1.CMD_UART_PORT`.
 
 
+ `faraday_1.POST()` will use the RESTful API of the Proxy Interface to POST data (our command packet) to a specified local device (`local_device_callsign`,`local_device_node_id`). The returned command packet in the tutorial example code is contained in the global variable `command`.
 
-**faradaycommands:** A predefined list of commands that control a Faraday device. These functions return a completed packet ready for transmission over the proxy interface.
-
-
- 
+The sleep time is only used so that each LED state is clearly visible to the user.
 
 ```python
-import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
-
-#Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-
-import time
-
-#Definitions
-
-
-#Variables
-local_device_callsign = 'kb1lqd'
-local_device_node_id = 1
-
-#Start the proxy server after configuring the configuration file correctly
-#Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
-faraday_cmd = faradaycommands.faraday_commands()
-
-
 ##############
 ## TOGGLE GPIO
 ##############
@@ -62,6 +43,36 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 command = faraday_cmd.CommandLocalGPIOLED2On()
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
+```
+
+## Code - Toggle GPIO's (LEDs) Bitmask
+
+The previous code used pre-defined functions for toggling GPIO and left LED #2 ON. Those predefined functions are actually just providing an abstraction of the raw command for GPIO bitmask control. The GPIO bitmask control is part of the Command Application and provides both ON/OFF control of many GPIO in a single command while also guarding potentially damaging GPIO from being accidently changed (i.e. removes ability to manually toggle the RF amplifier control GPIO).
+
+The Python module function `faraday_cmd.CommandLocalGPIO()` contains 6 function arguments:
+
+* 3 function arguments for commanding GPIO ports 3, 4, 5 pins ON
+* 3 function arguments for commanding GPIO ports 3, 4, 5 pins OFF
+
+If any bits are HIGH (1) in the bitmask bytes then that respective pin will be toggled ON (HIGH), if a bit is left LOW (0) then no action will take place and the bit will remain in it's current HIGH/LOW state.
+
+**For Example:**
+
+`faraday_cmd.CommandLocalGPIO(BIT1, 0, 0, 0, BIT3, 0)`
+
+* Toggles PORT 3 BIT 1 pin HIGH
+* Toggles PORT 4 BIT 3 pin LOW
+
+Bitwise operations are possible to simplified and consolidate the syntax to command multiple GPIO's.
+
+`faraday_cmd.CommandLocalGPIO(BIT1|BIT5|BIT6, 0, 0, 0, 0, 0)`
+
+* Toggles PORT 3 BIT 1, BIT 5, and BIT 6 pins HIGH
+
+
+
+
+```python
 
 #Turn LED 2 OFF LOCAL
 command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.LED_2, 0, 0) #This examples how the non predefined LED GPIO commanding is created. Multiple GPIO's can be toggled at once using ||'s
@@ -76,7 +87,10 @@ time.sleep(1)
 #Turn Both LED 1 and LED 2 OFF simultaneously
 command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.LED_1|gpioallocations.LED_2), 0, 0)
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+```
+## Code - Command ECHO
 
+```python
 ###############
 ## ECHO MESSAGE
 ###############
@@ -109,4 +123,5 @@ below is a screenshot of the partial output of the tutorial script when run in a
 
 * [Proxy Tool - FaradayIO](http://faraday-software.readthedocs.io/en/latest/faradayio.html)
 * [Proxy Tool - TelemetryParser](http://faraday-software.readthedocs.io/en/latest/telemetryparser.html)
+* Command Application
 
