@@ -17,7 +17,7 @@ This tutorial will focus on the interactions with Proxy directly without any app
 
 # Start The Proxy Interface
 
-Following the [Configuring Proxy](../../Tutorials/Tutorials/0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
+Following the [Configuring Proxy](../Tutorials/Tutorials/0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
 
 This tutorial assumes a standard UART telemetry beacon interval rate of 5 seconds or faster. If you've configured the interval slower it is suggested to configure the Faraday device to 5 seconds or faster.
 
