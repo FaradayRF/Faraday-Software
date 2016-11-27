@@ -15,13 +15,15 @@ This tutorial will introduce key concepts and interactions with the Faraday prox
 
 This tutorial will focus on the interactions with Proxy directly without any applications by using POST/GET to retrieve data from a local Faraday device.
 
-# Start The Proxy Interface
+#Running The Tutorial Example Script
+
+## Start The Proxy Interface
 
 Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
 
 This tutorial assumes a standard UART telemetry beacon interval rate of 5 seconds or faster. If you've configured the interval slower it is suggested to configure the Faraday device to 5 seconds or faster.
 
-# Tutorial Output Examples
+## Tutorial Output Examples
 
 below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Note that some data is blacked out of this image (GPS).
 

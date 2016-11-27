@@ -12,8 +12,28 @@ The example tutorial code focuses on how to:
 
 > NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
 
+#Running The Tutorial Example Script
+
+## Start The Proxy Interface
+
+Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
+
+
+## Tutorial Output Examples
+
+below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is runing to observe them turing ON and off.
+
+> Note: GPIO's being commanded may be recieving other commands and not work as intended if multiple programs are controlling a single GPIO (i.e. RED due to RF TX indication)
+
+
+![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
+
+
+
 ## Command Application (CC430)
 An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple [application layer (layer 7) packet protocol](https://en.wikipedia.org/wiki/OSI_model#Layer_7:_Application_Layer).
+
+# Code Overview
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
 
@@ -25,7 +45,6 @@ The Faraday command module object pre-defines many common actions such as turnin
 
 The sleep time is only used so that each LED state is clearly visible to the user.
 
-> Note: LED's being commanded may be recieving other commands and not work as intended (i.e. RED due to RF TX indication)
 
 ```python
 ##############
