@@ -146,7 +146,7 @@ class proxyio(object):
 
     def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug = False):
         """
-        This is an abstraction of the *GET* function that implements a timing funtionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
+        This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
