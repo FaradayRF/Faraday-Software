@@ -55,3 +55,18 @@ Open "Device Manager" from the start menu and locate the "Ports (COM & LPT)" tre
 **TODO:** Update with information to find based on programed FTDI manufacturer information.
 
 ![Device Manager](Images/Device-Manager.png "Device Manager")
+
+## Connecting To Multiple Faraday Devices
+
+The proxy interface can connect to more than one Faraday digital radio at a time and this is performed through a simple configuration of the `proxy.ini` file. 
+
+First, connect ***both*** Faraday units to your computer and identify both units assigned serial COM ports. Open and configure the `proxy.ini` file with the second (or more) unit's information following the pattern.
+
+* **[proxy]**
+  * `units=2` - or the number of units attached and to be connected to.
+* **[UNITx]**
+  * `Callsign`, `nodeid`, and `com` -Update like the first Faraday device **UNIT0** but with the respective device information.
+
+Connecting to 2 Faraday devices should look like the example below:
+
+![Device Manager](Images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
