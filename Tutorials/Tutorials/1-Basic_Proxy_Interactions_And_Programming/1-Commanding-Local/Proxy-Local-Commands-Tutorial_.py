@@ -1,10 +1,10 @@
 # This example will show how to command Faraday using the basic command application.
-# Make sure to turn UART TELEM BOOT Bitmask to 0 to turn OFF telemetry update automatically so that you know telemetry commands are working
+# LED's being commanded may be recieving other commands and not work as intended (i.e. RED due to RF TX indication)
 
 #Imports - General
 
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../FaradayIO")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -66,7 +66,7 @@ command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 #Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
-rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, 1, False) #Wait for up to 1 second
+rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, sec_timeout = 3)  # Wait for up to 3 seconds for data to arrive
 
 #Now parse data again
 b64_data = rx_echo_raw[0]['data']

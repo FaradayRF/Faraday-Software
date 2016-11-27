@@ -10,21 +10,22 @@ The example tutorial code focuses on how to:
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
-NOTE: All commands are checked for curruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
+> NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
 
 ## Command Application (CC430)
 An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple [application layer (layer 7) packet protocol](https://en.wikipedia.org/wiki/OSI_model#Layer_7:_Application_Layer).
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
 
-The Faraday command module object predefines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
+The Faraday command module object pre-defines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
 
 `faraday_cmd.CommandLocalGPIOLED1On()` returns a completed command packet ready to be sent to the local device over the proxy interface (UART) and must be sent over the correct UART service port (PORT 2) for the command application running on Faraday's CC430. This is predefined as the class variable `faraday_1.CMD_UART_PORT`.
-
 
  `faraday_1.POST()` will use the RESTful API of the Proxy Interface to POST data (our command packet) to a specified local device (`local_device_callsign`,`local_device_node_id`). The returned command packet in the tutorial example code is contained in the global variable `command`.
 
 The sleep time is only used so that each LED state is clearly visible to the user.
+
+> Note: LED's being commanded may be recieving other commands and not work as intended (i.e. RED due to RF TX indication)
 
 ```python
 ##############
@@ -104,7 +105,7 @@ command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 #Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
-rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, 1, False) #Wait for up to 1 second
+rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, sec_timeout = 3)  # Wait for up to 3 seconds for data to arrive
 
 #Now parse data again
 b64_data = rx_echo_raw[0]['data']
@@ -130,7 +131,7 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 #Bonus Excersize
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
-* Can you do this variably given any string length?
+* Can you do this variably given any string length using only the packets sent and received?
   * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
 
 #See Also
