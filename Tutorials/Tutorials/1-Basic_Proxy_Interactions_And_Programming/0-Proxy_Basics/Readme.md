@@ -6,7 +6,7 @@ This tutorial will introduce key concepts and interactions with the Faraday prox
 
 **Proxy Interface:** The proxy  interface provides an API for the physical Faraday device.
 
-**Applications:** Programs that interact with the Proxy Interface and provide functionalities using a Faraday device locally connected to the host computer.
+**Applications:** Programs that interact with the Proxy Interface and provide functionality using a Faraday device locally connected to the host computer.
 
 
 **External Interface:** Programs that interact with applications to provide a user interface or API to the applications functionality.
