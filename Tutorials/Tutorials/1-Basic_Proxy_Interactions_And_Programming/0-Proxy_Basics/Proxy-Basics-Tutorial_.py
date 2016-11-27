@@ -5,7 +5,7 @@
 #Imports - General
 
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../FaradayIO")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -26,14 +26,15 @@ faraday_parser = telemetryparser.TelemetryParse()
 print "Getting the latest telemetry from Faraday!"
 
 #Wait up to 10 seconds for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
-rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, 10, True) #Will block and wait for given time until a packet is recevied
+#rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, 10, debug = False) #Will block and wait for given time until a packet is recevied
+rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, sec_timeout = 10, limit=1) #Will block and wait for given time until a packet is recevied
 
+print rx_telem_data
 
 print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
 
-#Decode the first packet in list from BASE 64 to a RAW bytesting
-print rx_telem_data
-rx_telem_pkt_decoded = faraday_1.DecodeRawPacket(rx_telem_data[0]['data'])
+#Decode the packet in list from BASE 64 to a RAW bytesting
+rx_telem_pkt_decoded = faraday_1.DecodeRawPacket(rx_telem_data[0]['data']) #  JSON returned as list and use [0] to directly use the first (and only in this example due to "limit = 1") JSON list item
 print "\nThe first telemetry packet is:"
 print "\nAs Received BASE64:"
 print rx_telem_data[0]['data']

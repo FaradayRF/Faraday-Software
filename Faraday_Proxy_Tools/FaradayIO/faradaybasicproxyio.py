@@ -100,7 +100,7 @@ class proxyio(object):
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
-        :param limit: Number of data packets to pop off and return in dictionary from proxy
+        :param limit: (optional) Number of data packets to pop off and return in dictionary from proxy
 
 
         :Return: A JSON dictionary of all data packets waiting for the specified UART port. False if no data waiting.
@@ -144,7 +144,7 @@ class proxyio(object):
             self._logger.error("KeyError: " + str(e))
 
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout, debug = False):
+    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout = 1, debug = False, limit=None):
         """
         This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
@@ -152,8 +152,8 @@ class proxyio(object):
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
         :param sec_timeout: Timeout is in seconds and is a float (can be smaller than 1 seconds)
-        :param debug: Default=False, True = prints rolling time in wait until data recevied
-
+        :param debug: Default=False, True = prints rolling time in wait until data received
+        :param limit: (optional) Number of data packets to pop off and return in dictionary from proxy
         :Return: A JSON dictionary of all data packets waiting for the specified UART port. False if no data waiting.
 
         :Example: This example will get all data from FARADAY_TELEMETRY_UART_PORT (port 5) and if none
@@ -179,11 +179,11 @@ class proxyio(object):
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
 
             #Attempt to get data
-            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number)
+            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit = limit)
         #Determine if timeout or got data
         if(rx_data != False):
             if(debug):
-                print "Got Data!", "Time Inwaiting:", timedelta, "Seconds"
+                print "Got Data!", "Time In-waiting:", timedelta, "Seconds"
             else:
                 pass
             return rx_data
