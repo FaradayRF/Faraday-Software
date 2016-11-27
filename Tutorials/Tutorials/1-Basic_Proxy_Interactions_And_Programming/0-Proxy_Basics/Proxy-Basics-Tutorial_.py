@@ -22,14 +22,14 @@ faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 faraday_parser = telemetryparser.TelemetryParse()
 
-#Get all waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry packets). Get returns a list of all packets received on port (in JSON dictionary format).
+# Get only a single waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry
+# packets). GET() returns a list of all packets received on port (in JSON dictionary format). Argument limit=1 will
+# only get a single data packet from proxy even if there are more waiting. The default value is None and ALL packets
+# would be returned.
 print "Getting the latest telemetry from Faraday!"
 
-#Wait up to 10 seconds for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
-#rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, 10, debug = False) #Will block and wait for given time until a packet is recevied
+#Wait up to 10 seconds for the unit to respond to the command.
 rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, sec_timeout = 10, limit=1) #Will block and wait for given time until a packet is recevied
-
-print rx_telem_data
 
 print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
 

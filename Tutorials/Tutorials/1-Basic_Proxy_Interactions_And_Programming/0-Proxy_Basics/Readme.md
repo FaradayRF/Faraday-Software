@@ -48,7 +48,7 @@ The Faraday tools provided:
 #Imports - General
 
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -79,17 +79,21 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 `faraday_1.GETWait()` is a blocking function that waits for data in the `faraday_1.TELEMETRY_PORT` up to 10 seconds. The unit should be configured to send UART telemetry data every 5 seconds, if data is not already waiting in the UART (Telemetry) service port then the program will wait until it receives data and unblock or times out. If the program times out the script will error during parsing.
 
-The `GETWait()` and `GET()` functions will return ALL data packets waiting in the buffer. See [The faradayio module documentation](http://faraday-software.readthedocs.io/en/latest/faradayio.html) for more information.
+The `GETWait()` and `GET()` functions will return ALL data packets waiting in the buffer unless  the optional `limit` function argument is used. See [The faradayio module documentation](http://faraday-software.readthedocs.io/en/latest/faradayio.html) for more information.
 
 > NOTE: faraday_1.GET() can also be used but will not wait for data to arrive if not available in the proxy interface buffer at run-time.
 
 ```python
-#Get all waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry packets). Get returns a list of all packets received on port (in JSON dictionary format).
+# Get only a single waiting packets on the Telemetry port (assuming faraday has been auto-transmitting telemetry 
+# packets). GET() returns a list of all packets received on port (in JSON dictionary format). Argument limit=1 will
+# only get a single data packet from proxy even if there are more waiting. The default value is None and ALL packets
+# would be returned.
 print "Getting the latest telemetry from Faraday!"
 
-#Wait up to 10 seconds for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
-rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, 10, True) #Will block and wait for given time until a packet is recevied
+#Wait up to 10 seconds for the unit to respond to the command. 
+rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, sec_timeout = 10, limit=1) #Will block and wait for given time until a packet is recevied
 
+print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
 ```
 
 ## Code - Parsing Retrieve Data From Proxy
@@ -109,11 +113,8 @@ The `faraday_1.DecodeRawPacket()` function is used to decode a BASE64 encoded pr
 ***To-Do*** Add table/image of proxy data JSON
 
 ```python
-print "\nThe Recevied data contains " + str(len(rx_telem_data)) + " packet(s) encoded in BASE64"
-
-#Decode the first packet in list from BASE 64 to a RAW bytesting
-print rx_telem_data
-rx_telem_pkt_decoded = faraday_1.DecodeRawPacket(rx_telem_data[0]['data'])
+#Decode the packet in list from BASE 64 to a RAW bytesting
+rx_telem_pkt_decoded = faraday_1.DecodeRawPacket(rx_telem_data[0]['data']) #  JSON returned as list and use [0] to directly use the first (and only in this example due to "limit = 1") JSON list item
 print "\nThe first telemetry packet is:"
 print "\nAs Received BASE64:"
 print rx_telem_data[0]['data']
