@@ -13,7 +13,7 @@ class TelemetryParse(object):
         self.packet_3_len = 97
 
 
-    def UnpackDatagram(self, packet, debug):
+    def UnpackDatagram(self, packet, debug = False):
         """
         Unpacks a telemetry datagram from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
         then the function prints information about the packet as received. See Faraday packet definition guide for information.
@@ -46,7 +46,7 @@ class TelemetryParse(object):
 
 
 
-    def UnpackPacket_3(self, packet, debug):
+    def UnpackPacket_3(self, packet, debug = False):
         """
         Unpacks a telemetry packet type 3 (Telemetry) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
         then the function prints information about the packet as received. See Faraday packet definition guide for information.
@@ -150,7 +150,7 @@ class TelemetryParse(object):
         """
         return packet[0:packet_len]
 
-    def UnpackPacket_2(self, packet, debug):
+    def UnpackPacket_2(self, packet, debug = False):
         """
         Unpacks a telemetry packet type 2 (Debug Flash) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
         then the function prints information about the packet as received. See Faraday packet definition guide for information.
@@ -159,12 +159,12 @@ class TelemetryParse(object):
         Index[0]: Boot Count
         Index[1]: Reset Count
         Index[2]: Brownout reset counter
-        Index[3]: Reset / Non-maskable Interust counter
+        Index[3]: Reset / Non-maskable Interrupt counter
         Index[4]: PMM Supervisor Low counter
         Index[5]: PMM Supervisor High counter
         Index[6]: PMM Supervisor Low - OVP counter
         Index[7]: PMM Supervisor High - OVP counter
-        Index[8]: Watchdog timeput counter
+        Index[8]: Watchdog timeout counter
         Index[9]: Flash key violation counter
         Index[10]: FLL Unlock counter
         Index[11]: Peripheral / Config counter
@@ -179,12 +179,12 @@ class TelemetryParse(object):
             print "Index[0]: Boot Count", parsed_packet[0]
             print "Index[1]: Reset Count", parsed_packet[1]
             print "Index[2]: Brownout reset counter", parsed_packet[2]
-            print "Index[3]: Reset / Non-maskable Interust counter", parsed_packet[3]
+            print "Index[3]: Reset / Non-maskable Interrupt counter", parsed_packet[3]
             print "Index[4]: PMM Supervisor Low counter", parsed_packet[4]
             print "Index[5]: PMM Supervisor High counter", parsed_packet[5]
             print "Index[6]: PMM Supervisor Low - OVP counter", parsed_packet[6]
             print "Index[7]: PMM Supervisor High - OVP counter", parsed_packet[7]
-            print "Index[8]: Watchdog timeput counter", parsed_packet[8]
+            print "Index[8]: Watchdog timeout counter", parsed_packet[8]
             print "Index[9]: Flash key violation counter", parsed_packet[9]
             print "Index[10]: FLL Unlock counter", parsed_packet[10]
             print "Index[11]: Peripheral / Config counter", parsed_packet[11]
@@ -195,7 +195,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return parsed_packet
 
-    def UnpackPacket_1(self, packet, debug):
+    def UnpackPacket_1(self, packet, debug = False):
         """
         Unpacks a telemetry packet type 1 (Faraday System Settings) from the raw packet supplied in the function argument. The raw unpacked list is returned. If debug is True
         then the function prints information about the packet as received. See Faraday packet definition guide for information.

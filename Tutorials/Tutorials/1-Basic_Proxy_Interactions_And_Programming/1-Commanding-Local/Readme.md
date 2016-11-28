@@ -29,10 +29,6 @@ below is a screen-shot of the partial output of the tutorial script when run in 
 ![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
 
 
-
-## Command Application (CC430)
-An application is running on Faraday that provides a "command and control" functionallity among most of Faraday's operations. This program can control both peripheral, system, and some applications (as designed in) using it's application packet protocol. The *Command Application* is a great example of a simple [application layer (layer 7) packet protocol](https://en.wikipedia.org/wiki/OSI_model#Layer_7:_Application_Layer).
-
 # Code Overview
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
