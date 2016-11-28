@@ -30,11 +30,13 @@ This series does not yet contain tutorials covering programming the CC430 itself
   * Interacting with proxy as a programmer and the basics of the GET/POST API.
 * **[Commanding - Local](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/)**
   * How to send commands to a locally connected Faraday digital radio.
+* **[Telemetry Parsing](https://github.com/FaradayRF/Faraday-Software/tree/Tutorials-Main-Push-Release/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/2-Telemetry-Parsing)**
+  * Using the parsing module to parse all packet types of telemetry data from a Faraday digital radio.
+* **[Device Configuration](https://github.com/FaradayRF/Faraday-Software/tree/Tutorials-Main-Push-Release/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/3-Device-Configuration)**
+  * Using the device configuration application to re-configure non-volatile configuration of a locally connected Faraday device.
 * **Commanding - Remote (RF)**
   * How to send commands to a remote Faraday device over RF.
-* **Device Configuration**
-  * Using the device configuration application to re-configure non-volatile configuration of a locally connected Faraday device.
-* **Telemetry Parsing**
-  * Using the parsing module to parse all packet types of telemetry data from a Faraday digital radio.
+
+
 * **Experimental RF Packet Forwarding**
   * An introduction to using the simple RF packet forward command that sends a local UART payload over RF to a specified remote Faraday device. This is the basis for more advanced programs such as messaging and data/file transfers.
