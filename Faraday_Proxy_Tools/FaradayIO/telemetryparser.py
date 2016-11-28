@@ -69,7 +69,7 @@ class TelemetryParse(object):
         return packet[0:packet_len]
 
 
-    def UnpackPacket_3(self, packet, debug):
+    def UnpackPacket_3(self, packet, debug = False):
         """
         This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
 
@@ -229,7 +229,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return [telemetryList,dictionaryData]
 
-    def UnpackPacket_2(self, packet, debug):
+    def UnpackPacket_2(self, packet, debug = False):
         print packet, len(packet)
         """
         This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
@@ -245,12 +245,12 @@ class TelemetryParse(object):
             Index[0]: Boot Count
             Index[1]: Reset Count
             Index[2]: Brownout reset counter
-            Index[3]: Reset / Non-maskable Interust counter
+            Index[3]: Reset / Non-maskable Interrupt counter
             Index[4]: PMM Supervisor Low counter
             Index[5]: PMM Supervisor High counter
             Index[6]: PMM Supervisor Low - OVP counter
             Index[7]: PMM Supervisor High - OVP counter
-            Index[8]: Watchdog timeput counter
+            Index[8]: Watchdog timeout counter
             Index[9]: Flash key violation counter
             Index[10]: FLL Unlock counter
             Index[11]: Peripheral / Config counter
@@ -265,12 +265,12 @@ class TelemetryParse(object):
             print "Index[0]: Boot Count", parsed_packet[0]
             print "Index[1]: Reset Count", parsed_packet[1]
             print "Index[2]: Brownout reset counter", parsed_packet[2]
-            print "Index[3]: Reset / Non-maskable Interust counter", parsed_packet[3]
+            print "Index[3]: Reset / Non-maskable Interrupt counter", parsed_packet[3]
             print "Index[4]: PMM Supervisor Low counter", parsed_packet[4]
             print "Index[5]: PMM Supervisor High counter", parsed_packet[5]
             print "Index[6]: PMM Supervisor Low - OVP counter", parsed_packet[6]
             print "Index[7]: PMM Supervisor High - OVP counter", parsed_packet[7]
-            print "Index[8]: Watchdog timeput counter", parsed_packet[8]
+            print "Index[8]: Watchdog timeout counter", parsed_packet[8]
             print "Index[9]: Flash key violation counter", parsed_packet[9]
             print "Index[10]: FLL Unlock counter", parsed_packet[10]
             print "Index[11]: Peripheral / Config counter", parsed_packet[11]
@@ -281,7 +281,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return parsed_packet
 
-    def UnpackPacket_1(self, packet, debug):
+    def UnpackPacket_1(self, packet, debug = False):
         """
         This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
 
@@ -314,7 +314,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return parsed_packet
 
-    def UnpackConfigFlashD(self, packet, debug):
+    def UnpackConfigFlashD(self, packet, debug = False):
         """
         This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
 
@@ -365,8 +365,8 @@ class TelemetryParse(object):
             print "Index[8]: Default Boot Frequency [1]", parsed_packet[8]
             print "Index[9]: Default Boot Frequency [2]", parsed_packet[9]
             print "Index[10]: Default RF Power Amplifier Setting (PA Table)", parsed_packet[10]
-            print "Index[11]: Default GPS Lattitude", parsed_packet[11]
-            print "Index[12]: Default GPS Lattitude Direction", parsed_packet[12]
+            print "Index[11]: Default GPS Latitude", parsed_packet[11]
+            print "Index[12]: Default GPS Latitude Direction", parsed_packet[12]
             print "Index[13]: Default GPS Longitude", parsed_packet[13]
             print "Index[14]: Default GPS Longitude Direction", parsed_packet[14]
             print "Index[15]: Default GPS Altitude", parsed_packet[15]
