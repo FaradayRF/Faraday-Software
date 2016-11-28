@@ -39,20 +39,27 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.datagram_struct.unpack(packet)
 
+        dictionaryData = {'PacketType': parsed_packet[0],
+                          'RFSource': parsed_packet[1],
+                          'Payload_Length': parsed_packet[2],
+                          'PayloadData': parsed_packet[3],
+                          'ErrorDetection': parsed_packet[4],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "\n--- Telemetry Datagram ---"
-            print "Telemetry Packet Type:", parsed_packet[0]
-            print "Telemetry RF Source:", parsed_packet[1]
-            print "Telemetry Payload Length:", parsed_packet[2]
-            print "Telemetry Packet 16 Bit Checksum:", parsed_packet[4]
-            print "Telemetry Packet Payload Data:", repr(parsed_packet[3])
+            print "Telemetry Packet Type:", dictionaryData['PacketType']
+            print "Telemetry RF Source:", dictionaryData['RFSource']
+            print "Telemetry Payload Length:", dictionaryData['Payload_Length']
+            print "Telemetry Packet 16 Bit Checksum:", dictionaryData['PayloadData']
+            print "Telemetry Packet Payload Data:", repr(dictionaryData['ErrorDetection'])
             print "\n"
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
     def ExtractPaddedPacket(self, packet, packet_len):
         """
