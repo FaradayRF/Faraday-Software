@@ -10,7 +10,7 @@ from flask import request
 
 # Add Faraday proxy tools directory to path
 sys.path.append(os.path.join(os.path.dirname(__file__),
-                             "../Faraday_Proxy_Tools/"))  # Append path to common tutorial FaradayIO module
+                             "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
 
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
