@@ -48,7 +48,7 @@ rx_settings_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_settings_packe
 rx_settings_parsed = faraday_parser.UnpackPacket_1(rx_settings_pkt_extracted, True) #Debug ON
 
 # Print current Faraday radio frequency
-faraday_freq_mhz = cc430radioconfig.freq0_reverse_carrier_calculation(26.0, rx_settings_parsed[0], rx_settings_parsed[1], rx_settings_parsed[2], False)
+faraday_freq_mhz = cc430radioconfig.freq0_reverse_carrier_calculation(26.0, rx_settings_parsed['RF_Freq_2'], rx_settings_parsed['RF_Freq_1'], rx_settings_parsed['RF_Freq_0'])
 print "Faraday's Current Frequency:", str(faraday_freq_mhz)[0:7], "MHz"
 
 ############

@@ -227,7 +227,7 @@ class TelemetryParse(object):
             pass
 
         #Return parsed packet list
-        return [telemetryList,dictionaryData]
+        return dictionaryData
 
     def UnpackPacket_2(self, packet, debug = False):
         print packet, len(packet)
@@ -259,27 +259,42 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
 
+        dictionaryData = {'BootCounter': str(parsed_packet[0]),
+                          'ResetCounter': int(parsed_packet[1]),
+                          'BrownoutCounter': parsed_packet[2],
+                          'Reset_NMICounter': parsed_packet[3],
+                          'PMM_LowCounter': parsed_packet[4],
+                          'PMM_HighCounter': parsed_packet[5],
+                          'PMM_OVP_LowCounter': parsed_packet[6],
+                          'PMM_OVP_HighCounter': parsed_packet[7],
+                          'WatchdogTimeoutCounter': parsed_packet[8],
+                          'FlashKeyViolationCounter': parsed_packet[9],
+                          'FLLUnlockCounter': parsed_packet[10],
+                          'PeripheralConfigCounter': parsed_packet[11],
+                          'AccessViolationCounter': parsed_packet[12],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #2 ---"
-            print "Index[0]: Boot Count", parsed_packet[0]
-            print "Index[1]: Reset Count", parsed_packet[1]
-            print "Index[2]: Brownout reset counter", parsed_packet[2]
-            print "Index[3]: Reset / Non-maskable Interrupt counter", parsed_packet[3]
-            print "Index[4]: PMM Supervisor Low counter", parsed_packet[4]
-            print "Index[5]: PMM Supervisor High counter", parsed_packet[5]
-            print "Index[6]: PMM Supervisor Low - OVP counter", parsed_packet[6]
-            print "Index[7]: PMM Supervisor High - OVP counter", parsed_packet[7]
-            print "Index[8]: Watchdog timeout counter", parsed_packet[8]
-            print "Index[9]: Flash key violation counter", parsed_packet[9]
-            print "Index[10]: FLL Unlock counter", parsed_packet[10]
-            print "Index[11]: Peripheral / Config counter", parsed_packet[11]
-            print "Index[12]: Access violation counter", parsed_packet[12]
+            print "Index[0]: Boot Count", dictionaryData['BootCounter']
+            print "Index[1]: Reset Count", dictionaryData['ResetCounter']
+            print "Index[2]: Brownout reset counter", dictionaryData['BrownoutCounter']
+            print "Index[3]: Reset / Non-maskable Interrupt counter", dictionaryData['Reset_NMICounter']
+            print "Index[4]: PMM Supervisor Low counter", dictionaryData['PMM_LowCounter']
+            print "Index[5]: PMM Supervisor High counter", dictionaryData['PMM_HighCounter']
+            print "Index[6]: PMM Supervisor Low - OVP counter", dictionaryData['PMM_OVP_LowCounter']
+            print "Index[7]: PMM Supervisor High - OVP counter", dictionaryData['PMM_OVP_HighCounter']
+            print "Index[8]: Watchdog timeout counter", dictionaryData['WatchdogTimeoutCounter']
+            print "Index[9]: Flash key violation counter", dictionaryData['FlashKeyViolationCounter']
+            print "Index[10]: FLL Unlock counter", dictionaryData['FLLUnlockCounter']
+            print "Index[11]: Peripheral / Config counter", dictionaryData['PeripheralConfigCounter']
+            print "Index[12]: Access violation counter", dictionaryData['AccessViolationCounter']
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
     def UnpackPacket_1(self, packet, debug = False):
         """
@@ -301,18 +316,24 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_1_struct.unpack(packet)
 
+        dictionaryData = {'RF_Freq_2': parsed_packet[0],
+                          'RF_Freq_1': parsed_packet[1],
+                          'RF_Freq_0': parsed_packet[2],
+                          'RF_PATable': parsed_packet[3],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #1 ---"
-            print "Index[0]: RF Freq 2", parsed_packet[0]
-            print "Index[1]: RF Freq 1", parsed_packet[1]
-            print "Index[2]: RF Freq 0", parsed_packet[2]
-            print "Index[3]: RF Power Bitmask", parsed_packet[3]
+            print "Index[0]: RF Freq 2", dictionaryData['RF_Freq_2']
+            print "Index[1]: RF Freq 1", dictionaryData['RF_Freq_1']
+            print "Index[2]: RF Freq 0", dictionaryData['RF_Freq_0']
+            print "Index[3]: RF Power Bitmask", dictionaryData['RF_PATable']
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
     def UnpackConfigFlashD(self, packet, debug = False):
         """
