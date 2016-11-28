@@ -93,7 +93,7 @@ print "************************************"
 
 the [POSTman Chrome application](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en) is useful for debugging RESTful API's and clearly shows the returned JSON configuration data. This is identical to the JSON data being received by the tutorial script.
 
-![POSTman Example GET()](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/3-Device-Configuration/Images/POSTman_Example.png "POSTman Example GET()")
+![POSTman Example GET()](Images/POSTman_Example.png "POSTman Example GET()")
 
 
 ## Code - Update Device Configuration
