@@ -31,7 +31,6 @@ faraday_parser = telemetryparser.TelemetryParse()
 #Display current device configuration prior to configuration flash update (Send UART telemetry update now command)
 #Send the command to read the entire Flash Memory Info D allocations
 
-
 try:
     r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
@@ -40,11 +39,13 @@ except requests.exceptions.RequestException as e:  # This is the correct syntax
 #Print JSON dictionary device data from unit
 print r
 raw_unit_json = r.json()
-print "************************************"
+print "\n************************************"
+print "PRIOR TO CONFIGURATION UPDATE"
 print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
 print "RAW Unit JSON Data:", raw_unit_json
-
 print "************************************"
+
+
 #########################################################################################
 ###Update configuration using INI file as defined by Faraday device object and functions
 #########################################################################################
@@ -58,9 +59,6 @@ except requests.exceptions.RequestException as e:  # This is the correct syntax
 
 time.sleep(5) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
 
-#Flush old data from UART service port
-faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
-
 try:
     r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
@@ -68,7 +66,8 @@ except requests.exceptions.RequestException as e:  # This is the correct syntax
 
 #Print JSON dictionary device data from unit
 raw_unit_json = r.json()
-print "************************************"
+print "\n************************************"
+print "POST CONFIGURATION UPDATE"
 print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
 print "RAW Unit JSON Data:", raw_unit_json
 

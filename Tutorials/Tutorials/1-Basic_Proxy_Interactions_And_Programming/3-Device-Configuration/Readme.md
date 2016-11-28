@@ -52,7 +52,91 @@ The table below describes each INI file option and maximum size. Also supplied i
 
 ![Faraday Configuration Bitmask Descriptions](Images/Faraday_Configuration_Bitmask_Table.png "Faraday Configuration Bitmask Descriptions")
 
+Save the file when all updates are completed.
+
+## Execute Tutorial Script
+
+After all configuration files have been updated simply sending a POST command to the device configuration program will cause the `faraday_configuration.ini` file to be read and configuration command created and sent to reprogram the unit.
+
+![Successful Tutorial Script](Images/Output_Example_Success.png "Successful Tutorial Script")
+
+#Code Overview
+
+## Code - Read Current Configuration
+
+The code snippet from the tutorial script below uses sends a RESTful API `GET()` request to the device configuration application running on localhost port 8002. The request returns a JSON formatted dictionary of the current values in the device configuration flash memory which is then printed to the terminal.
+
+```python
+#########################################################################################
+###Get current configuration information prior to configuration update.
+#########################################################################################
+
+#Display current device configuration prior to configuration flash update (Send UART telemetry update now command)
+#Send the command to read the entire Flash Memory Info D allocations
+
+try:
+    r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+except requests.exceptions.RequestException as e:  # This is the correct syntax
+    print e
+
+#Print JSON dictionary device data from unit
+print r
+raw_unit_json = r.json()
+print "\n************************************"
+print "PRIOR TO CONFIGURATION UPDATE"
+print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
+print "RAW Unit JSON Data:", raw_unit_json
+print "************************************"
+```
+
+### Using POSTman To GET() Unit Configuration JSON
+
+the [POSTman Chrome application](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en) is useful for debugging RESTful API's and clearly shows the returned JSON configuration data. This is identical to the JSON data being received by the tutorial script.
+
+![POSTman Example GET()](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/3-Device-Configuration/Images/POSTman_Example.png "POSTman Example GET()")
+
+
+## Code - Update Device Configuration
+
+Using a POST() request to the device configuration application running the program will read the configuration ini file for the unit and reprogram the intended Faraday device.
+
+```python
+#########################################################################################
+###Update configuration using INI file as defined by Faraday device object and functions
+#########################################################################################
+
+time.sleep(1) # Sleep to allow unit to process, polling and slow
+
+try:
+    r = requests.post('http://127.0.0.1:8002', params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+except requests.exceptions.RequestException as e:  # This is the correct syntax
+    print e
+
+time.sleep(5) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
+```
+
+## Code - Re-Read Device Configuration (After Reprogramming)
+
+The last of the code in the tutorial simply re-reads the device configuration that should now be updated to the values listed in the conifguration INI file as reprogrammed and shown in the example output above.
+
+```python
+try:
+    r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+except requests.exceptions.RequestException as e:  # This is the correct syntax
+    print e
+
+#Print JSON dictionary device data from unit
+raw_unit_json = r.json()
+print "\n************************************"
+print "POST CONFIGURATION UPDATE"
+print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
+print "RAW Unit JSON Data:", raw_unit_json
+
+print "************************************"
+```
+
+
 #See Also
 
-
+* [Python Request Module](http://docs.python-requests.org/en/master/)
 
