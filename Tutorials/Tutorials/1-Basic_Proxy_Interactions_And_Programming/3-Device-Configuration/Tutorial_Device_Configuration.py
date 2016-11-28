@@ -25,7 +25,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 faraday_parser = telemetryparser.TelemetryParse()
 
 #########################################################################################
-###Get current configuration information post configuration update.
+###Get current configuration information prior to configuration update.
 #########################################################################################
 
 #Display current device configuration prior to configuration flash update (Send UART telemetry update now command)
