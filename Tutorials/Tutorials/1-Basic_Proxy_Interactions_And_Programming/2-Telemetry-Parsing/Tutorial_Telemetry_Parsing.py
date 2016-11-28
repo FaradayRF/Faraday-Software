@@ -47,7 +47,7 @@ rx_settings_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_settings_packe
 rx_settings_parsed = faraday_parser.UnpackPacket_1(rx_settings_pkt_extracted, debug = True) #Debug ON
 
 # Print current Faraday radio frequency
-faraday_freq_mhz = cc430radioconfig.freq0_reverse_carrier_calculation(26.0, rx_settings_parsed['RF_Freq_2'], rx_settings_parsed['RF_Freq_1'], rx_settings_parsed['RF_Freq_0'])
+faraday_freq_mhz = cc430radioconfig.freq0_reverse_carrier_calculation(rx_settings_parsed['RF_Freq_2'], rx_settings_parsed['RF_Freq_1'], rx_settings_parsed['RF_Freq_0'])
 print "Faraday's Current Frequency:", str(faraday_freq_mhz)[0:7], "MHz"
 
 ############
@@ -84,7 +84,7 @@ rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted
 faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
 
 #Command UART Telemetry Update NOW
-faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalUARTUpdateNow())
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalUARTFaradayTelemetry())
 
 #Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
 rx_telem_data = faraday_1.GETWait(local_device_callsign, local_device_node_id,faraday_1.TELEMETRY_PORT, 1) #Will block and wait for given time until a packet is recevied

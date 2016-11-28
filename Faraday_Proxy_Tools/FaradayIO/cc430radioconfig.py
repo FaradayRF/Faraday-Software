@@ -1,11 +1,11 @@
 #from construct import *
 
-def freq0_carrier_calculation(fxosc, freq_desired, debug = False):
+def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
     """
     Calculates the FREQ0, FREQ1, and FREQ2 24 bit word for main carrier frequency of the CC430.
 
-    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float)
     :param freq_desired: Frequency in MHz that is desired to tune to (Integer or float)
+    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float). Default = 26.0MHz
     :param debug: If True then the function will print additional information about the calculation process
 
     :return: A list\: [FREQ2, FREQ1, FREQ0, STR(actual frequency of carrier in MHz)]
@@ -48,14 +48,14 @@ def freq0_carrier_calculation(fxosc, freq_desired, debug = False):
     return FREQx_list
 
 
-def freq0_reverse_carrier_calculation(fxosc, freq0, freq1, freq2, debug = False):
+def freq0_reverse_carrier_calculation( freq0, freq1, freq2, fxosc = 26.0, debug = False):
     """
     This function reverse calculates the CC430 frequency in MHz from the known freq[] bytes in the CC430 radio registers.
 
-    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float)
     :param freq0: Frequency byte index 0
     :param freq1: Frequency byte index 1
     :param freq2: Frequency byte index 2
+    :param fxosc: CC430 High Frequency crystal frequency in MHZ  (Integer or float). efault = 26.0MHz
     :param debug: If True then the function will print additional information about the calculation process
 
     :return: Returns the calculated frequency in MHz as a float.
