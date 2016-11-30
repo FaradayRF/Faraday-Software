@@ -54,6 +54,18 @@ The table below describes each INI file option and maximum size. Also supplied i
 
 Save the file when all updates are completed.
 
+## Edit the Tutorial Script Callsign/ID
+
+Edit lines 18 and 19 in the tutorial script to contain the proxy assigned callsign and ID number of the unit you intend to reconfigure. This must match the *"deviceconfiguration.ini"* file callsign/ID.
+
+For example:
+
+```python
+#Variables
+local_device_callsign = 'KB1LQD'  # Enter the proxy callsign of the unit you'd like to reconfigure
+local_device_node_id = 2  # Enter the proxy callsign ID number of the unit you'd like to reconfigure
+```
+
 ## Execute Tutorial Script
 
 After all configuration files have been updated simply sending a POST command to the device configuration program will cause the `faraday_configuration.ini` file to be read and configuration command created and sent to reprogram the unit.
