@@ -15,8 +15,9 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'kb1lqd'
-local_device_node_id = 1
+local_device_callsign = 'KB1LQD'
+local_device_callsign = str(local_device_callsign).upper()
+local_device_node_id = 2
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -50,14 +51,14 @@ print "************************************"
 ###Update configuration using INI file as defined by Faraday device object and functions
 #########################################################################################
 
-time.sleep(1) # Sleep to allow unit to process, polling and slow
+time.sleep(3) # Sleep to allow unit to process, polling and slow
 
 try:
     r = requests.post('http://127.0.0.1:8002', params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
-time.sleep(5) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
+time.sleep(6) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
 
 try:
     r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
