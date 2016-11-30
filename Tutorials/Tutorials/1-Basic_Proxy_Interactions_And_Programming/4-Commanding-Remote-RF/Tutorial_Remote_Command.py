@@ -10,24 +10,21 @@ from FaradayIO import gpioallocations
 import time
 
 
-#Variables
-local_device_callsign = 'kb1lqd'
-local_device_node_id = 1
-
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 
-# This example will show how to command Faraday using the basic command application.
-# Make sure to turn UART TELEM BOOT Bitmask to 0 to turn OFF telemetry update automatically
+#Local device information (Must match proxy assigned information)
+local_device_callsign = 'kb1lqd'  #case independent
+local_device_node_id = 1
+
+#Remote device information (Must match unit programming)
+remote_callsign = 'kb1lqd'  #case independent
+remote_id = 2
 
 ################################
 ## TOGGLE Remote Device ++GPIO
 ################################
-
-#Remote device information
-remote_callsign = 'kb1lqd' #case independant
-remote_id = 2
 
 #Turn remote device LED 1 ON
 command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remote_callsign, remote_id))
