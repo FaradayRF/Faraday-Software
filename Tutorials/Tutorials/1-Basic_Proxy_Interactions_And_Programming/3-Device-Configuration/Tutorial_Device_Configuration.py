@@ -15,9 +15,9 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'KB1LQD'
+local_device_callsign = 'KB1LQD'  # Enter the proxy callsign of the unit you'd like to reconfigure
 local_device_callsign = str(local_device_callsign).upper()
-local_device_node_id = 2
+local_device_node_id = 2  # Enter the proxy callsign ID number of the unit you'd like to reconfigure
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
