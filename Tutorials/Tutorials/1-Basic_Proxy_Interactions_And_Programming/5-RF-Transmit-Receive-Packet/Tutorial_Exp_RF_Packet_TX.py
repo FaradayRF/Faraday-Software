@@ -24,7 +24,6 @@ remote_id = 2
 print "Connecting to proxy on PROXY device:", local_device_callsign + '-' + str(local_device_node_id)
 print "Transmitting to device:", remote_callsign + '-' + str(remote_id)
 
-
 #Use the predefined experimental message command (singled packet) function to send an RF message to a remote unit
 message = "Testing RF Packet 1"
 command = faraday_cmd.CommandLocalExperimentalRfPacketForward(remote_callsign, remote_id, message)

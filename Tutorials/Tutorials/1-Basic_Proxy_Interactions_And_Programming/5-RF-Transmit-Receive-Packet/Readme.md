@@ -1,17 +1,21 @@
 
 # Tutorial - Experimental RF Command
 
-Within the command program is a command called "Experimental RF Packet Forward" and it does just that: Send a single packet (payload) from your local device to a remote device using a wireless command transmission. A transmission is sent as a normal RF command with the data being forwarded as payload, when received it will be forwarded to UART at the remote device. ***This enables simple proxy (Python) packet protocol experimentation without the need for CC430 programming!***
+Within the command program is a command called "Experimental RF Packet Forward" and it does just that: Send a single packet (payload) from your local device to a remote device using a wireless command transmission. A transmission is sent as a normal RF command with the data being forwarded as payload, when received it will be forwarded to UART (service port #2) at the remote device. ***This enables simple proxy (Python) packet protocol experimentation without the need for CC430 programming!***
+
+> This code makes up for its extreme inefficiency with its simplicity. A throughput of ~2kBps was measured using this tutorial based program operating at a datarate of 38.4kbaud sending 1kB of data. Inefficient but still pretty fast for amateur radio!
 
 Although there is limited optimization and flexibility available this provides the educational basis for:
 
 * Single data packet transmissions
 * Text message programs
-  * Packet fragmentation, sequencing, protocol state machines
+  * [Packet fragmentation](http://www.tech-faq.com/packet-fragmentation.html), [packet sequencing](https://www.wireshark.org/docs/wsdg_html_chunked/ChDissectReassemble.html),flow control [general protocol state machines (PDF)](http://courses.cs.vt.edu/~cs5516/spring03/slides/reliable_tx_1.pdf)
 * File transfer
-  * ARQ protocols
+  * [ARQ protocols](https://en.wikipedia.org/wiki/Automatic_repeat_request)
 
 These tutorial scripts will transmit a single packet a) from a saved variable and b) from user typed input to a receiver program between two Faraday digital radios.
+
+
 
 #Running The Tutorial Example Script
 
@@ -62,6 +66,8 @@ Simply running this script will transmit two predefined data messages (ASCII) on
 
 ![Receiver Prompt Success 1](Images/Output_Example_Success_1.png "Receiver Prompt Success 1")
 
+> If you do not see received packets see the troubleshooting section below
+
 
 ## Execute Tutorial Script `Tutorial_Exp_RF_Packet_TX-User-Input.py`
 
@@ -75,9 +81,59 @@ Type in any message (keep in legal for Part 97!) to the transmitter prompt the i
 
 Congratulations, you just transmitted your first simple text message using Faraday!
 
-#Code Overview
+> If you do not see received packets see the troubleshooting section below
 
-## Code - 
+#Code Overview - Receiver
+
+
+
+## Code - Receiver Loop
+
+The receiver code is extremely basic and simple loops while checking for a new data from UART service port #2. The `faraday_1.GETWait()` is run on each loop iteration and when data has been received it decodes the proxy BASE64 and prints the raw data payload to the terminal prompt. Setting `data = None` is important so that the function only prints NEW data as received, `faraday_1.GETWait()` returns `None` when no data has been retrieved from proxy.
+
+```python
+#Print debug information about proxy port listening
+print "Receiver operating TCP Localhost port:", faraday_1.FLASK_PORT
+
+#Setup variables for receiving
+data = None
+
+#While loop to wait for reception of data packet from experimental message application
+while(1):
+    #Wait until there is new data on the message application port OR timout
+    data = faraday_1.GETWait(local_device_callsign, local_device_node_id, PROXY_MESSAGE_EXPERIMENTAL_PORT, 2)
+
+    #Check if data is False (False means that the Get() function timed out), if not then display new data
+    if (data != None) and (not 'error' in data):
+        #print "Received Message RAW", repr(data[0]['data'])
+        print "Received Message Decoded:", faraday_1.DecodeRawPacket(data[0]['data'])
+
+        #Set data = False so that the function loop can properly wait until the next data without printing last received data over and over
+        data = None
+```
+
+## Code - Transmitter (`Tutorial_Exp_RF_Packet_TX.py`)
+
+The transmitter code that sends a predefined string variable to the receiver is straight-forward programatically. The predefined experimental RF packet forward command is accessed using `faraday_cmd.CommandLocalExperimentalRfPacketForward()` from the `faradaycommands.py` module. The message is simple placed into this function as a data payload to the intended remote receiving Faraday device.
+
+Two messages are send sequentially, `"Testing RF Packet 1"` and `"Testing RF Packet 2"` with not timing constraints (flow control) between them. Faraday is fast enough to buffer both incoming packets and transmit them. 
+
+```python
+print "Connecting to proxy on PROXY device:", local_device_callsign + '-' + str(local_device_node_id)
+print "Transmitting to device:", remote_callsign + '-' + str(remote_id)
+
+#Use the predefined experimental message command (singled packet) function to send an RF message to a remote unit
+message = "Testing RF Packet 1"
+command = faraday_cmd.CommandLocalExperimentalRfPacketForward(remote_callsign, remote_id, message)
+print "Transmitting message:", message
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+
+message = "Testing RF Packet 2"
+command = faraday_cmd.CommandLocalExperimentalRfPacketForward(remote_callsign, remote_id, message)
+print "Transmitting message:", message
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+```
+
 
 # Troubleshooting
 
@@ -90,6 +146,15 @@ Check that the correct callsign and ID number of the remote device is correct (a
 **RF Power - Desensing**
 
 Faraday is actually quite sensitive and having a high power signal transmit between two close units can cause the receiving device to not hear the transmission. This is called radio de-sensing. The solution is to turn the power down, typically for a foot or two I've found a setting under 20 works well.
+
+**Payload Data Too Long**
+
+This simple implementation is limited to a maximum of 42 Bytes of payload data. Exceeding this will cause the transmission to fail.
+
+**General Noise/Corruption**
+
+This simplistic protocol has no error detection or correction. If a packet was not receiver simply retry several times.
+
 
 #See Also
 
