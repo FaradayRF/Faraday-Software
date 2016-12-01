@@ -16,11 +16,11 @@ faraday_cmd = faradaycommands.faraday_commands()
 
 #Local device information (Must match proxy assigned information)
 local_device_callsign = 'kb1lqd'  #case independent
-local_device_node_id = 1
+local_device_node_id = 2
 
 #Remote device information (Must match unit programming)
 remote_callsign = 'kb1lqd'  #case independent
-remote_id = 2
+remote_id = 1
 
 ################################
 ## TOGGLE Remote Device ++GPIO
