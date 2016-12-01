@@ -72,7 +72,17 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 time.sleep(0.5)
 ```
 
+# Troubleshooting
 
+The addition of wireless communications invites more chances for setup and reliability issues. Below are a few quick items to check if you are not able to runing the tutorial script is not commanding the remote unit correctly.
+
+**Remote Callsign/ID**
+
+Check that the correct callsign and ID number of the remote device is correct (as programmed) or the MAC layer protocol will not allow the remote unit to accept the command. All commands accepted by a unit over RF must match be properlly addressed.
+
+**RF Power - Desensing**
+
+Faraday is actually quite sensitive and having a high power signal transmit between two close units can cause the receiving device to not hear the transmission. This is called radio de-sensing. The solution is to turn the power down, typically for a foot or two I've found a setting under 20 works well.
 
 #See Also
 
