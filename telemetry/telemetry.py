@@ -159,7 +159,7 @@ def dbTelemetry():
     parameters["NODEID"] = nodeid
     parameters["DIRECTION"] = direction
     parameters["STARTTIME"] = startTime
-    parameters["ENDTIME"] = endTimeF
+    parameters["ENDTIME"] = endTime
     parameters["TIMESPAN"] = timespan
 
     data = []

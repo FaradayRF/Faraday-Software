@@ -11,5 +11,8 @@ docs/_build/
 telemetry/*.db
 telemetry/*.db-journal
 
+# APRS application
+aprs/login.ini
+
 #IDE (Pycharm)
 .idea/*
