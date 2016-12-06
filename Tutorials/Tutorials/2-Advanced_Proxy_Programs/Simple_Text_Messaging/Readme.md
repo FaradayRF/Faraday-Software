@@ -5,7 +5,7 @@ As demo'd in the previous tutorial it is possible to send short packets between 
 
 Packet fragmentation breaks a large packet into smaller "chunks" for transmission, the receiver reassembles these chunks of data piece by piece until the original packet has been recreated. 
 
-![Packet Fragmentation And Reassembly](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/Images/Packet-Fragmentation.png "Packet Fragmentation And Reassembly")
+![Packet Fragmentation And Reassembly](Images/Packet-Fragmentation.png "Packet Fragmentation And Reassembly")
 
 Packet encapsulation is the act of placing one packet (or portions of a packet) into another packet as data payload. In order to reassemble correctly several key issues need to be addressed:
 
