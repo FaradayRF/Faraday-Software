@@ -9,6 +9,10 @@ The tutorials series below is meant to introduce a user/developer to:
 
 This series does not yet contain tutorials covering programming the CC430 itself as most people will likely use and program at the host computer python level.
 
+#General Tutorials
+
+The general tutorials are focused on basic configuration, usage, and application operation.
+
 ##Welcome To Faraday
 
 * **Introduction To Faraday**
@@ -24,7 +28,11 @@ This series does not yet contain tutorials covering programming the CC430 itself
 * **Simple File Transfer**
   * This is a small update to the "Simple Messaging" program that sends binary data (files, images, etc...) over RF between two Faraday digital radios. The communications is unacknowledged not robust.
 
-##Developers - Faraday Proxy Programming
+#Developer Tutorials 
+
+Developer tutorials are focused on providing insight and examples for developers to begin programming with Faraday.
+
+##Introduction To Faraday Proxy Programming
 
 * **[Hello World - Proxy 101](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/0-Proxy_Basics/)**
   * Interacting with proxy as a programmer and the basics of the GET/POST API.
@@ -38,3 +46,8 @@ This series does not yet contain tutorials covering programming the CC430 itself
   * How to send commands to a remote Faraday device over RF.
 * **[Experimental RF Packet Forwarding](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/5-RF-Transmit-Receive-Packet)**
   * An introduction to using the simple RF packet forward command that sends a local UART payload over RF to a specified remote Faraday device. This is the basis for more advanced programs such as messaging and data/file transfers.
+
+## Building Fundamental Applications
+
+* **[Simple Text Messaging](/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/)**
+  * Utilizing the experimental RF packet forwarding command to build a simple text messaging application.
