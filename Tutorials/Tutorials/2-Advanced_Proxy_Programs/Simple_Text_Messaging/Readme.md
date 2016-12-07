@@ -105,6 +105,57 @@ Fragmentation of the packets must be accompanied by a method for the receiver to
 
 ![Receiver Fragmentation State Machine](Images/Receiver_States.png "Receiver Fragmentation State Machine")
 
+The code block below is from the `faraday_msg.py` receiver class `MessageAppRx(object)` and the function `parsepacketfromdatagram()` performs the parsing of the recieved packets. The state machine diagram above was implemented into code as shown below. 
+
+> Note: The state machine implementation is not strong and allows free movement to any state (i.e. END packet directly following a START packet).
+
+```python
+ def parsepacketfromdatagram(self, datagram):    
+        unpacked_datagram = self.pkt_datagram_frame.unpack(datagram)
+        packet_identifier = unpacked_datagram[0]
+        packet = unpacked_datagram[1]
+        try:
+            # Start Packet
+            if packet_identifier == 255:
+                unpacked_packet = self.pkt_start.unpack(packet[0:12])
+                # print unpacked_packet
+                self.faraday_Rx_SM.frameassembler(255, unpacked_packet)
+                return None
+            # Data Packet
+            if packet_identifier == 254:
+                unpacked_packet = self.pkt_data.unpack(packet[0:41])
+                # print unpacked_packet
+                self.faraday_Rx_SM.frameassembler(254, unpacked_packet)
+                return None
+            # END Packet
+            if packet_identifier == 253:
+                unpacked_packet = self.pkt_end.unpack(packet[0])
+                # print unpacked_packet
+                message_assembled = self.faraday_Rx_SM.frameassembler(253, unpacked_packet)
+                return message_assembled
+        except Exception, err:
+            print "Fail - Exception", Exception, err
+```
+The receiver program `rx.py` is constantly looping and looking for new data to obtain from the proxy interface. When available data is retrieved and then parsed through the simple state machine.
+
+```python
+def rxmsgloop(self, local_callsign, local_callsign_id, uart_service_port_application_number, getwaittimeout):
+        data = None
+        data = self.faraday_Rx.GETWait(str(local_callsign).upper(),
+                                       int(local_callsign_id),
+                                       uart_service_port_application_number,
+                                       getwaittimeout)
+        if (data is not None) and ('error' not in data):
+            for item in data:
+                datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
+                # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
+                datagram = datagram[0:42]
+                message_status = self.parsepacketfromdatagram(datagram)
+                if message_status is None:
+                    return None  # Partial fragmented packet, still receiving
+                else:
+                    return message_status  # Full packet relieved!
+```
 
 ## Transmitter - Fragmenting Data
 
@@ -112,11 +163,93 @@ The transmitter class operations are very straight forward in their operational 
 
 ![Fragmenting Data](Images/Transmit_Create_Functional_Diagram.png "Fragmenting Data")
 
+The code block below shows the `tx.py` script performing the actions above:
+
+```python
+# Create message to transmit
+message = 'This is a test of a very long message that will be fragmented and reassembled!'
+
+# Create message fragments
+faraday_tx_msg_sm.createmsgpackets(local_device_callsign, local_device_node_id, message)
+
+#Iterate through start, stop, and data fragment packets and transmit
+for i in range(0, len(faraday_tx_msg_sm.list_packets), 1):
+    print "TX:", repr(faraday_tx_msg_sm.list_packets[i])
+    faraday_tx_msg_object.transmitframe(faraday_tx_msg_sm.list_packets[i])
+```
+
+The function `createmsgpackets()` in `faraday_msg.py` transmitter object `MsgStateMachineTx()` performs all of the packet and fragment creation. Note the DATA packet creation implemented, the program will pring debug information as seen in the tutorial script execution that gives insight into the pre/post fragmentation operations.
+
+```python
+    def createmsgpackets(self, src_call, src_id, msg):
+        # Ensure callsign and ID are formatted correctly
+        src_call = str(src_call).upper()
+        src_id = int(src_id)
+
+        # Create START Packet
+        msg_start = self.createstartframe(src_call, src_id, len(msg))
+        msg_start = self.pkt_datagram_frame.pack(self.MSG_START, msg_start)
+
+        # Create END Packet
+        msg_end = self.createendframe(len(msg))
+        msg_end = self.pkt_datagram_frame.pack(self.MSG_END, msg_end)
+
+        # Create DATA Packet(s)
+        list_msg_fragments = self.fragmentmsg(msg)
+        list_data_packets = []
+
+        del list_data_packets[:]  # Remove all old indexes
+
+        for i in range(0, len(list_msg_fragments), 1):
+            data_packet = self.createdataframe(i, list_msg_fragments[i])
+            print "Pre-Pack:", repr(data_packet), len(data_packet)
+            data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
+            print "Post-Pack:", repr(data_packet), len(data_packet)
+            list_data_packets.append(data_packet)
+
+```
+
+In the `faraday_msg.py` transmitter object the `fragmentmsg()` breaks the larger message into smaller sized packets that are within the MTU of the system.
+
+```python
+    def fragmentmsg(self, msg):
+        list_message_fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
+                                  range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
+        for item in list_message_fragments:
+            print item, "Frag Length", len(item)
+        print repr(list_message_fragments)
+        return list_message_fragments
+```
+
+It should be noted that after the creation of all START, DATA, and END packets the program creates a list containing all packets in the correct order for transmisssion.
+
+
 ## Transmitter - Transmitting Fragmented Data
 
 The transmitter program then transmits the packets in the specific order to match the receiver state machine operational flow.
 
 ![Fragmentation Packet Transmit Ordering](Images/Transmit_Order.png "Fragmentation Packet Transmit Ordering")
+
+The transmitter script interates through a list of packets (already in the correct transmission order) and transmits them. There is no flow control or error correction.
+
+```python
+#Iterate through start, stop, and data fragment packets and transmit
+for i in range(0, len(faraday_tx_msg_sm.list_packets), 1):
+    print "TX:", repr(faraday_tx_msg_sm.list_packets[i])
+    faraday_tx_msg_object.transmitframe(faraday_tx_msg_sm.list_packets[i])
+```
+
+Transmission is performed using the message application object predefined function that simply implements a standard `proxy.py` interface POST.
+
+```python
+def transmitframe(self, payload):
+        self.command = self.faraday_cmd.CommandLocalExperimentalRfPacketForward(self.destination_callsign,
+                                                                                self.destination_id,
+                                                                                payload)
+        print "Transmitting message:", repr(payload), "length:", len(payload)
+        self.faraday_1.POST(self.local_device_callsign, self.local_device_node_id, self.faraday_1.CMD_UART_PORT,
+                            self.command)
+```
 
 
 

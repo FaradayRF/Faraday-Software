@@ -98,12 +98,14 @@ class MsgStateMachineTx(object):
         list_data_packets = []
 
         del list_data_packets[:]  # Remove all old indexes
+
         for i in range(0, len(list_msg_fragments), 1):
             data_packet = self.createdataframe(i, list_msg_fragments[i])
             print "Pre-Pack:", repr(data_packet), len(data_packet)
             data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
             print "Post-Pack:", repr(data_packet), len(data_packet)
             list_data_packets.append(data_packet)
+
         # Insert all packets into final packet list in order of transmission
         self.list_packets = []  # Reset any old packet fragments
         del self.list_packets[:]  # Remove all old indexes
@@ -318,7 +320,6 @@ class MessageAppRx(object):
         respectively.
 
         :param datagram: The received packet to be parsed
-
 
         :Return: If END packet then returns full reassembled packet
         :Return: If NOT END packet then returns None
