@@ -1,10 +1,5 @@
-
 import faraday_msg
 import ConfigParser
-
-#sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
-#from FaradayIO import faradaybasicproxyio
-
 
 # Load configuration from receiver INI file
 receiver_config = ConfigParser.RawConfigParser()
@@ -20,6 +15,9 @@ GETWAIT_TIMEOUT = 2
 
 # Create receiver application object
 faraday_rx_msg_object = faraday_msg.MessageAppRx()
+
+# Print initialization completed message
+print "Faraday Simple Messaging Receiver Started!"
 
 # Loop continuously through the faraday experimental RF command message application RX routine
 while 1:
