@@ -132,11 +132,14 @@ def dbTelemetry():
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
         timespan = request.args.get("timespan", 5*60)
+        limit = request.args.get("limit")
 
         nodeid = str(nodeid)
         direction = int(direction)
         callsign = str(callsign).upper()
         timespan = int(timespan)
+        if limit != None:
+            limit = int(limit)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -161,6 +164,7 @@ def dbTelemetry():
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
     parameters["TIMESPAN"] = timespan
+    parameters["LIMIT"] = limit
 
     data = []
     data = queryDb(parameters)
@@ -447,7 +451,9 @@ def queryDb(parameters):
     timeTuple = generateStartStopTimes(parameters)
     callsign = parameters["CALLSIGN"].upper()
     nodeid = parameters["NODEID"]
-    paramTuple = (callsign, nodeid) + timeTuple
+    limit = parameters["LIMIT"]
+    print "test"
+
 
     # Detect the direction, this will change the query from searching for
     # the source or destination radio. Must generate two slightly different
@@ -464,6 +470,11 @@ def queryDb(parameters):
     sqlBeg = "SELECT * FROM TELEMETRY "
     sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
     sqlEnd = "ORDER BY KEYID DESC"
+    if limit != None:
+        sqlEnd = sqlEnd + " LIMIT ?"
+        paramTuple = (callsign, nodeid) + timeTuple + (limit,)
+    else:
+        paramTuple = (callsign, nodeid) + timeTuple
 
     # Create  SQL Query string
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd

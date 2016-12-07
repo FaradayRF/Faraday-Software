@@ -58,12 +58,13 @@ def aprs_worker(config, sock):
     currently not bidirectional
     """
     logger.info('Starting aprs_worker thread')
-    while(5):
+    rate = config.getint("aprsis", "rate")
+
+    while(True):
         stations = getStations()
         stationData = getStationData(stations)
-        #print len(stationData)
         sendPositions(stationData, sock)
-        time.sleep(2) # should slow down
+        time.sleep(rate)
 
 
 
@@ -77,42 +78,65 @@ def getStations():
 def getStationData(stations):
     url = "http://127.0.0.1:8001/"
     stationData = []
+    age = aprsConfig.getint('aprsis', 'stationsage')
     for station in stations:
-        #print station
         callsign = station["SOURCECALLSIGN"]
         nodeid = station["SOURCEID"]
         epoch = station["EPOCH"]
 
 
         #hardcoding station timespan in...
-        payload = {"callsign": callsign, "nodeid": nodeid, "timespan": 60}
+        payload = {"callsign": callsign, "nodeid": nodeid, "timespan": age, "limit": 1}
         try:
             r = requests.get(url, params = payload)
-            #data = json.loads(r.text)
             data = r.json()
-            #print len(data)
+            stationData.append(data)
         except:
             pass
             print "none"
 
-        stationData.append(data)
-
-    # Return all station data from specified timespan
-    return stationData[0]
+    return stationData
 
 def sendPositions(stations, socket):
-    for station in stations:
+    #print "stations", stations
+    for item in stations:
+        station = item[0]
+        #print station["SOURCECALLSIGN"]
+
+        # Get Station data from GPS data
         sourceCallsign = station["SOURCECALLSIGN"]
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
         latitude = station["GPSLATITUDE"]
+        #latitude = 3359.7051 #hardcoded
         longitude = station["GPSLONGITUDE"]
+        #longitude = 11826.9469
         latitudeDirection = station["GPSLATITUDEDIR"]
+        #latitudeDirection = "N"
         longitudeDir = station["GPSLONGITUDEDIR"]
+        #longitudeDir = "W"
         altitude = station["GPSALTITUDE"]
+        #altitude = 100
         speed = station["GPSSPEED"]
+        #speed = 10
+        gpsFix = station["GPSFIX"]
+        #gpsFix = 2
 
+        # Get APRS configuration
+        qConstruct = aprsConfig.get('aprs', 'qconstruct')
+        dataTypeIdent = aprsConfig.get('aprs', 'datatypeident')
+        destAddress = aprsConfig.get('aprs', 'destaddress')
+        symbolTable = aprsConfig.get('aprs', 'symboltable')
+        symbol = aprsConfig.get('aprs', 'symbol')
+        altSymbolTable = aprsConfig.get('aprs', 'altsymboltable')
+        altSymbol = aprsConfig.get('aprs', 'altsymbol')
+        comment = aprsConfig.get('aprs', 'comment')
+        altComment = aprsConfig.get('aprs', 'altcomment')
+
+        #print dataTypeIdent, destAddress, symbolTable, symbol, comment
+
+        # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
@@ -124,48 +148,52 @@ def sendPositions(stations, socket):
         latString = str('{:.2f}'.format(aprsLat))
         lonString = str('{:.2f}'.format(aprsLon))
 
-        aprsPosition = '=' + latString + latitudeDirection + '/' + lonString + longitudeDir
+
 
         rawaltitude = str(round(altitude, 0)).split('.')
         altitude = rawaltitude[0].zfill(6)
         rawspeed = str(round(speed, 0)).split('.')
         speed = rawspeed[0].zfill(3)
 
-        positionString = node + '>GPSFDY,' + 'qAR,' + destNode + ':' + aprsPosition + '[' + '.../' + speed + '/A=' + altitude + 'FaradayRF Modem' + '\r'
-        socket.sendall(positionString)
-        #print positionString, socket
+        if gpsFix > 0:
+            if node != destNode:
+                aprsPosition = dataTypeIdent + latString + latitudeDirection + symbolTable + lonString + longitudeDir + symbol
+                positionString = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + ':' + aprsPosition + '.../' + speed + '/A=' + altitude + comment + '\r'
+                socket.sendall(positionString)
+                print time.time(), positionString
+            elif node == destNode:
+                aprsPosition = dataTypeIdent + latString + latitudeDirection + altSymbolTable + lonString + longitudeDir + altSymbol
+                positionString = node + ">" + destAddress + ':' + aprsPosition + '.../' + speed + '/A=' + altitude + altComment + '\r'
+                socket.sendall(positionString)
+                print time.time(), positionString
+        elif station["GPSFIX"] == 0:
+            print node, "No GPS Fix"
 
-def aprsPosition(data):
+## unused aprsTelemetry
+def aprsTelemetry(telemSequence,data):
     for station in data:
         station = station[0]
 
-        if (station["gpsfix"] == 1) or (station["gpsfix"] == 2):
+        if (station["gpsfix"] == 1) or (station["gpsfix"] == 2): #might not actually need this for telemetry!
             # Extract stations
             node = station["callsign"] + "-" + str(station["id"])
             destNode = station["destcallsign"] + "-" + str(station["destid"])
 
-            # Extract node GPS data suitable for APRS-IS use
-            dmlat = "%.2f" % round(station["latdec"], 2)
-            dmlon = "%.2f" % round(station["londec"], 2)
-            latdeg = str(station["latdeg"])
-            londeg = str(station["londeg"])
-            latdir = station["latdir"]
-            londir = station['londir']
-            rawaltitude = str(round(station["altitude"], 0)).split('.')
-            altitude = rawaltitude[0].zfill(6)
-            rawspeed = str(round(station["speed"], 0)).split('.')
-            speed = rawspeed[0].zfill(3)
+            #Extract GPIO data
+            gpio = bin(station["gpio1"])[2:].zfill(8) #get on-board IO state (mosfet, button, etc)
 
-            aprsposition = '=' + latdeg + dmlat + latdir + '/' + londeg + dmlon + londir
 
+            # Make telemetry string from supplied data
             if station["aprf"] == 1:
-                positionString = node + '>GPSFDY,' + 'qAR,' + destNode + ':' + aprsposition + '[' + '.../' + speed + '/A=' + altitude + 'FaradayRF Modem' + '\r'
+                telemString = node + '>GPSFDY,' + 'qAR,' + destNode + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["adc0"]/16).zfill(3) + ',' + str(station["adc1"]/16).zfill(3) + ',' + str(station["adc2"]/16).zfill(3) + ',' + str(station["adc7"]/16).zfill(3) + ',' + str(station["adc8"]/16).zfill(3) + ',' + gpio + '\r'
             else:
-                positionString = node + '>GPSFDY,' + ':' + aprsposition + '[' + '.../' + speed + '/A=' + altitude + 'FaradayRF Modem' + '\r'
-            print positionString
+                telemString = node + '>GPSFDY' + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["adc0"]/16).zfill(3) + ',' + str(station["adc1"]/16).zfill(3) + ',' + str(station["adc2"]/16).zfill(3) + ',' + str(station["adc7"]/16).zfill(3) + ',' + str(station["adc8"]/16).zfill(3) + ',' + gpio + '\r'
+            print telemString
             aprs = connectAPRSIS()
-            aprs.sendall(positionString)
+            aprs.sendall(telemString)
             aprs.close()
+    telemSequence += 1
+    return telemSequence
 
 def decdec2decdeg(latitude,longitude):
     # GPS NMEA decimal value is 7 characters long
@@ -769,8 +797,6 @@ def main():
     #credentials = getCredentials()
     #print credentials
     sock = connectAPRSIS()
-
-
 
     # Initialize local variables
     threads = []
