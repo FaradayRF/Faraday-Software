@@ -1,20 +1,22 @@
 import faraday_msg
+import ConfigParser
 
+# Load configuration from transmitter INI file
+transmitter_config = ConfigParser.RawConfigParser()
+transmitter_config.read('transmitter_configuration.ini')
 
 #Variables
-local_device_callsign = 'kb1lqd'  # Callsign of the local unit to connect to (COM port assignment)
-local_device_node_id = 1  # Callsign ID of the local unit to connect to (COM port assignment)
-
-#Remote device information
-remote_callsign = 'kb1lqc'  # Callsign of the remote unit to transmit to
-remote_id = 1  # Callsign ID of the remote unit to connect to transmit to
+local_device_callsign = transmitter_config.get("local", "callsign")  # Callsign of the local unit to connect to (COM port assignment)
+local_device_node_id = transmitter_config.getint("local", "id")  # Callsign ID of the local unit to connect to (COM port assignment)
+remote_device_callsign = transmitter_config.get("remote", "callsign")  # Callsign of the local unit to connect to (COM port assignment)
+remote_device_node_id = transmitter_config.getint("remote", "id")  # Callsign ID of the local unit to connect to (COM port assignment)
 
 # Create messaging application objects needed for transmissions
 faraday_tx_msg_sm = faraday_msg.MsgStateMachineTx()  # Transmit state machine object used to fragment data
-faraday_tx_msg_object = faraday_msg.MessageAppTx(local_device_callsign, local_device_node_id, remote_callsign, remote_id)  # Transmit object from the Faraday MSG application module
+faraday_tx_msg_object = faraday_msg.MessageAppTx(local_device_callsign, local_device_node_id, remote_device_callsign, remote_device_node_id)  # Transmit object from the Faraday MSG application module
 
 # Update destination Callsign and ID for transmission addressing purposes
-faraday_tx_msg_object.updatedestinationstation(remote_callsign, remote_id)
+faraday_tx_msg_object.updatedestinationstation(remote_device_callsign, remote_device_node_id)
 
 # Create message global variable
 message = ''
