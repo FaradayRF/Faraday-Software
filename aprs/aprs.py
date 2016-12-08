@@ -60,10 +60,18 @@ def aprs_worker(config, sock):
     logger.info('Starting aprs_worker thread')
     rate = config.getint("aprsis", "rate")
 
+    # Local Variables
+    telemSequence = 0
+
     while(True):
         stations = getStations()
         stationData = getStationData(stations)
+
         sendPositions(stationData, sock)
+        telemSequence = sendtelemetry(stationData, telemSequence, sock)
+        sendTelemLabels(stationData, sock)
+        sendParameters(stationData, sock)
+        sendEquations(stationData, sock)
         time.sleep(rate)
 
 
@@ -109,19 +117,12 @@ def sendPositions(stations, socket):
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
         latitude = station["GPSLATITUDE"]
-        #latitude = 3359.7051 #hardcoded
         longitude = station["GPSLONGITUDE"]
-        #longitude = 11826.9469
         latitudeDirection = station["GPSLATITUDEDIR"]
-        #latitudeDirection = "N"
         longitudeDir = station["GPSLONGITUDEDIR"]
-        #longitudeDir = "W"
         altitude = station["GPSALTITUDE"]
-        #altitude = 100
         speed = station["GPSSPEED"]
-        #speed = 10
         gpsFix = station["GPSFIX"]
-        #gpsFix = 2
 
         # Get APRS configuration
         qConstruct = aprsConfig.get('aprs', 'qconstruct')
@@ -156,44 +157,219 @@ def sendPositions(stations, socket):
         speed = rawspeed[0].zfill(3)
 
         if gpsFix > 0:
+            # Put in configuration to disable sending pos, telem, etc to server?
             if node != destNode:
                 aprsPosition = dataTypeIdent + latString + latitudeDirection + symbolTable + lonString + longitudeDir + symbol
                 positionString = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + ':' + aprsPosition + '.../' + speed + '/A=' + altitude + comment + '\r'
                 socket.sendall(positionString)
-                print time.time(), positionString
+                print positionString
             elif node == destNode:
                 aprsPosition = dataTypeIdent + latString + latitudeDirection + altSymbolTable + lonString + longitudeDir + altSymbol
                 positionString = node + ">" + destAddress + ':' + aprsPosition + '.../' + speed + '/A=' + altitude + altComment + '\r'
                 socket.sendall(positionString)
-                print time.time(), positionString
+                print positionString
         elif station["GPSFIX"] == 0:
             print node, "No GPS Fix"
 
-## unused aprsTelemetry
-def aprsTelemetry(telemSequence,data):
-    for station in data:
-        station = station[0]
+def sendtelemetry(stations, telemSequence, socket):
 
-        if (station["gpsfix"] == 1) or (station["gpsfix"] == 2): #might not actually need this for telemetry!
-            # Extract stations
-            node = station["callsign"] + "-" + str(station["id"])
-            destNode = station["destcallsign"] + "-" + str(station["destid"])
+    for item in stations:
+        station = item[0]
 
-            #Extract GPIO data
-            gpio = bin(station["gpio1"])[2:].zfill(8) #get on-board IO state (mosfet, button, etc)
+        # Get Station data from GPS data
+        sourceCallsign = station["SOURCECALLSIGN"]
+        sourceID = station["SOURCEID"]
+        destinationCallsign = station["DESTINATIONCALLSIGN"]
+        destinationID = station["DESTINATIONID"]
+
+        gpsFix = station["GPSFIX"]
+        gpioValues = station["GPIOSTATE"]
+        rfValues = station["RFSTATE"]
+
+        # Get APRS Telemetry configuration
+        qConstruct = aprsConfig.get('aprs', 'qconstruct')
+        destAddress = aprsConfig.get('aprs', 'destaddress')
+        ioSource = aprsConfig.get('aprs', 'iosource')
+
+        # Extract IO data
+        if ioSource == 'gpio':
+            ioList = bin(gpioValues)[2:].zfill(8)
+        elif ioSource == 'rf':
+            ioList = bin(rfValues)[2:].zfill(8)
+
+        # Create nodes from GPS data
+        node = sourceCallsign + "-" + str(sourceID)
+        destNode = destinationCallsign + "-" + str(destinationID)
+
+        if gpsFix > 0:
+            if node != destNode:
+
+                telemetry = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["ADC0"]/16).zfill(3) + ',' + str(station["ADC1"]/16).zfill(3) + ',' + str(station["ADC3"]/16).zfill(3) + ',' + str(station["ADC6"]/16).zfill(3) + ',' + str(station["BOARDTEMP"]/16).zfill(3) + ',' + ioList + '\r'
+                print telemetry
+                socket.sendall(telemetry)
+
+            elif node == destNode:
+                telemetry = node + '>' + destAddress + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["ADC0"]/16).zfill(3) + ',' + str(station["ADC1"]/16).zfill(3) + ',' + str(station["ADC3"]/16).zfill(3) + ',' + str(station["ADC6"]/16).zfill(3) + ',' + str(station["BOARDTEMP"]/16).zfill(3) + ',' + ioList + '\r'
+                print telemetry
+                socket.sendall(telemetry)
+        elif station["GPSFIX"] == 0:
+            print node, "No GPS Fix"
+
+        # Check for telemetry sequence rollover
+        if telemSequence >= 999:
+            telemSequence = 0
+        else:
+            telemSequence += 1
+
+        return telemSequence
+
+def sendTelemLabels(stations, socket):
+
+    for item in stations:
+        station = item[0]
+
+        # Get Station data from GPS data
+        sourceCallsign = station["SOURCECALLSIGN"]
+        sourceID = station["SOURCEID"]
+        destinationCallsign = station["DESTINATIONCALLSIGN"]
+        destinationID = station["DESTINATIONID"]
+        gpsFix = station["GPSFIX"]
 
 
-            # Make telemetry string from supplied data
-            if station["aprf"] == 1:
-                telemString = node + '>GPSFDY,' + 'qAR,' + destNode + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["adc0"]/16).zfill(3) + ',' + str(station["adc1"]/16).zfill(3) + ',' + str(station["adc2"]/16).zfill(3) + ',' + str(station["adc7"]/16).zfill(3) + ',' + str(station["adc8"]/16).zfill(3) + ',' + gpio + '\r'
-            else:
-                telemString = node + '>GPSFDY' + ':T#' + str(telemSequence).zfill(3) + ',' + str(station["adc0"]/16).zfill(3) + ',' + str(station["adc1"]/16).zfill(3) + ',' + str(station["adc2"]/16).zfill(3) + ',' + str(station["adc7"]/16).zfill(3) + ',' + str(station["adc8"]/16).zfill(3) + ',' + gpio + '\r'
-            print telemString
-            aprs = connectAPRSIS()
-            aprs.sendall(telemString)
-            aprs.close()
-    telemSequence += 1
-    return telemSequence
+        # Get APRS Telemetry configuration
+        qConstruct = aprsConfig.get('aprs', 'qconstruct')
+        destAddress = aprsConfig.get('aprs', 'destaddress')
+
+        unit0 = aprsConfig.get('aprs', 'unit0')
+        unit1 = aprsConfig.get('aprs', 'unit1')
+        unit2 = aprsConfig.get('aprs', 'unit2')
+        unit3 = aprsConfig.get('aprs', 'unit3')
+        unit4 = aprsConfig.get('aprs', 'unit4')
+        bLabel0 = aprsConfig.get('aprs', 'blabel0')
+        bLabel1 = aprsConfig.get('aprs', 'blabel1')
+        bLabel2 = aprsConfig.get('aprs', 'blabel2')
+        bLabel3 = aprsConfig.get('aprs', 'blabel3')
+        bLabel4 = aprsConfig.get('aprs', 'blabel4')
+        bLabel5 = aprsConfig.get('aprs', 'blabel5')
+        bLabel6 = aprsConfig.get('aprs', 'blabel6')
+        bLabel7 = aprsConfig.get('aprs', 'blabel7')
+
+        # Create nodes from GPS data
+        node = sourceCallsign + "-" + str(sourceID)
+        destNode = destinationCallsign + "-" + str(destinationID)
+
+        if gpsFix > 0:
+            if node != destNode:
+                labels = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + '::' + node + ' :' + "UNIT." + str(unit0[:6]) + ',' + str(unit1[:6]) + ',' + str(unit2[:5]) + ',' + str(unit3[:5]) + ',' + str(unit4[:4]) + ',' + str(bLabel0[:5]) + ',' + str(bLabel1[:4]) + ',' + str(bLabel2[:3]) + ',' + str(bLabel3[:3]) + ',' + str(bLabel4[:3]) + ',' + str(bLabel5[:2]) + ',' + str(bLabel6[:2]) + ',' + str(bLabel7[:2]) + '\r'
+                print labels
+                socket.sendall(labels)
+
+            elif node == destNode:
+                pass
+                labels = node + '>' + destAddress + '::' + node + ' :' + "UNIT." + str(unit0[:6]) + ',' + str(unit1[:6]) + ',' + str(unit2[:5]) + ',' + str(unit3[:5]) + ',' + str(unit4[:4]) + ',' + str(bLabel0[:5]) + ',' + str(bLabel1[:4]) + ',' + str(bLabel2[:3]) + ',' + str(bLabel3[:3]) + ',' + str(bLabel4[:3]) + ',' + str(bLabel5[:2]) + ',' + str(bLabel6[:2]) + ',' + str(bLabel7[:2]) + '\r'
+                print labels
+                socket.sendall(labels)
+        elif station["GPSFIX"] == 0:
+            print node, "No GPS Fix"
+
+def sendParameters(stations, socket):
+
+    for item in stations:
+        station = item[0]
+
+        # Get Station data from GPS data
+        sourceCallsign = station["SOURCECALLSIGN"]
+        sourceID = station["SOURCEID"]
+        destinationCallsign = station["DESTINATIONCALLSIGN"]
+        destinationID = station["DESTINATIONID"]
+        gpsFix = station["GPSFIX"]
+
+
+        # Get APRS Telemetry configuration
+        qConstruct = aprsConfig.get('aprs', 'qconstruct')
+        destAddress = aprsConfig.get('aprs', 'destaddress')
+
+        adc0 = aprsConfig.get('aprs', 'adc0param')
+        adc1 = aprsConfig.get('aprs', 'adc1param')
+        adc2 = aprsConfig.get('aprs', 'adc2param')
+        adc3 = aprsConfig.get('aprs', 'adc3param')
+        adc4 = aprsConfig.get('aprs', 'adc4param')
+        io0 = aprsConfig.get('aprs', 'io0param')
+        io1 = aprsConfig.get('aprs', 'io1param')
+        io2 = aprsConfig.get('aprs', 'io2param')
+        io3 = aprsConfig.get('aprs', 'io3param')
+        io4 = aprsConfig.get('aprs', 'io4param')
+        io5 = aprsConfig.get('aprs', 'io5param')
+        io6 = aprsConfig.get('aprs', 'io6param')
+        io7 = aprsConfig.get('aprs', 'io7param')
+
+        # Create nodes from GPS data
+        node = sourceCallsign + "-" + str(sourceID)
+        destNode = destinationCallsign + "-" + str(destinationID)
+
+        if gpsFix > 0:
+            if node != destNode:
+                parameters = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + '::' + node + ' :' + "PARM." + str(adc0[:6]) + ',' + str(adc1[:6]) + ',' + str(adc2[:5]) + ',' + str(adc3[:5]) + ',' + str(adc4[:4]) + ',' + str(io0[:5]) + ',' + str(io1[:4]) + ',' + str(io2[:3]) + ',' + str(io3[:3]) + ',' + str(io4[:3]) + ',' + str(io5[:2]) + ',' + str(io6[:2]) + ',' + str(io7[:2]) + '\r'
+                print parameters
+                socket.sendall(parameters)
+
+            elif node == destNode:
+                parameters = node + '>' + destAddress + '::' + node + ' :' + "PARM." + str(adc0[:6]) + ',' + str(adc1[:6]) + ',' + str(adc2[:5]) + ',' + str(adc3[:5]) + ',' + str(adc4[:4]) + ',' + str(io0[:5]) + ',' + str(io1[:4]) + ',' + str(io2[:3]) + ',' + str(io3[:3]) + ',' + str(io4[:3]) + ',' + str(io5[:2]) + ',' + str(io6[:2]) + ',' + str(io7[:2]) + '\r'
+                print parameters
+                socket.sendall(parameters)
+        elif station["GPSFIX"] == 0:
+            print node, "No GPS Fix"
+
+def sendEquations(stations, socket):
+
+    for item in stations:
+        station = item[0]
+
+        # Get Station data from GPS data
+        sourceCallsign = station["SOURCECALLSIGN"]
+        sourceID = station["SOURCEID"]
+        destinationCallsign = station["DESTINATIONCALLSIGN"]
+        destinationID = station["DESTINATIONID"]
+        gpsFix = station["GPSFIX"]
+
+
+        # Get APRS Telemetry configuration
+        qConstruct = aprsConfig.get('aprs', 'qconstruct')
+        destAddress = aprsConfig.get('aprs', 'destaddress')
+
+        eq0a = aprsConfig.get('aprs', 'eq0a')
+        eq0b = aprsConfig.get('aprs', 'eq0b')
+        eq0c = aprsConfig.get('aprs', 'eq0c')
+        eq1a = aprsConfig.get('aprs', 'eq1a')
+        eq1b = aprsConfig.get('aprs', 'eq1b')
+        eq1c = aprsConfig.get('aprs', 'eq1c')
+        eq2a = aprsConfig.get('aprs', 'eq2a')
+        eq2b = aprsConfig.get('aprs', 'eq2b')
+        eq2c = aprsConfig.get('aprs', 'eq2c')
+        eq3a = aprsConfig.get('aprs', 'eq3a')
+        eq3b = aprsConfig.get('aprs', 'eq3b')
+        eq3c = aprsConfig.get('aprs', 'eq3c')
+        eq4a = aprsConfig.get('aprs', 'eq4a')
+        eq4b = aprsConfig.get('aprs', 'eq4b')
+        eq4c = aprsConfig.get('aprs', 'eq4c')
+
+        # Create nodes from GPS data
+        node = sourceCallsign + "-" + str(sourceID)
+        destNode = destinationCallsign + "-" + str(destinationID)
+
+        if gpsFix > 0:
+            if node != destNode:
+                equations = node + '>' + destAddress + ',' + qConstruct + ',' + destNode + '::' + node + ' :' + "EQNS." + str(eq0a) + ',' + str(eq0b) + ',' + str(eq0c) + ',' + str(eq1a) + ',' + str(eq1b) + ',' + str(eq1c) + ',' + str(eq2a) + ',' + str(eq2b) + ',' + str(eq2c) + ',' + str(eq3a) + ',' + str(eq3b) + ',' + str(eq3c) + ',' + str(eq4a) + ',' + str(eq4b) + ',' + str(eq4c) + '\r'
+
+                print equations
+                socket.sendall(equations)
+
+            elif node == destNode:
+                parameters = node + '>' + destAddress + '::' + node + ' :' + "EQNS." + str(eq0a) + ',' + str(eq0b) + ',' + str(eq0c) + ',' + str(eq1a) + ',' + str(eq1b) + ',' + str(eq1c) + ',' + str(eq2a) + ',' + str(eq2b) + ',' + str(eq2c) + ',' + str(eq3a) + ',' + str(eq3b) + ',' + str(eq3c) + ',' + str(eq4a) + ',' + str(eq4b) + ',' + str(eq4c) + '\r'
+                print parameters
+                socket.sendall(parameters)
+        elif station["GPSFIX"] == 0:
+            print node, "No GPS Fix"
 
 def decdec2decdeg(latitude,longitude):
     # GPS NMEA decimal value is 7 characters long
@@ -428,16 +604,10 @@ def rawTelemetry():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
-@app.route('/stations', methods=['GET'])
-def stations():
+@app.route('/aprs', methods=['GET'])
+def aprsStatus():
     """
-    Provides a RESTful interface to station queries at URL '/stations'
-
-    This function, stations(), runs whenever "/stations" URL is queried. The
-    intent of this function is to return a JSON dictionary of stations and
-    the time they were heard. If no timespan or range is specified then it
-    defaults to the last 5 minutes. If a specific station is specified, then
-    the last time it was heard is returned.
+    Provides a RESTful interface to station queries at URL '/aprs'
     """
 
     try:

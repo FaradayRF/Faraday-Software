@@ -15,4 +15,4 @@ telemetry/*.db-journal
 aprs/login.ini
 
 #IDE (Pycharm)
-.idea/*
+.idea*
