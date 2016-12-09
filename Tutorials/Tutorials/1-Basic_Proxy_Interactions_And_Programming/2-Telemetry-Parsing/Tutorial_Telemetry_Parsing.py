@@ -12,7 +12,7 @@ from FaradayIO import cc430radioconfig
 
 #Variables
 local_device_callsign = 'kb1lqd' # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1 # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 2 # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object

@@ -30,20 +30,14 @@ class receiver(threading.Thread):
     def run(self):
         # Loop continuously through the faraday experimental RF command message application RX routine
         while 1:
-            #print "RX'ing"
             rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, rx_uart_service_port_application_number, GETWAIT_TIMEOUT)
             if rx_message_dict != None:
-                print '***************************************'
-                print "FROM:", rx_message_dict['source_callsign']
-                print '\n'
-                print rx_message_dict['message']
-                print '\n***************************************'
-                self.fifo.put_nowait(rx_message_dict)
-                print "Queue:", self.fifo.qsize()
+                self.fifo.put(rx_message_dict)
                 rx_message_dict = None
             else:
                 pass # No messages received
 
-test = receiver()
-t = receiver()
-t.start()
+    def GetQueueSize(self):
+        return self.fifo.qsize()
+
+
