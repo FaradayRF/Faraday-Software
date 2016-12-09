@@ -24,6 +24,6 @@ class transmit_object(object):
         #Iterate through start, stop, and data fragment packets and transmit
         for i in range(0, len(self.faraday_tx_msg_sm.list_packets), 1):
             print "TX:", repr(self.faraday_tx_msg_sm.list_packets[i])
-            self.faraday_tx_msg_object.transmitframe(dest_callsign, dest_id, self.faraday_tx_msg_sm.list_packets[i])
+            self.faraday_tx_msg_object.transmitframe(self.faraday_tx_msg_sm.list_packets[i], dest_callsign, dest_id)
 
 
