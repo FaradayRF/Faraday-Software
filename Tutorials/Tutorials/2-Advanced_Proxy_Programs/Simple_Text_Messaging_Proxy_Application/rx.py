@@ -1,5 +1,8 @@
 import faraday_msg
 import ConfigParser
+import threading
+import time
+import Queue
 
 # Load configuration from receiver INI file
 receiver_config = ConfigParser.RawConfigParser()
@@ -18,16 +21,28 @@ faraday_rx_msg_object = faraday_msg.MessageAppRx()
 
 # Print initialization completed message
 print "Faraday Simple Messaging Receiver Started!"
+class receiver(object):
+    def __init__(self):
+        self.fifo = Queue.Queue(0)
 
-# Loop continuously through the faraday experimental RF command message application RX routine
-while 1:
-    rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, rx_uart_service_port_application_number, GETWAIT_TIMEOUT)
-    if rx_message_dict != None:
-        print '***************************************'
-        print "FROM:", rx_message_dict['source_callsign']
-        print '\n'
-        print rx_message_dict['message']
-        print '\n***************************************'
-        rx_message_dict = None
-    else:
-        pass # No messages received
+    def rxloop(self):
+        # Loop continuously through the faraday experimental RF command message application RX routine
+        while 1:
+            time.sleep(0.05)
+            print "RX'ing"
+            rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, rx_uart_service_port_application_number, GETWAIT_TIMEOUT)
+            if rx_message_dict != None:
+                print '***************************************'
+                print "FROM:", rx_message_dict['source_callsign']
+                print '\n'
+                print rx_message_dict['message']
+                print '\n***************************************'
+                self.fifo.put_nowait(rx_message_dict)
+                print "Queue:", self.fifo.qsize()
+                rx_message_dict = None
+            else:
+                pass # No messages received
+
+test = receiver()
+t = threading.Thread(target=test.rxloop)
+t.start()
