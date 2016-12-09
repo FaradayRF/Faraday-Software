@@ -14,22 +14,23 @@ local_device_node_id = receiver_config.getint("local", "id")  # Callsign ID of t
 
 #Set constants
 rx_uart_service_port_application_number = 3
-GETWAIT_TIMEOUT = 2
+GETWAIT_TIMEOUT = 0.5
 
 # Create receiver application object
 faraday_rx_msg_object = faraday_msg.MessageAppRx()
 
 # Print initialization completed message
 print "Faraday Simple Messaging Receiver Started!"
-class receiver(object):
+class receiver(threading.Thread):
     def __init__(self):
+        threading.Thread.__init__(self)
         self.fifo = Queue.Queue(0)
+        return
 
-    def rxloop(self):
+    def run(self):
         # Loop continuously through the faraday experimental RF command message application RX routine
         while 1:
-            time.sleep(0.05)
-            print "RX'ing"
+            #print "RX'ing"
             rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, rx_uart_service_port_application_number, GETWAIT_TIMEOUT)
             if rx_message_dict != None:
                 print '***************************************'
@@ -44,5 +45,5 @@ class receiver(object):
                 pass # No messages received
 
 test = receiver()
-t = threading.Thread(target=test.rxloop)
+t = receiver()
 t.start()
