@@ -104,6 +104,6 @@ class MessageObject(object):
     This object is used to create a single transmit/receive object for a single connected proxy Faraday device.
     """
     def __init__(self, local_device_callsign, local_device_node_id):
-        self.transmit = transmit_object(local_device_callsign, local_device_node_id)
-        self.receive = receive_object(local_device_callsign, local_device_node_id)
+        self.transmit = TransmitObject(local_device_callsign, local_device_node_id)
+        self.receive = ReceiveObject(local_device_callsign, local_device_node_id)
         self.receive.start()
