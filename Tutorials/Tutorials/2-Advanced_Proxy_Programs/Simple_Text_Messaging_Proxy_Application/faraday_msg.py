@@ -45,7 +45,7 @@ class MsgStateMachineTx(object):
 
         :param msg_len: The length of the packet to be fragmented
 
-        :Return: Number of fragmentation packets calculated to be needed to break the message length into the
+        :returns Number of fragmentation packets calculated to be needed to break the message length into the
         predetermined sized "chunks"
         """
         # Determine fragment count
@@ -62,7 +62,7 @@ class MsgStateMachineTx(object):
 
         :param msg: The data to be fragmented
 
-        :Return: A list containing the fragemented "chunks" of data of the pre-determined size.
+        :returns A list containing the fragemented "chunks" of data of the pre-determined size.
         """
         list_message_fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
                                   range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
@@ -124,7 +124,7 @@ class MsgStateMachineTx(object):
         :param src_id: Source device callsign ID number
         :param msg_len: Length in bytes of the full Message/data to be transmitted to the receiving device
 
-        :Return: A START packet
+        :returns A START packet
         """
         # Calculate the number of fragmented packets
         frag_cnt = self.fragmentcount(msg_len)
@@ -143,7 +143,7 @@ class MsgStateMachineTx(object):
         after reception.
         :param data: The data to be encapsulated in the data fragment packet.
 
-        :Return: A DATA packet
+        :returns A DATA packet
         """
         #print "create:", repr(data), len(data)
         packet = self.pkt_data.pack(sequence, len(data), data)
@@ -158,7 +158,7 @@ class MsgStateMachineTx(object):
 
         :param msg_len: TThe length of the full data/message in bytes that was transmitted.
 
-        :Return: An END packet
+        :returns An END packet
         """
         frag_cnt = self.fragmentcount(msg_len)
         packet = self.pkt_end.pack(frag_cnt)
@@ -256,8 +256,8 @@ class MsgStateMachineRx(object):
         :param frame_type: The frame type being parsed and reassembled (START/DATA/END) packet types
         :param data: The data contained in the received fragment packet
 
-        :Return: If END packet then returns full reassembled packet
-        :Return: If NOT END packet then returns None
+        :returns If END packet then returns full reassembled packet
+        :returns If NOT END packet then returns None
 
         """
         # Not a true state machine yet, but working to it!
@@ -324,8 +324,8 @@ class MessageAppRx(object):
 
         :param datagram: The received packet to be parsed
 
-        :Return: If END packet then returns full reassembled packet
-        :Return: If NOT END packet then returns None
+        :return If END packet then returns full reassembled packet
+        :return If NOT END packet then returns None
 
         """
         unpacked_datagram = self.pkt_datagram_frame.unpack(datagram)
@@ -368,8 +368,8 @@ class MessageAppRx(object):
         the timeout time in the FaradayIO faradaybasicproxyio programs "GETWait()" function.
 
 
-        :Return: If message not received properly (but trigger) then returns None (unlikely)
-        :Return: If new data/message received and reassembled then returns the received data/message as a dictionary
+        :returns If message not received properly (but trigger) then returns None (unlikely)
+        :returns If new data/message received and reassembled then returns the received data/message as a dictionary
         of the source callsign/ID and data.
 
         """
