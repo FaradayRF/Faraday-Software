@@ -51,3 +51,5 @@ Developer tutorials are focused on providing insight and examples for developers
 
 * **[Simple Text Messaging](/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/)**
   * Utilizing the experimental RF packet forwarding command to build a simple text messaging application.
+* **[Simple Text Messaging - Creating Functional Objects](/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging_Creating_Objects/)**
+  * This example tutorial implements the previous messaging application into a generic transmiter/receiver python object. This is a major step towards implemented a RESTful FLASK based application interface. 
