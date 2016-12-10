@@ -7,10 +7,6 @@ import Queue
 transmitter_config = ConfigParser.RawConfigParser()
 transmitter_config.read('configuration.ini')
 
-#Variables
-#local_device_callsign = transmitter_config.get("local", "callsign")  # Callsign of the local unit to connect to (COM port assignment)
-#local_device_node_id = transmitter_config.getint("local", "id")  # Callsign ID of the local unit to connect to (COM port assignment)
-
 
 class transmit_object(object):
     def __init__(self, local_device_callsign, local_device_node_id):
@@ -34,7 +30,7 @@ class transmit_object(object):
             self.faraday_tx_msg_object.transmitframe(self.faraday_tx_msg_sm.list_packets[i], dest_callsign, dest_id)
 
 
-class receiver(threading.Thread):
+class receive_object(threading.Thread):
     def __init__(self, local_device_callsign, local_device_node_id):
         self.local_device_callsign = local_device_callsign
         self.local_device_node_id = local_device_node_id
@@ -51,7 +47,6 @@ class receiver(threading.Thread):
     def run(self):
         # Loop continuously through the faraday experimental RF command message application RX routine
         while 1:
-            print "running"
             rx_message_dict = self.faraday_rx_msg_object.rxmsgloop(self.local_device_callsign, self.local_device_node_id, self.rx_uart_service_port_application_number, self.GETWAIT_TIMEOUT)
             if rx_message_dict != None:
                 self.fifo.put(rx_message_dict)
@@ -61,3 +56,14 @@ class receiver(threading.Thread):
 
     def GetQueueSize(self):
         return self.fifo.qsize()
+
+    def GetQueueItem(self):
+        return self.fifo.get_nowait()
+
+
+
+class message_object(object):
+    def __init__(self, local_device_callsign, local_device_node_id):
+        self.transmit = transmit_object(local_device_callsign, local_device_node_id)
+        self.receive = receive_object(local_device_callsign, local_device_node_id)
+        self.receive.start()
