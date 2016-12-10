@@ -21,7 +21,7 @@ print "Unit 2 Queue Size:", unit_2.receive.getqueuesize()
 while 1:
     print "\n *** Transmit Message ***"
     # Send user input from Unit #1 to Unit #2
-    user_input = raw_input("Enter message:")
+    user_input = raw_input("Enter message: ")
     unit_1.transmit.send(unit_2_callsign, unit_2_callsign_id, str(user_input))
 
     # sleep to allow buffers to fill
