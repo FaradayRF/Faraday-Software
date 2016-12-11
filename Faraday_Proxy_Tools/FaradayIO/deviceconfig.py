@@ -141,8 +141,7 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
-        freq_list = cc430radioconfig.freq0_carrier_calculation(26, boot_frequency_mhz,
-                                                               False)  # create_freq_list(float(boot_frequency_mhz))
+        freq_list = cc430radioconfig.freq0_carrier_calculation(boot_frequency_mhz)  # create_freq_list(float(boot_frequency_mhz))
         self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
         self.rf_PATable = patable_byte
 

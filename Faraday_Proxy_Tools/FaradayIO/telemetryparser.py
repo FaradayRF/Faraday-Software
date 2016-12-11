@@ -39,20 +39,27 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.datagram_struct.unpack(packet)
 
+        dictionaryData = {'PacketType': parsed_packet[0],
+                          'RFSource': parsed_packet[1],
+                          'Payload_Length': parsed_packet[2],
+                          'PayloadData': parsed_packet[3],
+                          'ErrorDetection': parsed_packet[4],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "\n--- Telemetry Datagram ---"
-            print "Telemetry Packet Type:", parsed_packet[0]
-            print "Telemetry RF Source:", parsed_packet[1]
-            print "Telemetry Payload Length:", parsed_packet[2]
-            print "Telemetry Packet 16 Bit Checksum:", parsed_packet[4]
-            print "Telemetry Packet Payload Data:", repr(parsed_packet[3])
+            print "Telemetry Packet Type:", dictionaryData['PacketType']
+            print "Telemetry RF Source:", dictionaryData['RFSource']
+            print "Telemetry Payload Length:", dictionaryData['Payload_Length']
+            print "Telemetry Packet 16 Bit Checksum:", dictionaryData['PayloadData']
+            print "Telemetry Packet Payload Data:", repr(dictionaryData['ErrorDetection'])
             print "\n"
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
     def ExtractPaddedPacket(self, packet, packet_len):
         """
@@ -69,7 +76,7 @@ class TelemetryParse(object):
         return packet[0:packet_len]
 
 
-    def UnpackPacket_3(self, packet, debug):
+    def UnpackPacket_3(self, packet, debug = False):
         """
         This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
 
@@ -227,9 +234,9 @@ class TelemetryParse(object):
             pass
 
         #Return parsed packet list
-        return [telemetryList,dictionaryData]
+        return dictionaryData
 
-    def UnpackPacket_2(self, packet, debug):
+    def UnpackPacket_2(self, packet, debug = False):
         print packet, len(packet)
         """
         This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
@@ -245,12 +252,12 @@ class TelemetryParse(object):
             Index[0]: Boot Count
             Index[1]: Reset Count
             Index[2]: Brownout reset counter
-            Index[3]: Reset / Non-maskable Interust counter
+            Index[3]: Reset / Non-maskable Interrupt counter
             Index[4]: PMM Supervisor Low counter
             Index[5]: PMM Supervisor High counter
             Index[6]: PMM Supervisor Low - OVP counter
             Index[7]: PMM Supervisor High - OVP counter
-            Index[8]: Watchdog timeput counter
+            Index[8]: Watchdog timeout counter
             Index[9]: Flash key violation counter
             Index[10]: FLL Unlock counter
             Index[11]: Peripheral / Config counter
@@ -259,29 +266,44 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
 
+        dictionaryData = {'BootCounter': str(parsed_packet[0]),
+                          'ResetCounter': int(parsed_packet[1]),
+                          'BrownoutCounter': parsed_packet[2],
+                          'Reset_NMICounter': parsed_packet[3],
+                          'PMM_LowCounter': parsed_packet[4],
+                          'PMM_HighCounter': parsed_packet[5],
+                          'PMM_OVP_LowCounter': parsed_packet[6],
+                          'PMM_OVP_HighCounter': parsed_packet[7],
+                          'WatchdogTimeoutCounter': parsed_packet[8],
+                          'FlashKeyViolationCounter': parsed_packet[9],
+                          'FLLUnlockCounter': parsed_packet[10],
+                          'PeripheralConfigCounter': parsed_packet[11],
+                          'AccessViolationCounter': parsed_packet[12],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #2 ---"
-            print "Index[0]: Boot Count", parsed_packet[0]
-            print "Index[1]: Reset Count", parsed_packet[1]
-            print "Index[2]: Brownout reset counter", parsed_packet[2]
-            print "Index[3]: Reset / Non-maskable Interust counter", parsed_packet[3]
-            print "Index[4]: PMM Supervisor Low counter", parsed_packet[4]
-            print "Index[5]: PMM Supervisor High counter", parsed_packet[5]
-            print "Index[6]: PMM Supervisor Low - OVP counter", parsed_packet[6]
-            print "Index[7]: PMM Supervisor High - OVP counter", parsed_packet[7]
-            print "Index[8]: Watchdog timeput counter", parsed_packet[8]
-            print "Index[9]: Flash key violation counter", parsed_packet[9]
-            print "Index[10]: FLL Unlock counter", parsed_packet[10]
-            print "Index[11]: Peripheral / Config counter", parsed_packet[11]
-            print "Index[12]: Access violation counter", parsed_packet[12]
+            print "Index[0]: Boot Count", dictionaryData['BootCounter']
+            print "Index[1]: Reset Count", dictionaryData['ResetCounter']
+            print "Index[2]: Brownout reset counter", dictionaryData['BrownoutCounter']
+            print "Index[3]: Reset / Non-maskable Interrupt counter", dictionaryData['Reset_NMICounter']
+            print "Index[4]: PMM Supervisor Low counter", dictionaryData['PMM_LowCounter']
+            print "Index[5]: PMM Supervisor High counter", dictionaryData['PMM_HighCounter']
+            print "Index[6]: PMM Supervisor Low - OVP counter", dictionaryData['PMM_OVP_LowCounter']
+            print "Index[7]: PMM Supervisor High - OVP counter", dictionaryData['PMM_OVP_HighCounter']
+            print "Index[8]: Watchdog timeout counter", dictionaryData['WatchdogTimeoutCounter']
+            print "Index[9]: Flash key violation counter", dictionaryData['FlashKeyViolationCounter']
+            print "Index[10]: FLL Unlock counter", dictionaryData['FLLUnlockCounter']
+            print "Index[11]: Peripheral / Config counter", dictionaryData['PeripheralConfigCounter']
+            print "Index[12]: Access violation counter", dictionaryData['AccessViolationCounter']
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
-    def UnpackPacket_1(self, packet, debug):
+    def UnpackPacket_1(self, packet, debug = False):
         """
         This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
 
@@ -301,20 +323,26 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_1_struct.unpack(packet)
 
+        dictionaryData = {'RF_Freq_2': parsed_packet[0],
+                          'RF_Freq_1': parsed_packet[1],
+                          'RF_Freq_0': parsed_packet[2],
+                          'RF_PATable': parsed_packet[3],
+                          }
+
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #1 ---"
-            print "Index[0]: RF Freq 2", parsed_packet[0]
-            print "Index[1]: RF Freq 1", parsed_packet[1]
-            print "Index[2]: RF Freq 0", parsed_packet[2]
-            print "Index[3]: RF Power Bitmask", parsed_packet[3]
+            print "Index[0]: RF Freq 2", dictionaryData['RF_Freq_2']
+            print "Index[1]: RF Freq 1", dictionaryData['RF_Freq_1']
+            print "Index[2]: RF Freq 0", dictionaryData['RF_Freq_0']
+            print "Index[3]: RF Power Bitmask", dictionaryData['RF_PATable']
         else:
             pass
 
         #Return parsed packet list
-        return parsed_packet
+        return dictionaryData
 
-    def UnpackConfigFlashD(self, packet, debug):
+    def UnpackConfigFlashD(self, packet, debug = False):
         """
         This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
 
@@ -365,8 +393,8 @@ class TelemetryParse(object):
             print "Index[8]: Default Boot Frequency [1]", parsed_packet[8]
             print "Index[9]: Default Boot Frequency [2]", parsed_packet[9]
             print "Index[10]: Default RF Power Amplifier Setting (PA Table)", parsed_packet[10]
-            print "Index[11]: Default GPS Lattitude", parsed_packet[11]
-            print "Index[12]: Default GPS Lattitude Direction", parsed_packet[12]
+            print "Index[11]: Default GPS Latitude", parsed_packet[11]
+            print "Index[12]: Default GPS Latitude Direction", parsed_packet[12]
             print "Index[13]: Default GPS Longitude", parsed_packet[13]
             print "Index[14]: Default GPS Longitude Direction", parsed_packet[14]
             print "Index[15]: Default GPS Altitude", parsed_packet[15]

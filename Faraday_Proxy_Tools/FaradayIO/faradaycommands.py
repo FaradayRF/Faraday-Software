@@ -80,7 +80,7 @@ class faraday_commands(object):
         packet = commandmodule.create_command_datagram(self.CMD_UPDATEFREQUENCY, commandmodule.create_update_rf_frequency_packet(freq_mhz))
         return packet
 
-    def CommandLocalUARTUpdateNow(self):
+    def CommandLocalUARTFaradayTelemetry(self):
         """
         A predefined command to return a complete command datagram and packet to command the LOCAL device to transmit its current telemetry packet #3 (normal telemetry) over UART.
 
