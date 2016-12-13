@@ -391,12 +391,10 @@ def initDB():
         # Open database schema SQL file and execute the SQL functions inside
         # after connecting. Close the database when complete.
         with open(dbSchema, 'rt') as f:
+            conn = sqlite3.connect(dbFilename)
+            cur = conn.cursor()
             schema = f.read()
-
-        conn = sqlite3.connect(dbFilename)
-        cur = conn.cursor()
-        cur.executescript(schema)
-
+            cur.executescript(schema)
         conn.close()
 
 def createTelemetryList(data):
@@ -475,6 +473,10 @@ def sqlInsert(data):
         logger.error("IndexError: " + str(e))
     except KeyError as e:
         logger.error("KeyError: " + str(e))
+    except sqlite3.OperationalError as e:
+        # TODO: cleanup
+        logger.error(e)
+        initDB()
 
     # Completed, close database
     conn.close()
