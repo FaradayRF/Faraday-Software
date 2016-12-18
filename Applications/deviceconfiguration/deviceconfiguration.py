@@ -167,7 +167,7 @@ def unitconfig():
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
 
-        return json.dumps(pickled_parsed_config_dict_b64, indent=1), 200, \
+        return json.dumps({"data": pickled_parsed_config_dict_b64}, indent=1), 200, \
                {'Content-Type': 'application/json'}
 
 

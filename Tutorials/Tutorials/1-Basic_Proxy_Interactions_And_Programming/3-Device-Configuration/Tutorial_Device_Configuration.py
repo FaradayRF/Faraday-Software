@@ -5,6 +5,8 @@
 import os
 import sys
 import requests
+import base64
+import cPickle
 import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
@@ -15,8 +17,8 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'KB1LQD'  # Enter the proxy callsign of the unit you'd like to reconfigure
-local_device_node_id = 2  # Enter the proxy callsign ID number of the unit you'd like to reconfigure
+local_device_callsign = 'NOCALL'  # Enter the proxy callsign of the unit you'd like to reconfigure
+local_device_node_id = 0  # Enter the proxy callsign ID number of the unit you'd like to reconfigure
 local_device_callsign = str(local_device_callsign).upper()
 
 
@@ -39,12 +41,17 @@ except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
 #Print JSON dictionary device data from unit
-print r
 raw_unit_json = r.json()
+
+# Decode and depickle (serialize) device configuration parsed dictionary data
+b64_unit_json = base64.b64decode(raw_unit_json['data'])
+unit_configuration_dict = cPickle.loads(b64_unit_json)
+
+
 print "\n************************************"
 print "PRIOR TO CONFIGURATION UPDATE"
-print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
-print "RAW Unit JSON Data:", raw_unit_json
+print "Unit Callsign-ID:\n", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']] + '-' + str(unit_configuration_dict['local_callsign_id'])
+print "RAW Unit JSON Data:", unit_configuration_dict
 print "************************************"
 
 
@@ -68,10 +75,15 @@ except requests.exceptions.RequestException as e:  # This is the correct syntax
 
 #Print JSON dictionary device data from unit
 raw_unit_json = r.json()
+
+# Decode and depickle (serialize) device configuration parsed dictionary data
+b64_unit_json = base64.b64decode(raw_unit_json['data'])
+unit_configuration_dict = cPickle.loads(b64_unit_json)
+
 print "\n************************************"
 print "POST CONFIGURATION UPDATE"
-print "Unit Callsign-ID:\n", str(raw_unit_json['local_callsign']) + '-' + str(raw_unit_json['local_callsign_id'])
-print "RAW Unit JSON Data:", raw_unit_json
+print "Unit Callsign-ID:\n", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']] + '-' + str(unit_configuration_dict['local_callsign_id'])
+print "RAW Unit JSON Data:", unit_configuration_dict
 
 print "************************************"
 
