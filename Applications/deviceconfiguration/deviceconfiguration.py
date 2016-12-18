@@ -4,6 +4,8 @@ import os
 import sys
 import json
 import ConfigParser
+import base64
+import cPickle
 
 from flask import Flask
 from flask import request
@@ -127,20 +129,33 @@ def unitconfig():
             # Wait enough time for Faraday to respond to commanded memory read.
             time.sleep(2)
 
+            try:
+                # Retrieve the next device configuration read packet to arrive
+                data = proxy.GETWait(str(callsign), str(nodeid), proxy.CMD_UART_PORT, 2)
 
-            # Retrieve the next device configuration read packet to arrive
-            data = proxy.GETWait(str(callsign), str(nodeid), proxy.CMD_UART_PORT, 2)
+                # Create device configuration module object
+                device_config_object = deviceconfig.DeviceConfigClass()
 
-            # Create device configuration module object
-            device_config_object = deviceconfig.DeviceConfigClass()
+                # Decode BASE64 JSON data packet into
+                data = proxy.DecodeRawPacket(data[0]["data"])  # Get first item
+                data = device_config_object.extract_config_packet(data)
 
-            # Decode BASE64 JSON data packet into
-            data = proxy.DecodeRawPacket(data[0]["data"])  # Get first item
+                # Parse device configuration into dictionary
+                parsed_config_dict = device_config_object.parse_config_packet(data)
+
+                # Encoded dictionary data for save network transit
+                pickled_parsed_config_dict = cPickle.dumps(parsed_config_dict)
+                pickled_parsed_config_dict_b64 = base64.b64encode(pickled_parsed_config_dict)
 
 
-            data = device_config_object.extract_config_packet(data)
-
-            parsed_config_dict = device_config_object.parse_config_packet(data)
+            except ValueError as e:
+                print e
+            except IndexError as e:
+                print e
+            except KeyError as e:
+                print e
+            except StandardError as e:
+                print e
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
@@ -152,7 +167,7 @@ def unitconfig():
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
 
-        return json.dumps(parsed_config_dict, indent=1), 200, \
+        return json.dumps({"data": pickled_parsed_config_dict_b64}, indent=1), 200, \
                {'Content-Type': 'application/json'}
 
 
