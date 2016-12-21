@@ -513,6 +513,17 @@ def create_send_telemetry_device_debug_flash():
     packet = packet_struct.pack(0)
     return packet
 
+def create_empty_command_packet():
+    """
+    A predefined command that returns a simple empty command packet used as payload for commands simply needed the
+    command "number" and no other payload data to accompany.
+
+    :Return: A completed packet (string of bytes)
+    """
+    packet_struct = struct.Struct('1B')
+    packet = packet_struct.pack(0)
+    return packet
+
 
 ##############
 ## EXPERIMENTAL MESSAGE APPLICATION
