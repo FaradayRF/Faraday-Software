@@ -23,6 +23,7 @@ class faraday_commands(object):
         self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER = 16
         self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE = 17
         self.CMD_RFPACKETFORWARD = 18
+        self.CMD_DEVICECONFIGFACTORYRESET = 254
         self.CMD_DEVICECONFIG = 255
 
         #Flash Info D Constants
@@ -212,6 +213,18 @@ class faraday_commands(object):
         """
         packet = commandmodule.create_command_datagram(self.CMD_DEVICESETTINGSTELEMETRYNOW, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
+
+    def CommandLocalFactoryResetConfiguration(self):
+        """
+        A predefined commanmd that invokes the function that resets the Faraday device information configuration (i.e.
+        callsign, boot default settings, etc...) to a factory default configuration. This is the configuration used
+        during first boot of a new unit.
+
+        :Return: Returns the complete generated packet as a string of bytes
+        """
+        packet = commandmodule.create_command_datagram(self.CMD_DEVICECONFIGFACTORYRESET, commandmodule.create_empty_command_packet())
+        return packet
+
 
     def CommandLocalHABActivateCutdownEvent(self):
         """
