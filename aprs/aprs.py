@@ -167,8 +167,12 @@ def sendPositions(stations, socket):
         #Convert NMEA to Decimal Degrees
         aprsLat = round(float(latitude),2)
         aprsLon = round(float(longitude),2)
-        latString = str('{:.2f}'.format(aprsLat))
-        lonString = str('{:.2f}'.format(aprsLon))
+        #latString = str('{:.2f}'.format(aprsLat))
+        latString = str('{0:0>7}'.format(aprsLat))
+        #lonString = str('{:.2f}'.format(aprsLon))
+        lonString = str('{0:0>8}'.format(aprsLon))
+        #lonString = '07122.99'
+
 
         # Convert altitude and speed to APRS compliant values
         try:
