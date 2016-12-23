@@ -88,15 +88,11 @@ def telemetry_worker(config):
                         unPackedItem = proxy.DecodeRawPacket(item["data"])
                         # Unpack packet into datagram elements
                         datagram = faradayParser.UnpackDatagram(unPackedItem,False)
-                        # Grab the payload of the datagram
-                        paddedPacket = datagram[3]
                         # Extract the payload length from payload since padding could be used
-                        telemetryData = faradayParser.ExtractPaddedPacket(paddedPacket,faradayParser.packet_3_len)
+                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"],faradayParser.packet_3_len)
                         # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
                         parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
 
-                    except StandardError as e:
-                        logger.error("StandardError: " + str(e))
                     except ValueError as e:
                         logger.error("ValueError: " + str(e))
                     except IndexError as e:
@@ -105,9 +101,8 @@ def telemetry_worker(config):
                         logger.error("KeyError: " + str(e))
 
                     else:
-
-                        sqlInsert(parsedTelemetry[0])
-                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry[1])
+                        sqlInsert(parsedTelemetry)
+                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
 
          time.sleep(1) # should slow down
 
@@ -132,11 +127,14 @@ def dbTelemetry():
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
         timespan = request.args.get("timespan", 5*60)
+        limit = request.args.get("limit")
 
         nodeid = str(nodeid)
         direction = int(direction)
         callsign = str(callsign).upper()
         timespan = int(timespan)
+        if limit != None:
+            limit = int(limit)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -159,8 +157,9 @@ def dbTelemetry():
     parameters["NODEID"] = nodeid
     parameters["DIRECTION"] = direction
     parameters["STARTTIME"] = startTime
-    parameters["ENDTIME"] = endTimeF
+    parameters["ENDTIME"] = endTime
     parameters["TIMESPAN"] = timespan
+    parameters["LIMIT"] = limit
 
     data = []
     data = queryDb(parameters)
@@ -367,7 +366,6 @@ def stations():
         return '', 204  # HTTP 204 response cannot have message data
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
-    print len(data)
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
@@ -393,13 +391,58 @@ def initDB():
         # Open database schema SQL file and execute the SQL functions inside
         # after connecting. Close the database when complete.
         with open(dbSchema, 'rt') as f:
+            conn = sqlite3.connect(dbFilename)
+            cur = conn.cursor()
             schema = f.read()
-
-        conn = sqlite3.connect(dbFilename)
-        cur = conn.cursor()
-        cur.executescript(schema)
-
+            cur.executescript(schema)
         conn.close()
+
+def createTelemetryList(data):
+    """Converts data dictionary into a defined list for insertion into SQLite db"""
+
+    # Create list of dictionary data in appropriate order
+    # First statement in None for KeyID
+    temp = [None,
+            data["SOURCECALLSIGN"],
+            data["SOURCEID"],
+            data["DESTINATIONCALLSIGN"],
+            data["DESTINATIONID"],
+            data["RTCSEC"],
+            data["RTCMIN"],
+            data["RTCHOUR"],
+            data["RTCDAY"],
+            data["RTCDOW"],
+            data["RTCMONTH"],
+            data["RTCYEAR"],
+            data["GPSLATITUDE"],
+            data["GPSLATITUDEDIR"],
+            data["GPSLONGITUDE"],
+            data["GPSLONGITUDEDIR"],
+            data["GPSALTITUDE"],
+            data["GPSALTITUDEUNITS"],
+            data["GPSSPEED"],
+            data["GPSFIX"],
+            data["GPSHDOP"],
+            data["GPIOSTATE"],
+            data["RFSTATE"],
+            data["ADC0"],
+            data["ADC1"],
+            data["ADC2"],
+            data["ADC3"],
+            data["ADC4"],
+            data["ADC5"],
+            data["ADC6"],
+            data["BOARDTEMP"],
+            data["ADC8"],
+            data["HABTIMERSTATE"],
+            data["HABCUTDOWNSTATE"],
+            data["HABTRIGGERTIME"],
+            data["HABTIMER"],
+            data["EPOCH"]
+            ]
+
+    return temp
+
 
 def sqlInsert(data):
     """Takes in a data tuple and inserts int into the telemetry SQLite table"""
@@ -407,9 +450,10 @@ def sqlInsert(data):
     # Read in name of telemetry databse
     db = telemetryConfig.get("database", "filename")
 
+    telem = createTelemetryList(data)
+
     # Create parameter substitute "?" string for SQL query then create SQL
-    data = (None,) + data  # Add a null to tuple for KEYID
-    numKeys = len(data)
+    numKeys = len(telem)
     paramSubs = "?" * (numKeys)
     paramSubs = ",".join(paramSubs)
     sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
@@ -421,16 +465,18 @@ def sqlInsert(data):
 
         # Use connection as context manager to rollback automatically if error
         with conn:
-            conn.execute(sql,data)
+            conn.execute(sql,telem)
 
-    except StandardError as e:
-        logger.error("StandardError: " + str(e))
     except ValueError as e:
         logger.error("ValueError: " + str(e))
     except IndexError as e:
         logger.error("IndexError: " + str(e))
     except KeyError as e:
         logger.error("KeyError: " + str(e))
+    except sqlite3.OperationalError as e:
+        # TODO: cleanup
+        logger.error(e)
+        initDB()
 
     # Completed, close database
     conn.close()
@@ -447,7 +493,7 @@ def queryDb(parameters):
     timeTuple = generateStartStopTimes(parameters)
     callsign = parameters["CALLSIGN"].upper()
     nodeid = parameters["NODEID"]
-    paramTuple = (callsign, nodeid) + timeTuple
+    limit = parameters["LIMIT"]
 
     # Detect the direction, this will change the query from searching for
     # the source or destination radio. Must generate two slightly different
@@ -464,6 +510,11 @@ def queryDb(parameters):
     sqlBeg = "SELECT * FROM TELEMETRY "
     sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
     sqlEnd = "ORDER BY KEYID DESC"
+    if limit != None:
+        sqlEnd = sqlEnd + " LIMIT ?"
+        paramTuple = (callsign, nodeid) + timeTuple + (limit,)
+    else:
+        paramTuple = (callsign, nodeid) + timeTuple
 
     # Create  SQL Query string
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
@@ -479,8 +530,6 @@ def queryDb(parameters):
         cur.execute(sql,paramTuple)
         rows = cur.fetchall()
 
-    except StandardError as e:
-        logger.error("StandardError: " + str(e))
     except ValueError as e:
         logger.error("ValueError: " + str(e))
     except IndexError as e:
