@@ -23,6 +23,14 @@ from flask import request
 
 from faraday_uart_stack import layer_4_service
 
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+from FaradayIO import faradaycommands
+from FaradayIO import telemetryparser
+
+faraday_cmd = faradaycommands.faraday_commands()
+faraday_parser = telemetryparser.TelemetryParse()
+
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
 logger = logging.getLogger('Proxy')
@@ -342,6 +350,9 @@ def callsign2COM():
             "baudrate": baudrate,
             "timeout": timeout
             }
+
+        print "callsign", callsign
+        print repr(faraday_cmd.CommandLocalSendTelemDeviceSystemSettings())
 
     local = json.dumps(local)
     return json.loads(local)
