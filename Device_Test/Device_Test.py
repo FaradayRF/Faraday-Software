@@ -41,58 +41,73 @@ print "/n** Beginning ECHO command test** /n"
 
 
 
+def TestEchoUart():
+    #Display information
+    for i in range(0,1):
+        originalmsg = os.urandom(40)  # Cannot be longer than max UART payload size!
+        # Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
+        faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT)
+        command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
+        faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+        # Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
+        rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
+                                        sec_timeout=3)  # Wait for up to 3 seconds for data to arrive
+        # Now parse data again
+        b64_data = rx_echo_raw[0]['data']
+        echo_decoded = faraday_1.DecodeRawPacket(b64_data)
+        print repr(originalmsg)
+        print repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+        echo_len = len(originalmsg)
+        if(originalmsg == echo_decoded[0:echo_len]):
+            print "TEST: ECHO - Success"
+        else:
+            print "TEST: ECHO - Fail"
 
-#Display information
-for i in range(0,5):
-    originalmsg = os.urandom(40)  # Cannot be longer than max UART payload size!
-    # Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
-    faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT)
-    command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
-    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
-    # Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
-    rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
-                                    sec_timeout=3)  # Wait for up to 3 seconds for data to arrive
-    # Now parse data again
-    b64_data = rx_echo_raw[0]['data']
-    echo_decoded = faraday_1.DecodeRawPacket(b64_data)
-    print repr(originalmsg)
-    print repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
-    echo_len = len(originalmsg)
-    if(originalmsg == echo_decoded[0:echo_len]):
-        print "ECHO Success"
-    else:
-        print "ECHO Fail"
+
+def GetDebugFlash():
+    # Flush old data from UART service port
+    faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
+
+    # Command UART Telemetry Update NOW
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
+                   faraday_cmd.CommandLocalSendTelemDeviceDebugFlash())
+
+    # Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
+    rx_debug_data = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT, 2,
+                                      False)  # Will block and wait for given time until a packet is recevied
+
+    # Decode the first packet in list from BASE 64 to a RAW bytesting
+    rx_debug_data_pkt_decoded = faraday_1.DecodeRawPacket(rx_debug_data[0]['data'])
+
+    # Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
+    rx_debug_data_datagram = faraday_parser.UnpackDatagram(rx_debug_data_pkt_decoded, False)  # Debug is ON
+    rx_debug_data_packet = rx_debug_data_datagram['PayloadData']
+
+    # Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)
+    rx_debug_data_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_debug_data_packet, faraday_parser.packet_2_len)
+    #
+    # Parse the Telemetry #3 packet
+    rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted, debug=True)  # Debug ON
 
 #
 #
 # ############
 # ## Reset Device Debug Flash
 # ############
-#
-# # Reset the device debug flash counters and data
-# faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
-#
-# #Flush old data from UART service port
-# faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
-#
-# #Command UART Telemetry Update NOW
-# faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalSendTelemDeviceDebugFlash())
-#
-# #Wait up to 1 second for the unit to respond to the command. NOTE: GETWait will return ALL packets received if more than 1 packet (likley not in THIS case)
-# rx_debug_data = faraday_1.GETWait(local_device_callsign, local_device_node_id,faraday_1.TELEMETRY_PORT, 1, False) #Will block and wait for given time until a packet is recevied
-#
-# #Decode the first packet in list from BASE 64 to a RAW bytesting
-# rx_debug_data_pkt_decoded = faraday_1.DecodeRawPacket(rx_debug_data[0]['data'])
-#
-# #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
-# rx_debug_data_datagram = faraday_parser.UnpackDatagram(rx_debug_data_pkt_decoded, False) #Debug is ON
-# rx_debug_data_packet = rx_debug_data_datagram['PayloadData']
-#
-# #Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)
-# rx_debug_data_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_debug_data_pkt_decoded, faraday_parser.packet_2_len)
-#
-# #Parse the Telemetry #3 packet
-# rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted, debug = False) #Debug ON
+
+rx_debug_data_parsed = GetDebugFlash()
+
+print repr(rx_debug_data_parsed)
+
+# Reset the device debug flash counters and data
+faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
+
+# Sleep to allow unit to perform reset and be ready for next command
+time.sleep(3)
+
+rx_debug_data_parsed = GetDebugFlash()
+
+print repr(rx_debug_data_parsed)
 #
 # ############
 # ## Read System Settings
@@ -153,3 +168,6 @@ for i in range(0,5):
 # rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_datagram_extracted, debug = False) #Debug ON
 #
 # #print "Parsed packet dictionary:", rx_telemetry_packet_parsed
+
+
+#TestEchoUart()
