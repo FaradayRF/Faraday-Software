@@ -87,17 +87,19 @@ def GetDebugFlash():
     rx_debug_data_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_debug_data_packet, faraday_parser.packet_2_len)
     #
     # Parse the Telemetry #3 packet
-    rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted, debug=True)  # Debug ON
+    rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted)  # Debug OFF
 
-#
-#
+    return rx_debug_data_parsed
+
+
 # ############
 # ## Reset Device Debug Flash
 # ############
 
-rx_debug_data_parsed = GetDebugFlash()
+print "*** Pre-Debug RESET ***"
+rx_debug_data_parsed_initial = GetDebugFlash()
 
-print repr(rx_debug_data_parsed)
+print repr(rx_debug_data_parsed_initial)
 
 # Reset the device debug flash counters and data
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
@@ -105,9 +107,20 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 # Sleep to allow unit to perform reset and be ready for next command
 time.sleep(3)
 
-rx_debug_data_parsed = GetDebugFlash()
+print "*** Post-Debug RESET ***"
+rx_debug_data_parsed_reset = GetDebugFlash()
 
-print repr(rx_debug_data_parsed)
+print repr(rx_debug_data_parsed_reset)
+
+debug_test_pass = True
+
+for key in rx_debug_data_parsed_reset:
+    if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
+        print key, rx_debug_data_parsed_reset[key]
+    else:
+        print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
+        debug_test_pass = False
+
 #
 # ############
 # ## Read System Settings
