@@ -266,8 +266,8 @@ class TelemetryParse(object):
         #Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
 
-        dictionaryData = {'BootCounter': str(parsed_packet[0]),
-                          'ResetCounter': int(parsed_packet[1]),
+        dictionaryData = {'BootCounter': parsed_packet[0],
+                          'ResetCounter': parsed_packet[1],
                           'BrownoutCounter': parsed_packet[2],
                           'Reset_NMICounter': parsed_packet[3],
                           'PMM_LowCounter': parsed_packet[4],
