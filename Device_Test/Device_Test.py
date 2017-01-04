@@ -116,10 +116,16 @@ debug_test_pass = True
 
 for key in rx_debug_data_parsed_reset:
     if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
-        print key, rx_debug_data_parsed_reset[key]
+        pass
+        #print key, rx_debug_data_parsed_reset[key]
     else:
         print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
         debug_test_pass = False
+
+if debug_test_pass == True:
+    print "DEBUG Flash RESET = PASS"
+else:
+    print "DEBUG Flash RESET = FAIL"
 
 #
 # ############
