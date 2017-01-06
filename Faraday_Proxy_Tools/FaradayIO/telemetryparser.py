@@ -140,51 +140,53 @@ class TelemetryParse(object):
         telemetryList[3] = parsed_packet[3][:parsed_packet[4]]
 
         # Delete the callsign length fields, removes two index values!
-        del telemetryList[1] # Source callsign length index
-        del telemetryList[3] # Destination callsign length index - 1
-        del telemetryList[31] # N/A Byte is not needed
+        #del telemetryList[1] # Source callsign length index
+        #del telemetryList[3] # Destination callsign length index - 1
+        #del telemetryList[31] # N/A Byte is not needed
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
+        print repr(telemetryList)
 
 
 
 
         dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
-                            'SOURCEID': int(telemetryList[1]),
-                            'DESTINATIONCALLSIGN': telemetryList[2],
-                            'DESTINATIONID': telemetryList[3],
-                            'RTCSEC': telemetryList[4],
-                            'RTCMIN': telemetryList[5],
-                            'RTCHOUR': telemetryList[6],
-                            'RTCDAY': telemetryList[7],
-                            'RTCDOW': telemetryList[8],
-                            'RTCMONTH': telemetryList[9],
-                            'RTCYEAR': telemetryList[10],
-                            'GPSLATITUDE': telemetryList[11],
-                            'GPSLATITUDEDIR': telemetryList[12],
-                            'GPSLONGITUDE': telemetryList[13],
-                            'GPSLONGITUDEDIR': telemetryList[14],
-                            'GPSALTITUDE': telemetryList[15],
-                            'GPSALTITUDEUNITS': telemetryList[16],
-                            'GPSSPEED': telemetryList[17],
-                            'GPSFIX': telemetryList[18],
-                            'GPSHDOP': telemetryList[19],
-                            'GPIOSTATE': telemetryList[20],
-                            'RFSTATE': telemetryList[21],
-                            'ADC0': telemetryList[22],
-                            'ADC1': telemetryList[23],
-                            'ADC2': telemetryList[24],
-                            'ADC3': telemetryList[25],
-                            'ADC4': telemetryList[26],
-                            'ADC5': telemetryList[27],
-                            'VCC': telemetryList[28],
-                            'BOARDTEMP': telemetryList[29],
-                            'ADC8': telemetryList[30],
-                            'HABTIMERSTATE': telemetryList[31],
-                            'HABCUTDOWNSTATE': telemetryList[32],
-                            'HABTRIGGERTIME': telemetryList[33],
-                            'HABTIMER': telemetryList[34],
-                            'EPOCH': telemetryList[35]
+                            'SOURCEID': int(telemetryList[2]),
+                            'DESTINATIONCALLSIGN': telemetryList[3],
+                            'DESTINATIONID': telemetryList[5],
+                            'RTCSEC': telemetryList[6],
+                            'RTCMIN': telemetryList[7],
+                            'RTCHOUR': telemetryList[8],
+                            'RTCDAY': telemetryList[9],
+                            'RTCDOW': telemetryList[10],
+                            'RTCMONTH': telemetryList[11],
+                            'RTCYEAR': telemetryList[12],
+                            'GPSLATITUDE': telemetryList[13],
+                            'GPSLATITUDEDIR': telemetryList[14],
+                            'GPSLONGITUDE': telemetryList[15],
+                            'GPSLONGITUDEDIR': telemetryList[16],
+                            'GPSALTITUDE': telemetryList[17],
+                            'GPSALTITUDEUNITS': telemetryList[18],
+                            'GPSSPEED': telemetryList[19],
+                            'GPSFIX': telemetryList[20],
+                            'GPSHDOP': telemetryList[21],
+                            'GPIOSTATE': telemetryList[22],
+                            'IOSTATE': telemetryList[23],
+                            'RFSTATE': telemetryList[24],
+                            'ADC0': telemetryList[25],
+                            'ADC1': telemetryList[26],
+                            'ADC2': telemetryList[27],
+                            'ADC3': telemetryList[28],
+                            'ADC4': telemetryList[29],
+                            'ADC5': telemetryList[30],
+                            'VCC': telemetryList[31],
+                            'BOARDTEMP': telemetryList[32],
+                            'ADC8': telemetryList[33],
+                            'HABTIMERSTATE': telemetryList[34],
+                            'HABCUTDOWNSTATE': telemetryList[35],
+                            'HABTRIGGERTIME': telemetryList[36],
+                            'HABTIMER': telemetryList[37],
+                            'EPOCH': telemetryList[38]
                         }
 
         #print dictionaryData["ADC8"]
@@ -230,6 +232,7 @@ class TelemetryParse(object):
             print "Index[35]: HAB Cutdown Event State Machine State", parsed_packet[35]
             print "Index[36]: HAB Automatic Cutdown Timer Trigger Time", parsed_packet[36]
             print "Index[37]: HAB Automatic Cutdown Timer Current Time", parsed_packet[37]
+            print "Index[38]: EPOCH", telemetryList[38]
         else:
             pass
 
