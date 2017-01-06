@@ -177,7 +177,7 @@ class TelemetryParse(object):
                             'ADC3': telemetryList[25],
                             'ADC4': telemetryList[26],
                             'ADC5': telemetryList[27],
-                            'ADC6': telemetryList[28],
+                            'VCC': telemetryList[28],
                             'BOARDTEMP': telemetryList[29],
                             'ADC8': telemetryList[30],
                             'HABTIMERSTATE': telemetryList[31],
