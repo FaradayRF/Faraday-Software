@@ -95,37 +95,37 @@ def GetDebugFlash():
 # ############
 # ## Reset Device Debug Flash
 # ############
+def ResetDebugFlash():
+    print "*** Pre-Debug RESET ***"
+    rx_debug_data_parsed_initial = GetDebugFlash()
 
-print "*** Pre-Debug RESET ***"
-rx_debug_data_parsed_initial = GetDebugFlash()
+    print repr(rx_debug_data_parsed_initial)
 
-print repr(rx_debug_data_parsed_initial)
+    # Reset the device debug flash counters and data
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
 
-# Reset the device debug flash counters and data
-faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
+    # Sleep to allow unit to perform reset and be ready for next command
+    time.sleep(3)
 
-# Sleep to allow unit to perform reset and be ready for next command
-time.sleep(3)
+    print "*** Post-Debug RESET ***"
+    rx_debug_data_parsed_reset = GetDebugFlash()
 
-print "*** Post-Debug RESET ***"
-rx_debug_data_parsed_reset = GetDebugFlash()
+    print repr(rx_debug_data_parsed_reset)
 
-print repr(rx_debug_data_parsed_reset)
+    debug_test_pass = True
 
-debug_test_pass = True
+    for key in rx_debug_data_parsed_reset:
+        if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
+            pass
+            #print key, rx_debug_data_parsed_reset[key]
+        else:
+            print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
+            debug_test_pass = False
 
-for key in rx_debug_data_parsed_reset:
-    if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
-        pass
-        #print key, rx_debug_data_parsed_reset[key]
+    if debug_test_pass == True:
+        print "DEBUG Flash RESET = PASS"
     else:
-        print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
-        debug_test_pass = False
-
-if debug_test_pass == True:
-    print "DEBUG Flash RESET = PASS"
-else:
-    print "DEBUG Flash RESET = FAIL"
+        print "DEBUG Flash RESET = FAIL"
 
 #
 # ############
@@ -190,3 +190,4 @@ else:
 
 
 #TestEchoUart()
+#ResetDebugFlash()
