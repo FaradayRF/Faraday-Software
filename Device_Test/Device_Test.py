@@ -8,7 +8,7 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 from FaradayIO import cc430radioconfig
-
+from FaradayIO import gpioallocations
 
 #Variables
 local_device_callsign = 'KB1LQD' # Should match the connected Faraday unit as assigned in Proxy configuration
@@ -127,7 +127,21 @@ def ResetDebugFlash():
     else:
         print "DEBUG Flash RESET = FAIL"
 
-#
+def TestGPIOLEDs():
+    # WARNING: Make sure RED and GREEN LED's are allowed to be commanded in firmware!
+    # Turn Both LED 1 and LED 2 ON simultaneously
+    print "Turning ON both the Green and Red LED (LED #1 + LED #2)"
+    command = faraday_cmd.CommandLocalGPIO((gpioallocations.LED_1 | gpioallocations.LED_2), 0, 0, 0, 0, 0)
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+    time.sleep(1)
+
+    # Turn Both LED 1 and LED 2 OFF simultaneously
+    print "Turning Off both the Green and Red LED (LED #1 + LED #2)"
+    command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.LED_1 | gpioallocations.LED_2), 0, 0)
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+
+
+    #
 # ############
 # ## Read System Settings
 # ############
@@ -191,3 +205,4 @@ def ResetDebugFlash():
 
 #TestEchoUart()
 #ResetDebugFlash()
+TestGPIOLEDs()
