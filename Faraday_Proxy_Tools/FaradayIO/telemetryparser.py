@@ -140,51 +140,55 @@ class TelemetryParse(object):
         telemetryList[3] = parsed_packet[3][:parsed_packet[4]]
 
         # Delete the callsign length fields, removes two index values!
-        del telemetryList[1] # Source callsign length index
-        del telemetryList[3] # Destination callsign length index - 1
-        del telemetryList[31] # N/A Byte is not needed
+        #del telemetryList[1] # Source callsign length index
+        #del telemetryList[3] # Destination callsign length index - 1
+        #del telemetryList[31] # N/A Byte is not needed
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
+        print repr(telemetryList)
 
 
 
 
         dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
-                            'SOURCEID': int(telemetryList[1]),
-                            'DESTINATIONCALLSIGN': telemetryList[2],
-                            'DESTINATIONID': telemetryList[3],
-                            'RTCSEC': telemetryList[4],
-                            'RTCMIN': telemetryList[5],
-                            'RTCHOUR': telemetryList[6],
-                            'RTCDAY': telemetryList[7],
-                            'RTCDOW': telemetryList[8],
-                            'RTCMONTH': telemetryList[9],
-                            'RTCYEAR': telemetryList[10],
-                            'GPSLATITUDE': telemetryList[11],
-                            'GPSLATITUDEDIR': telemetryList[12],
-                            'GPSLONGITUDE': telemetryList[13],
-                            'GPSLONGITUDEDIR': telemetryList[14],
-                            'GPSALTITUDE': telemetryList[15],
-                            'GPSALTITUDEUNITS': telemetryList[16],
-                            'GPSSPEED': telemetryList[17],
-                            'GPSFIX': telemetryList[18],
-                            'GPSHDOP': telemetryList[19],
-                            'GPIOSTATE': telemetryList[20],
-                            'RFSTATE': telemetryList[21],
-                            'ADC0': telemetryList[22],
-                            'ADC1': telemetryList[23],
-                            'ADC2': telemetryList[24],
-                            'ADC3': telemetryList[25],
-                            'ADC4': telemetryList[26],
-                            'ADC5': telemetryList[27],
-                            'ADC6': telemetryList[28],
-                            'BOARDTEMP': telemetryList[29],
-                            'ADC8': telemetryList[30],
-                            'HABTIMERSTATE': telemetryList[31],
-                            'HABCUTDOWNSTATE': telemetryList[32],
-                            'HABTRIGGERTIME': telemetryList[33],
-                            'HABTIMER': telemetryList[34],
-                            'EPOCH': telemetryList[35]
+                            'SOURCECALLSIGNLEN': str(telemetryList[1]),
+                            'SOURCEID': int(telemetryList[2]),
+                            'DESTINATIONCALLSIGN': telemetryList[3],
+                            'DESTINATIONCALLSIGNLEN': telemetryList[4],
+                            'DESTINATIONID': telemetryList[5],
+                            'RTCSEC': telemetryList[6],
+                            'RTCMIN': telemetryList[7],
+                            'RTCHOUR': telemetryList[8],
+                            'RTCDAY': telemetryList[9],
+                            'RTCDOW': telemetryList[10],
+                            'RTCMONTH': telemetryList[11],
+                            'RTCYEAR': telemetryList[12],
+                            'GPSLATITUDE': telemetryList[13],
+                            'GPSLATITUDEDIR': telemetryList[14],
+                            'GPSLONGITUDE': telemetryList[15],
+                            'GPSLONGITUDEDIR': telemetryList[16],
+                            'GPSALTITUDE': telemetryList[17],
+                            'GPSALTITUDEUNITS': telemetryList[18],
+                            'GPSSPEED': telemetryList[19],
+                            'GPSFIX': telemetryList[20],
+                            'GPSHDOP': telemetryList[21],
+                            'GPIOSTATE': telemetryList[22],
+                            'IOSTATE': telemetryList[23],
+                            'RFSTATE': telemetryList[24],
+                            'ADC0': telemetryList[25],
+                            'ADC1': telemetryList[26],
+                            'ADC2': telemetryList[27],
+                            'ADC3': telemetryList[28],
+                            'ADC4': telemetryList[29],
+                            'ADC5': telemetryList[30],
+                            'VCC': telemetryList[31],
+                            'BOARDTEMP': telemetryList[32],
+                            'ADC8': telemetryList[33],
+                            'HABTIMERSTATE': telemetryList[34],
+                            'HABCUTDOWNSTATE': telemetryList[35],
+                            'HABTRIGGERTIME': telemetryList[36],
+                            'HABTIMER': telemetryList[37],
+                            'EPOCH': telemetryList[38]
                         }
 
         #print dictionaryData["ADC8"]
@@ -192,44 +196,46 @@ class TelemetryParse(object):
         #Perform debug actions if needed
         if(debug == True):
             print "--- Telemetry Packet #3 ---"
-            print "Index[0]: Source Callsign", parsed_packet[0]
-            print "Index[1]: Source Callsign Length", parsed_packet[1]
-            print "Index[2]: Source Callsign ID", parsed_packet[2]
-            print "Index[3]: Destination Callsign", parsed_packet[3]
-            print "Index[4]: Destination Callsign Length", parsed_packet[4]
-            print "Index[5]: Destination Callsign ID", parsed_packet[5]
-            print "Index[6]: RTC Second", parsed_packet[6]
-            print "Index[7]: RTC Minute", parsed_packet[7]
-            print "Index[8]: RTC Hour", parsed_packet[8]
-            print "Index[9]: RTC Day", parsed_packet[9]
-            print "Index[10]: RTC Day Of Week", parsed_packet[10]
-            print "Index[11]: RTC Month", parsed_packet[11]
-            print "Index[12]: Year", parsed_packet[12]
-            print "Index[13]: GPS Lattitude", parsed_packet[13]
-            print "Index[14]: GPS Lattitude Direction", parsed_packet[14]
-            print "Index[15]: GPS Longitude", parsed_packet[15]
-            print "Index[16]: GPS Longitude Direction", parsed_packet[16]
-            print "Index[17]: GPS Altitude", parsed_packet[17]
-            print "Index[18]: GPS Altitude Units", parsed_packet[18]
-            print "Index[19]: GPS Speed", parsed_packet[19]
-            print "Index[20]: GPS Fix", parsed_packet[20]
-            print "Index[21]: GPS HDOP", parsed_packet[21]
-            print "Index[22]: GPIO State Telemetry", parsed_packet[22]
-            print "Index[23]: RF State Telemetry", parsed_packet[23]
-            print "Index[24]: ADC 0", parsed_packet[24]
-            print "Index[25]: ADC 1", parsed_packet[25]
-            print "Index[26]: ADC 2", parsed_packet[26]
-            print "Index[27]: ADC 3", parsed_packet[27]
-            print "Index[28]: ADC 4", parsed_packet[28]
-            print "Index[29]: ADC 5", parsed_packet[29]
-            print "Index[30]: ADC 6", parsed_packet[30]
-            print "Index[31]: CC430 Temperature", parsed_packet[31]
-            print "Index[32]: ADC 8", parsed_packet[32]
-            print "Index[33]: N/A Byte", parsed_packet[33]
-            print "Index[34]: HAB Automatic Cutdown Timer State Machine State", parsed_packet[34]
-            print "Index[35]: HAB Cutdown Event State Machine State", parsed_packet[35]
-            print "Index[36]: HAB Automatic Cutdown Timer Trigger Time", parsed_packet[36]
-            print "Index[37]: HAB Automatic Cutdown Timer Current Time", parsed_packet[37]
+            print "Source Callsign", dictionaryData['SOURCECALLSIGN']
+            print "Source Callsign Length", dictionaryData['SOURCECALLSIGNLEN']
+            print "Source Callsign ID", dictionaryData['SOURCEID']
+            print "Destination Callsign", dictionaryData['DESTINATIONCALLSIGN']
+            print "Destination Callsign Length", dictionaryData['DESTINATIONCALLSIGNLEN']
+            print "Destination Callsign ID", dictionaryData['DESTINATIONID']
+            print "RTC Second", dictionaryData['RTCSEC']
+            print "RTC Minute", dictionaryData['RTCMIN']
+            print "RTC Hour", dictionaryData['RTCHOUR']
+            print "RTC Day", dictionaryData['RTCDAY']
+            print "RTC Day Of Week", dictionaryData['RTCDOW']
+            print "RTC Month", dictionaryData['RTCMONTH']
+            print "Year", dictionaryData['RTCYEAR']
+            print "GPS Lattitude", dictionaryData['GPSLATITUDE']
+            print "GPS Lattitude Direction", dictionaryData['GPSLATITUDEDIR']
+            print "GPS Longitude", dictionaryData['GPSLONGITUDE']
+            print "GPS Longitude Direction", dictionaryData['GPSLONGITUDEDIR']
+            print "GPS Altitude", dictionaryData['GPSALTITUDE']
+            print "GPS Altitude Units", dictionaryData['GPSALTITUDEUNITS']
+            print "GPS Speed", dictionaryData['GPSSPEED']
+            print "GPS Fix", dictionaryData['GPSFIX']
+            print "GPS HDOP", dictionaryData['GPSHDOP']
+            print "GPIO State Telemetry", dictionaryData['GPIOSTATE']
+            print "IO State Telemetry", dictionaryData['IOSTATE']
+            print "RF State Telemetry", dictionaryData['RFSTATE']
+            print "ADC 0", dictionaryData['ADC0']
+            print "ADC 1", dictionaryData['ADC1']
+            print "ADC 2", dictionaryData['ADC2']
+            print "ADC 3", dictionaryData['ADC3']
+            print "ADC 4", dictionaryData['ADC4']
+            print "ADC 5", dictionaryData['ADC5']
+            print "VCC", dictionaryData['VCC']
+            print "CC430 Temperature", dictionaryData['BOARDTEMP']
+            print "ADC 8", dictionaryData['ADC8']
+            #print "N/A Byte", dictionaryData['']
+            print "HAB Automatic Cutdown Timer State Machine State", dictionaryData['HABTIMERSTATE']
+            print "HAB Cutdown Event State Machine State", dictionaryData['HABCUTDOWNSTATE']
+            print "HAB Automatic Cutdown Timer Trigger Time", dictionaryData['HABTRIGGERTIME']
+            print "HAB Automatic Cutdown Timer Current Time", dictionaryData['HABTIMER']
+            print "EPOCH", dictionaryData['EPOCH']
         else:
             pass
 
