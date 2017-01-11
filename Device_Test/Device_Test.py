@@ -182,6 +182,30 @@ def ReadTelemTemp(telemetry_parsed):
         print "FAIL"
         return False
 
+def ReadADCTelem(telem):
+    pass
+
+def ReadGPSTelem(telem):
+    boolFix = telem['GPSFIX']
+    strLat = telem['GPSLATITUDE']
+    strLon = telem['GPSLONGITUDE']
+    strLatDir = telem['GPSLATITUDEDIR']
+    strLonDir = telem['GPSLONGITUDEDIR']
+    strAlt = telem['GPSALTITUDE']
+    strAltUnit = telem['GPSALTITUDEUNITS']
+    floatSpeed = telem['GPSSPEED']
+    strHDOP = telem['GPSHDOP']
+    if boolFix and float(strHDOP) > 0:
+        print "VALID GPS Signal Lock!"
+        print "Lat:", strLat, strLatDir
+        print "Lon:", strLon, strLonDir
+        print "HDOP", strHDOP
+        return True
+
+    else:
+        print "NO GPS Lock"
+        return False
+
 # ############
 # ## Read System Settings
 # ############
@@ -225,5 +249,6 @@ def ReadTelemTemp(telemetry_parsed):
 #ResetDebugFlash()
 #TestGPIOLEDs()
 telem = GetTelem3()
-#print telem
+print telem
 temp_test = ReadTelemTemp(telem)
+ReadGPSTelem(telem)
