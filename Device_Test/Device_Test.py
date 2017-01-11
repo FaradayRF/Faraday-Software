@@ -169,7 +169,19 @@ def GetTelem3():
 
     return rx_telemetry_packet_parsed
 
-    #
+def ReadTelemTemp(telemetry_parsed):
+    #Get and print current CC430 ("board") temp
+    int_boardtemp = telemetry_parsed['BOARDTEMP']
+    print "Current CC430 Temperature: %dC" %int_boardtemp
+
+    #Check if temp is inside of bounds (set wide for check if generall OK
+    if int_boardtemp > 15 and int_boardtemp < 30:
+        print "PASS"
+        return True
+    else:
+        print "FAIL"
+        return False
+
 # ############
 # ## Read System Settings
 # ############
@@ -212,5 +224,6 @@ def GetTelem3():
 #TestEchoUart()
 #ResetDebugFlash()
 #TestGPIOLEDs()
-#telem = GetTelem3()
+telem = GetTelem3()
 #print telem
+temp_test = ReadTelemTemp(telem)
