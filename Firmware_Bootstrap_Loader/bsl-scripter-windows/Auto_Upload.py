@@ -14,7 +14,7 @@ import os
 import Faraday_BSL_FTDI_CBUS
 
 #firmware_filename = sys.argv[1]
-firmware_filename = 'REV-D1_GPS-Test-1-11-17.txt'
+firmware_filename = '1-12-17_GPIO.txt'
 os.system("Create_TI-TXT_Parse.py " + firmware_filename)
 
 #Enable BSL Mode

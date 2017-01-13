@@ -257,6 +257,24 @@ def ResetCONFIGFlash():
 
 
 
+def EnableGPIO():
+    # P3 - 0, 1, 2
+    # P4 - 0, 1, 2, 3, 4
+    # P5 - 4
+    print "Turning ON all GPIO outputs"
+    command = faraday_cmd.CommandLocalGPIO((gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2), gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7, gpioallocations.DIGITAL_IO_8, 0, 0, 0)
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+
+
+def DisableGPIO():
+    # P3 - 0, 1, 2
+    # P4 - 0, 1, 2, 3, 4
+    # P5 - 4
+    print "Turning OFF all GPIO outputs"
+    command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2),
+        gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7,
+        gpioallocations.DIGITAL_IO_8)
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 
 
@@ -267,11 +285,14 @@ def ResetCONFIGFlash():
 #print telem
 #temp_test = ReadTelemTemp(telem)
 #ReadGPSTelem(telem)
+#ResetCONFIGFlash()
 
-telem = GetTelem3()
-print telem
+#telem = GetTelem3()
+#print telem
 
-ResetCONFIGFlash()
+EnableGPIO()
+#time.sleep(5)
+#DisableGPIO()
 
-telem = GetTelem3()
-print telem
+
+
