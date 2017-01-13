@@ -269,6 +269,17 @@ def ReadGPSTelem(telem):
 # ############
 #
 
+def VerifyIdealDiodeBlock(telemetry_parsed):
+    # Make sure no VCC is applied!
+    vcc = ReadVCCTelem(telemetry_parsed)
+
+    if vcc > float(0.010):
+        return False
+    else:
+        return True
+
+
+
 def ResetCONFIGFlash():
     print "*** Pre-Debug RESET ***"
 
@@ -312,7 +323,7 @@ def ActiveMOSFETCutdown():
 #TestGPIOLEDs()
 telem = GetTelem3()
 #print telem
-#temp_test = ReadTelemTemp(telem)
+temp_test = ReadTelemTemp(telem)
 
 print ReadADCTelem(telem)
 print ReadVCCTelem(telem)
@@ -326,6 +337,7 @@ print ReadVCCTelem(telem)
 #time.sleep(5)
 #DisableGPIO()
 #ActiveMOSFETCutdown() # Not working...
+print VerifyIdealDiodeBlock(telem)
 
 
 
