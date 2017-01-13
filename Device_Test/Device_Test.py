@@ -182,8 +182,34 @@ def ReadTelemTemp(telemetry_parsed):
         print "FAIL"
         return False
 
-def ReadADCTelem(telem):
-    pass
+def ReadADCTelem(telemetry_parsed):
+    # Get and print current CC430 ("board") temp
+    int_adc0 = telemetry_parsed['ADC0']
+    int_adc1 = telemetry_parsed['ADC1']
+    int_adc2 = telemetry_parsed['ADC2']
+    int_adc3 = telemetry_parsed['ADC3']
+    int_adc4 = telemetry_parsed['ADC4']
+    int_adc5 = telemetry_parsed['ADC5']
+    int_adc8 = telemetry_parsed['ADC8']
+    return [int_adc0, int_adc1, int_adc2, int_adc3, int_adc4, int_adc5, int_adc5, int_adc8]
+
+def ReadVCCTelem(telemetry_parsed):
+    # Get and print current CC430 ("board") temp
+    int_vcc = telemetry_parsed['VCC']
+
+    # Get sub calculations
+    adc = int_vcc
+    refv = 2.41
+    bitv = refv / 2 ** 12
+    scale = float(3300) / (3300 + 33200)
+
+    # Voltage at ADC Pin
+    adc_volt = adc * bitv
+
+    # Input Voltage (scaled)
+    input_vcc = adc_volt / scale
+
+    return input_vcc
 
 def ReadGPSTelem(telem):
     boolFix = telem['GPSFIX']
@@ -277,22 +303,29 @@ def DisableGPIO():
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 
+def ActiveMOSFETCutdown():
+    command = faraday_cmd.CommandLocalHABActivateCutdownEvent()
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 #TestEchoUart()
 #ResetDebugFlash()
 #TestGPIOLEDs()
-#telem = GetTelem3()
+telem = GetTelem3()
 #print telem
 #temp_test = ReadTelemTemp(telem)
+
+print ReadADCTelem(telem)
+print ReadVCCTelem(telem)
 #ReadGPSTelem(telem)
 #ResetCONFIGFlash()
 
 #telem = GetTelem3()
 #print telem
 
-EnableGPIO()
+#EnableGPIO()
 #time.sleep(5)
 #DisableGPIO()
+#ActiveMOSFETCutdown() # Not working...
 
 
 
