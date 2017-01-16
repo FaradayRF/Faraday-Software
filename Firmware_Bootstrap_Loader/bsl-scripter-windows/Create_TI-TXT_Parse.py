@@ -12,7 +12,7 @@ import array
 import sys
 
 #filename = sys.argv[1]
-filename = '1-12-17_GPIO.txt'
+filename = 'REV-D1_GPS-Test-1-11-17.txt'
 device_com_port = 32
 
 f = open(filename, 'r')
@@ -70,7 +70,7 @@ def CreateBslScript():
 	#global device_com_port
 	#com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
     textfile = open("FaradayFirmwareUpgradeScript.txt", 'w')
-    textfile.writelines(('MODE 6xx UART 9600 COM9 PARITY', '\n'))
+    textfile.writelines(('MODE 6xx UART 9600 COM110 PARITY', '\n'))
     textfile.writelines(('CHANGE_BAUD_RATE 115200', '\n'))
     textfile.writelines(('VERBOSE', '\n'))
     textfile.writelines(('RX_PASSWORD pass32_wrong.txt', '\n')) #//gives the wrong password to mass erase the memory
