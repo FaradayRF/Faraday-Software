@@ -59,8 +59,8 @@ def TestEchoUart():
             # Now parse data again
             b64_data = rx_echo_raw[0]['data']
             echo_decoded = faraday_1.DecodeRawPacket(b64_data)
-            print "\nSent:", repr(originalmsg)
-            print "Received:", repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+            print "\n\nSent:", repr(originalmsg)
+            print "\nReceived:", repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
             echo_len = len(originalmsg)
             if(originalmsg == echo_decoded[0:echo_len]):
                 #print "TEST: ECHO - Success"
@@ -120,7 +120,7 @@ def ResetDebugFlash():
     print "*** Pre-Debug RESET ***"
     rx_debug_data_parsed_initial = GetDebugFlash()
 
-    print repr(rx_debug_data_parsed_initial)
+    #print repr(rx_debug_data_parsed_initial)
 
     # Reset the device debug flash counters and data
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
@@ -131,7 +131,7 @@ def ResetDebugFlash():
     print "*** Post-Debug RESET ***"
     rx_debug_data_parsed_reset = GetDebugFlash()
 
-    print repr(rx_debug_data_parsed_reset)
+    #print repr(rx_debug_data_parsed_reset)
 
     debug_test_pass = True
 
@@ -140,7 +140,7 @@ def ResetDebugFlash():
             pass
             #print key, rx_debug_data_parsed_reset[key]
         else:
-            print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
+            #print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
             debug_test_pass = False
 
     if debug_test_pass == True:
@@ -154,7 +154,7 @@ def TestGPIOLEDs():
     print "Turning ON both the Green and Red LED (LED #1 + LED #2)"
     command = faraday_cmd.CommandLocalGPIO((gpioallocations.LED_1 | gpioallocations.LED_2), 0, 0, 0, 0, 0)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
-    time.sleep(1)
+    time.sleep(5)
 
     # Turn Both LED 1 and LED 2 OFF simultaneously
     print "Turning Off both the Green and Red LED (LED #1 + LED #2)"
@@ -193,14 +193,14 @@ def GetTelem3():
 def ReadTelemTemp(telemetry_parsed):
     #Get and print current CC430 ("board") temp
     int_boardtemp = telemetry_parsed['BOARDTEMP']
-    print "Current CC430 Temperature: %dC" %int_boardtemp
+    print "\nCurrent CC430 Temperature: %dC" %int_boardtemp
 
     #Check if temp is inside of bounds (set wide for check if generall OK
     if int_boardtemp > 15 and int_boardtemp < 35:
-        print "PASS"
+        print "Temperature Test: PASS"
         return True
     else:
-        print "FAIL"
+        print "Temperature Test: FAIL"
         return False
 
 def ReadADCTelem(telemetry_parsed):

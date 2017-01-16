@@ -1,15 +1,18 @@
 import devicetest
+import proxy_settings
 
-devicetest.local_device_callsign = "KB1LQD"
-devicetest.local_device_node_id = 1
+#Setup script to use correct proxy unit
+devicetest.local_device_callsign = proxy_settings.local_device_callsign
+devicetest.local_device_node_id = proxy_settings.local_device_node_id
 
-status_echo_test = devicetest.TestEchoUart()
-print status_echo_test
+#devicetest.TestGPIOLEDs() # Due to GPS use of LED's and boot sequence just use that.
+
+#status_echo_test = devicetest.TestEchoUart()
+#print status_echo_test
 
 
-# TestEchoUart()
+
 # #ResetDebugFlash()
-# #TestGPIOLEDs()
 # telem = GetTelem3()
 # #print telem
 # temp_test = ReadTelemTemp(telem)
