@@ -18,11 +18,10 @@ import time
 
 
 #Variables
-local_device_callsign = 'NOCALL'
-local_device_node_id = 0
+local_device_callsign = 'KB1LQD'
+local_device_node_id = 1
 
-remote_device_callsign = 'KB1LQD'
-remote_device_node_id = 1
+remote_device_node_id = 0
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -45,14 +44,14 @@ faraday_cmd = faradaycommands.faraday_commands()
 #faraday_1.POST(remote_device_callsign, remote_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 # Command Local RF Telemetry TX
-command = faraday_cmd.CommandLocalRFUpdateNow()
+#command = faraday_cmd.CommandLocalRFUpdateNow()
 #print repr(command)
 #faraday_1.POST(remote_device_callsign, remote_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 # Command remote RF telemetry
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteRFUpdateNow(remote_device_callsign, remote_device_node_id))
-print repr(command)
-
-#print repr(command)
-faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+for i in range(0,5):
+    command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteRFUpdateNow(remote_device_callsign, remote_device_node_id))
+    #print repr(command)
+    faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
+    time.sleep(0.5)
 
