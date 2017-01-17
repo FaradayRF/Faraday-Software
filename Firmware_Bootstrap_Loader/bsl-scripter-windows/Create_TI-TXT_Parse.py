@@ -12,7 +12,7 @@ import array
 import sys
 
 #filename = sys.argv[1]
-filename = 'REV-D1_GPS-Test-1-11-17.txt'
+filename = 'RF_Test_Firmware_1-17-17.txt'
 device_com_port = 32
 
 f = open(filename, 'r')
