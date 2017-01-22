@@ -431,7 +431,7 @@ def createTelemetryList(data):
             data["ADC3"],
             data["ADC4"],
             data["ADC5"],
-            data["ADC6"],
+            data["VCC"],
             data["BOARDTEMP"],
             data["ADC8"],
             data["HABTIMERSTATE"],
