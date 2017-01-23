@@ -28,4 +28,4 @@ Debian 8 did not need to install any additional drivers when plugging Faraday in
 If only a single Faraday is connected to the computer the device should show up as ```/dev/ttyUSB0```
 
 # Configure Proxy
-With the drivers installed and serial COM port addresses obtained it's time to [configure the Proxy application](\Tutorials\Tutorials\0-Welcome_To_Faraday\Configuring_Proxy) for use.
+With the drivers installed and serial COM port addresses obtained it's time to [configure the Proxy application](/Tutorials/Tutorials/0-Welcome_To_Faraday/Configuring_Proxy) for use.
