@@ -16,6 +16,7 @@ import logging
 import logging.config
 import threading
 import ConfigParser
+import os
 from collections import deque
 
 from flask import Flask
@@ -24,12 +25,16 @@ from flask import request
 from faraday_uart_stack import layer_4_service
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, 'loggingConfig.ini')
+logging.config.fileConfig(filename)
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read('proxy.ini')
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, 'proxy.ini')
+proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
 postDict = {}
