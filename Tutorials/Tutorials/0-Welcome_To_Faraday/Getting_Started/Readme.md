@@ -47,3 +47,6 @@ Connect your power connector to P4 as shown below. External Power, P4, is locate
 
 ### External MOSFET Connector
 This connector operates in exactly the same fashion as the external power connector P3. However, it is an "output" where the on-board MOSFET simply completes the conduction path when commanded. Do not allow these wires to short to ground or other reference points.
+
+# Preparing Your Computer
+Now that you are aquainted with Faraday let's [get your computer setup](installing-software.md) to run Faraday software.
