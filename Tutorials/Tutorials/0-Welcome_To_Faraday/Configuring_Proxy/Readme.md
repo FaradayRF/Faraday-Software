@@ -72,5 +72,7 @@ A proper ```proxy.ini``` configuration file will resemble the example below.
 
 ![Device Manager](Images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
 
-# Interfacing Proxy
-It's time to move on and [interface with Proxy](commands.ini) to communicate and command Faraday.
+# Time to Use the API
+With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](../1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)
+
+[turn on the LEDs](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)!
