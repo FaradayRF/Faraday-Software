@@ -7,8 +7,8 @@ Thank you for purchasing a Faraday radio from us. We truely appreciate it! If yo
  1. This page
  2. [Installing Faraday Software](installing-software.md)
  3. [Connecting Faraday](connecting-hardware.md)
- 4. [Configuring Proxy](/Tutorials/Tutorials/0-Welcome_To_Faraday/Configuring_Proxy)
- 5. [turn on the LED's](../../1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)
+ 4. [Configuring Proxy](configuring-proxy.md)
+ 5. [Turn on The LED's](hello-world.md)
 
 ## Getting to Know Faraday
 We want you to understand some basics about the radio before we move on. Faraday is sectioned off into areas of operation. Each area performs a necessary function.
