@@ -8,7 +8,7 @@
 ## Configuring Proxy
 Proxy.ini is a plaintext ASCII file which contains the necessary configuration values to properly connect with and identify hardware when Proxy is initialized. Multiple Radios can be connected at once by simple extension of the [UNITx] sections where x is the zero-indexed enumeration of Faraday radios connected to the computer.
 
->This guide assumes you have already [connected a Faraday radio](../Getting_Started/connecting-hardware.md) to your computer!
+>This guide assumes you have already [connected a Faraday radio](connecting-hardware.md) to your computer!
 
 ### Proxy Configs Overview
  * `[FLASK]`: Flask server configuration values
@@ -30,7 +30,7 @@ The image below shows the default `proxy.ini` contents as viewed in a text edito
  1. Open the `proxy-template.ini` file in a text editor to edit `[UNIT0]` values
  2. Change `CALLSIGN` Replace ```NOCALL``` to match your callsign
  3. Change `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
- 4. Change `COM` to match the COM port indicated while [connecting Faraday](../Getting_Started/connecting-hardware.md). `x` represents a number.
+ 4. Change `COM` to match the COM port indicated while [connecting Faraday](connecting-hardware.md). `x` represents a number.
  5. Save the file as `proxy.ini`
 
 ```BAUDRATE``` and `TIMEOUT` Should not be changed unless you are intending to do so.
@@ -94,6 +94,4 @@ A proper ```proxy.ini``` configuration file will resemble the example below.
 ![Device Manager](images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
 
 # Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](../1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)
-
-[turn on the LEDs](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)!
+With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](hello-world.md)!
