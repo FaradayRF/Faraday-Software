@@ -1,9 +1,9 @@
 # Installing Faraday Software
-The open source Faraday software provided by FaradayRF is primarily written in Python. Any language capable of interfacing with a serial port could be used however we chose Python 2.7 due to it's ease of learning and cross-platform capabilities.
+The open source software provided by FaradayRF is primarily written in Python. Any language capable of interfacing with a serial port could be used. However, we chose Python 2.7 due to it's ease of learning and cross-platform capabilities.
 
 Please note that no testing has been performed with Python 3 at this time. If you do, please let us know!
 
-This guide is also a work in progress and has been written using a Windows environment. It will be updated as possible with other operating system specific steps.
+This guide is also a work in progress and has been written using a Windows and Debian environment. It will be updated as available with other operating system specific steps.
 
 ## Installing Python 2.7
 ### Windows
@@ -24,27 +24,35 @@ Python 2.7 should come installed on OS X. however it does not include all necess
 ###Windows
 > Skip to "Zip File Installation" if you do not plan on forking/commiting new code to GitHub
 
-The open-source software is provided on our GitHub repository. If you plan on developing software you should [install GIT](https://git-scm.com/) on your computer and checkout the GitHub repository. We assume you know how to do this if you are thinking about developing software.
+The open-source software is provided on our GitHub repository. If you plan on developing software you should [install GIT](https://git-scm.com/) on your computer.
+
+**Windows Git guide!**
 
 ###Linux (Debian-Based)
 > Skip to "Zip File Installation" if you do not plan on forking/commiting new code to GitHub
 
- 1. Create suitable folder for Faraday software. I.e. ```~/git/faraday-software```
- 2. Navigate to folder ```cd ~/git/faraday-software```
- 2. Checkout latest master branch: ```git checkout https://github.com/FaradayRF/Faraday-Software.git .```
-
+ 1. Create suitable folder for Faraday software. I.e. ```mkdir -p git/faradayrf```
+ 2. Navigate to the new folder ```cd git/faradayrf```
+ 3. Clone latest master branch: ```git clone https://github.com/FaradayRF/Faraday-Software.git .```
+ 4. [Install Python packages](/installing-software.md#installing-required-python-packages)
 
 Latest Master: https://github.com/FaradayRF/Faraday-Software.git
 
 ###Zip File Installation
 ####Windows
-This guide will simply download the latest stable software
- 1. Faraday Software Zip: https://github.com/FaradayRF/Faraday-Software/archive/master.zip
- 2. Unzip contents into desired location i.e. ```C:\faradayrf```
- 3. Navigate to your unzipped file ```C:\faradayrf\Faraday-Software-master```
+This method will download the latest stable software in a Zip archive. It is not able to push code back into GitHub.
+ 1. Download the [Faraday Software Zip](https://github.com/FaradayRF/Faraday-Software/archive/master.zip)
+ 3. Unzip contents into desired location i.e. ```C:\faradayrf```
+ 4. Navigate to your unzipped file ```C:\faradayrf\Faraday-Software-master```
+ 5. [Install Python packages](/installing-software.md#windows-3)
  
 ####Linux (Debian-Based)
-
+This method will download the latest stable software in a Zip archive. It is not able to push code back into GitHub.
+ 1. Download the [Faraday Software Zip](https://github.com/FaradayRF/Faraday-Software/archive/master.zip)
+ 2. Open zip with Archive Manager
+ 3. Create a new folder ```faradayrf``` and extract the archive to this location
+ 4. In terminal ```cd faradayrf/Faraday-Software-master```
+ 5. [Install Python packages](/installing-software.md#linux-debian-based-3)
 
 ##Installing Required Python Packages
 ###Windows
@@ -57,7 +65,7 @@ Use the requirements.txt file to install all necessary packages in one command.
 
 ```sudo pip install -r requirements.txt```
 
-You must use sudo as to install using sudo to ensure all accounts have access.
+You must use sudo to ensure you have permission to install all necessary packages.
  
 # Plugging it Together
-Congratulations! Making it this far means that the software is nearly ready. However we need to [plug in the Faraday hardware](connecting-hardware.md) to complete configuration.
+Congratulations! Making it this far means that you're so close to using Faraday. However we need to [plug in the Faraday hardware](connecting-hardware.md) and complete configuration. Two quick steps.
