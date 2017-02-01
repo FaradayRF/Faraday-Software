@@ -1,7 +1,7 @@
 
 # The Proxy Interface
 
-[Proxy](../../../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read its [documentation](update).
+[Proxy](../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read its documentation.
 
 ![Faraday Software Architecture](images/FaradayProxyBlocks.jpg "Faraday Software Architecture")
 
