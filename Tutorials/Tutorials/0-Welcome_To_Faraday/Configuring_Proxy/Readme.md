@@ -1,72 +1,78 @@
 
-# Configuring The Faraday Proxy Interface
+# The Proxy Interface
 
-The [proxy interface](../../../../proxy) is a program that is used to perform all interactions with a Faraday digital radio. The diagram below illistrates this point.
+[Proxy](../../../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy.
 
 ![Faraday Software Architecture](Images/FaradayProxyBlocks.jpg "Faraday Software Architecture")
 
-## Proxy Configuration INI File 
+## Configuring Proxy
+Proxy.ini contains the necessary configuration values to properly connect with and identify hardware. Multiple Radios can be connected at once by simple extension of the [UNITS] sections.
 
-This file contains setup variables for the proxy prior to program operation that are used to properly connect to locally attached (USB) Faraday digital radios. The proxy can connect to multiple units but for now attach a single Faraday digital radio to your computer and identify the Serial COM port address assigned to it. 
+>This guide assumes you have already [connected a Faraday radio](../Getting_Started/connecting-hardware.md) to your computer
 
-Open the `Proxy.ini` file in a text editor.
-
-![Proxy Program Folder](Images/Proxy-Folder.png "Proxy Program Folder") 
-
+### Proxy Configs Overview
+ * ```[FLASK]```: Flask configuration values
+  * ```HOST```: IP Address or hostname of flask server.
+  * ```PORT```: Flask port to serve data
+ * ```[PROXY]```: Proxy server high level configuration
+  * ```UNITS```: Number of Faraday radios connected to computer.
+ * ```[UNIT0]```: Unit 0 Proxy configuration values
+  * ```CALLSIGN```: Callsign to associate with radio on this USB port.
+  * ```NODEID```: Node ID of radio connected on this USB port.
+  * ```COM```: COM Port associated with radio connected on this USB port.
+  
 The image below shows the default `proxy.ini` contents as viewed in a text editor.
 
 ![Proxy INI Text Editor](Images/Proxy-INI.png "Proxy INI Text Editor")
 
-Update the INI file sections with your specific information or as indicated.
+### Windows
 
-* **[proxy]**
-  * `units=1`
-* **[UNIT0]**
-  * `Callsign` - Replace `NOCALL` with your callsign. Case in-sensitive but it's good practice to use all uppercase.
-  * `nodeid` - `nodeid = 1` or replace with any number between 0-255. This is a unit identification number.
-  * `com` - Replace with the `COMx` port assignment of the Faraday digital radio connected. Make sure to keep the "COM" prior to the number assignment.
+ 1. Open the `proxy-template.ini` file in a text editor to edit ```[UNIT0]``` values
+ 2. Change ```CALLSIGN``` Replace ```NOCALL``` to match your callsign
+ 3. Change ```NODEID``` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
+ 4. Change ```COM``` to match the COM port indicated while [connecting Faraday](../Getting_Started/connecting-hardware.md). ```x``` represents a number.
+ 5. Save the file as ```proxy.ini```
 
-When completed the file should look similar to the example below assuming the use of the callsign "KB1LQD" and a COM port assignment of 12.
+```BAUDRATE``` and ```TIMEOUT``` Should not be changed unless you are intending to do so.
+
+A proper configuration file will look similar to the configuration below. Notice the radio is "KB1LQD-1" on COM71.
 
 ![Proxy INI Example](Images/Proxy-INI-Example.png "Proxy INI Example")
 
-Save the file and open (double-click) the `proxy.py` Python script to start the Farday proxy interface server.
+###Linux (Debian-Based)
+Update with configuration
 
-### Successful Connection
+## Connecting Proxy to Faraday
 
-The screenshot below shows a successful proxy connect to a Farday digital radio.
+Double-click on ```proxy.py``` to run it. With Faraday connected and ```proxy.py``` properly configured you will see a screen similar to that shown below.
 
 ![Successful Proxy Connection](Images/Proxy-Success-Connection.png "Successful Proxy Connection")
 
+> Once connected leave proxy running. It is a background application which provides a service to our core applications.
+
+Congratulations, Proxy is now running successfully!
 
 ### Connection Error
 
-The screenshot below shows the expected command prompt output if the proxy connection fails. An error is likley due to the Faraday device not actually physically connected  or the incorrect COM port assignment used in the `proxy.ini` file.
+An incorrect COM port assignment or unconnected Faraday radio will cause the following common error to appear.
 
 ![Proxy Connection ERROR](Images/Proxy-Error-Connection.png "Proxy Connection ERROR")
 
-
-#Apendix
-
-##Determining Faraday Device Serial COM Port Assignment (Windows)
-
-Open "Device Manager" from the start menu and locate the "Ports (COM & LPT)" tree menu item and expand it. Identify the "USB Serial Port (COMx)" as highlighted in blue in the image below. The assigned COM port of the Faraday currently attached in the example below is COM 8 and when typed into the `proxy.ini` should follow the syntax `COM8`.
-
-**TODO:** Update with information to find based on programed FTDI manufacturer information.
-
-![Device Manager](Images/Device-Manager.png "Device Manager")
+> Check your COM port settings and that you did not change ```baudrate``` in ```proxy.ini```
 
 ## Connecting To Multiple Faraday Devices
 
-The proxy interface can connect to more than one Faraday digital radio at a time and this is performed through a simple configuration of the `proxy.ini` file. 
+The proxy interface can connect to more than one Faraday digital radio at a time and this is achieved by creating more instances of ```[UNITx]``` sections and updating the ```Units``` value in the ```[PROXY]``` section.
 
-First, connect ***both*** Faraday units to your computer and identify both units assigned serial COM ports. Open and configure the `proxy.ini` file with the second (or more) unit's information following the pattern.
+### Windows
+ 1. [Connect](../Getting_Started/connecting-hardware.md) ***both*** Faraday radios to your computer via USB and identify their respective COM ports. 
+ 2. Open and configure the `proxy.ini` by changing ```Units``` in the [PROXY] section and adding a second ```[UNITx]``` section.
 
-* **[proxy]**
-  * `units=2` - or the number of units attached and to be connected to.
-* **[UNITx]**
-  * `Callsign`, `nodeid`, and `com` -Update like the first Faraday device **UNIT0** but with the respective device information.
-
-Connecting to 2 Faraday devices should look like the example below:
+A proper ```proxy.ini``` configuration file will resemble the example below.
 
 ![Device Manager](Images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
+
+# Time to Use the API
+With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](../1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)
+
+[turn on the LEDs](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/Readme.md)!

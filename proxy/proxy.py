@@ -16,6 +16,7 @@ import logging
 import logging.config
 import threading
 import ConfigParser
+import os
 from collections import deque
 
 from flask import Flask
@@ -24,12 +25,14 @@ from flask import request
 from faraday_uart_stack import layer_4_service
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
+filename = os.path.abspath("loggingConfig.ini")
+logging.config.fileConfig(filename)
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read('proxy.ini')
+filename = os.path.abspath("proxy.ini")
+proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
 postDict = {}
@@ -324,7 +327,7 @@ def pageNotFound(error):
 def callsign2COM():
     """ Associate configuration callsigns with serial COM ports"""
     local = {}
-    num = int(proxyConfig.get('proxy', 'units'))
+    num = int(proxyConfig.get('PROXY', 'units'))
     units = range(0, num)
 
     for unit in units:
@@ -359,7 +362,7 @@ def main():
     threads = []
 
     # Obtain number of Faraday units connected to Proxy
-    numUnits = int(proxyConfig.get('proxy', 'units'))
+    numUnits = int(proxyConfig.get('PROXY', 'units'))
 
     while(1):
         # Initialize a Faraday Radio device
@@ -391,8 +394,8 @@ def main():
     t.start()
 
     # Start the flask server on localhost:8000
-    proxyHost = proxyConfig.get("flask", "host")
-    proxyPort = proxyConfig.getint("flask", "port")
+    proxyHost = proxyConfig.get("FLASK", "host")
+    proxyPort = proxyConfig.getint("FLASK", "port")
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
 

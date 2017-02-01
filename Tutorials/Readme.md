@@ -15,7 +15,7 @@ The general tutorials are focused on basic configuration, usage, and application
 
 ##Welcome To Faraday
 
-* **Introduction To Faraday**
+* **[Getting Started](/Tutorials/Tutorials/0-Welcome_To_Faraday/Getting_Started/)**
   * What is Faraday and what can you do with it out of the box?
 * **[Configuring Proxy](/Tutorials/Tutorials/0-Welcome_To_Faraday/Configuring_Proxy/)**
   * The proxy interface program is the main program needed to interact with Faraday on a Host computer. Learn how to set-up the program to properly connect to Faraday digital radio(s).

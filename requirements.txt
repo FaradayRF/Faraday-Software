@@ -1,0 +1,8 @@
+click==6.7
+Flask==0.12
+itsdangerous==0.24
+Jinja2==2.9.4
+MarkupSafe==0.23
+pyserial==3.2.1
+requests==2.12.5
+Werkzeug==0.11.15
