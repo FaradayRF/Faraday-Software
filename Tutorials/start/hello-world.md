@@ -14,7 +14,7 @@ The following code example will enter an infinite loop to turn LED1 ON (green) a
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
@@ -36,6 +36,20 @@ while(1):
     faraday_1.POST('KB1LQD', 1, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
 ```
+
+To run the code example we've placed hello-world.py in the start folder
+### Windows
+ * Double-click on hello-world.py and run with python
+ * Navigate to `C:\faradayrf\faraday-software\Tutorials\start' and run `python hello-world.py`
+ 
+Ensure that Proxy is running in the background!
+ 
+### Linux (Debian-based)
+ * Navigate in terminal to `/git/faraday-software/Tutorials/start` and run `sudo python hello-world.py`
+  * sudo is needed to ensure you can write to `/dev/ttyUSB0`
+  
+Ensure that Proxy is running in the background!
+
 # Code Overview
 ## Importing Faraday Modules
 The FaradayIO module contains several subpackages which make using Faraday much more straight forward. These are the ```faradaybasicproxyio``` and ```faradaycommands``` classes which implement communications over proxy with an abstracted API using several of their attributes.
