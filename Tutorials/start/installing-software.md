@@ -24,16 +24,21 @@ Python 2.7 should come installed on OS X. however it does not include all necess
 ###Windows
 > Skip to "Zip File Installation" if you do not plan on forking/commiting new code to GitHub
 
-The open-source software is provided on our GitHub repository. If you plan on developing software you should [install GIT](https://git-scm.com/) on your computer.
+The open-source software is provided on our GitHub repository. If you plan on developing software you should [install GIT](https://git-scm.com/) on your computer. This guide assumes Git is installed with Git Bash.
 
-**Windows Git guide!**
+Using Git Bash (right-click|Git Bash here) this example will be relative to wherever you start bash:
+
+ 1. Create a suitable folder for Faraday software. I.e. `mkdir -p git/faradayrf`
+ 2. Navigate to the new folder `cd git/faradayrf`
+ 3. Clone the lastest master branch `git clone https://github.com/FaradayRF/Faraday-Software.git .`
+ 4. [Install Python packages](installing-software.md#installing-required-python-packages)
 
 ###Linux (Debian-Based)
 > Skip to "Zip File Installation" if you do not plan on forking/commiting new code to GitHub
 
  1. Create suitable folder for Faraday software. I.e. ```mkdir -p git/faradayrf```
  2. Navigate to the new folder ```cd git/faradayrf```
- 3. Clone latest master branch: ```git clone https://github.com/FaradayRF/Faraday-Software.git .```
+ 3. Clone latest master branch ```git clone https://github.com/FaradayRF/Faraday-Software.git .```
  4. [Install Python packages](installing-software.md#installing-required-python-packages)
 
 Latest Master: https://github.com/FaradayRF/Faraday-Software.git
@@ -44,7 +49,7 @@ This method will download the latest stable software in a Zip archive. It is not
  1. Download the [Faraday Software Zip](https://github.com/FaradayRF/Faraday-Software/archive/master.zip)
  3. Unzip contents into desired location i.e. ```C:\faradayrf```
  4. Navigate to your unzipped file ```C:\faradayrf\Faraday-Software-master```
- 5. [Install Python packages](/installing-software.md#windows-3)
+ 5. [Install Python packages](installing-software.md#installing-required-python-packages)
  
 ####Linux (Debian-Based)
 This method will download the latest stable software in a Zip archive. It is not able to push code back into GitHub.
@@ -52,7 +57,7 @@ This method will download the latest stable software in a Zip archive. It is not
  2. Open zip with Archive Manager
  3. Create a new folder ```faradayrf``` and extract the archive to this location
  4. In terminal ```cd faradayrf/Faraday-Software-master```
- 5. [Install Python packages](/installing-software.md#linux-debian-based-3)
+ 5. [Install Python packages](installing-software.md#installing-required-python-packages)
 
 ##Installing Required Python Packages
 ###Windows
