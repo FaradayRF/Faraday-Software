@@ -34,7 +34,7 @@ The open-source software is provided on our GitHub repository. If you plan on de
  1. Create suitable folder for Faraday software. I.e. ```mkdir -p git/faradayrf```
  2. Navigate to the new folder ```cd git/faradayrf```
  3. Clone latest master branch: ```git clone https://github.com/FaradayRF/Faraday-Software.git .```
- 4. [Install Python packages](/installing-software.md#installing-required-python-packages)
+ 4. [Install Python packages](installing-software.md#installing-required-python-packages)
 
 Latest Master: https://github.com/FaradayRF/Faraday-Software.git
 
