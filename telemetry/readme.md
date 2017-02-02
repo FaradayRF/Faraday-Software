@@ -30,6 +30,8 @@ Configuring Telemetry consists of changing three parameters for basic use. The t
 
 > Telemetry expects [Proxy](../proxy) to be running on the same computer. Please ensure it is running in a window before attempting to start this application.
 
+When this application starts-up it will create a database in the telemetry folder using the `filename` if it doesn't already exist. Once created, the program queries Proxy once per second for telemetry in its queues. Every Faraday physically connected to the computer will be queried. When data is retrieved from Proxy it is parsed and saved into a row of the `TELEMETRY` table.
+
 ### Windows
 
 There are two ways to start Telemetry in Windows. First by command line and secondly by double-clicking on the file in explorer.
@@ -47,5 +49,9 @@ There are two ways to start Telemetry in Windows. First by command line and seco
 
 ![Telemetry application](images/telemetryoutput.png)
 
+### Linux (Debian-based)
+### OSX
 
-#### Explorer
+## Exploring the database
+
+The easiest way to explore the database with Faraday data in it is to use [DB Browser for SQLite](http://sqlitebrowser.org/). DB Browser works for Windows, Mac, and Linux.
