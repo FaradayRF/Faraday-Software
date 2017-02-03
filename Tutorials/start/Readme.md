@@ -3,12 +3,15 @@
 
 Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true to open hardware we'd like to congratulate anyone who built up their own too.
 
+**These tutorials and code are a work in progress, we encourage you to help identify and fix issues with us** Simply create an issue ticket on GitHub or contact us at Support@FaradayRF.com if you find something wrong or think you can clarify anything.
+
 ## Getting Started Overview
  1. This page
  2. [Installing Faraday Software](installing-software.md)
  3. [Connecting Faraday](connecting-hardware.md)
  4. [Configuring Proxy](configuring-proxy.md)
- 5. [Turn on The LED's](hello-world.md)
+ 5. [Configuring Faraday](configuring-faraday.md)
+ 6. [Turn on The LED's](hello-world.md)
 
 ## Getting to Know Faraday
 We want you to understand some basics about the radio before we move on. Faraday is sectioned off into areas of operation. Each area performs a necessary function. This design also helps seperate noisy circuits from sensitive ones which improves performance.

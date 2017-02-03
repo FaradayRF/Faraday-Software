@@ -184,6 +184,7 @@ def sendPositions(stations, socket):
             altitude = rawaltitude[0].zfill(6)
             speed = rawspeed[0].zfill(3)
 
+
             # If GPSFix is valid send data to the socket
             if gpsFix > 0:
                 if node != destNode:
@@ -195,6 +196,10 @@ def sendPositions(stations, socket):
                                    lonString +\
                                    longitudeDir +\
                                    symbol
+                    try:
+                        logger.info(aprsPosition)
+                    except:
+                        pass
 
                     positionString = node +\
                                      '>' +\
