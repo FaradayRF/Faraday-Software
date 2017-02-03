@@ -59,3 +59,6 @@ This subpackage contains the class proxyio which abstracts the RESTful interface
 
 ### Faradaycommands
 This subpackage abstracts commands one might wish to send to Faraday. IT contains functions which build up generic commands such as ```CommandLocal()``` or task-specific commands such as ```CommandLocalGPIOLED1On()``` which turns on LED1.
+
+# Congratulations
+Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide. We highly encourage you to check out our standard core programs such as [Telemetry](../../telemetry) or [APRS](../../aprs). You should also learn more about our API. We're providing the building blocks to experiment, lets go!

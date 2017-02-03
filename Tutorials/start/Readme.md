@@ -8,7 +8,8 @@ Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true t
  2. [Installing Faraday Software](installing-software.md)
  3. [Connecting Faraday](connecting-hardware.md)
  4. [Configuring Proxy](configuring-proxy.md)
- 5. [Turn on The LED's](hello-world.md)
+ 5. [Configuring Faraday](configuring-faraday.md)
+ 6. [Turn on The LED's](hello-world.md)
 
 ## Getting to Know Faraday
 We want you to understand some basics about the radio before we move on. Faraday is sectioned off into areas of operation. Each area performs a necessary function. This design also helps seperate noisy circuits from sensitive ones which improves performance.

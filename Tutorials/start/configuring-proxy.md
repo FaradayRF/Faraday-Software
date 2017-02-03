@@ -93,5 +93,5 @@ A proper ```proxy.ini``` configuration file will resemble the example below.
 
 ![Device Manager](images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
 
-# Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](hello-world.md)!
+# It's Time To Configure Faraday
+Now that Proxy is running, we can communicate with the radio. This means we should program it with some basic information such as your callsign and its node ID. Let's [configure Faraday](configuring-faraday.md).
