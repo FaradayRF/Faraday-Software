@@ -38,7 +38,7 @@ Now that `deviceconfiguration.py` is configured it could be run and will sit in 
 
 `[RF]`
  * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot
- * `BOOT_RF_POWER` Faraday RF power (152 is max @kb1lqd ?)
+ * `BOOT_RF_POWER` Faraday RF power setting, 152 is maximum however not optimal
 
 `[GPS]`
  * `DEFAULT_LATITUDE` Latitude to default to when no GPS is present or is not used
