@@ -55,3 +55,9 @@ There are two ways to start Telemetry in Windows. First by command line and seco
 ## Exploring the database
 
 The easiest way to explore the database with Faraday data in it is to use [DB Browser for SQLite](http://sqlitebrowser.org/). DB Browser works for Windows, Mac, and Linux.
+
+### Linux (Debian-based)
+The DB Browser website has clear and concise instructions to install the browser. However, one tip will be to install `apt-get-repository`. It is located in the `software-properties-common` package.
+
+ * `sudo apt-get install software-properties-common`
+
