@@ -1,5 +1,5 @@
 # Telemetry
-The Telemetry application is a core application provided by FaradayRF. Its basic function is to receive telemtry packets from Faraday, local or remote, and save them to an SQLite database. Doing so allows us to document the data as well as query it easily in the future.
+The Telemetry application is a core application provided by FaradayRF. Its basic function is to receive telemetry packets from [Proxy](../../proxy) and save them into a SQLite database. Doing so allows us to document the data as well as search it easily in the future with SQL queries. Telemetry is built upon a Flask server providing a simple API for searching the telemetry database file. Telemetry_worker operates on its own thread to independently query Proxy for new data.
 
 Basing Telemetry on a [Flask](http://flask.pocoo.org/) server allows it to provide a RESTful interface to the network interface from which other applications such as a user interface or [APRS](../aprs) can query the saved data using simple HTTP GET commands.
 
