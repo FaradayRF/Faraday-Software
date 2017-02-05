@@ -145,7 +145,6 @@ class TelemetryParse(object):
         #del telemetryList[31] # N/A Byte is not needed
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
-        print repr(telemetryList)
 
 
 

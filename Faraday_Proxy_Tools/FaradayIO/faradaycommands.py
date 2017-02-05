@@ -23,6 +23,7 @@ class faraday_commands(object):
         self.CMD_APP_HAB_DISABLEAUTOCUTDOWNTIMER = 16
         self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE = 17
         self.CMD_RFPACKETFORWARD = 18
+        self.CMD_DEVICECONFIGHARDRESET = 253
         self.CMD_DEVICECONFIGFACTORYRESET = 254
         self.CMD_DEVICECONFIG = 255
 
@@ -223,6 +224,17 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes
         """
         packet = commandmodule.create_command_datagram(self.CMD_DEVICECONFIGFACTORYRESET, commandmodule.create_empty_command_packet())
+        return packet
+
+    def CommandLocalHardResetConfiguration(self):
+        """
+        A predefined commanmd that invokes the function that HARD resets the Faraday device information configuration (i.e.
+        callsign, boot default settings, etc...) to a all 0xff memory space.
+
+        :Return: Returns the complete generated packet as a string of bytes
+        """
+        packet = commandmodule.create_command_datagram(self.CMD_DEVICECONFIGHARDRESET,
+                                                       commandmodule.create_empty_command_packet())
         return packet
 
 
