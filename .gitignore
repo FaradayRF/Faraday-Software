@@ -8,11 +8,11 @@ __pycache__/
 docs/_build/
 
 # Telemetry database
-telemetry/*.db
-telemetry/*.db-journal
+Applications/Telemetry/*.db
+Applications/Telemetry/*.db-journal
 
 # APRS application
-aprs/login.ini
+Applications/APRS/login.ini
 
 #IDE (Pycharm)
 .idea*
