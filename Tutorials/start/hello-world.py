@@ -14,11 +14,11 @@ while(1):
     #Turn LED 1 ON (GREEN)
     print "Turning LED 1 ON"
     command = faraday_cmd.CommandLocalGPIOLED1On()
-    faraday_1.POST('KB1LQD', 1, faraday_1.CMD_UART_PORT, command)
+    faraday_1.POST('KB1LQC', 1, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
 
     #Turn LED 1 OFF
     print "Turning LED 1 OFF"
     command = faraday_cmd.CommandLocalGPIOLED1Off()
-    faraday_1.POST('KB1LQD', 1, faraday_1.CMD_UART_PORT, command)
+    faraday_1.POST('KB1LQC', 1, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
