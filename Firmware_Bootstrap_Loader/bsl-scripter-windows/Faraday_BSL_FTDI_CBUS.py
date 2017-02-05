@@ -125,6 +125,9 @@ class FtdiD2xxCbusControlObject(object):
         self.Disconnect()
         return True
 
+	def SetResetHigh(self):
+		##RESET HIGH TEST LOW
+		self.ftd2xxDll.FT_SetBitMode(self.handle, self.BITMASK_IO_OUTPUTS | self.BITMASK_RST, 0x20)
 
 
 

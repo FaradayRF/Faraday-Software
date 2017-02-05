@@ -21,7 +21,7 @@ import socket
 import requests
 
 # Can we clean this up?
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 
