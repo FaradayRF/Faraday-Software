@@ -29,7 +29,7 @@ The software that powers Faraday is based on the principle of serving data over 
 [Simple Message](Applications/simplemessage) Provides messaging functionality over RF paths. Simple as that.
 
 # Contributing
-Absolutely! Join us in developing the future of ham radio. Check out [our contribution](contributing.md) guide.
+Absolutely! Join us in developing the future of ham radio. Check out [our contribution](CONTRIBUTING.md) guide.
  * Help implement new functions and write better code
  * Report problems and frustrations
  * Help recreate problems
