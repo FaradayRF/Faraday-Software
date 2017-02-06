@@ -81,6 +81,8 @@ def unitconfig():
             device_gps_dict['DEFAULT_ALTITUDE'] = telemetryconfig.get("GPS", 'DEFAULT_ALTITUDE')
             device_gps_dict['DEFAULT_ALTITUDE_UNITS'] = telemetryconfig.get("GPS", 'DEFAULT_ALTITUDE_UNITS')
             device_gps_dict['GPS_BOOT_BIT'] = telemetryconfig.get("GPS", 'GPS_BOOT_BIT')
+            device_gps_dict['GPS_PRESENT_BIT'] = telemetryconfig.get("GPS", 'GPS_PRESENT_BIT')
+            print device_gps_dict
 
             device_telemetry_dict = dict()
             device_telemetry_dict['UART_TELEMETRY_BOOT_BIT'] = telemetryconfig.get("TELEMETRY", 'UART_TELEMETRY_BOOT_BIT')
@@ -99,7 +101,8 @@ def unitconfig():
             device_config_object.update_rf(float(device_rf_dict['BOOT_FREQUENCY_MHZ']),
                                            int(device_rf_dict['BOOT_RF_POWER']))
             device_config_object.update_gps(
-                device_config_object.update_bitmask_gps_boot(int(device_gps_dict['GPS_BOOT_BIT'])),
+                device_config_object.update_bitmask_gps_boot(int(device_gps_dict['GPS_PRESENT_BIT']),
+                                                             int(device_gps_dict['GPS_BOOT_BIT'])),
                 device_gps_dict['DEFAULT_LATITUDE'], device_gps_dict['DEFAULT_LATITUDE_DIRECTION'],
                 device_gps_dict['DEFAULT_LONGITUDE'], device_gps_dict['DEFAULT_LONGITUDE_DIRECTION'],
                 device_gps_dict['DEFAULT_ALTITUDE'], device_gps_dict['DEFAULT_ALTITUDE_UNITS'])
