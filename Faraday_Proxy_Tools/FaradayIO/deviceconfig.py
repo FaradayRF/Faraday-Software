@@ -181,17 +181,18 @@ class DeviceConfigClass:
         else:
             print "ERROR: GPS string(s) too long"
 
-    def update_bitmask_gps_boot(self, gps_enable_boot):
+    def update_bitmask_gps_boot(self, gps_present_boot, gps_enable_boot):
         """
         A simple function that updates only the GPS boot bitmask.
 
+        :param gps_present_boot: HIGH = GPS present (installed) by default | LOW = GPS not present (not-installed) by default
         :param gps_enable_boot: HIGH = GPS enabled on boot | LOW = GPS disabled on boot
 
         :return: Nothing
         """
         bitmask = 0
-        self.gps_boot_bitmask |= gps_enable_boot << 0
-        # self.basic_configuration_bitmask |= bitx << 1
+        bitmask |= gps_enable_boot << 0
+        bitmask |= gps_present_boot << 1
         # self.basic_configuration_bitmask |= bitx << 2
         # self.basic_configuration_bitmask |= bitx << 3
         # self.basic_configuration_bitmask |= bitx << 4
