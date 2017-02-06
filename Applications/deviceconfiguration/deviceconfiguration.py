@@ -106,8 +106,8 @@ def unitconfig():
                 device_gps_dict['DEFAULT_LONGITUDE'], device_gps_dict['DEFAULT_LONGITUDE_DIRECTION'],
                 device_gps_dict['DEFAULT_ALTITUDE'], device_gps_dict['DEFAULT_ALTITUDE_UNITS'])
             device_config_object.update_telemetry(device_config_object.update_bitmask_telemetry_boot(
-                int(device_telemetry_dict['UART_TELEMETRY_BOOT_BIT']),
-                int(device_telemetry_dict['RF_TELEMETRY_BOOT_BIT'])),
+                int(device_telemetry_dict['RF_TELEMETRY_BOOT_BIT']),
+                int(device_telemetry_dict['UART_TELEMETRY_BOOT_BIT'])),
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_UART_INTERVAL']),
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_RF_INTERVAL']))
 
