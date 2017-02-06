@@ -176,8 +176,8 @@ def main():
     logger.info('Starting device configuration server')
 
     # Start the flask server on localhost:8001
-    telemetryhost = deviceConfig.get("flask", "host")
-    telemetryport = deviceConfig.getint("flask", "port")
+    telemetryhost = deviceConfig.get("FLASK", "HOST")
+    telemetryport = deviceConfig.getint("FLASK", "PORT")
 
     app.run(host=telemetryhost, port=telemetryport, threaded=True)
 
