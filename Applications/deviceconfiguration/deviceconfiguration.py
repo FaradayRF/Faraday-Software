@@ -82,7 +82,6 @@ def unitconfig():
             device_gps_dict['DEFAULT_ALTITUDE_UNITS'] = telemetryconfig.get("GPS", 'DEFAULT_ALTITUDE_UNITS')
             device_gps_dict['GPS_BOOT_BIT'] = telemetryconfig.get("GPS", 'GPS_BOOT_BIT')
             device_gps_dict['GPS_PRESENT_BIT'] = telemetryconfig.get("GPS", 'GPS_PRESENT_BIT')
-            print device_gps_dict
 
             device_telemetry_dict = dict()
             device_telemetry_dict['UART_TELEMETRY_BOOT_BIT'] = telemetryconfig.get("TELEMETRY", 'UART_TELEMETRY_BOOT_BIT')
