@@ -61,31 +61,53 @@ def unitconfig():
             telemetryconfig.read('faraday_config.ini')
 
             # Create dictionaries of each config section
-            device_basic_dict = dict(telemetryconfig.items("Basic"))
-            device_rf_dict = dict(telemetryconfig.items("RF"))
-            device_gps_dict = dict(telemetryconfig.items("GPS"))
-            device_telemetry_dict = dict(telemetryconfig.items("Telemetry"))
+            device_basic_dict = dict()
+            device_basic_dict['CONFIGBOOTBITMASK'] = telemetryconfig.get("BASIC", 'CONFIGBOOTBITMASK')
+            device_basic_dict['CALLSIGN'] = telemetryconfig.get("BASIC", 'CALLSIGN')
+            device_basic_dict['ID'] = telemetryconfig.get("BASIC", 'ID')
+            device_basic_dict['GPIO_P3'] = telemetryconfig.get("BASIC", 'GPIO_P3')
+            device_basic_dict['GPIO_P4'] = telemetryconfig.get("BASIC", 'GPIO_P4')
+            device_basic_dict['GPIO_P5'] = telemetryconfig.get("BASIC", 'GPIO_P5')
+
+            device_rf_dict = dict()
+            device_rf_dict['BOOT_FREQUENCY_MHZ'] = telemetryconfig.get("RF", 'BOOT_FREQUENCY_MHZ')
+            device_rf_dict['BOOT_RF_POWER'] = telemetryconfig.get("RF", 'BOOT_RF_POWER')
+
+            device_gps_dict = dict()
+            device_gps_dict['DEFAULT_LATITUDE'] = telemetryconfig.get("GPS", 'DEFAULT_LATITUDE')
+            device_gps_dict['DEFAULT_LATITUDE_DIRECTION'] = telemetryconfig.get("GPS", 'DEFAULT_LATITUDE_DIRECTION')
+            device_gps_dict['DEFAULT_LONGITUDE'] = telemetryconfig.get("GPS", 'DEFAULT_LONGITUDE')
+            device_gps_dict['DEFAULT_LONGITUDE_DIRECTION'] = telemetryconfig.get("GPS", 'DEFAULT_LONGITUDE_DIRECTION')
+            device_gps_dict['DEFAULT_ALTITUDE'] = telemetryconfig.get("GPS", 'DEFAULT_ALTITUDE')
+            device_gps_dict['DEFAULT_ALTITUDE_UNITS'] = telemetryconfig.get("GPS", 'DEFAULT_ALTITUDE_UNITS')
+            device_gps_dict['GPS_BOOT_BIT'] = telemetryconfig.get("GPS", 'GPS_BOOT_BIT')
+
+            device_telemetry_dict = dict()
+            device_telemetry_dict['UART_TELEMETRY_BOOT_BIT'] = telemetryconfig.get("TELEMETRY", 'UART_TELEMETRY_BOOT_BIT')
+            device_telemetry_dict['RF_TELEMETRY_BOOT_BIT'] = telemetryconfig.get("TELEMETRY", 'RF_TELEMETRY_BOOT_BIT')
+            device_telemetry_dict['TELEMETRY_DEFAULT_UART_INTERVAL'] = telemetryconfig.get("TELEMETRY", 'TELEMETRY_DEFAULT_UART_INTERVAL')
+            device_telemetry_dict['TELEMETRY_DEFAULT_RF_INTERVAL'] = telemetryconfig.get("TELEMETRY", 'TELEMETRY_DEFAULT_RF_INTERVAL')
 
             # Create device configuration module object to use for programming packet creation
             device_config_object = deviceconfig.DeviceConfigClass()
 
             # Update the device configuration object with the fields obtained from the INI configuration files loaded
-            device_config_object.update_bitmask_configuration(int(device_basic_dict['configbootbitmask']))
-            device_config_object.update_basic(int(1), str(device_basic_dict['callsign']),
-                                              int(device_basic_dict['id']), int(device_basic_dict['gpio_p3']),
-                                              int(device_basic_dict['gpio_p4']), int(device_basic_dict['gpio_p5']))
-            device_config_object.update_rf(float(device_rf_dict['boot_frequency_mhz']),
-                                           int(device_rf_dict['boot_rf_power']))
+            device_config_object.update_bitmask_configuration(int(device_basic_dict['CONFIGBOOTBITMASK']))
+            device_config_object.update_basic(int(1), str(device_basic_dict['CALLSIGN']),
+                                              int(device_basic_dict['ID']), int(device_basic_dict['GPIO_P3']),
+                                              int(device_basic_dict['GPIO_P4']), int(device_basic_dict['GPIO_P5']))
+            device_config_object.update_rf(float(device_rf_dict['BOOT_FREQUENCY_MHZ']),
+                                           int(device_rf_dict['BOOT_RF_POWER']))
             device_config_object.update_gps(
-                device_config_object.update_bitmask_gps_boot(int(device_gps_dict['gps_boot_bit'])),
-                device_gps_dict['default_latitude'], device_gps_dict['default_latitude_direction'],
-                device_gps_dict['default_longitude'], device_gps_dict['default_longitude_direction'],
-                device_gps_dict['default_altitude'], device_gps_dict['default_altitude_units'])
+                device_config_object.update_bitmask_gps_boot(int(device_gps_dict['GPS_BOOT_BIT'])),
+                device_gps_dict['DEFAULT_LATITUDE'], device_gps_dict['DEFAULT_LATITUDE_DIRECTION'],
+                device_gps_dict['DEFAULT_LONGITUDE'], device_gps_dict['DEFAULT_LONGITUDE_DIRECTION'],
+                device_gps_dict['DEFAULT_ALTITUDE'], device_gps_dict['DEFAULT_ALTITUDE_UNITS'])
             device_config_object.update_telemetry(device_config_object.update_bitmask_telemetry_boot(
-                int(device_telemetry_dict['rf_telemetry_boot_bit']),
-                int(device_telemetry_dict['uart_telemetry_boot_bit'])),
-                int(device_telemetry_dict['telemetry_default_uart_interval']),
-                int(device_telemetry_dict['telemetry_default_rf_interval']))
+                int(device_telemetry_dict['UART_TELEMETRY_BOOT_BIT']),
+                int(device_telemetry_dict['RF_TELEMETRY_BOOT_BIT'])),
+                int(device_telemetry_dict['TELEMETRY_DEFAULT_UART_INTERVAL']),
+                int(device_telemetry_dict['TELEMETRY_DEFAULT_RF_INTERVAL']))
 
             # Create the raw device configuration packet to send to unit
             device_config_packet = device_config_object.create_config_packet()
