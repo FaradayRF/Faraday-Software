@@ -3,7 +3,7 @@
 
 Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true to open hardware we'd like to congratulate anyone who built up their own too.
 
-**These tutorials and code are a work in progress, we encourage you to help identify and fix issues with us** Simply create an issue ticket on GitHub or contact us at Support@FaradayRF.com if you find something wrong or think you can clarify anything.
+**These tutorials and code are a work in progress, we encourage you to help identify and fix issues with us**. Simply create an issue ticket on GitHub or contact us at Support@FaradayRF.com if you find something wrong or think you can clarify anything.
 
 ## Getting Started Overview
  1. This page
