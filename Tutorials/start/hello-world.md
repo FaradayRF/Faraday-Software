@@ -61,4 +61,4 @@ Ensure that Proxy is running in the background!
 Ensure that Proxy is running in the background!
 
 # Congratulations
-Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide. We highly encourage you to check out our standard core programs such as [Telemetry](../../telemetry) or [APRS](../../aprs). You should also learn more about our API. We're providing the building blocks to experiment, lets go!
+Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide. We highly encourage you to check out our standard core programs such as [Telemetry](../../Applications/Telemetry) or [APRS](../../Applications/APRS). You should also learn more about our API. We're providing the building blocks to experiment, lets go!
