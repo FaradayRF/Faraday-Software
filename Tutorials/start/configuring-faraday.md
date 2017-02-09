@@ -37,8 +37,8 @@ Now that `deviceconfiguration.py` is configured it could be run and will sit in 
  * `GPIO_P5` Default CC430 P5 IO state, all considerd outputs at this time
 
 `[RF]`
- * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot
- * `BOOT_RF_POWER` Faraday RF power setting, 152 is maximum however not optimal
+ * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot, 914.5 MHz is current default. Range is 902-928MHz
+ * `BOOT_RF_POWER` Faraday RF power setting, 152 is maximum however not optimal, 20 is suggested for desktop use to prevent desensing
 
 `[GPS]`
  * `DEFAULT_LATITUDE` Latitude to default to when no GPS is present or is not used
@@ -48,6 +48,7 @@ Now that `deviceconfiguration.py` is configured it could be run and will sit in 
  * `DEFAULT_ALTITUDE` Altitude to default to when no GPS is present or is not used
  * `DEFAULT_ALTITUDE_UNITS`Altitude to default to when no GPS is present or is not used
  * `GPS_BOOT_BIT` ON/OFF to allow GPS to turn on at boot
+ * `GPS_PRESENT_BIT` Boolean value to inform Faraday whether there is a GPS present or not
 
 `[TELEMETRY]`
  * `UART_TELEMETRY_BOOT_BIT` ON/OFF sending telemetry over UART after boot
