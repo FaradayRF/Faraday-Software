@@ -3,8 +3,6 @@
 
 [Proxy](../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read its documentation.
 
-![Faraday Software Architecture](images/FaradayProxyBlocks.jpg "Faraday Software Architecture")
-
 ## Configuring Proxy
 Proxy.ini is a plaintext ASCII file which contains the necessary configuration values to properly connect with and identify hardware when Proxy is initialized. Multiple Radios can be connected at once by simple extension of the [UNITx] sections where x is the zero-indexed enumeration of Faraday radios connected to the computer.
 
@@ -27,13 +25,13 @@ The image below shows the default `proxy.ini` contents as viewed in a text edito
 
 ### Windows
 
+> There is no need to change any other Proxy.ini settings unless you know what you're doing!
+
  1. Open the `proxy-template.ini` file in a text editor to edit `[UNIT0]` values
  2. Change `CALLSIGN` Replace ```NOCALL``` to match your callsign
  3. Change `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Change `COM` to match the COM port indicated while [connecting Faraday](connecting-hardware.md). `x` represents a number.
  5. Save the file as `proxy.ini`
-
-```BAUDRATE``` and `TIMEOUT` Should not be changed unless you are intending to do so.
 
 A proper configuration file will look similar to the configuration below. Notice the radio is "KB1LQD-1" on COM71.
 
@@ -41,13 +39,13 @@ A proper configuration file will look similar to the configuration below. Notice
 
 ###Linux (Debian-Based)
 
+> There is no need to change any other Proxy.ini settings unless you know what you're doing!
+
  1. Open `proxy-template.ini` with a text editor i.e `gedit git/faraday-software/proxy/proxy-template.ini`
  2. Update `CALLSIGN` Replace ```NOCALL``` to match your callsign
  3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
  5. Save the file as `proxy.ini`
-
-`BAUDRATE` and `TIMEOUT` Should not be changed unless you are intending to do so.
 
 A proper configuration file will look similar to the configuration below. Notice the radio is "KB1LQD-1" on COM71. For Debian COM71 would be /dev/ttyUSB0 in this example.
 
