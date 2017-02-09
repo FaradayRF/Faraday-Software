@@ -3,6 +3,8 @@ In order to configure the software with appropriate information we need to plug 
 
 ## Plugging in USB
 
+> The LEDs may blink briefly after plugging Faraday in. This is OK.
+
  1. Connect Micro-USB cable to Faraday Micro-USB **P16**
  
  Insert Image Here
