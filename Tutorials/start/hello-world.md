@@ -7,6 +7,16 @@ With hardware connected as well as Proxy configured and running you are ready to
 ###Prerequisits
  * Faraday radio connected via USB to the computer
  * Proxy configured and running
+ 
+# Code Overview
+## Importing Faraday Modules
+The FaradayIO module contains several subpackages which make using Faraday much more straight forward. These are the ```faradaybasicproxyio``` and ```faradaycommands``` classes which implement communications over proxy with an abstracted API using several of their attributes.
+
+###Faradaybasicproxyio
+This subpackage contains the class proxyio which abstracts the RESTful interface provided by Proxy. Two of the most important functions provided are ```GET()``` and ```POST()``` which perform GET and POST HTTP methods with properly formatted BASE64 payloads Proxy expects.
+
+### Faradaycommands
+This subpackage abstracts commands one might wish to send to Faraday. IT contains functions which build up generic commands such as ```CommandLocal()``` or task-specific commands such as ```CommandLocalGPIOLED1On()``` which turns on LED1.
 
 ##LED Code
 The following code example will enter an infinite loop to turn LED1 ON (green) and OFF in a total of one second.
@@ -49,16 +59,6 @@ Ensure that Proxy is running in the background!
   * sudo is needed to ensure you can write to `/dev/ttyUSB0`
   
 Ensure that Proxy is running in the background!
-
-# Code Overview
-## Importing Faraday Modules
-The FaradayIO module contains several subpackages which make using Faraday much more straight forward. These are the ```faradaybasicproxyio``` and ```faradaycommands``` classes which implement communications over proxy with an abstracted API using several of their attributes.
-
-###Faradaybasicproxyio
-This subpackage contains the class proxyio which abstracts the RESTful interface provided by Proxy. Two of the most important functions provided are ```GET()``` and ```POST()``` which perform GET and POST HTTP methods with properly formatted BASE64 payloads Proxy expects.
-
-### Faradaycommands
-This subpackage abstracts commands one might wish to send to Faraday. IT contains functions which build up generic commands such as ```CommandLocal()``` or task-specific commands such as ```CommandLocalGPIOLED1On()``` which turns on LED1.
 
 # Congratulations
 Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide. We highly encourage you to check out our standard core programs such as [Telemetry](../../telemetry) or [APRS](../../aprs). You should also learn more about our API. We're providing the building blocks to experiment, lets go!
