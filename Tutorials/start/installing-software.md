@@ -31,7 +31,7 @@ Using Git Bash (right-click|Git Bash here) this example will be relative to wher
  1. Create a suitable folder for Faraday software. I.e. `mkdir -p git/faradayrf`
  2. Navigate to the new folder `cd git/faradayrf`
  3. Clone the lastest master branch `git clone https://github.com/FaradayRF/Faraday-Software.git software`
- 4. [Install Python packages](installing-software.md#installing-required-python-packages)
+ 4. Now that you've downloaded Faraday Software, [Install Python packages](installing-software.md#installing-required-python-packages)
 
 ###Linux (Debian-Based)
 > Skip to "Zip File Installation" if you do not plan on forking/commiting new code to GitHub
@@ -39,12 +39,14 @@ Using Git Bash (right-click|Git Bash here) this example will be relative to wher
  1. Create suitable folder for Faraday software. I.e. ```mkdir -p git/faradayrf```
  2. Navigate to the new folder ```cd git/faradayrf```
  3. Clone latest master branch ```git clone https://github.com/FaradayRF/Faraday-Software.git software```
- 4. [Install Python packages](installing-software.md#installing-required-python-packages)
+ 4. Now that you've downloaded Faraday Software, [Install Python packages](installing-software.md#installing-required-python-packages)
 
 Latest Master: https://github.com/FaradayRF/Faraday-Software.git
 
 ###Zip File Installation
 ####Windows
+> Unnecessary if Git repository was cloned
+
 This method will download the latest stable software in a Zip archive. It is not able to push code back into GitHub.
  1. Download the [Faraday Software Zip](https://github.com/FaradayRF/Faraday-Software/archive/master.zip)
  3. Create two new folders `faradayrf/software` and extract the archive to this location
@@ -52,6 +54,8 @@ This method will download the latest stable software in a Zip archive. It is not
  5. [Install Python packages](installing-software.md#installing-required-python-packages)
  
 ####Linux (Debian-Based)
+> Unnecessary if Git repository was cloned
+
 This method will download the latest stable software in a Zip archive. It is not able to push code back into GitHub.
  1. Download the [Faraday Software Zip](https://github.com/FaradayRF/Faraday-Software/archive/master.zip)
  2. Open zip with Archive Manager
