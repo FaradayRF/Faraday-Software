@@ -16,25 +16,7 @@ Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true t
 ## Getting to Know Faraday
 We want you to understand some basics about the radio before we move on. Faraday is sectioned off into areas of operation. Each area performs a necessary function. This design also helps seperate noisy circuits from sensitive ones which improves performance.
 
-![Faraday Overview](images/Faraday_Overview_D1_Boxed_1000px.jpg)
-
-### Orange
-Micro USB jack with USB communication and power circuitry
-
-### Red
-External power and MOSFET control connectors
-
-### Green
-3.3V Switching regulator
-
-### Blue
-GPS unit with integrated GPS antenna (if installed)
-
-### Yellow
-RF power amplifier, low noise amplifier, SAW filter and SMA antenna jack
-
-### Light Blue
-CC430 microcontroller and support circuitry
+![Faraday Overview](images/RevD1Overview_1200w.jpg)
 
 ## Faraday Connectors
 
