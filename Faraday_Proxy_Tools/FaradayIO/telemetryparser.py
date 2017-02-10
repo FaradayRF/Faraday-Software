@@ -12,7 +12,7 @@ class TelemetryParse(object):
         self.flash_config_info_d_struct_len = 116
         self.packet_1_struct = struct.Struct('4B')
         self.packet_1_len = 4
-        self.packet_2_struct = struct.Struct('<1H 12B 4s')
+        self.packet_2_struct = struct.Struct('<1H 12B L')
         self.packet_2_len = 18
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97

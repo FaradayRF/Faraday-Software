@@ -11,8 +11,8 @@ from FaradayIO import cc430radioconfig
 
 
 #Variables
-local_device_callsign = 'kb1lqd' # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 2 # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'REPLACEME' # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = REPLACEME # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -71,7 +71,7 @@ rx_debug_data_datagram = faraday_parser.UnpackDatagram(rx_debug_data_pkt_decoded
 rx_debug_data_packet = rx_debug_data_datagram['PayloadData']
 
 #Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)
-rx_debug_data_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_debug_data_pkt_decoded, faraday_parser.packet_2_len)
+rx_debug_data_pkt_extracted = faraday_parser.ExtractPaddedPacket(rx_debug_data_packet, faraday_parser.packet_2_len)
 
 #Parse the Telemetry #3 packet
 rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted, debug = True) #Debug ON
