@@ -12,8 +12,8 @@ class TelemetryParse(object):
         self.flash_config_info_d_struct_len = 116
         self.packet_1_struct = struct.Struct('4B')
         self.packet_1_len = 4
-        self.packet_2_struct = struct.Struct('<1H 12B')
-        self.packet_2_len = 14
+        self.packet_2_struct = struct.Struct('<1H 12B L')
+        self.packet_2_len = 18
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
 
@@ -267,6 +267,7 @@ class TelemetryParse(object):
             Index[10]: FLL Unlock counter
             Index[11]: Peripheral / Config counter
             Index[12]: Access violation counter
+            Index[13]: Firmware Revision
         """
         #Unpack the packet
         parsed_packet = self.packet_2_struct.unpack(packet)
@@ -284,6 +285,7 @@ class TelemetryParse(object):
                           'FLLUnlockCounter': parsed_packet[10],
                           'PeripheralConfigCounter': parsed_packet[11],
                           'AccessViolationCounter': parsed_packet[12],
+                          'FirmwareRevision': parsed_packet[13],
                           }
 
         #Perform debug actions if needed
@@ -302,6 +304,7 @@ class TelemetryParse(object):
             print "Index[10]: FLL Unlock counter", dictionaryData['FLLUnlockCounter']
             print "Index[11]: Peripheral / Config counter", dictionaryData['PeripheralConfigCounter']
             print "Index[12]: Access violation counter", dictionaryData['AccessViolationCounter']
+            print "Index[13]: Firmware Revision", dictionaryData['FirmwareRevision'], repr(dictionaryData['FirmwareRevision'])
         else:
             pass
 
