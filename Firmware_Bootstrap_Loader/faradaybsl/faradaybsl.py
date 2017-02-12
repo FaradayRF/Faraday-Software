@@ -1,17 +1,16 @@
-from faradaybsl import createtiscripter
+import createtiscripter
 import sys
 import subprocess
 import os
-from faradaybsl import faradayftdi
+import faradayftdi
 
 filename = 'RF_Test_Firmware_1-17-17.txt'
 comport = 'COM112'
 
-#filename = sys.argv[1]
-#comport = sys.argv[2]
+filename = sys.argv[1]
+comport = sys.argv[2]
 
-print "Filename:", filename
-print "Comport:", comport
+
 
 test = createtiscripter.CreateTiBslScript(filename,comport)
 

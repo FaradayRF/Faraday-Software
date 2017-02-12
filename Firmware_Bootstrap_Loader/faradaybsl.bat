@@ -1,0 +1,1 @@
+python faradaybsl/faradaybsl.py RF_Test_Firmware_1-17-17.txt COM112
