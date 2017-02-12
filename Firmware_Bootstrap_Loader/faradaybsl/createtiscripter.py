@@ -90,7 +90,7 @@ class CreateTiBslScript(object):
         #global device_com_port
         #com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
         textfile = open("FaradayFirmwareUpgradeScript.txt", 'w')
-        textfile.writelines(("MODE 6xx UART 9600 COM106 PARITY", '\n'))
+        textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))
         textfile.writelines(("RX_PASSWORD pass32_wrong.txt", '\n')) #//gives the wrong password to mass erase the memory
