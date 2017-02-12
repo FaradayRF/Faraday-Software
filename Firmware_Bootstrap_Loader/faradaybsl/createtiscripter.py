@@ -21,6 +21,11 @@ import sys
 # section_data_index = []
 # file_program_hex = f.read()
 
+
+
+#print "Arguement 0:", argument1
+
+
 class CreateTiBslScript(object):
 
     def __init__(self, filename, comport):
