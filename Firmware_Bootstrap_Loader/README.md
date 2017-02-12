@@ -34,11 +34,11 @@ BSL requires the use of a HEX file containing the intended firmware that will be
 
 Generate the HEX file by compiling the firmware, after successful compilation the `.txt` file will be in the ../Debug path of the CCS project. The file will be named after the project name automatically.
 
-![](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Firmware_Bootstrap_Loader/Images/CCS_Nav.png)
+![](Images/CCS_Nav.png)
 
 Compiling the program will create the file as highlighted below.
 
-![](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Firmware_Bootstrap_Loader/Images/Debug_Folder_Hex.png)
+![](Images/Debug_Folder_Hex.png)
 
 `Faraday_D1_Release.txt` is the HEX file in TI-TXT format ready to be programmed into Faraday using the BSL.
 
@@ -63,15 +63,15 @@ Running the Batch script will open a command prompt window that automatically pe
 
 **BSL programming will begin by forcing Faraday into BSL mode which takes several seconds.** 
 
-![](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Firmware_Bootstrap_Loader/Images/BSL_Programming_1.png)
+![](Images/BSL_Programming_1.png)
 
 **This is followed by programming which looks like fast moving HEX scrolling down the window.** 
 
-![](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Firmware_Bootstrap_Loader/Images/BSL_Programming2.png)
+![](Images/BSL_Programming2.png)
 
 **Completion is verified with a CRC check indicating program success verification completed.**
 
-![](file:///C:/Users/Brent/Documents/Faraday_Github_Software/Faraday-Software/Firmware_Bootstrap_Loader/Images/BSL_Programming_3.png)
+![](Images/BSL_Programming_3.png)
 
 Faraday will now wait abbout 6-10 seconds to reboot and the command prompt will close. Observe Faraday reboot with the newly programmed firmware!
 
