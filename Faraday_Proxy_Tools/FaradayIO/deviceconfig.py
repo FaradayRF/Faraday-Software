@@ -272,7 +272,6 @@ class DeviceConfigClass:
         gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir,
                                   self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask)
 
-        print repr(pkt_struct_gps)
 
         pkt_struct_telemetry = struct.Struct('<BHH10x')
         telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemetry_uart_beacon_interval,

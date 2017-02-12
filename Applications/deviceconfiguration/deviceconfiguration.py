@@ -111,19 +111,18 @@ def unitconfig():
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_UART_INTERVAL']),
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_RF_INTERVAL']))
 
-            print "Packing Basic Status:", status_basic
-            print "Packing GPS Status:", status_gps
-            print "Packing RF Status:", status_rf
-            print "Packing Telem Status:", status_telem
+            if (status_basic == True and status_gps == True and status_rf == True and status_telem == True):
+                # Create the raw device configuration packet to send to unit
+                device_config_packet = device_config_object.create_config_packet()
 
-            # Create the raw device configuration packet to send to unit
-            device_config_packet = device_config_object.create_config_packet()
+                # Transmit device configuration to local unit as supplied by the function arguments
+                proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
+                           faradayCmd.CommandLocal(faradayCmd.CMD_DEVICECONFIG, device_config_packet))
 
-            # Transmit device configuration to local unit as supplied by the function arguments
-            proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
-                       faradayCmd.CommandLocal(faradayCmd.CMD_DEVICECONFIG, device_config_packet))
-
-            return '', 204  # nothing to return but successful transmission
+                return '', 204  # nothing to return but successful transmission
+            else:
+                logger.error('Failed to create configuration packet!')
+                return 'Failed to create configuration packet!', 400
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
