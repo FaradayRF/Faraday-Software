@@ -24,6 +24,8 @@ faraday_parser = telemetryparser.TelemetryParse()
 ## System Settings
 ############
 
+print "\n"
+
 #Flush old data from UART service port
 faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
 
@@ -53,6 +55,7 @@ print "Faraday's Current Frequency:", str(faraday_freq_mhz)[0:7], "MHz"
 ############
 ## Debug
 ############
+print "\n"
 
 #Flush old data from UART service port
 faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
@@ -79,6 +82,7 @@ rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted
 ############
 ## Telemetry
 ############
+print "\n"
 
 #Flush old data from UART service port
 faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
