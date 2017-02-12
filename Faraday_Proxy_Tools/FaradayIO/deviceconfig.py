@@ -178,14 +178,10 @@ class DeviceConfigClass:
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
 
-        print "Lat:", latitude_str, float(latitude_str)
-        print "Lon:", longitude_str, float(longitude_str)
-        print "ALTITUDE:", altitude_str, float(altitude_str)
-
+        # Force all Lat, Lon, Alt to float then convert to an ASCII 0 (0x30) padded string of fixed length
         latitude_str = commandmodule.create_fixed_length_packet_padding(str(float(latitude_str)), self.MAX_GPS_LATITUDE_LEN, 0x30)
         longitude_str = commandmodule.create_fixed_length_packet_padding(str(float(longitude_str)), self.MAX_GPS_LONGITUDE_LEN, 0x30)
         altitude_str = commandmodule.create_fixed_length_packet_padding(str(float(altitude_str)), self.MAX_ALTITUDE_UNITS_LEN, 0x30)
-        print "NEW ALT:", altitude_str
 
         if lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check:
             self.gps_latitude = latitude_str
