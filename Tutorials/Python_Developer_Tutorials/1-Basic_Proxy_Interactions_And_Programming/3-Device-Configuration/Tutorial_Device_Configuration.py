@@ -17,9 +17,8 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'NOCALL'  # Enter the proxy callsign of the unit you'd like to reconfigure
-local_device_node_id = 0  # Enter the proxy callsign ID number of the unit you'd like to reconfigure
-local_device_callsign = str(local_device_callsign).upper()
+local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 
 #Start the proxy server after configuring the configuration file correctly
