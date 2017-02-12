@@ -55,7 +55,7 @@ To run the code example we've placed hello-world.py in the start folder
 Ensure that Proxy is running in the background!
  
 ### Linux (Debian-based)
- * Navigate in terminal to `/git/faraday-software/Tutorials/start` and run `sudo python hello-world.py`
+ * Navigate in terminal to `/git/faraday-software/Python_Developer_Tutorials/start` and run `sudo python hello-world.py`
   * sudo is needed to ensure you can write to `/dev/ttyUSB0`
   
 Ensure that Proxy is running in the background!
