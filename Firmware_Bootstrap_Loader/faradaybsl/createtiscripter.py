@@ -75,7 +75,7 @@ class CreateTiBslScript(object):
     crc_script_index = []
 
     def CreateOutputFile(self):
-        textfile = open("Program_CRC_Calculations.txt", 'w')
+        textfile = open("faradaybsl/Program_CRC_Calculations.txt", 'w')
         for i in range(0, len(self.mem_addr_index)):
             final_addr = self.mem_addr_index[i].encode('hex')
             final_len = hex(len(self.section_data_index[i]))
@@ -94,13 +94,14 @@ class CreateTiBslScript(object):
     def CreateBslScript(self):
         #global device_com_port
         #com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
-        textfile = open("FaradayFirmwareUpgradeScript.txt", 'w')
+        textfile = open("faradaybsl/FaradayFirmwareUpgradeScript.txt", 'w')
         textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))
         textfile.writelines(("RX_PASSWORD pass32_wrong.txt", '\n')) #//gives the wrong password to mass erase the memory
         textfile.writelines(("RX_PASSWORD pass32_default.txt", '\n'))
-        textfile.writelines(("RX_DATA_BLOCK ", self.filename, '\n'))
+        print "Script file:", self.filename
+        textfile.writelines(("RX_DATA_BLOCK ", "../", self.filename, '\n'))
         for i in range(0, len(self.crc_script_index)):
             textfile.writelines((str(self.crc_script_index[i]), '\n'))
 
