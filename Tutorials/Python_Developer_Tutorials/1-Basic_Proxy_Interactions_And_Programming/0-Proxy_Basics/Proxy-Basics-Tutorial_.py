@@ -13,8 +13,8 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'KB1LQD'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -44,12 +44,12 @@ print repr(rx_telem_data)
 #Unpack the telemetry datagram containing the standard "Telemetry Packet #3" packet
 rx_telemetry_datagram = faraday_parser.UnpackDatagram(rx_telem_pkt_decoded, debug = True) #Debug is ON
 #Extract just the data packet portion of the JSON dictionary
-rx_telemetry_packet = rx_telemetry_datagram[3]
-print "\nThe Decoded Data Within The Packet Is:\n"
-print rx_telemetry_datagram[3]
+rx_telemetry_packet_payload = rx_telemetry_datagram['PayloadData']
+
+print "\nThe telemetry packet payload data:\n"
 
 #Extract the exact debug packet from longer datagram payload (Telemetry Packet #2)
-rx_telemetry_packet_extracted = faraday_parser.ExtractPaddedPacket(rx_telemetry_packet, faraday_parser.packet_3_len)
+rx_telemetry_packet_extracted = faraday_parser.ExtractPaddedPacket(rx_telemetry_packet_payload, faraday_parser.packet_3_len)
 
 #Parse the Telemetry #3 packet
 rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_packet_extracted, True) #Debug ON
