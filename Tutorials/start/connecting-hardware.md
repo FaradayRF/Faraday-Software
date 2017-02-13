@@ -8,7 +8,7 @@ In order to configure the software with appropriate information we need to plug 
  1. Connect Micro-USB cable to Faraday Micro-USB **P16**
  2. Connect Micro-USB cable to computer USB port
  
-![Faraday USB Connection](/images/Faraday_USB_1500w_LowRes.jpg)
+![Faraday USB Connection](images/Faraday_USB_1500w_LowRes.jpg)
 
  
 ### Windows Drivers
