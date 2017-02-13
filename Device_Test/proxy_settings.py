@@ -1,2 +1,2 @@
-local_device_callsign = "KB1LQD"
-local_device_node_id = 1
+local_device_callsign = "NOCALL"
+local_device_node_id = 0

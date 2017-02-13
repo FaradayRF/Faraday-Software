@@ -18,7 +18,7 @@ while user_input != 'q':
         try:
             telem = devicetest.GetTelem3()
             temp = devicetest.ReadADCTelem(telem)
-            for i in range(0, len(temp)):
+            for i in range(0, 6):
                 vadc = temp[i]*bitv
                 print "ADC", str(i) + ":", str(vadc)[0:4], "V"
         except:

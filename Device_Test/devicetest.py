@@ -11,14 +11,16 @@ from FaradayIO import cc430radioconfig
 from FaradayIO import gpioallocations
 
 #Variables
-local_device_callsign = 'nocall' # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1 # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'NOCALL' # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 0 # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 faraday_parser = telemetryparser.TelemetryParse()
+
+print faraday_1
 
 
 # Verify UART communications
@@ -29,6 +31,16 @@ faraday_parser = telemetryparser.TelemetryParse()
 # Verify ADC's
 # Verify GPS
 # Verify Radio
+
+
+#Get Configuration
+
+def GetConfigFlash():
+    rx_debug_data_parsed_initial = GetConfigFlashNow()
+
+    #print repr(rx_debug_data_parsed_initial)
+
+
 
 
 ############
@@ -111,6 +123,45 @@ def GetDebugFlash():
     rx_debug_data_parsed = faraday_parser.UnpackPacket_2(rx_debug_data_pkt_extracted)  # Debug OFF
 
     return rx_debug_data_parsed
+
+def GetConfigFlashNow():
+    faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, 5)
+
+    # Start the proxy server after configuring the configuration file correctly
+    # Setup a Faraday IO object
+    faraday_1 = faradaybasicproxyio.proxyio()
+    faraday_cmd = faradaycommands.faraday_commands()
+    faraday_parser = telemetryparser.TelemetryParse()
+
+    #########################################################################################
+    ###Get current configuration information prior to configuration update.
+    #########################################################################################
+
+    # Display current device configuration prior to configuration flash update (Send UART telemetry update now command)
+    # Send the command to read the entire Flash Memory Info D allocations
+
+    try:
+        r = requests.get("http://127.0.0.1:8002",
+                         params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+    except requests.exceptions.RequestException as e:  # This is the correct syntax
+        print e
+
+    # Print JSON dictionary device data from unit
+    raw_unit_json = r.json()
+
+    # Decode and depickle (serialize) device configuration parsed dictionary data
+    b64_unit_json = base64.b64decode(raw_unit_json['data'])
+    unit_configuration_dict = cPickle.loads(b64_unit_json)
+
+    print "\n************************************"
+    print "PRIOR TO CONFIGURATION UPDATE"
+    print "Unit Callsign-ID:\n", str(unit_configuration_dict['local_callsign'])[
+                                 0:unit_configuration_dict['local_callsign_length']] + '-' + str(
+        unit_configuration_dict['local_callsign_id'])
+    print "RAW Unit JSON Data:", unit_configuration_dict
+    print "************************************"
+
+    #return rx_debug_data_parsed
 
 
 # ############
@@ -320,7 +371,7 @@ def EnableGPIO():
     # P4 - 0, 1, 2, 3, 4
     # P5 - 4
     print "Turning ON all GPIO outputs"
-    command = faraday_cmd.CommandLocalGPIO((gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2), gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7, gpioallocations.DIGITAL_IO_8, 0, 0, 0)
+    command = faraday_cmd.CommandLocalGPIO((gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2 | gpioallocations.LED_1 | gpioallocations.LED_2), gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7, gpioallocations.DIGITAL_IO_8, 0, 0, 0)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 
@@ -329,9 +380,9 @@ def DisableGPIO():
     # P4 - 0, 1, 2, 3, 4
     # P5 - 4
     print "Turning OFF all GPIO outputs"
-    command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2),
+    command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2 | gpioallocations.LED_1 | gpioallocations.LED_2),
         gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7,
-        gpioallocations.DIGITAL_IO_8)
+        gpioallocations.DIGITAL_IO_8 | gpioallocations.LED_1 | gpioallocations.LED_2)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 
