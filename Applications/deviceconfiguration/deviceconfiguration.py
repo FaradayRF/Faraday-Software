@@ -93,7 +93,7 @@ def unitconfig():
             device_config_object = deviceconfig.DeviceConfigClass()
 
             # Update the device configuration object with the fields obtained from the INI configuration files loaded
-            config_bitmask = device_config_object.create_bitmask_configuration(int(device_basic_dict['CONFIGBOOTBITMASK']))
+            config_bitmask = device_config_object.update_bitmask_configuration(int(device_basic_dict['CONFIGBOOTBITMASK']))
             status_basic = device_config_object.update_basic(config_bitmask, str(device_basic_dict['CALLSIGN']),
                                               int(device_basic_dict['ID']), int(device_basic_dict['GPIO_P3']),
                                               int(device_basic_dict['GPIO_P4']), int(device_basic_dict['GPIO_P5']))
