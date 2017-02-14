@@ -177,8 +177,6 @@ def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
     pad = chr(padding_byte) * pad_len
     pad = pad
     padded_data = pad + data
-    print "Fixed:", fixed_legth
-    print "PAD LEN:", pad_len, pad, padded_data
     return padded_data
 
 

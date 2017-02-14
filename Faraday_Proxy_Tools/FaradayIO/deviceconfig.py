@@ -34,6 +34,8 @@ class DeviceConfigClass:
         # Definitions
         self.MAX_CALLSIGN_LEN = 9
         self.MAX_GPS_LATITUDE_LEN = 9
+        self.MAX_GPS_LATITUDE_LEADING_LEN = 4
+        self.MAX_GPS_LATITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LATITUDE_DIR_LEN = 1
         self.MAX_GPS_LONGITUDE_LEN = 10
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
@@ -171,12 +173,46 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
+        # Check Latitude formatting
         lat_check = len(latitude_str) <= self.MAX_GPS_LATITUDE_LEN
         lat_dir_check = len(latitude_dir_str) <= self.MAX_GPS_LATITUDE_DIR_LEN
+        latitude_str_format = latitude_str.split('.')
+        if len(latitude_str_format) != 2:
+            lat_check = False
+
+        #Correct latitude formatting
+        print "lat:", latitude_str, len(latitude_str_format)
+        latitude_str_format = latitude_str.split('.')
+
+
+        print "Leading Len:", len(latitude_str_format[0]), self.MAX_GPS_LATITUDE_LEADING_LEN
+        latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str_format[0]),
+                                                                 self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
+        latitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(latitude_str_format[1]),
+                                                                                          self.MAX_GPS_LATITUDE_TRAILING_LEN,
+                                                                                          0x30)
+        latitude_str = latitude_str_format[0] + '.' + latitude_str_format[1]
+        print "Leading Formatted:", latitude_str_format[0]
+        print "Trailing Formatted:", latitude_str_format[1]
+        print "Trailing Len:", len(latitude_str_format[1]), self.MAX_GPS_LATITUDE_TRAILING_LEN
+        print "Formatted Lat:", latitude_str, type(latitude_str)
+
+
+
+        # Check Longitude formatting
         lon_check = len(longitude_str) <= self.MAX_GPS_LONGITUDE_LEN
         lon_dir_check = len(longitude_dir_str) <= self.MAX_GPS_LONGITUDE_DIR_LEN
+        longitude_str_format = longitude_str.split('.')
+        if len(longitude_str_format) != 2:
+            lon_check = False
+
+        # Check Altitude formatting
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
+
+
+        print "lon:", longitude_str.split('.')
+        print "Alt:", altitude_str.split('.')
 
         # Prepend all Lat, Lon, Alt with (0x30) padded bytes of fixed length packet
         latitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str), self.MAX_GPS_LATITUDE_LEN, 0x30)
@@ -195,7 +231,7 @@ class DeviceConfigClass:
             return True
 
         else:
-            print "ERROR: GPS string(s) too long"
+            print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
             return False
 
     def update_bitmask_gps_boot(self, gps_present_boot, gps_enable_boot):
