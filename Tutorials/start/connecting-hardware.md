@@ -6,12 +6,10 @@ In order to configure the software with appropriate information we need to plug 
 > The LEDs may blink briefly after plugging Faraday in. This is OK.
 
  1. Connect Micro-USB cable to Faraday Micro-USB **P16**
- 
- Insert Image Here
-
  2. Connect Micro-USB cable to computer USB port
+ 
+![Faraday USB Connection](images/Faraday_USB_1500w_LowRes.jpg)
 
- Insert Image Here
  
 ### Windows Drivers
  1. Allow necessary drivers to install from Windows Update, note COM port
