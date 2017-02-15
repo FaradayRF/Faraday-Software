@@ -183,7 +183,6 @@ class DeviceConfigClass:
             lat_check = False
 
         #Correct latitude formatting
-        print "lat:", latitude_str, len(latitude_str_format)
         latitude_str_format = latitude_str.split('.')
         latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str_format[0]),
                                                                  self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
@@ -191,12 +190,6 @@ class DeviceConfigClass:
                                                                                           self.MAX_GPS_LATITUDE_TRAILING_LEN,
                                                                                           0x30)
         latitude_str = latitude_str_format[0] + '.' + latitude_str_format[1]
-        print "Leading Formatted:", latitude_str_format[0]
-        print "Trailing Formatted:", latitude_str_format[1]
-        print "Trailing Len:", len(latitude_str_format[1]), self.MAX_GPS_LATITUDE_TRAILING_LEN
-        print "Formatted Lat:", latitude_str, type(latitude_str)
-
-
 
         # Check Longitude formatting
         lon_check = len(longitude_str) <= self.MAX_GPS_LONGITUDE_LEN
@@ -206,7 +199,6 @@ class DeviceConfigClass:
             lon_check = False
 
         # Correct longitude formatting
-        print "lon:", longitude_str, len(longitude_str_format)
         longitude_str_format = latitude_str.split('.')
         longitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(
             str(longitude_str_format[0]),
@@ -215,10 +207,6 @@ class DeviceConfigClass:
                                                                                   self.MAX_GPS_LONGITUDE_TRAILING_LEN,
                                                                                   0x30)
         longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
-        print "Leading Formatted:", longitude_str_format[0]
-        print "Trailing Formatted:", longitude_str_format[1]
-        print "Trailing Len:", len(longitude_str_format[1]), self.MAX_GPS_LATITUDE_TRAILING_LEN
-        print "Formatted Lat:", longitude_str
 
         # Check Altitude formatting
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
@@ -228,6 +216,7 @@ class DeviceConfigClass:
         altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(altitude_str),
                                                                                 self.MAX_ALTITUDE_LEN, 0x30)
 
+        print "Formatted GPS Flash Config"
         print "lat:", latitude_str
         print "lon:", longitude_str
         print "Alt:", altitude_str
