@@ -38,6 +38,8 @@ class DeviceConfigClass:
         self.MAX_GPS_LATITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LATITUDE_DIR_LEN = 1
         self.MAX_GPS_LONGITUDE_LEN = 10
+        self.MAX_GPS_LONGITUDE_LEADING_LEN = 5
+        self.MAX_GPS_LONGITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
@@ -183,9 +185,6 @@ class DeviceConfigClass:
         #Correct latitude formatting
         print "lat:", latitude_str, len(latitude_str_format)
         latitude_str_format = latitude_str.split('.')
-
-
-        print "Leading Len:", len(latitude_str_format[0]), self.MAX_GPS_LATITUDE_LEADING_LEN
         latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str_format[0]),
                                                                  self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
         latitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(latitude_str_format[1]),
@@ -206,18 +205,37 @@ class DeviceConfigClass:
         if len(longitude_str_format) != 2:
             lon_check = False
 
+        # Correct longitude formatting
+        print "lon:", longitude_str, len(longitude_str_format)
+        longitude_str_format = latitude_str.split('.')
+        longitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(
+            str(longitude_str_format[0]),
+            self.MAX_GPS_LONGITUDE_LEADING_LEN, 0x30)
+        longitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(longitude_str_format[1]),
+                                                                                  self.MAX_GPS_LONGITUDE_TRAILING_LEN,
+                                                                                  0x30)
+        longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
+        print "Leading Formatted:", longitude_str_format[0]
+        print "Trailing Formatted:", longitude_str_format[1]
+        print "Trailing Len:", len(longitude_str_format[1]), self.MAX_GPS_LATITUDE_TRAILING_LEN
+        print "Formatted Lat:", longitude_str
+
         # Check Altitude formatting
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
 
+        # Format altitude with prepended bytes if needed
+        altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(altitude_str),
+                                                                                self.MAX_ALTITUDE_LEN, 0x30)
 
-        print "lon:", longitude_str.split('.')
-        print "Alt:", altitude_str.split('.')
+        print "lat:", latitude_str
+        print "lon:", longitude_str
+        print "Alt:", altitude_str
 
         # Prepend all Lat, Lon, Alt with (0x30) padded bytes of fixed length packet
-        latitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str), self.MAX_GPS_LATITUDE_LEN, 0x30)
-        longitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(longitude_str), self.MAX_GPS_LONGITUDE_LEN, 0x30)
-        altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(altitude_str), self.MAX_ALTITUDE_LEN, 0x30)
+        #latitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str), self.MAX_GPS_LATITUDE_LEN, 0x30)
+        #longitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(longitude_str), self.MAX_GPS_LONGITUDE_LEN, 0x30)
+
 
         if lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check:
             self.gps_latitude = latitude_str
