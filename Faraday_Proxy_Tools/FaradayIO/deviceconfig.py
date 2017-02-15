@@ -208,8 +208,9 @@ class DeviceConfigClass:
             longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
 
         # Check Altitude formatting
+        print altitude_str, float(altitude_str)
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
-        if float(altitude_str) < -9999.0 or float(altitude_str) > 17999.9:
+        if float(altitude_str) < 0 or float(altitude_str) > 17999.9: # Don't accept negative altitude for now...
             alt_check = False
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
 
@@ -241,6 +242,7 @@ class DeviceConfigClass:
 
         else:
             print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
+            print "ERROR: Negative altitude not supported at this time for flash programming"
             return False
 
     def update_bitmask_gps_boot(self, gps_present_boot, gps_enable_boot):
