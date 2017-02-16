@@ -1,6 +1,5 @@
 import struct
 import cc430radioconfig
-import commandmodule
 
 
 class DeviceConfigClass:
@@ -34,12 +33,8 @@ class DeviceConfigClass:
         # Definitions
         self.MAX_CALLSIGN_LEN = 9
         self.MAX_GPS_LATITUDE_LEN = 9
-        self.MAX_GPS_LATITUDE_LEADING_LEN = 4
-        self.MAX_GPS_LATITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LATITUDE_DIR_LEN = 1
         self.MAX_GPS_LONGITUDE_LEN = 10
-        self.MAX_GPS_LONGITUDE_LEADING_LEN = 5
-        self.MAX_GPS_LONGITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
@@ -83,12 +78,10 @@ class DeviceConfigClass:
             self.basic_gpio_p3_bitmask = p3_bitmask
             self.basic_gpio_p4_bitmask = p4_bitmask
             self.basic_gpio_p5_bitmask = p5_bitmask
-            return True
         else:
             print "ERROR: Callsign too long!"
-            return False
 
-    def create_bitmask_configuration(self, device_programmed_bit):
+    def update_bitmask_configuration(self, device_programmed_bit):
         """
         A sub routine that allows modification of only the device programmed bit in the Configuration Boot bitmask. If
         this bit is LOW then the unit will perform factory reset on boot. This function updates the class object
@@ -101,7 +94,7 @@ class DeviceConfigClass:
         """
 
         bitmask = 0
-        bitmask |= int(device_programmed_bit) << 0
+        bitmask |= device_programmed_bit << 0
         # self.basic_configuration_bitmask |= bitx << 1
         # self.basic_configuration_bitmask |= bitx << 2
         # self.basic_configuration_bitmask |= bitx << 3
@@ -111,7 +104,7 @@ class DeviceConfigClass:
         # self.basic_configuration_bitmask |= bitx << 7
         return bitmask
 
-    def create_bitmask_gpio(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
+    def update_bitmask_gpio(self, gpio_7, gpio_6, gpio_5, gpio_4, gpio_3, gpio_2, gpio_1, gpio_0):
         """
         A sub routine that allows modification of default Port X GPIO boot states. This function updates the class
         object variables.
@@ -148,12 +141,9 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
-        freq_list = cc430radioconfig.freq0_carrier_calculation(float(boot_frequency_mhz))  # create_freq_list(float(boot_frequency_mhz))
+        freq_list = cc430radioconfig.freq0_carrier_calculation(boot_frequency_mhz)  # create_freq_list(float(boot_frequency_mhz))
         self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
         self.rf_PATable = patable_byte
-        return True
-
-
 
     def update_gps(self, gps_boot_bitmask, latitude_str, latitude_dir_str, longitude_str, longitude_dir_str,
                    altitude_str, altitude_units_str):
@@ -162,8 +152,6 @@ class DeviceConfigClass:
         (if desired) or no GPS available.
 
         This function updates the class object variables.
-
-        :note This function forces "float" on: Lat, Lon, Alt.
 
         :param gps_boot_bitmask: A bitmask for boot states of the GPIO (i.e Enabled/disabled).
         :param latitude_str: Default latitude as a string (length = 9 bytes)
@@ -175,59 +163,12 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
-        # Check Latitude formatting
         lat_check = len(latitude_str) <= self.MAX_GPS_LATITUDE_LEN
         lat_dir_check = len(latitude_dir_str) <= self.MAX_GPS_LATITUDE_DIR_LEN
-        latitude_str_format = latitude_str.split('.')
-        if len(latitude_str_format) != 2 or len(latitude_str_format[0]) > self.MAX_GPS_LATITUDE_LEADING_LEN or len(latitude_str_format[1]) > self.MAX_GPS_LATITUDE_TRAILING_LEN:
-            lat_check = False
-        else:
-            #Correct latitude formatting
-            latitude_str_format = latitude_str.split('.')
-            latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str_format[0]),
-                                                                     self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
-            latitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(latitude_str_format[1]),
-                                                                                              self.MAX_GPS_LATITUDE_TRAILING_LEN,
-                                                                                              0x30)
-            latitude_str = latitude_str_format[0] + '.' + latitude_str_format[1]
-
-        # Check Longitude formatting
         lon_check = len(longitude_str) <= self.MAX_GPS_LONGITUDE_LEN
         lon_dir_check = len(longitude_dir_str) <= self.MAX_GPS_LONGITUDE_DIR_LEN
-        longitude_str_format = longitude_str.split('.')
-        if len(longitude_str_format) != 2 or len(longitude_str_format[0]) > self.MAX_GPS_LONGITUDE_LEADING_LEN or len(longitude_str_format[1]) > self.MAX_GPS_LONGITUDE_TRAILING_LEN:
-            lon_check = False
-        else:
-            # Correct longitude formatting
-            longitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(
-                str(longitude_str_format[0]),
-                self.MAX_GPS_LONGITUDE_LEADING_LEN, 0x30)
-            longitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(longitude_str_format[1]),
-                                                                                      self.MAX_GPS_LONGITUDE_TRAILING_LEN,
-                                                                                      0x30)
-            longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
-
-        # Check Altitude formatting
-        print altitude_str, float(altitude_str)
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
-        if float(altitude_str) < 0 or float(altitude_str) > 17999.9: # Don't accept negative altitude for now...
-            alt_check = False
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
-
-        # Format altitude with prepended bytes if needed
-        altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(float(altitude_str)),
-                                                                                self.MAX_ALTITUDE_LEN, 0x30)
-
-
-        print "Formatted GPS Flash Config"
-        print "lat:", latitude_str
-        print "lon:", longitude_str
-        print "Alt:", altitude_str
-
-        # Prepend all Lat, Lon, Alt with (0x30) padded bytes of fixed length packet
-        #latitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str), self.MAX_GPS_LATITUDE_LEN, 0x30)
-        #longitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(longitude_str), self.MAX_GPS_LONGITUDE_LEN, 0x30)
-
 
         if lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check:
             self.gps_latitude = latitude_str
@@ -237,20 +178,12 @@ class DeviceConfigClass:
             self.gps_altitude = altitude_str
             self.gps_altitude_units = altitude_units_str
             self.gps_boot_bitmask = gps_boot_bitmask
-
-            return True
-
         else:
-            print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
-            print "ERROR: Negative altitude not supported at this time for flash programming"
-            return False
+            print "ERROR: GPS string(s) too long"
 
     def update_bitmask_gps_boot(self, gps_present_boot, gps_enable_boot):
         """
         A simple function that updates only the GPS boot bitmask.
-
-        HIGH = 1
-        LOW = 0
 
         :param gps_present_boot: HIGH = GPS present (installed) by default | LOW = GPS not present (not-installed) by default
         :param gps_enable_boot: HIGH = GPS enabled on boot | LOW = GPS disabled on boot
@@ -258,8 +191,8 @@ class DeviceConfigClass:
         :return: Nothing
         """
         bitmask = 0
-        bitmask |= int(gps_enable_boot) << 0
-        bitmask |= int(gps_present_boot) << 1
+        bitmask |= gps_enable_boot << 0
+        bitmask |= gps_present_boot << 1
         # self.basic_configuration_bitmask |= bitx << 2
         # self.basic_configuration_bitmask |= bitx << 3
         # self.basic_configuration_bitmask |= bitx << 4
@@ -279,10 +212,9 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
-        self.telemetry_boot_bitmask = int(boot_bitmask)
-        self.telemetry_uart_beacon_interval = int(uart_interval_seconds)
-        self.telemetry_rf_beacon_interval = int(rf_interval_seconds)
-        return True
+        self.telemetry_boot_bitmask = boot_bitmask
+        self.telemetry_uart_beacon_interval = uart_interval_seconds
+        self.telemetry_rf_beacon_interval = rf_interval_seconds
 
     def update_bitmask_telemetry_boot(self, rf_beacon_boot, uart_beacon_boot):
         """
@@ -296,8 +228,8 @@ class DeviceConfigClass:
         :return: Nothing
         """
         bitmask = 0
-        bitmask |= int(uart_beacon_boot) << 0
-        bitmask |= int(rf_beacon_boot) << 1
+        bitmask |= uart_beacon_boot << 0
+        bitmask |= rf_beacon_boot << 1
         # self.basic_configuration_bitmask |= bitx << 2
         # self.basic_configuration_bitmask |= bitx << 3
         # self.basic_configuration_bitmask |= bitx << 4
@@ -326,7 +258,6 @@ class DeviceConfigClass:
         pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21x')
         gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir,
                                   self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask)
-
 
         pkt_struct_telemetry = struct.Struct('<BHH10x')
         telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemetry_uart_beacon_interval,
