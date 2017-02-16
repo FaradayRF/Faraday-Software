@@ -1,0 +1,1 @@
+python faradaybsl/faradaybsl.py Faraday_D1_Release.txt COM112
