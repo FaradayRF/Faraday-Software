@@ -1,0 +1,50 @@
+{
+	"version": 1,
+	"disable_existing_loggers": false,
+	"formatters": {
+		"simple": {
+			"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+			}
+	},
+	"handlers": {
+		"console": {
+			"class": "logging.StreamHandler",
+			"level": "INFO",
+			"stream": "ext://sys.stdout"
+		},
+		"proxy_file_handler" : {
+			"class" : "logging.handlers.RotatingFileHandler",
+			"level" : "INFO",
+			"formatter" :"simple",
+			"filename" : "logs/PROXY-INFO.LOG",
+			"maxBytes" : 5120,
+			"backupCount": 2,
+			"encoding" : "utf8"
+		},
+		"telemetry_file_handler" : {
+			"class" : "logging.handlers.RotatingFileHandler",
+			"level" : "INFO",
+			"formatter" :"simple",
+			"filename" : "logs/TELEMETRY-INFO.LOG",
+			"maxBytes" : 5120,
+			"backupCount": 2,
+			"encoding" : "utf8"
+		}
+	},
+	"loggers": {
+		"proxy": {
+			"level": "INFO",
+			"handlers": ["proxy_file_handler"],
+			"propagate": "yes"
+		},
+		"telemetry": {
+			"level": "INFO",
+			"handlers": ["telemetry_file_handler"],
+			"propagate": "yes"
+		}
+	},
+	"root": {
+		"level": "INFO",
+		"handlers": ["console"]
+	}
+}
