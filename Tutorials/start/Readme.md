@@ -23,19 +23,19 @@ We want you to understand some basics about the radio before we move on. Faraday
 ### SMA Antenna
 Attaching an SMA antenna or SMA cable to Faraday is a simple task. Simply screw the antenna carefully into the SMA connector (P1) with a clockwise rotation. There should be no increase in resistance until the antenna or connector bottoms out. If so, stop and remove antenna to try again carefully.
 
-![SMA Antenna Connector](images/FaradayTop_Ant_LowRes.jpg)
+![SMA Antenna Connector](images/FaradayRevBANT_1500w_LowRes.jpg)
 
 ### Micro-USB Connector
 Faraday uses a standard Micro-USB connector which means any Micro-USB cable will attach. Some are better than others and a quality USB cable will have shielding that runs the length of the cable. Simply insert the connector as you would any USB connector. Please be mindful of over-stressing the connector solder pads.
 
-![Faraday USB Connection](/images/Faraday_USB_1500w_LowRes.jpg)
+<Insert Image>
 
 ### External Power Connector
 The external power connector and external MOSFET connectors are adjacent to each other and are the same keying. This means you can connect power to both so **be careful**. P3 (MOSFET) and P4(External Power) are rotated 180 degrees from each other to help identify them.  We've [tested that no damage will be done](https://github.com/FaradayRF/FaradayRF-Hardware/issues/49) if you do thanks to careful design.
 
 Connect your power connector to P4 as shown below. External Power, P4, is located closer to the top of the board.
 
-![Faraday External Power Connector](images/FaradayTop_VCC_MOSFET_2_1500w_LowRes.jpg)
+![Faraday External Power Connector](images/FaradayRevBVCC_1500w_LowRes.jpg)
 
 ### External MOSFET Connector
 This connector operates in exactly the same fashion as the external power connector P3. However, it is an "output" where the on-board MOSFET simply completes the conduction path when commanded. One wire is VCC which can short to anything referenced to Faraday ground. **Be careful**! An external power source must be connected between VCC and Ground on P4 to actually use the MOSFET on P3. USB Power cannot be sourced externally from this connector.

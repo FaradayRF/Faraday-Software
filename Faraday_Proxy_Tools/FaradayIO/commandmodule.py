@@ -144,7 +144,7 @@ def create_fixed_length_packet_padding(data, fixed_legth, padding_byte):
 
     :Example:
 
-        >>> pack_data("Test data message", 20, 0x30)
+        >>> pack_data("Test data message", 20)
         'Test data message\x00\x00\x00'
 
     .. note:: This should be updated so that the padding byte can be specified as well.
@@ -153,30 +153,6 @@ def create_fixed_length_packet_padding(data, fixed_legth, padding_byte):
     pad = chr(padding_byte) * pad_len
     pad = pad
     padded_data = data + pad
-    return padded_data
-
-def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
-    """
-    A simple function that accepts a string of databytes and prepends padding bytes up to a fixed length. This version
-    of the packing routine allows for the selection of a specific padding byte.
-
-    :param data: The string of bytes that will be prepended padding bytes to create the fixed length packet
-    :param fixed_length: The length of the fixed length packet in bytes
-    :param padding_byte: The byte to use as padding
-
-    :return: Returns the "data" padded with additional bytes in the fixed sized specified.
-
-    :Example:
-
-        >>> pack_data("Test data message", 20, 0x30)
-        '\x00\x00\x00Test data message'
-
-    .. note:: This should be updated so that the padding byte can be specified as well.
-    """
-    pad_len = fixed_legth - len(data)
-    pad = chr(padding_byte) * pad_len
-    pad = pad
-    padded_data = pad + data
     return padded_data
 
 
