@@ -25,7 +25,7 @@ from FaradayIO import telemetryparser
 
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
-logger = logging.getLogger('aprs')
+logger = logging.getLogger('APRS')
 
 # Load Telemetry Configuration from telemetry.ini file
 # Should have common file for apps...
@@ -49,7 +49,7 @@ def aprs_worker(config, sock):
     :return: None
     """
     logger.info('Starting aprs_worker thread')
-    rate = config.getint("aprsis", "rate")
+    rate = config.getint("APRSIS", "RATE")
 
     # Local variable initialization
     telemSequence = 0
@@ -78,8 +78,8 @@ def getStations():
     """
 
     # Read configuration to query telemetry server
-    host = aprsConfig.get("telemetry", "host")
-    port = aprsConfig.get("telemetry", "port")
+    host = aprsConfig.get("TELEMETRY", "HOST")
+    port = aprsConfig.get("TELEMETRY", "PORT")
 
     # Construct station URL and query for active stations
     url = "http://" + host + ":" + port + "/stations"
@@ -103,9 +103,9 @@ def getStationData(stations):
     stationData = []
 
     # Read configuration to query telemetry server
-    host = aprsConfig.get("telemetry", "host")
-    port = aprsConfig.get("telemetry", "port")
-    age = aprsConfig.getint('aprsis', 'stationsage')
+    host = aprsConfig.get("TELEMETRY", "HOST")
+    port = aprsConfig.get("TELEMETRY", "PORT")
+    age = aprsConfig.getint('APRSIS', 'STATIONSAGE')
 
     # Construct base URL to get station data from telemetry server
     url = "http://" + host + ":" + port + "/"
@@ -189,15 +189,15 @@ def sendPositions(stations, socket):
         gpsFix = station["GPSFIX"]
 
         # Get APRS configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        dataTypeIdent = aprsConfig.get('aprs', 'datatypeident')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
-        symbolTable = aprsConfig.get('aprs', 'symboltable')
-        symbol = aprsConfig.get('aprs', 'symbol')
-        altSymbolTable = aprsConfig.get('aprs', 'altsymboltable')
-        altSymbol = aprsConfig.get('aprs', 'altsymbol')
-        comment = aprsConfig.get('aprs', 'comment')
-        altComment = aprsConfig.get('aprs', 'altcomment')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        dataTypeIdent = aprsConfig.get('APRS', 'DATATYPEIDENT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
+        symbolTable = aprsConfig.get('APRS', 'SYMBOLTABLE')
+        symbol = aprsConfig.get('APRS', 'SYMBOL')
+        altSymbolTable = aprsConfig.get('APRS', 'ALTSYMBOLTABLE')
+        altSymbol = aprsConfig.get('APRS', 'ALTSYMBOL')
+        comment = aprsConfig.get('APRS', 'COMMENT')
+        altComment = aprsConfig.get('APRS', 'ALTCOMMENT')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -315,14 +315,14 @@ def sendtelemetry(stations, telemSequence, socket):
         rfValues = station["RFSTATE"]
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
-        ioSource = aprsConfig.get('aprs', 'iosource')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
+        ioSource = aprsConfig.get('APRS', 'IOSOURCE').upper()
 
         # Extract IO data
-        if ioSource == 'gpio':
+        if ioSource == 'GPIO':
             ioList = bin(gpioValues)[2:].zfill(8)
-        elif ioSource == 'rf':
+        elif ioSource == 'RF':
             ioList = bin(rfValues)[2:].zfill(8)
 
         # Create nodes from GPS data
@@ -420,23 +420,23 @@ def sendTelemLabels(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
         # Get units and labels from configuration file
-        unit0 = aprsConfig.get('aprs', 'unit0')
-        unit1 = aprsConfig.get('aprs', 'unit1')
-        unit2 = aprsConfig.get('aprs', 'unit2')
-        unit3 = aprsConfig.get('aprs', 'unit3')
-        unit4 = aprsConfig.get('aprs', 'unit4')
-        bLabel0 = aprsConfig.get('aprs', 'blabel0')
-        bLabel1 = aprsConfig.get('aprs', 'blabel1')
-        bLabel2 = aprsConfig.get('aprs', 'blabel2')
-        bLabel3 = aprsConfig.get('aprs', 'blabel3')
-        bLabel4 = aprsConfig.get('aprs', 'blabel4')
-        bLabel5 = aprsConfig.get('aprs', 'blabel5')
-        bLabel6 = aprsConfig.get('aprs', 'blabel6')
-        bLabel7 = aprsConfig.get('aprs', 'blabel7')
+        unit0 = aprsConfig.get('APRS', 'UNIT0')
+        unit1 = aprsConfig.get('APRS', 'UNIT1')
+        unit2 = aprsConfig.get('APRS', 'UNIT2')
+        unit3 = aprsConfig.get('APRS', 'UNIT3')
+        unit4 = aprsConfig.get('APRS', 'UNIT4')
+        bLabel0 = aprsConfig.get('APRS', 'BLABEL0')
+        bLabel1 = aprsConfig.get('APRS', 'BLABEL1')
+        bLabel2 = aprsConfig.get('APRS', 'BLABEL2')
+        bLabel3 = aprsConfig.get('APRS', 'BLABEL3')
+        bLabel4 = aprsConfig.get('APRS', 'BLABEL4')
+        bLabel5 = aprsConfig.get('APRS', 'BLABEL5')
+        bLabel6 = aprsConfig.get('APRS', 'BLABEL6')
+        bLabel7 = aprsConfig.get('APRS', 'BLABEL7')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -553,22 +553,22 @@ def sendParameters(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
-        adc0 = aprsConfig.get('aprs', 'adc0param')
-        adc1 = aprsConfig.get('aprs', 'adc1param')
-        adc2 = aprsConfig.get('aprs', 'adc2param')
-        adc3 = aprsConfig.get('aprs', 'adc3param')
-        adc4 = aprsConfig.get('aprs', 'adc4param')
-        io0 = aprsConfig.get('aprs', 'io0param')
-        io1 = aprsConfig.get('aprs', 'io1param')
-        io2 = aprsConfig.get('aprs', 'io2param')
-        io3 = aprsConfig.get('aprs', 'io3param')
-        io4 = aprsConfig.get('aprs', 'io4param')
-        io5 = aprsConfig.get('aprs', 'io5param')
-        io6 = aprsConfig.get('aprs', 'io6param')
-        io7 = aprsConfig.get('aprs', 'io7param')
+        adc0 = aprsConfig.get('APRS', 'ADC0PARAM')
+        adc1 = aprsConfig.get('APRS', 'ADC1PARAM')
+        adc2 = aprsConfig.get('APRS', 'ADC2PARAM')
+        adc3 = aprsConfig.get('APRS', 'ADC3PARAM')
+        adc4 = aprsConfig.get('APRS', 'ADC4PARAM')
+        io0 = aprsConfig.get('APRS', 'IO0PARAM')
+        io1 = aprsConfig.get('APRS', 'IO1PARAM')
+        io2 = aprsConfig.get('APRS', 'IO2PARAM')
+        io3 = aprsConfig.get('APRS', 'IO3PARAM')
+        io4 = aprsConfig.get('APRS', 'IO4PARAM')
+        io5 = aprsConfig.get('APRS', 'IO5PARAM')
+        io6 = aprsConfig.get('APRS', 'IO6PARAM')
+        io7 = aprsConfig.get('APRS', 'IO7PARAM')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -685,25 +685,25 @@ def sendEquations(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
         # Get equations from configuration file
-        eq0a = aprsConfig.get('aprs', 'eq0a')
-        eq0b = aprsConfig.get('aprs', 'eq0b')
-        eq0c = aprsConfig.get('aprs', 'eq0c')
-        eq1a = aprsConfig.get('aprs', 'eq1a')
-        eq1b = aprsConfig.get('aprs', 'eq1b')
-        eq1c = aprsConfig.get('aprs', 'eq1c')
-        eq2a = aprsConfig.get('aprs', 'eq2a')
-        eq2b = aprsConfig.get('aprs', 'eq2b')
-        eq2c = aprsConfig.get('aprs', 'eq2c')
-        eq3a = aprsConfig.get('aprs', 'eq3a')
-        eq3b = aprsConfig.get('aprs', 'eq3b')
-        eq3c = aprsConfig.get('aprs', 'eq3c')
-        eq4a = aprsConfig.get('aprs', 'eq4a')
-        eq4b = aprsConfig.get('aprs', 'eq4b')
-        eq4c = aprsConfig.get('aprs', 'eq4c')
+        eq0a = aprsConfig.get('APRS', 'EQ0A')
+        eq0b = aprsConfig.get('APRS', 'EQ0B')
+        eq0c = aprsConfig.get('APRS', 'EQ0C')
+        eq1a = aprsConfig.get('APRS', 'EQ1A')
+        eq1b = aprsConfig.get('APRS', 'EQ1B')
+        eq1c = aprsConfig.get('APRS', 'EQ1C')
+        eq2a = aprsConfig.get('APRS', 'EQ2A')
+        eq2b = aprsConfig.get('APRS', 'EQ2B')
+        eq2c = aprsConfig.get('APRS', 'EQ2C')
+        eq3a = aprsConfig.get('APRS', 'EQ3A')
+        eq3b = aprsConfig.get('APRS', 'EQ3B')
+        eq3c = aprsConfig.get('APRS', 'EQ3C')
+        eq4a = aprsConfig.get('APRS', 'EQ4A')
+        eq4b = aprsConfig.get('APRS', 'EQ4B')
+        eq4c = aprsConfig.get('APRS', 'EQ4C')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -815,12 +815,12 @@ def connectAPRSIS():
     """
 
     # Read APRS-IS login credentials from configuration file
-    callsign = aprsISConfig.get('credentials', 'callsign')
-    passcode = aprsISConfig.getint('credentials', 'passcode')
+    callsign = aprsISConfig.get('CREDENTIALS', 'CALLSIGN').upper()
+    passcode = aprsISConfig.getint('CREDENTIALS', 'PASSCODE')
 
     # Read APRS-IS server address from configuration file
-    server = aprsConfig.get("aprsis", "server")
-    port = aprsConfig.getint("aprsis", "port")
+    server = aprsConfig.get("APRSIS", "SERVER")
+    port = aprsConfig.getint("APRSIS", "PORT")
 
     logger.info("Connecting to APRS-IS as: " + str(callsign))
     logger.info("Server: " + str(server) + ":" + str(port))
