@@ -9,16 +9,14 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import time
-import logging
 import logging.config
 import threading
 import ConfigParser
 import os
 import sys
-import json
 import socket
 import requests
+from time import sleep
 
 # Can we clean this up?
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
@@ -27,7 +25,7 @@ from FaradayIO import telemetryparser
 
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
-logger = logging.getLogger('aprs')
+logger = logging.getLogger('APRS')
 
 # Load Telemetry Configuration from telemetry.ini file
 # Should have common file for apps...
@@ -44,15 +42,14 @@ telemetryDicts = {}
 
 def aprs_worker(config, sock):
     """
-    Obtains telemetry from Telemetry application, forwards to APRS-IS
+    Obtains telemetry with infinite loop, forwards to APRS-IS server
 
-    This worker thread is used to periodically query the telemetry server
-    and obtain recent station activity. It then forwards the information
-    in appropriate APRS formatted strings to APRS-IS. It is
-    currently not bidirectional
+    :param config: Configuration file descriptor from aprs.INI
+    :param sock: Internet socket
+    :return: None
     """
     logger.info('Starting aprs_worker thread')
-    rate = config.getint("aprsis", "rate")
+    rate = config.getint("APRSIS", "RATE")
 
     # Local variable initialization
     telemSequence = 0
@@ -71,14 +68,18 @@ def aprs_worker(config, sock):
         sendEquations(stationData, sock)
 
         # Sleep for intended update rate (seconds)
-        time.sleep(rate)
+        sleep(rate)
 
 def getStations():
-    """Queries telemetry server for active stations"""
+    """
+    Queries telemetry server for active stations
+
+    :return: JSON results from request
+    """
 
     # Read configuration to query telemetry server
-    host = aprsConfig.get("telemetry", "host")
-    port = aprsConfig.get("telemetry", "port")
+    host = aprsConfig.get("TELEMETRY", "HOST")
+    port = aprsConfig.get("TELEMETRY", "PORT")
 
     # Construct station URL and query for active stations
     url = "http://" + host + ":" + port + "/stations"
@@ -91,15 +92,20 @@ def getStations():
     return results
 
 def getStationData(stations):
-    """Queries telemetry server for detailed telemetry from active stations"""
+    """
+    Queries telemetry server for detailed telemetry from active stations
+
+    :param stations: List of callsign + nodeids to get telemetry data from
+    :return: list containing latest station telemetry
+    """
 
     # Initialize lists
     stationData = []
 
     # Read configuration to query telemetry server
-    host = aprsConfig.get("telemetry", "host")
-    port = aprsConfig.get("telemetry", "port")
-    age = aprsConfig.getint('aprsis', 'stationsage')
+    host = aprsConfig.get("TELEMETRY", "HOST")
+    port = aprsConfig.get("TELEMETRY", "PORT")
+    age = aprsConfig.getint('APRSIS', 'STATIONSAGE')
 
     # Construct base URL to get station data from telemetry server
     url = "http://" + host + ":" + port + "/"
@@ -128,8 +134,41 @@ def getStationData(stations):
     # Return all detailed stationData
     return stationData
 
+def nmeaToDegDecMin(latitude,longitude):
+    """
+    Converts NMEA string latitude and longitude data into degree decimal minutes data compatible with
+    APRS-IS server requirements per APRS Protocol Version 1.0
+
+    :param latitude: NMEA latitude string
+    :param longitude: NMEA longitude string
+    :return: list of latitude and longitude strings per APRS protocol version 1
+    """
+
+    # Convert NMEA to Decimal Degrees
+    latDeg = latitude[:2]  # latitude degrees
+    lonDeg = longitude[:3]  # Longitude degrees
+    latDec = round(float(latitude[2:]), 2)  # Latitude decimal minutes
+    lonDec = round(float(longitude[3:]), 2)  # Longitude decimal minutes
+
+    # round decimal minutes to 2 dec places & make 5 characters, zero fill
+    latDec = str("%.2f" % latDec).zfill(5)
+    lonDec = str("%.2f" % lonDec).zfill(5)
+
+    # Combine into APRS-IS compliant lat/lon position
+    latString = latDeg + str(latDec)
+    lonString = lonDeg + str(lonDec)
+
+    return [latString,lonString]
+
+
 def sendPositions(stations, socket):
-    """Constructs an APRS position string for station and sends to a socket"""
+    """
+    Constructs an APRS position string for station and sends to a socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     # Iterate through each station and generate an APRS position string
     # then send the string to the socket for each station in list
@@ -150,25 +189,22 @@ def sendPositions(stations, socket):
         gpsFix = station["GPSFIX"]
 
         # Get APRS configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        dataTypeIdent = aprsConfig.get('aprs', 'datatypeident')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
-        symbolTable = aprsConfig.get('aprs', 'symboltable')
-        symbol = aprsConfig.get('aprs', 'symbol')
-        altSymbolTable = aprsConfig.get('aprs', 'altsymboltable')
-        altSymbol = aprsConfig.get('aprs', 'altsymbol')
-        comment = aprsConfig.get('aprs', 'comment')
-        altComment = aprsConfig.get('aprs', 'altcomment')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        dataTypeIdent = aprsConfig.get('APRS', 'DATATYPEIDENT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
+        symbolTable = aprsConfig.get('APRS', 'SYMBOLTABLE')
+        symbol = aprsConfig.get('APRS', 'SYMBOL')
+        altSymbolTable = aprsConfig.get('APRS', 'ALTSYMBOLTABLE')
+        altSymbol = aprsConfig.get('APRS', 'ALTSYMBOL')
+        comment = aprsConfig.get('APRS', 'COMMENT')
+        altComment = aprsConfig.get('APRS', 'ALTCOMMENT')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
-        #Convert NMEA to Decimal Degrees
-        aprsLat = round(float(latitude),2)
-        aprsLon = round(float(longitude),2)
-        latString = str('{:.2f}'.format(aprsLat))
-        lonString = str('{:.2f}'.format(aprsLon))
+        # Convert position to APRS-IS compliant string
+        latString,lonString = nmeaToDegDecMin(latitude,longitude)
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -185,79 +221,86 @@ def sendPositions(stations, socket):
             speed = rawspeed[0].zfill(3)
 
 
-            # If GPSFix is valid send data to the socket
-            if gpsFix > 0:
-                if node != destNode:
-                    # APRS string is for remote RF node
-                    aprsPosition = dataTypeIdent +\
-                                   latString +\
-                                   latitudeDirection +\
-                                   symbolTable +\
-                                   lonString +\
-                                   longitudeDir +\
-                                   symbol
-                    try:
-                        logger.info(aprsPosition)
-                    except:
-                        pass
-
-                    positionString = node +\
-                                     '>' +\
-                                     destAddress +\
-                                     ',' +\
-                                     qConstruct +\
-                                     ',' +\
-                                     destNode +\
-                                     ':' +\
-                                     aprsPosition +\
-                                     '.../' +\
-                                     speed +\
-                                     '/A=' +\
-                                     altitude +\
-                                     comment +\
-                                     '\r'
-
-                    logger.debug(positionString)
-
-                    try:
-                        socket.sendall(positionString)
-
-                    except socket.error as e:
-                        logger.error(e)
-
-                elif node == destNode:
-                    # APRS string is for local node
-                    aprsPosition = dataTypeIdent +\
-                                   latString +\
-                                   latitudeDirection +\
-                                   altSymbolTable +\
-                                   lonString +\
-                                   longitudeDir +\
-                                   altSymbol
-                    positionString = node +\
-                                     ">" +\
-                                     destAddress +\
-                                     ':' +\
-                                     aprsPosition +\
-                                     '.../' +\
-                                     speed +\
-                                     '/A=' +\
-                                     altitude +\
-                                     altComment +\
-                                     '\r'
-                    logger.debug(positionString)
-
-                    try:
-                        socket.sendall(positionString)
-
-                    except socket.error as e:
-                        logger.error(e)
-
-            elif station["GPSFIX"] == 0:
+            # If GPSFix is not valid warn user
+            if gpsFix <= 0:
                 logger.warning(node + " No GPS Fix")
 
+            if node != destNode:
+                # APRS string is for remote RF node
+                aprsPosition = dataTypeIdent +\
+                               latString +\
+                               latitudeDirection +\
+                               symbolTable +\
+                               lonString +\
+                               longitudeDir +\
+                               symbol
+                try:
+                    logger.info(aprsPosition)
+                except:
+                    pass
+
+                positionString = node +\
+                                 '>' +\
+                                 destAddress +\
+                                 ',' +\
+                                 qConstruct +\
+                                 ',' +\
+                                 destNode +\
+                                 ':' +\
+                                 aprsPosition +\
+                                 '.../' +\
+                                 speed +\
+                                 '/A=' +\
+                                 altitude +\
+                                 comment +\
+                                 '\r'
+
+                logger.debug(positionString)
+
+                try:
+                    socket.sendall(positionString)
+
+                except socket.error as e:
+                    logger.error(e)
+
+            elif node == destNode:
+                # APRS string is for local node
+                aprsPosition = dataTypeIdent +\
+                               latString +\
+                               latitudeDirection +\
+                               altSymbolTable +\
+                               lonString +\
+                               longitudeDir +\
+                               altSymbol
+                positionString = node +\
+                                 ">" +\
+                                 destAddress +\
+                                 ':' +\
+                                 aprsPosition +\
+                                 '.../' +\
+                                 speed +\
+                                 '/A=' +\
+                                 altitude +\
+                                 altComment +\
+                                 '\r'
+                logger.debug(positionString)
+
+                try:
+                    socket.sendall(positionString)
+
+                except socket.error as e:
+                    logger.error(e)
+
 def sendtelemetry(stations, telemSequence, socket):
-    """Constructs an APRS telemetry string for each station and sends it to the socket"""
+    """
+    Constructs an APRS telemetry string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param telemSequence: Telemetry sequence number from 0 to 999, incrementing
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
+
 
     for item in stations:
         station = item[0]
@@ -272,14 +315,14 @@ def sendtelemetry(stations, telemSequence, socket):
         rfValues = station["RFSTATE"]
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
-        ioSource = aprsConfig.get('aprs', 'iosource')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
+        ioSource = aprsConfig.get('APRS', 'IOSOURCE').upper()
 
         # Extract IO data
-        if ioSource == 'gpio':
+        if ioSource == 'GPIO':
             ioList = bin(gpioValues)[2:].zfill(8)
-        elif ioSource == 'rf':
+        elif ioSource == 'RF':
             ioList = bin(rfValues)[2:].zfill(8)
 
         # Create nodes from GPS data
@@ -357,7 +400,13 @@ def sendtelemetry(stations, telemSequence, socket):
         return telemSequence
 
 def sendTelemLabels(stations, socket):
-    """Constructs an APRS unit/label string for each station and sends it to the socket"""
+    """
+    Constructs an APRS unit/label string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     for item in stations:
         station = item[0]
@@ -371,23 +420,23 @@ def sendTelemLabels(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
         # Get units and labels from configuration file
-        unit0 = aprsConfig.get('aprs', 'unit0')
-        unit1 = aprsConfig.get('aprs', 'unit1')
-        unit2 = aprsConfig.get('aprs', 'unit2')
-        unit3 = aprsConfig.get('aprs', 'unit3')
-        unit4 = aprsConfig.get('aprs', 'unit4')
-        bLabel0 = aprsConfig.get('aprs', 'blabel0')
-        bLabel1 = aprsConfig.get('aprs', 'blabel1')
-        bLabel2 = aprsConfig.get('aprs', 'blabel2')
-        bLabel3 = aprsConfig.get('aprs', 'blabel3')
-        bLabel4 = aprsConfig.get('aprs', 'blabel4')
-        bLabel5 = aprsConfig.get('aprs', 'blabel5')
-        bLabel6 = aprsConfig.get('aprs', 'blabel6')
-        bLabel7 = aprsConfig.get('aprs', 'blabel7')
+        unit0 = aprsConfig.get('APRS', 'UNIT0')
+        unit1 = aprsConfig.get('APRS', 'UNIT1')
+        unit2 = aprsConfig.get('APRS', 'UNIT2')
+        unit3 = aprsConfig.get('APRS', 'UNIT3')
+        unit4 = aprsConfig.get('APRS', 'UNIT4')
+        bLabel0 = aprsConfig.get('APRS', 'BLABEL0')
+        bLabel1 = aprsConfig.get('APRS', 'BLABEL1')
+        bLabel2 = aprsConfig.get('APRS', 'BLABEL2')
+        bLabel3 = aprsConfig.get('APRS', 'BLABEL3')
+        bLabel4 = aprsConfig.get('APRS', 'BLABEL4')
+        bLabel5 = aprsConfig.get('APRS', 'BLABEL5')
+        bLabel6 = aprsConfig.get('APRS', 'BLABEL6')
+        bLabel7 = aprsConfig.get('APRS', 'BLABEL7')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -484,7 +533,14 @@ def sendTelemLabels(stations, socket):
                 logger.error(e)
 
 def sendParameters(stations, socket):
-    """Constructs an APRS parameters string for each station and sends it to the socket"""
+    """
+    Constructs an APRS parameters string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return:
+    """
+
     for item in stations:
         station = item[0]
 
@@ -497,22 +553,22 @@ def sendParameters(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
-        adc0 = aprsConfig.get('aprs', 'adc0param')
-        adc1 = aprsConfig.get('aprs', 'adc1param')
-        adc2 = aprsConfig.get('aprs', 'adc2param')
-        adc3 = aprsConfig.get('aprs', 'adc3param')
-        adc4 = aprsConfig.get('aprs', 'adc4param')
-        io0 = aprsConfig.get('aprs', 'io0param')
-        io1 = aprsConfig.get('aprs', 'io1param')
-        io2 = aprsConfig.get('aprs', 'io2param')
-        io3 = aprsConfig.get('aprs', 'io3param')
-        io4 = aprsConfig.get('aprs', 'io4param')
-        io5 = aprsConfig.get('aprs', 'io5param')
-        io6 = aprsConfig.get('aprs', 'io6param')
-        io7 = aprsConfig.get('aprs', 'io7param')
+        adc0 = aprsConfig.get('APRS', 'ADC0PARAM')
+        adc1 = aprsConfig.get('APRS', 'ADC1PARAM')
+        adc2 = aprsConfig.get('APRS', 'ADC2PARAM')
+        adc3 = aprsConfig.get('APRS', 'ADC3PARAM')
+        adc4 = aprsConfig.get('APRS', 'ADC4PARAM')
+        io0 = aprsConfig.get('APRS', 'IO0PARAM')
+        io1 = aprsConfig.get('APRS', 'IO1PARAM')
+        io2 = aprsConfig.get('APRS', 'IO2PARAM')
+        io3 = aprsConfig.get('APRS', 'IO3PARAM')
+        io4 = aprsConfig.get('APRS', 'IO4PARAM')
+        io5 = aprsConfig.get('APRS', 'IO5PARAM')
+        io6 = aprsConfig.get('APRS', 'IO6PARAM')
+        io7 = aprsConfig.get('APRS', 'IO7PARAM')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -609,7 +665,13 @@ def sendParameters(stations, socket):
                 logger.error(e)
 
 def sendEquations(stations, socket):
-    """Constructs an APRS equation string for each station and sends it to the socket"""
+    """
+    Constructs an APRS equation string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     for item in stations:
         station = item[0]
@@ -623,25 +685,25 @@ def sendEquations(stations, socket):
 
 
         # Get APRS Telemetry configuration
-        qConstruct = aprsConfig.get('aprs', 'qconstruct')
-        destAddress = aprsConfig.get('aprs', 'destaddress')
+        qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
+        destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
         # Get equations from configuration file
-        eq0a = aprsConfig.get('aprs', 'eq0a')
-        eq0b = aprsConfig.get('aprs', 'eq0b')
-        eq0c = aprsConfig.get('aprs', 'eq0c')
-        eq1a = aprsConfig.get('aprs', 'eq1a')
-        eq1b = aprsConfig.get('aprs', 'eq1b')
-        eq1c = aprsConfig.get('aprs', 'eq1c')
-        eq2a = aprsConfig.get('aprs', 'eq2a')
-        eq2b = aprsConfig.get('aprs', 'eq2b')
-        eq2c = aprsConfig.get('aprs', 'eq2c')
-        eq3a = aprsConfig.get('aprs', 'eq3a')
-        eq3b = aprsConfig.get('aprs', 'eq3b')
-        eq3c = aprsConfig.get('aprs', 'eq3c')
-        eq4a = aprsConfig.get('aprs', 'eq4a')
-        eq4b = aprsConfig.get('aprs', 'eq4b')
-        eq4c = aprsConfig.get('aprs', 'eq4c')
+        eq0a = aprsConfig.get('APRS', 'EQ0A')
+        eq0b = aprsConfig.get('APRS', 'EQ0B')
+        eq0c = aprsConfig.get('APRS', 'EQ0C')
+        eq1a = aprsConfig.get('APRS', 'EQ1A')
+        eq1b = aprsConfig.get('APRS', 'EQ1B')
+        eq1c = aprsConfig.get('APRS', 'EQ1C')
+        eq2a = aprsConfig.get('APRS', 'EQ2A')
+        eq2b = aprsConfig.get('APRS', 'EQ2B')
+        eq2c = aprsConfig.get('APRS', 'EQ2C')
+        eq3a = aprsConfig.get('APRS', 'EQ3A')
+        eq3b = aprsConfig.get('APRS', 'EQ3B')
+        eq3c = aprsConfig.get('APRS', 'EQ3C')
+        eq4a = aprsConfig.get('APRS', 'EQ4A')
+        eq4b = aprsConfig.get('APRS', 'EQ4B')
+        eq4c = aprsConfig.get('APRS', 'EQ4C')
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -746,15 +808,19 @@ def sendEquations(stations, socket):
                 logger.error(e)
 
 def connectAPRSIS():
-    """Connect to APRS-IS server with login credentials"""
+    """
+    Connect to APRS-IS server with login credentials
+
+    :return: APRS-IS socket connection
+    """
 
     # Read APRS-IS login credentials from configuration file
-    callsign = aprsISConfig.get('credentials', 'callsign')
-    passcode = aprsISConfig.getint('credentials', 'passcode')
+    callsign = aprsISConfig.get('CREDENTIALS', 'CALLSIGN').upper()
+    passcode = aprsISConfig.getint('CREDENTIALS', 'PASSCODE')
 
     # Read APRS-IS server address from configuration file
-    server = aprsConfig.get("aprsis", "server")
-    port = aprsConfig.getint("aprsis", "port")
+    server = aprsConfig.get("APRSIS", "SERVER")
+    port = aprsConfig.getint("APRSIS", "PORT")
 
     logger.info("Connecting to APRS-IS as: " + str(callsign))
     logger.info("Server: " + str(server) + ":" + str(port))
@@ -768,6 +834,7 @@ def connectAPRSIS():
             # Create login string and connect to server
             logon_string = 'user' + ' ' + callsign + ' ' + 'pass' + ' ' + str(
                 passcode) + ' vers "FaradayRF APRS-IS application" \r'
+            logger.debug(logon_string)
             aprssock.connect((server, port))
             aprssock.sendall(logon_string)
 
@@ -779,11 +846,16 @@ def connectAPRSIS():
             return aprssock
             break
 
-        time.sleep(10)  # Try to reconnect every 10 seconds
+        sleep(10)  # Try to reconnect every 10 seconds
     return aprssock
 
 def main():
-    """Main function which starts telemery worker thread + Flask server."""
+    """
+    Main function which starts telemery worker thread + Flask server.
+
+    :return: None
+    """
+
     logger.info('Starting Faraday APRS-IS application')
     sock = connectAPRSIS()
 
