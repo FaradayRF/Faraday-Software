@@ -128,6 +128,33 @@ def getStationData(stations):
     # Return all detailed stationData
     return stationData
 
+def nmeaToDegDecMin(latitude,longitude):
+    """
+    Converts NMEA string latitude and longitude data into degree decimal minutes data compatible with
+    APRS-IS server requirements per APRS Protocol Version 1.0
+
+    :param latitude: NMEA latitude string
+    :param longitude: NMEA longitude string
+    :return: list of latitude and longitude strings per APRS protocol version 1
+    """
+
+    # Convert NMEA to Decimal Degrees
+    latDeg = latitude[:2]  # latitude degrees
+    lonDeg = longitude[:3]  # Longitude degrees
+    latDec = round(float(latitude[2:]), 2)  # Latitude decimal minutes
+    lonDec = round(float(longitude[3:]), 2)  # Longitude decimal minutes
+
+    # round decimal minutes to 2 dec places & make 5 characters, zero fill
+    latDec = str("%.2f" % latDec).zfill(5)
+    lonDec = str("%.2f" % lonDec).zfill(5)
+
+    # Combine into APRS-IS compliant lat/lon position
+    latString = latDeg + str(latDec)
+    lonString = lonDeg + str(lonDec)
+
+    return [latString,lonString]
+
+
 def sendPositions(stations, socket):
     """Constructs an APRS position string for station and sends to a socket"""
 
@@ -164,11 +191,8 @@ def sendPositions(stations, socket):
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
-        #Convert NMEA to Decimal Degrees
-        aprsLat = round(float(latitude),2)
-        aprsLon = round(float(longitude),2)
-        latString = str('{:.2f}'.format(aprsLat))
-        lonString = str('{:.2f}'.format(aprsLon))
+        # Convert position to APRS-IS compliant string
+        latString,lonString = nmeaToDegDecMin(latitude,longitude)
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -185,76 +209,76 @@ def sendPositions(stations, socket):
             speed = rawspeed[0].zfill(3)
 
 
-            # If GPSFix is valid send data to the socket
-            if gpsFix > 0:
-                if node != destNode:
-                    # APRS string is for remote RF node
-                    aprsPosition = dataTypeIdent +\
-                                   latString +\
-                                   latitudeDirection +\
-                                   symbolTable +\
-                                   lonString +\
-                                   longitudeDir +\
-                                   symbol
-                    try:
-                        logger.info(aprsPosition)
-                    except:
-                        pass
-
-                    positionString = node +\
-                                     '>' +\
-                                     destAddress +\
-                                     ',' +\
-                                     qConstruct +\
-                                     ',' +\
-                                     destNode +\
-                                     ':' +\
-                                     aprsPosition +\
-                                     '.../' +\
-                                     speed +\
-                                     '/A=' +\
-                                     altitude +\
-                                     comment +\
-                                     '\r'
-
-                    logger.debug(positionString)
-
-                    try:
-                        socket.sendall(positionString)
-
-                    except socket.error as e:
-                        logger.error(e)
-
-                elif node == destNode:
-                    # APRS string is for local node
-                    aprsPosition = dataTypeIdent +\
-                                   latString +\
-                                   latitudeDirection +\
-                                   altSymbolTable +\
-                                   lonString +\
-                                   longitudeDir +\
-                                   altSymbol
-                    positionString = node +\
-                                     ">" +\
-                                     destAddress +\
-                                     ':' +\
-                                     aprsPosition +\
-                                     '.../' +\
-                                     speed +\
-                                     '/A=' +\
-                                     altitude +\
-                                     altComment +\
-                                     '\r'
-                    logger.debug(positionString)
-
-                    try:
-                        socket.sendall(positionString)
-
-                    except socket.error as e:
-                        logger.error(e)
-
-            elif station["GPSFIX"] == 0:
+            # If GPSFix is not valid warn user
+            if gpsFix <= 0:
                 logger.warning(node + " No GPS Fix")
+
+            if node != destNode:
+                # APRS string is for remote RF node
+                aprsPosition = dataTypeIdent +\
+                               latString +\
+                               latitudeDirection +\
+                               symbolTable +\
+                               lonString +\
+                               longitudeDir +\
+                               symbol
+                try:
+                    logger.info(aprsPosition)
+                except:
+                    pass
+
+                positionString = node +\
+                                 '>' +\
+                                 destAddress +\
+                                 ',' +\
+                                 qConstruct +\
+                                 ',' +\
+                                 destNode +\
+                                 ':' +\
+                                 aprsPosition +\
+                                 '.../' +\
+                                 speed +\
+                                 '/A=' +\
+                                 altitude +\
+                                 comment +\
+                                 '\r'
+
+                logger.debug(positionString)
+
+                try:
+                    socket.sendall(positionString)
+
+                except socket.error as e:
+                    logger.error(e)
+
+            elif node == destNode:
+                # APRS string is for local node
+                aprsPosition = dataTypeIdent +\
+                               latString +\
+                               latitudeDirection +\
+                               altSymbolTable +\
+                               lonString +\
+                               longitudeDir +\
+                               altSymbol
+                positionString = node +\
+                                 ">" +\
+                                 destAddress +\
+                                 ':' +\
+                                 aprsPosition +\
+                                 '.../' +\
+                                 speed +\
+                                 '/A=' +\
+                                 altitude +\
+                                 altComment +\
+                                 '\r'
+                logger.debug(positionString)
+
+                try:
+                    socket.sendall(positionString)
+                    print "test"
+
+                except socket.error as e:
+                    logger.error(e)
 
 def sendtelemetry(stations, telemSequence, socket):
     """Constructs an APRS telemetry string for each station and sends it to the socket"""
@@ -768,6 +792,7 @@ def connectAPRSIS():
             # Create login string and connect to server
             logon_string = 'user' + ' ' + callsign + ' ' + 'pass' + ' ' + str(
                 passcode) + ' vers "FaradayRF APRS-IS application" \r'
+            logger.debug(logon_string)
             aprssock.connect((server, port))
             aprssock.sendall(logon_string)
 
