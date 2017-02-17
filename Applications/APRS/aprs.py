@@ -9,16 +9,14 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import time
-import logging
 import logging.config
 import threading
 import ConfigParser
 import os
 import sys
-import json
 import socket
 import requests
+from time import sleep
 
 # Can we clean this up?
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
@@ -44,12 +42,11 @@ telemetryDicts = {}
 
 def aprs_worker(config, sock):
     """
-    Obtains telemetry from Telemetry application, forwards to APRS-IS
+    Obtains telemetry with infinite loop, forwards to APRS-IS server
 
-    This worker thread is used to periodically query the telemetry server
-    and obtain recent station activity. It then forwards the information
-    in appropriate APRS formatted strings to APRS-IS. It is
-    currently not bidirectional
+    :param config: Configuration file descriptor from aprs.INI
+    :param sock: Internet socket
+    :return: None
     """
     logger.info('Starting aprs_worker thread')
     rate = config.getint("aprsis", "rate")
@@ -71,10 +68,14 @@ def aprs_worker(config, sock):
         sendEquations(stationData, sock)
 
         # Sleep for intended update rate (seconds)
-        time.sleep(rate)
+        sleep(rate)
 
 def getStations():
-    """Queries telemetry server for active stations"""
+    """
+    Queries telemetry server for active stations
+
+    :return: JSON results from request
+    """
 
     # Read configuration to query telemetry server
     host = aprsConfig.get("telemetry", "host")
@@ -91,7 +92,12 @@ def getStations():
     return results
 
 def getStationData(stations):
-    """Queries telemetry server for detailed telemetry from active stations"""
+    """
+    Queries telemetry server for detailed telemetry from active stations
+
+    :param stations: List of callsign + nodeids to get telemetry data from
+    :return: list containing latest station telemetry
+    """
 
     # Initialize lists
     stationData = []
@@ -156,7 +162,13 @@ def nmeaToDegDecMin(latitude,longitude):
 
 
 def sendPositions(stations, socket):
-    """Constructs an APRS position string for station and sends to a socket"""
+    """
+    Constructs an APRS position string for station and sends to a socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     # Iterate through each station and generate an APRS position string
     # then send the string to the socket for each station in list
@@ -275,13 +287,20 @@ def sendPositions(stations, socket):
 
                 try:
                     socket.sendall(positionString)
-                    print "test"
 
                 except socket.error as e:
                     logger.error(e)
 
 def sendtelemetry(stations, telemSequence, socket):
-    """Constructs an APRS telemetry string for each station and sends it to the socket"""
+    """
+    Constructs an APRS telemetry string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param telemSequence: Telemetry sequence number from 0 to 999, incrementing
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
+
 
     for item in stations:
         station = item[0]
@@ -381,7 +400,13 @@ def sendtelemetry(stations, telemSequence, socket):
         return telemSequence
 
 def sendTelemLabels(stations, socket):
-    """Constructs an APRS unit/label string for each station and sends it to the socket"""
+    """
+    Constructs an APRS unit/label string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     for item in stations:
         station = item[0]
@@ -508,7 +533,14 @@ def sendTelemLabels(stations, socket):
                 logger.error(e)
 
 def sendParameters(stations, socket):
-    """Constructs an APRS parameters string for each station and sends it to the socket"""
+    """
+    Constructs an APRS parameters string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return:
+    """
+
     for item in stations:
         station = item[0]
 
@@ -633,7 +665,13 @@ def sendParameters(stations, socket):
                 logger.error(e)
 
 def sendEquations(stations, socket):
-    """Constructs an APRS equation string for each station and sends it to the socket"""
+    """
+    Constructs an APRS equation string for each station and sends it to the socket
+
+    :param stations: List of dictionary organized station data
+    :param socket: APRS-IS server internet socket
+    :return: None
+    """
 
     for item in stations:
         station = item[0]
@@ -770,7 +808,11 @@ def sendEquations(stations, socket):
                 logger.error(e)
 
 def connectAPRSIS():
-    """Connect to APRS-IS server with login credentials"""
+    """
+    Connect to APRS-IS server with login credentials
+
+    :return: APRS-IS socket connection
+    """
 
     # Read APRS-IS login credentials from configuration file
     callsign = aprsISConfig.get('credentials', 'callsign')
@@ -804,11 +846,16 @@ def connectAPRSIS():
             return aprssock
             break
 
-        time.sleep(10)  # Try to reconnect every 10 seconds
+        sleep(10)  # Try to reconnect every 10 seconds
     return aprssock
 
 def main():
-    """Main function which starts telemery worker thread + Flask server."""
+    """
+    Main function which starts telemery worker thread + Flask server.
+
+    :return: None
+    """
+
     logger.info('Starting Faraday APRS-IS application')
     sock = connectAPRSIS()
 
