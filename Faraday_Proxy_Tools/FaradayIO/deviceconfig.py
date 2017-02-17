@@ -175,10 +175,25 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
+        # Setup check variables
+        lat_check = True
+        lat_dir_check = True
+        lon_check = True
+        lon_dir_check = True
+        alt_check = True
+        alt_units_check = True
+
         # Check Latitude formatting
+
         lat_check = len(latitude_str) <= self.MAX_GPS_LATITUDE_LEN
         lat_dir_check = len(latitude_dir_str) <= self.MAX_GPS_LATITUDE_DIR_LEN
         latitude_str_format = latitude_str.split('.')
+
+        # Check for non numeric inputs
+        for item in latitude_str_format:
+            if not item.isdigit():
+                lat_check = False # non-numeric input - Fail
+
         if len(latitude_str_format) != 2 or len(latitude_str_format[0]) > self.MAX_GPS_LATITUDE_LEADING_LEN or len(latitude_str_format[1]) > self.MAX_GPS_LATITUDE_TRAILING_LEN:
             lat_check = False
         else:
@@ -195,6 +210,12 @@ class DeviceConfigClass:
         lon_check = len(longitude_str) <= self.MAX_GPS_LONGITUDE_LEN
         lon_dir_check = len(longitude_dir_str) <= self.MAX_GPS_LONGITUDE_DIR_LEN
         longitude_str_format = longitude_str.split('.')
+
+        # Check for non numeric inputs
+        for item in longitude_str_format:
+            if not item.isdigit():
+                lon_check = False  # non-numeric input - Fail
+
         if len(longitude_str_format) != 2 or len(longitude_str_format[0]) > self.MAX_GPS_LONGITUDE_LEADING_LEN or len(longitude_str_format[1]) > self.MAX_GPS_LONGITUDE_TRAILING_LEN:
             lon_check = False
         else:
@@ -208,7 +229,6 @@ class DeviceConfigClass:
             longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
 
         # Check Altitude formatting
-        print altitude_str, float(altitude_str)
         alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
         if float(altitude_str) < 0 or float(altitude_str) > 17999.9: # Don't accept negative altitude for now...
             alt_check = False
@@ -217,16 +237,6 @@ class DeviceConfigClass:
         # Format altitude with prepended bytes if needed
         altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(float(altitude_str)),
                                                                                 self.MAX_ALTITUDE_LEN, 0x30)
-
-
-        print "Formatted GPS Flash Config"
-        print "lat:", latitude_str
-        print "lon:", longitude_str
-        print "Alt:", altitude_str
-
-        # Prepend all Lat, Lon, Alt with (0x30) padded bytes of fixed length packet
-        #latitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str), self.MAX_GPS_LATITUDE_LEN, 0x30)
-        #longitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(longitude_str), self.MAX_GPS_LONGITUDE_LEN, 0x30)
 
 
         if lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check:
@@ -242,7 +252,8 @@ class DeviceConfigClass:
 
         else:
             print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
-            print "ERROR: Negative altitude not supported at this time for flash programming"
+            print "ERROR: Altitude must be 0-17999.99"
+            print "ERROR: Only numbers and a single decimal allowed"
             return False
 
     def update_bitmask_gps_boot(self, gps_present_boot, gps_enable_boot):
