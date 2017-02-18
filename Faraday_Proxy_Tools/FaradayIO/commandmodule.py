@@ -127,7 +127,6 @@ def create_fixed_length_packet(data, fixed_legth):
         """
         pad_len = fixed_legth-len(data)
         pad = chr(0x00)*pad_len
-        pad = pad
         padded_data = data + pad
         return padded_data
 
@@ -153,7 +152,6 @@ def create_fixed_length_packet_padding(data, fixed_legth, padding_byte):
     """
     pad_len = fixed_legth - len(data)
     pad = chr(padding_byte) * pad_len
-    pad = pad
     padded_data = data + pad
     return padded_data
 
@@ -178,7 +176,6 @@ def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
     """
     pad_len = fixed_legth - len(data)
     pad = chr(padding_byte) * pad_len
-    pad = pad
     padded_data = pad + data
     return padded_data
 
