@@ -44,6 +44,8 @@ class DeviceConfigClass:
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
         self.CONFIG_PACKET_LENGTH = 116
+        self.MIN_FREQUENCY_MHZ = 900.0
+        self.MAX_FREQUENCY_MHZ = 928.0
 
         # Packet Definitions
         self.config_pkt_struct_config = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
@@ -169,10 +171,18 @@ class DeviceConfigClass:
 
         :return: Nothing
         """
-        freq_list = cc430radioconfig.freq0_carrier_calculation(float(boot_frequency_mhz))  # create_freq_list(float(boot_frequency_mhz))
-        self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
-        self.rf_PATable = patable_byte
-        return True
+
+
+        # Check radio for allowable amateur frequency range
+        if float(boot_frequency_mhz) > self.MIN_FREQUENCY_MHZ and float(boot_frequency_mhz) < self.MAX_FREQUENCY_MHZ:
+            freq_list = cc430radioconfig.freq0_carrier_calculation(
+                float(boot_frequency_mhz))  # create_freq_list(float(boot_frequency_mhz))
+            self.rf_default_boot_freq = [freq_list[2], freq_list[1], freq_list[0]]
+            self.rf_PATable = patable_byte
+            return True
+        else:
+            print "ERROR: Frequency out of range!"
+            return False
 
 
 
