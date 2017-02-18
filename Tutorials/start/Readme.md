@@ -38,7 +38,9 @@ Connect your power connector to P4 as shown below. External Power, P4, is locate
 ![Faraday External Power Connector](images/FaradayTop_VCC_MOSFET_2_1500w_LowRes.jpg)
 
 ### External MOSFET Connector
-This connector operates in exactly the same fashion as the external power connector P3. However, it is an "output" where the on-board MOSFET simply completes the conduction path when commanded. One wire is VCC which can short to anything referenced to Faraday ground. **Be careful**! An external power source must be connected between VCC and Ground on P4 to actually use the MOSFET on P3. USB Power cannot be sourced externally from this connector.
+This connector operates in exactly the same fashion as the external power connector P3. However, it is an "output" where the on-board MOSFET simply completes the conduction path when commanded. One wire is VCC which can short to anything referenced to Faraday ground. 
+
+>**Be careful**! Faraday's MOSFET connection is an [open-drain](https://en.wikipedia.org/wiki/Open_collector#MOSFET) and can used with any power source referenced to and returning power with Faraday's ground connection. There is no requirement to use VCC provided by Faraday, you could use an external battery for MOSFET control and USB power for Faraday. An external power source may be connected between VCC and Ground on P4 to conveniently use the MOSFET but this will power Faraday too. USB Power cannot be sourced externally from this connector.
 
 # Preparing Your Computer
 Now that you are aquainted with Faraday let's [get your computer setup](installing-software.md) to run Faraday software.

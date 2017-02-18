@@ -78,4 +78,4 @@ Note:
 Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.
 
 # Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTful API. Next step, [turn on the LED's](hello-world.md)!
+With the Proxy setup we now have the ability to communicate with Faraday using a RESTful API. Next step, [run the  Telemetry application](telemetrystart.md) and use the Faraday API to see data in your web browser!
