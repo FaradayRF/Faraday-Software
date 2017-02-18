@@ -119,7 +119,8 @@ def create_fixed_length_packet(data, fixed_legth):
 
         :Example:
 
-            >>> pack_data("Test data message", 20)
+            >>> testdata = create_fixed_length_packet("Test data message", 20)
+            >>> print repr(testdata)
             'Test data message\x00\x00\x00'
 
         .. note:: This should be updated so that the padding byte can be specified as well.
@@ -144,8 +145,9 @@ def create_fixed_length_packet_padding(data, fixed_legth, padding_byte):
 
     :Example:
 
-        >>> pack_data("Test data message", 20, 0x30)
-        'Test data message\x00\x00\x00'
+        >>> testdata = create_fixed_length_packet_padding("Test data message", 20, 0x7E)
+        >>> print testdata
+        'Test data message~~~'
 
     .. note:: This should be updated so that the padding byte can be specified as well.
     """
@@ -168,8 +170,9 @@ def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
 
     :Example:
 
-        >>> pack_data("Test data message", 20, 0x30)
-        '\x00\x00\x00Test data message'
+        >>> testdata = create_fixed_length_packet_leading_padding("Test data message", 20, 0x7E)
+        >>> print testdata
+        '~~~Test data message'
 
     .. note:: This should be updated so that the padding byte can be specified as well.
     """
