@@ -80,10 +80,10 @@ else:
     print "\nBASIC"
     print "Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']]
     print "ID:", str(unit_configuration_dict['local_callsign_id'])
-    print "CONFIGBOOTBITMASK:", bin(unit_configuration_dict['configuration_bitmask'])
-    print "GPIO_P3:", bin(unit_configuration_dict['default_gpio_port_3_bitmask'])
-    print "GPIO_P4:", bin(unit_configuration_dict['default_gpio_port_4_bitmask'])
-    print "GPIO_P5:", bin(unit_configuration_dict['default_gpio_port_5_bitmask'])
+    print "CONFIGBOOTBITMASK:", format(unit_configuration_dict['configuration_bitmask'], '#010b')
+    print "GPIO_P3:", format(unit_configuration_dict['default_gpio_port_3_bitmask'], '#010b')
+    print "GPIO_P4:", format(unit_configuration_dict['default_gpio_port_4_bitmask'], '#010b')
+    print "GPIO_P5:", format(unit_configuration_dict['default_gpio_port_5_bitmask'], '#010b')
     print "\nRF"
     print "BOOT_FREQUENCY_MHZ 0:", str(unit_configuration_dict['default_boot_freq_0'])
     print "BOOT_FREQUENCY_MHZ 1:", str(unit_configuration_dict['default_boot_freq_1'])
@@ -96,9 +96,9 @@ else:
     print "DEFAULT_LONGITUDE_DIR:", str(unit_configuration_dict['default_longitude_dir'])
     print "DEFAULT_ALTITUDE:", str(unit_configuration_dict['default_altitude'])
     print "DEFAULT_ALTITUDE_UNITS:", str(unit_configuration_dict['default_altitude_units'])
-    print "GPS_BOOT_BIT & GPS_PRESENT_BIT:", bin(unit_configuration_dict['gps_boot_bitmask'])
+    print "GPS_BOOT_BIT & GPS_PRESENT_BIT:", format(unit_configuration_dict['gps_boot_bitmask'], '#010b')
     print "\nTELEMETRY"
-    print "UART_TELEMETRY_BOOT_BIT & RF_TELEMETRY_BOOT_BIT:", bin(unit_configuration_dict['telemetry_boot_bitmask'])
+    print "UART_TELEMETRY_BOOT_BIT & RF_TELEMETRY_BOOT_BIT:", format(unit_configuration_dict['telemetry_boot_bitmask'], '#010b')
     print "TELEMETRY_DEFAULT_UART_INTERVAL:", str(unit_configuration_dict['default_telemetry_uart_beacon_interval'])
     print "TELEMETRY_DEFAULT_RF_INTERVAL:", str(unit_configuration_dict['default_telemetry_rf_beacon_interval'])
 
