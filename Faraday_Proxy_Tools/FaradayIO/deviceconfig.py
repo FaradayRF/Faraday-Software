@@ -75,7 +75,28 @@ class DeviceConfigClass:
         :return: Nothing
 
         """
-        if len(callsign) <= self.MAX_CALLSIGN_LEN:
+        callsign_check = True
+        callsign_id_check = True
+        gpio3_check = True
+        gpio4_check = True
+        gpio5_check = True
+
+        if len(callsign) > self.MAX_CALLSIGN_LEN:
+            callsign_check = False
+
+        if callsign_id < 0 or callsign_id > 255:
+            callsign_id_check = False
+
+        if p3_bitmask < 0 or p3_bitmask > 255:
+            gpio3_check = False
+
+        if p4_bitmask < 0 or p4_bitmask > 255:
+            gpio4_check = False
+
+        if p5_bitmask < 0 or p5_bitmask > 255:
+            gpio5_check = False
+
+        if callsign_check and callsign_id_check and gpio3_check and gpio4_check and gpio5_check:
             self.basic_configuration_bitmask = config_bitmask
             self.basic_local_callsign = str(callsign).upper()  # Force all uppercase
             self.basic_local_callsign_len = len(callsign)
@@ -85,7 +106,7 @@ class DeviceConfigClass:
             self.basic_gpio_p5_bitmask = p5_bitmask
             return True
         else:
-            print "ERROR: Callsign too long!"
+            print "ERROR: Formatting!"
             return False
 
     def create_bitmask_configuration(self, device_programmed_bit):
