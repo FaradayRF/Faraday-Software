@@ -27,5 +27,14 @@ Debian 8 did not need to install any additional drivers when plugging Faraday in
  
 Faraday will show up as ```/dev/ttyUSB0``` if only one is connected
 
+### Mac OS X
+OS X requires you to install the FTDI [Virtual COM Port](http://www.ftdichip.com/Drivers/VCP.htm).
+
+The Following steps will ensure your computer has the correct drivers:
+
+ 1. In terminal ls /dev/cu.*` to see what USB serial ports are connected. `/dev/cu.usbserial-x` is a valid USB Serial port where x is a number.
+  * `tty.usbserial-x` where x is a number is also a valid FTDI USB Com Port
+ 2. Note the displayed filenames. This is the device dev path in OS X. If you have other serial devices plugged in you may want to remove Faraday and run the same command to see which file goes away. Faraday would be the file that disapeared.
+
 # Configure Proxy
 With the drivers installed and serial port addresses obtained it's time to [configure the Proxy application](configuring-proxy.md) for use.
