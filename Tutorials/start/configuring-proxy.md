@@ -28,12 +28,12 @@ The image below shows the default `proxy.ini` contents as viewed in a text edito
 > There is no need to change any other Proxy.ini settings unless you know what you're doing!
 
  1. Open the `proxy-template.ini` file in a text editor to edit `[UNIT0]` values
- 2. Change `CALLSIGN` Replace ```NOCALL``` to match your callsign
+ 2. Change `CALLSIGN` Replace `REPLACEME` to match your callsign
  3. Change `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Change `COM` to match the COM port indicated while [connecting Faraday](connecting-hardware.md). `x` represents a number.
  5. Save the file as `proxy.ini`
 
-A proper configuration file will look similar to the configuration below. Notice the radio is "KB1LQD-1" on COM71.
+A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on `COM71`.
 
 ![Proxy INI Example](images/Proxy-INI-Example.png "Proxy INI Example")
 
@@ -41,26 +41,39 @@ A proper configuration file will look similar to the configuration below. Notice
 
 > There is no need to change any other Proxy.ini settings unless you know what you're doing!
 
- 1. Open `proxy-template.ini` with a text editor i.e `gedit git/faraday-software/proxy/proxy-template.ini`
- 2. Update `CALLSIGN` Replace ```NOCALL``` to match your callsign
+ 1. Open `proxy-template.ini` with a text editor i.e `gedit git/faradayrf/software/proxy/proxy-template.ini`
+ 2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
  3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
  5. Save the file as `proxy.ini`
 
-A proper configuration file will look similar to the configuration below. Notice the radio is "KB1LQD-1" on COM71. For Debian COM71 would be /dev/ttyUSB0 in this example.
+A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on `COM71`. For Debian `COM71` would be `/dev/ttyUSB0` in this example.
 
-![Proxy INI Example](images/Proxy-INI-Example.png "Proxy INI Example")
+###Mac OS X
+
+> There is no need to change any other Proxy.ini settings unless you know what you're doing!
+
+ 1. Open `proxy-template.ini` with a text editor `faradayrf/software/proxy/proxy-template.ini`
+ 2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
+ 3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
+ 4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
+ 5. Save the file as `proxy.ini`
+
+A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on COM71. For Mac OS X `COM71` would be `/dev/cu.usbserial-40` as an example.
 
 ## Connecting Proxy to Faraday
 
-Double-click on ```proxy.py``` to run it from a file explorer.
+Double-click on `proxy.py` to run it from a file explorer.
 Alternatively one can simply run proxy from command line:
 
 ### Windows
-For example `python C:\faradayrf\Faraday-Software-master\proxy\proxy.py`
+For example `python C:\faradayrf\software\proxy\proxy.py`
 
 ###Linux (Debian-Based)
-For example `python faradayrf/Faraday-Software-master/proxy/proxy.py`
+For example `python faradayrf/software/proxy/proxy.py`
+
+###Mac OS X
+For example `python faradayrf/software/proxy/proxy.py`
 
 ###Proxy Running
 With Faraday connected and `proxy.py` properly configured you will see a screen similar to that shown below upon initialization.
@@ -80,6 +93,8 @@ An incorrect COM/serial port assignment or unconnected Faraday radio will cause 
 > Check your COM port settings and that you did not change `baudrate` in `proxy.ini`
 
 ## Connecting To Multiple Faraday Devices
+
+> This feature is currently broken in `Master` and we are actively working on [Issue #86](https://github.com/FaradayRF/Faraday-Software/issues/86) to fix it!
 
 The proxy interface can connect to more than one Faraday digital radio at a time and this is achieved by creating more instances of `[UNITx]` sections and updating the `UNITS` value in the `[PROXY]` section.
 
