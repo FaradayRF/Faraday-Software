@@ -44,6 +44,17 @@ The Faraday tools provided:
 
 **telemetryparser:** A tool used to decode and parse retrieved telemetry application packets from a Faraday device.
 
+**commandmodule:** A collection of command functions used to create command application packets.
+
+**cc430radioconfig:** A tool used to convert frequency to CC430 frequency register bytes to tune the radio.
+
+**Checksum:** Simple module that performs checksums used by faraday to validate data.
+
+**deviceconfig:** Module containing classes and functions used to read/write Faraday flash configuration memory.
+
+**gpioallocations:** A module that defines Faraday GPIO allocations (hardware) to respective bitmasks.
+
+Tutorial 1 only uses a few of the python tools directly, as shown below.
  
 
 ```python
