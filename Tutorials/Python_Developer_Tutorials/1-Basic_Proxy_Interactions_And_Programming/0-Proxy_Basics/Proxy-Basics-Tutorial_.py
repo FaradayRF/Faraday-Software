@@ -4,7 +4,9 @@
 
 #Imports - General
 
-import os, sys
+import os
+import sys
+import time
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -13,8 +15,8 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 
 #Variables
-local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'kb1lqd'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -53,4 +55,12 @@ rx_telemetry_packet_extracted = faraday_parser.ExtractPaddedPacket(rx_telemetry_
 
 #Parse the Telemetry #3 packet
 rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_packet_extracted, True) #Debug ON
+
+
+print "************************************"
+print "\nQuit with ctrl+c"
+while(True):
+    #Loop until user presses ctrl+c so they can read response
+    time.sleep(1)
+    pass
 
