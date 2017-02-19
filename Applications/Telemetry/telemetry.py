@@ -354,7 +354,7 @@ def stations():
     parameters["TIMESPAN"] = timespan
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
-    parameters["CALLSIGN"] = callsign.upper()
+    parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeId
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
