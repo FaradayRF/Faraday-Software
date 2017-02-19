@@ -1,22 +1,20 @@
 
 # Tutorial - Proxy Interaction Basics
 
-This tutorial will introduce commanding a local Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
-
-To clarify the tutorials subjects covered in detail in prior tutorials are not overviewed in the tutorials that follow (i.e. Imports or initializing proxy tool modules).
+This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
 
 The example tutorial code focuses on how to:
 
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
-> NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
+> NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or garenteed to be received.
 
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Prerequisites
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
+
 
 
 ## Tutorial Output Examples

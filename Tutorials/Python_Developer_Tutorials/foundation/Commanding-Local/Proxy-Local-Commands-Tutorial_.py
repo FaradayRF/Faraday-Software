@@ -68,7 +68,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ###############
 ## ECHO MESSAGE
 ###############
-print "/n** Beginning ECHO command test** /n"
+print "\n** Beginning ECHO command test** \n"
 #Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
 originalmsg = "This will ECHO back on UART" #Cannot be longer than max UART payload size!
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
@@ -82,9 +82,9 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
-print "Original Message: ", originalmsg
-print "RAW Received BASE64 ECHO'd Message:", b64_data
-print "Decoded received ECHO'd Message:", echo_decoded #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nOriginal Message: ", originalmsg
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
 
 
 print "************************************"
