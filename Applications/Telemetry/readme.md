@@ -112,7 +112,7 @@ The following URL parameters are possible when interfacing the Telemetry server 
  * `DIRECTION`: Boolean 0 or 1 indicating return of only local or RF station data respectively
  * `STARTTIME`: Start time (ISO 8601 "%Y-%m-%dT%H:%M:%S") of data to be obtained from SQLite database
  * `ENDTIME`: End time (ISO 8601 "%Y-%m-%dT%H:%M:%S") of data to be obtained from SQLite database
- * `TIMESPAN`: Timespan ending with current time of data to be obtained from SQLite database
+ * `TIMESPAN`: Timespan to retrieve data from, ending at the current time. Value in seconds
  * `LIMIT`: Number of telemetry items to be returned in the query. Number of JSON items.
         
 The API will be better documented shortly. Barebones at the moment!
