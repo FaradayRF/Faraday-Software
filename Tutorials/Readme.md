@@ -14,21 +14,21 @@ This tutorial series is focused on introducing Faraday as a digital radio platfo
 
 ##Introduction To Faraday Proxy Programming
 
-* **[Commanding - Local](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/1-Commanding-Local/)**
+* **[Commanding - Local](/Python_Developer_Tutorials/foundation/Commanding-Local)**
   * How to send commands to a locally connected Faraday digital radio.
-* **[Telemetry Parsing](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/2-Telemetry-Parsing)**
+* **[Telemetry Parsing](/Python_Developer_Tutorials/foundation/Telemetry-Parsing)**
   * Using the parsing module to parse all packet types of telemetry data from a Faraday digital radio.
     * Telemetry - Device settings
     * Telemetry - Debug
     * Telemetry - Faraday Telemetry
-* **[Commanding - Remote (RF)](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/4-Commanding-Remote-RF)**
+* **[Commanding - Remote (RF)](/Python_Developer_Tutorials/foundation/Commanding-Remote-RF)**
   * How to send commands to a remote Faraday device over RF.
-* **[Experimental RF Packet Forwarding](/Tutorials/Tutorials/1-Basic_Proxy_Interactions_And_Programming/5-RF-Transmit-Receive-Packet)**
+* **[Experimental RF Packet Forwarding](/Python_Developer_Tutorials/foundation/RF-Transmit-Receive-Packet)**
   * An introduction to using the simple RF packet forward command that sends a local UART payload over RF to a specified remote Faraday device. This is the basis for more advanced programs such as messaging and data/file transfers.
 
 ## Building Fundamental Applications
 
-* **[Simple Text Messaging](/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/)**
+* **[Simple Text Messaging](/Python_Developer_Tutorials/foundation/Simple_Text_Messaging/)**
   * Utilizing the experimental RF packet forwarding command to build a simple text messaging application.
-* **[Simple Text Messaging - Creating Functional Objects](/Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging_Creating_Objects/)**
+* **[Simple Text Messaging - Creating Functional Objects](/Python_Developer_Tutorials/foundation/Simple_Text_Messaging_Creating_Objects/)**
   * This example tutorial implements the "Simple Text Messaging" application into a generic transmiter/receiver python object. This is a major step towards implemented a RESTful FLASK based application interface. 
