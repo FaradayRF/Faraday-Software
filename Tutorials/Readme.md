@@ -10,7 +10,7 @@ This tutorial series is focused on introducing Faraday as a digital radio platfo
 * Programming with Faraday toolsets/modules
 * Building more advanced Faraday host computer programs
 
-These tutorials rely on the currently implemented commands/functionality of Faraday and thus provide a great platform for experimentation. Higher data throughput and functionality can be achieved using other toolsets or in conjuction with more speciallized firmware programming that will be covered at a later date.
+> These tutorials rely on the currently implemented commands/functionality of Faraday and thus provide a great platform for experimentation. Higher data throughput and functionality can be achieved using other toolsets or in conjuction with more speciallized firmware programming that will be covered at a later date.
 
 ##Introduction To Faraday Proxy Programming
 
