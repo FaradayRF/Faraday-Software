@@ -1,5 +1,5 @@
 
-# Tutorials
+# Faraday Python Developer Tutorials
 
 This tutorial series is focused on introducing Faraday as a digital radio platform to program using Python. The reader will begin by learning fundamental transmissions of commands to both local and remote (using RF) devices. The tutorial series will conclude by building apon each skill and toolset learned to develope a basic radio data  transmission program capable of transmitting data, text, etc... of abritrary size from one Faraday to another wirelessly.
 
@@ -10,9 +10,7 @@ This tutorial series is focused on introducing Faraday as a digital radio platfo
 * Programming with Faraday toolsets/modules
 * Building more advanced Faraday host computer programs
 
-
-
-
+These tutorials rely on the currently implemented commands/functionality of Faraday and thus provide a great platform for experimentation. Higher data throughput and functionality can be achieved using other toolsets or in conjuction with more speciallized firmware programming that will be covered at a later date.
 
 ##Introduction To Faraday Proxy Programming
 
