@@ -6,6 +6,8 @@
 import os
 import sys
 import time
+import ConfigParser
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -13,14 +15,18 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import gpioallocations
 
-import time
+
+#Open configuration INI
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("configuration.ini")
+config.read(filename)
 
 #Definitions
 
-
 #Variables
-local_device_callsign = 'kb1lqd'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.get("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = str(local_device_callsign).upper()
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -82,9 +88,9 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
-print "\nOriginal Message: ", originalmsg
-print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "Original Message: ", originalmsg
 print "\nDecoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "RAW Received BASE64 ECHO'd Message:", b64_data
 
 
 print "************************************"

@@ -10,10 +10,18 @@ The example tutorial code focuses on how to:
 
 > NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or garenteed to be received.
 
+### Prerequisites
+* Properly configured and connected proxy
+  * Single Faraday
+
 #Running The Tutorial Example Script
 
-## Prerequisites
+## Configuration
 
+* Open `configuration-template.ini` with a text editor
+* Update `CALLSIGN` Replace ```NOCALL``` to match your callsign
+* Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
+* Save the file as `configuration.ini`
 
 
 
@@ -146,10 +154,4 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
 * Can you do this variably given any string length using only the packets sent and received?
   * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
-
-#See Also
-
-* [Proxy Tool - FaradayIO](http://faraday-software.readthedocs.io/en/latest/faradayio.html)
-* [Proxy Tool - TelemetryParser](http://faraday-software.readthedocs.io/en/latest/telemetryparser.html)
-* Command Application
 
