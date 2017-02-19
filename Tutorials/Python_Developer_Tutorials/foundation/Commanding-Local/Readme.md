@@ -19,8 +19,8 @@ The example tutorial code focuses on how to:
 ## Configuration
 
 * Open `configuration-template.ini` with a text editor
-* Update `CALLSIGN` Replace ```NOCALL``` to match your callsign
-* Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
+* Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+* Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
 * Save the file as `configuration.ini`
 
 
