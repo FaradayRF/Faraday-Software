@@ -88,9 +88,13 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
+print "**Sending**\n"
 print "Original Message: ", originalmsg
-print "\nDecoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
-print "RAW Received BASE64 ECHO'd Message:", b64_data
+print "\n**Receiving**\n"
+print "Decoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
+
 
 
 print "************************************"

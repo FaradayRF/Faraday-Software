@@ -132,6 +132,14 @@ rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, far
 #Now parse data again
 b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
+
+#Display information
+print "**Sending**\n"
+print "Original Message: ", originalmsg
+print "\n**Receiving**\n"
+print "Decoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 ```
 
 
@@ -147,6 +155,6 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 #Bonus Excersize
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
-* Can you do this variably given any string length using only the packets sent and received?
-  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
+* Can you do this variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
+  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) framing (packet) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
 
