@@ -61,14 +61,14 @@ def telemetry_worker(config):
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
     # Open configuration file
-    dbFilename = config.get("database", "filename")
+    dbFilename = config.get("DATABASE", "FILENAME")
 
     # Pragmatically create descriptors for each Faraday connected to Proxy
-    count = config.getint("telemetry", "units")
+    count = config.getint("TELEMETRY", "UNITS")
 
     for num in range(count):
-        callsign = config.get("telemetry", "unit" + str(num) + "call").upper()
-        nodeid = config.get("telemetry", "unit" + str(num) + "id")
+        callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
+        nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
         stations["UNIT" + str(num) + "CALL"] = callsign
         stations["UNIT" + str(num) + "ID"] = nodeid
         telemetryDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
@@ -354,7 +354,7 @@ def stations():
     parameters["TIMESPAN"] = timespan
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
-    parameters["CALLSIGN"] = callsign
+    parameters["CALLSIGN"] = callsign.upper()
     parameters["NODEID"] = nodeId
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
@@ -381,8 +381,8 @@ def pageNotFound(error):
 def initDB():
     """Initialize database, if not present then create it"""
     # Obtain configuration filenames
-    dbFilename = telemetryConfig.get("database", "filename")
-    dbSchema = telemetryConfig.get("database", "schemaname")
+    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
 
     # Check if database exists
     if os.path.isfile(dbFilename):
@@ -448,7 +448,7 @@ def sqlInsert(data):
     """Takes in a data tuple and inserts int into the telemetry SQLite table"""
 
     # Read in name of telemetry databse
-    db = telemetryConfig.get("database", "filename")
+    db = telemetryConfig.get("DATABASE", "FILENAME")
 
     telem = createTelemetryList(data)
 
@@ -520,7 +520,7 @@ def queryDb(parameters):
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
 
     # Open configuration file
-    dbFilename = telemetryConfig.get("database", "filename")
+    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
 
     # Connect to database, create SQL query, execute query, and close database
     try:
@@ -607,7 +607,7 @@ def queryStationsDb(parameters):
     sql = sqlBeg + sqlWhere + sqlEnd
 
     # Get telemetry databse name from configuration file
-    dbFilename = telemetryConfig.get("database", "filename")
+    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
 
     # Connect to database, create SQL query, execute query, and close database
     try:
@@ -702,8 +702,8 @@ def main():
     t.start()
 
     # Start the flask server on localhost:8001
-    telemetryHost = telemetryConfig.get("flask", "host")
-    telemetryPort = telemetryConfig.getint("flask", "port")
+    telemetryHost = telemetryConfig.get("FLASK", "HOST")
+    telemetryPort = telemetryConfig.getint("FLASK", "PORT")
 
     app.run(host=telemetryHost, port=telemetryPort, threaded=True)
 
