@@ -36,12 +36,12 @@ command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remot
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
 
-#Turn both LED 1 and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
+#Turn both LED 1, LED2, and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
 
 #Turn both LED 1 and DIGITAL_IO_0 OFF
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0))
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
