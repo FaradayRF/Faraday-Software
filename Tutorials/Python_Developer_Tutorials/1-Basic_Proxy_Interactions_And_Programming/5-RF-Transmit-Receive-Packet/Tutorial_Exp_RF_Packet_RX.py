@@ -11,8 +11,8 @@ from FaradayIO import faradaycommands
 
 
 #Local device information
-local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'KB1LQD'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 2  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -20,8 +20,8 @@ faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 
 #Remote device information
-remote_callsign = 'KB1LQC' #case independant
-remote_id = 1
+remote_callsign = 'KB1LQD' #case independant
+remote_id = 2
 
 #Define constants
 PROXY_MESSAGE_EXPERIMENTAL_PORT = 3
@@ -41,7 +41,7 @@ while(1):
     #Check if data is False (False means that the Get() function timed out), if not then display new data
     if (data != None) and (not 'error' in data):
         #print "Received Message RAW", repr(data[0]['data'])
-        print "Received Message Decoded:", faraday_1.DecodeRawPacket(data[0]['data'])
+        print "\nReceived Message Decoded:", faraday_1.DecodeRawPacket(data[0]['data'])
 
         #Set data = False so that the function loop can properly wait until the next data without printing last received data over and over
         data = None
