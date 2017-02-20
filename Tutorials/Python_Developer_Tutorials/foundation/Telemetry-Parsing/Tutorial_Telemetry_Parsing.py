@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+import ConfigParser
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -12,9 +13,17 @@ from FaradayIO import telemetryparser
 from FaradayIO import cc430radioconfig
 
 
+#Open configuration INI
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("configuration.ini")
+config.read(filename)
+
+#Definitions
+
 #Variables
-local_device_callsign = 'kb1lqd'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.getint("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = str(local_device_callsign).upper()
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -25,7 +34,6 @@ faraday_parser = telemetryparser.TelemetryParse()
 ############
 ## System Settings
 ############
-
 print "\n"
 
 #Flush old data from UART service port
