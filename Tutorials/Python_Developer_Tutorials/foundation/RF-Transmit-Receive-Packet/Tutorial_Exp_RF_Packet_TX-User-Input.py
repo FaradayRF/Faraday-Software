@@ -31,10 +31,6 @@ receiver_device_callsign = str(receiver_device_callsign).upper()
 faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 
-##############
-## TOGGLE Remote Device ++GPIO
-##############
-
 user_input = ''
 
 while(user_input != "quit"):
