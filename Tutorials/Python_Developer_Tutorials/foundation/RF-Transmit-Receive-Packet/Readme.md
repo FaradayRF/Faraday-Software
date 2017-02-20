@@ -1,9 +1,9 @@
 
 # Tutorial - Experimental RF Command
 
-Within the command program is a command called "Experimental RF Packet Forward" and it does just that: Send a single packet (payload) from your local device to a remote device using a wireless command transmission. A transmission is sent as a normal RF command with the data being forwarded as payload, when received it will be forwarded to UART (service port #2) at the remote device. ***This enables simple proxy (Python) packet protocol experimentation without the need for CC430 programming!***
+This tutorial introduces wireless data transmission between two Faraday units. The example program(s) uses the "Experimental RF Packet Forward" Faraday command application command. This command sends a single data packet (payload) as supplied from the local device (transmitter) to a remote device (receiver) using a wireless command transmission. This is "experimental" because it is not optimized and purely for learning/debugging but it introduces key concepts that are used in more advanced Faraday data transmission programs. ***This enables simple proxy (Python) packet protocol experimentation without the need for CC430 programming!***
 
-> This code makes up for its extreme inefficiency with its simplicity. A throughput of ~2kBps was measured using this tutorial based program operating at a datarate of 38.4kbaud sending 1kB of data. Inefficient but still pretty fast for amateur radio!
+> This code makes up for its extreme inefficiency with its simplicity. A throughput of ~2kBps was measured using this tutorial program operating at a datarate of 38.4kbaud sending 1kB of data. Inefficient but still pretty fast for amateur radio!
 
 Although there is limited optimization and flexibility available this provides the educational basis for:
 
@@ -13,7 +13,10 @@ Although there is limited optimization and flexibility available this provides t
 * File transfer
   * [ARQ protocols](https://en.wikipedia.org/wiki/Automatic_repeat_request)
 
-These tutorial scripts will transmit a single packet a) from a saved variable and b) from user typed input to a receiver program between two Faraday digital radios.
+There are two transmitter scripts provided that are received by a single receiver script.
+ 
+* Transmit a saved variable 
+* Transmit user input data
 
 
 
