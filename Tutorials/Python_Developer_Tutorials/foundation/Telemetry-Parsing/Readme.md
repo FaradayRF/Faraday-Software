@@ -1,7 +1,7 @@
 
 # Tutorial - Proxy Interaction Basics
 
-In this tutorial the three Telemetry packets available from Faraday are queried, parsed, and displayed. This makes use of the telemetry parsing tool module and more detailed information can be found in the telemetry application and packet definition documentation.
+This tutorial introduces telemetry packets available from Faraday's telemetry application. Although beaconing mode(s) allow automatic transmission of telemetry this tutorial commands the local device to send the respective packet.The telemetry packets are queried, parsed, and displayed. This makes use of the telemetry parsing tool module.
 
 ##Telemetry Packet Types
 
@@ -12,18 +12,96 @@ In this tutorial the three Telemetry packets available from Faraday are queried,
 * **Main Faraday Telemetry**
   * Faraday telemetry that include all peripheral data (i.e GPS, ADC's, etc...) 
 
+
+### Prerequisites
+* Properly configured and connected proxy
+  * Single Faraday
+
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
-
+* Open `configuration-template.ini` with a text editor
+* Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+* Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Save the file as `configuration.ini`
 
 ## Tutorial Output Examples
 
-below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). The script 
+Shown below is the output of the tutorial script when run in a python interpreter (PyCharm). 
 
-![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
+``` Python
+--- Telemetry Packet #1 ---
+Index[0]: RF Freq 2 35
+Index[1]: RF Freq 1 44
+Index[2]: RF Freq 0 78
+Index[3]: RF Power Bitmask 20
+Faraday's Current Frequency: 914.499 MHz
+
+
+18
+--- Telemetry Packet #2 ---
+Index[0]: Boot Count 93
+Index[1]: Reset Count 0
+Index[2]: Brownout reset counter 0
+Index[3]: Reset / Non-maskable Interrupt counter 0
+Index[4]: PMM Supervisor Low counter 0
+Index[5]: PMM Supervisor High counter 0
+Index[6]: PMM Supervisor Low - OVP counter 0
+Index[7]: PMM Supervisor High - OVP counter 0
+Index[8]: Watchdog timeout counter 0
+Index[9]: Flash key violation counter 0
+Index[10]: FLL Unlock counter 0
+Index[11]: Peripheral / Config counter 0
+Index[12]: Access violation counter 0
+Index[13]: Firmware Revision 232278577 232278577
+
+
+--- Telemetry Packet #3 ---
+Source Callsign KB1LQD
+Source Callsign Length 6
+Source Callsign ID 1
+Destination Callsign KB1LQD
+Destination Callsign Length 6
+Destination Callsign ID 1
+RTC Second 49
+RTC Minute 59
+RTC Hour 7
+RTC Day 20
+RTC Day Of Week 1
+RTC Month 2
+Year 57607
+GPS Lattitude 1234.5678
+GPS Lattitude Direction N
+GPS Longitude 12345.6789
+GPS Longitude Direction W
+GPS Altitude 11.50000
+GPS Altitude Units M
+GPS Speed 0.320
+GPS Fix 1
+GPS HDOP 0.86
+GPIO State Telemetry 192
+IO State Telemetry 7
+RF State Telemetry 0
+ADC 0 2394
+ADC 1 2348
+ADC 2 2244
+ADC 3 2187
+ADC 4 2186
+ADC 5 2136
+VCC 0
+CC430 Temperature 23
+ADC 8 2849
+HAB Automatic Cutdown Timer State Machine State 0
+HAB Cutdown Event State Machine State 0
+HAB Automatic Cutdown Timer Trigger Time 7200
+HAB Automatic Cutdown Timer Current Time 0
+EPOCH 1487577590.49
+Parsed packet dictionary: {'RFSTATE': 0, 'GPIOSTATE': 192, 'VCC': 0, 'RTCMIN': 59, 'SOURCECALLSIGN': 'KB1LQD', 'GPSLONGITUDE': '11826.1782', 'SOURCEID': 1, 'RTCYEAR': 57607, 'ADC1': 2348, 'BOARDTEMP': 23, 'DESTINATIONID': 1, 'EPOCH': 1487577590.494, 'RTCSEC': 49, 'GPSLATITUDE': '3400.0206', 'IOSTATE': 7, 'GPSSPEED': '0.320', 'RTCDAY': 20, 'RTCMONTH': 2, 'GPSFIX': '1', 'RTCHOUR': 7, 'HABTIMER': 0, 'GPSHDOP': '0.86', 'ADC3': 2187, 'HABTRIGGERTIME': 7200, 'DESTINATIONCALLSIGNLEN': 6, 'GPSLONGITUDEDIR': 'W', 'DESTINATIONCALLSIGN': 'KB1LQD', 'ADC4': 2186, 'ADC5': 2136, 'SOURCECALLSIGNLEN': '6', 'GPSALTITUDE': '11.50000', 'ADC0': 2394, 'GPSLATITUDEDIR': 'N', 'ADC2': 2244, 'HABTIMERSTATE': 0, 'RTCDOW': 1, 'HABCUTDOWNSTATE': 0, 'ADC8': 2849, 'GPSALTITUDEUNITS': 'M'}
+************************************
+
+Quit with ctrl+c
+```
 
 # Code Overview
 
