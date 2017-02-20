@@ -58,3 +58,10 @@ print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) 
 command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_device_callsign, remote_device_node_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
+
+print "************************************"
+print "\nQuit with ctrl+c"
+while(True):
+    #Loop until user presses ctrl+c so they can read response
+    time.sleep(1)
+    pass
