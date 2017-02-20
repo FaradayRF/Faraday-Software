@@ -9,6 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Pro
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
+from FaradayIO import commandmodule
 
 #Open configuration INI
 config = ConfigParser.RawConfigParser()
@@ -37,7 +38,11 @@ faraday_cmd = faradaycommands.faraday_commands()
 user_input = ''
 
 while(user_input != "quit"):
-    user_input = raw_input("Text To Transmit:")
-    command = faraday_cmd.CommandLocalExperimentalRfPacketForward(receiver_device_callsign, receiver_device_node_id, str(user_input))
-    print "\nTransmitting message:", user_input
-    faraday_1.POST(transmitter_device_callsign, transmitter_device_node_id, faraday_1.CMD_UART_PORT, command)
+    user_input = raw_input("\nText To Transmit (Max Length = " + str(commandmodule.FIXED_RF_PAYLOAD_LEN) +" Bytes)" + ": ")
+    if len(user_input) < commandmodule.FIXED_RF_PAYLOAD_LEN:
+        command = faraday_cmd.CommandLocalExperimentalRfPacketForward(receiver_device_callsign, receiver_device_node_id,
+                                                                      str(user_input))
+        print "Transmitting message:", user_input, '\n'
+        faraday_1.POST(transmitter_device_callsign, transmitter_device_node_id, faraday_1.CMD_UART_PORT, command)
+    else:
+        print "Payload is too long!", len(user_input), "Bytes", '\n'

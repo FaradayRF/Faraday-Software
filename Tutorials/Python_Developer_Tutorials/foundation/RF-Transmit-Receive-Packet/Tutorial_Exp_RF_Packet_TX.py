@@ -37,7 +37,7 @@ print "Receiver (Device Configuration):", receiver_device_callsign + '-' + str(r
 print '\n'
 
 #Use the predefined experimental message command (singled packet) function to send an RF message to a remote unit
-message = "Testing RF Packet 1"
+message = "Testing RF Packet 1"  # NOTE: Max payload size commandmodule.FIXED_RF_PAYLOAD_LEN
 command = faraday_cmd.CommandLocalExperimentalRfPacketForward(receiver_device_callsign, receiver_device_node_id, message)
 print "Transmitting message:", message
 faraday_1.POST(transmitter_device_callsign, transmitter_device_node_id, faraday_1.CMD_UART_PORT, command)
