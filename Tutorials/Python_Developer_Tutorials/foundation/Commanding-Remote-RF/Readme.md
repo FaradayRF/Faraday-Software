@@ -1,34 +1,47 @@
 
 # Tutorial - Remote RF Command
 
-This tutorial will example how to interact with other Faraday digital radios wirelessly using RF commanding. This tutorial requires the use of two Faraday units connected to proxy, although they will both be connect to the same computer (for convienience) the communication is performed using the CC430 radio. This can be verified by commanding a Faraday unit while being battery powered!
+This tutorial introduces basic wireless commanding between two Farday devices. 
+
+### Prerequisites
+* Properly configured and connected proxy
+  * x1 Faraday connected to local computer
+  * x1 Faraday powered within radio range
+ 
+> Note: Keep the units seperated a few feet apart and ensure the RF power settings are below ~20 to avoid desensing the CC430 front end receiver!
 
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to **BOTH** locally (USB) connected Faraday digital radios.
-
-## Edit Local/Remote Device Information
-
-The tutorial script variables listed below hold the local and remote Faraday device callsign/ID numbers. The local device communicates through the proxy interface and regardless of actual assigned callsign/ID the variables must match that assigned by the *"proxy.ini"* file. The remote device callsign/ID variable is used to address the RF packet and must match that of the remote unit device configuration to be communicated with.
+* Open `configuration-template.ini` with a text editor
+* Transmitter
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+  * Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Receiver
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+  * Update `NODEID` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+* Save the file as `configuration.ini`
 
 > NOTE: Ideally the proxy assigned callsign/ID matches the unit device configuration but this is not controlled or required and care should be taken.
 
 ```python
-#Local device information (Must match proxy assigned information)
-local_device_callsign = 'kb1lqd'  #case independent
-local_device_node_id = 1
+[DEVICES]
+UNITS=2
 
-#Remote device information (Must match unit programming)
-remote_callsign = 'kb1lqd'  #case independent
-remote_id = 2
+; Transmitter - This should match the connected Faraday unit as assigned in Proxy configuration
+UNIT0CALL=REPLACEME
+UNIT0ID= REPLACEME
+
+; Receiver - This should match the programmed callsign of the remote Faraday device to be commanded (receive)
+UNIT1CALL=REPLACEME
+UNIT1ID= REPLACEME
 ```
 
 
 ## Execute Tutorial Script
 
-While running the tutorial script you should see the green led (LED #1) light up on the remote unit and the red LED flashing on the local unit. Default Faraday operation enables the red LED whenever RF transmissions are occuring.
+While running the tutorial script you should see the green led (LED #1) and red LED (LED #2) light up on the remote unit.
 
 The tutorial script terminal output during a succesful operation displays raw command packets as transmitted for reference.
 

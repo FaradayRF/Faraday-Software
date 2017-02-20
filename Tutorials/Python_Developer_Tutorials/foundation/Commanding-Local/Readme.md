@@ -1,5 +1,5 @@
 
-# Tutorial - Proxy Interaction Basics
+# Tutorial - Command Local
 
 This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
 
