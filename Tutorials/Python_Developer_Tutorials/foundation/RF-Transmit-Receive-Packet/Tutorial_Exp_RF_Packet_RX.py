@@ -2,6 +2,7 @@
 
 import os
 import sys
+import ConfigParser
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 #Imports - Faraday Specific
@@ -9,23 +10,29 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 
 
+#Open configuration INI
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("configuration.ini")
+config.read(filename)
 
-#Local device information
-local_device_callsign = 'KB1LQD'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 2  # Should match the connected Faraday unit as assigned in Proxy configuration
+#Definitions
+
+#Variables
+local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.getint("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = str(local_device_callsign).upper()
+remote_device_callsign = config.get("DEVICES","UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_node_id = config.getint("DEVICES","UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_callsign = str(remote_device_callsign).upper()
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()
 faraday_cmd = faradaycommands.faraday_commands()
 
-#Remote device information
-remote_callsign = 'KB1LQD' #case independant
-remote_id = 2
-
 #Define constants
 PROXY_MESSAGE_EXPERIMENTAL_PORT = 3
-PROXY_GET_TIMEOUT = 1 #Second(s)
+PROXY_GET_TIMEOUT = 1 # Second(s)
 
 #Print debug information about proxy port listening
 print "Receiver operating TCP Localhost port:", faraday_1.FLASK_PORT
