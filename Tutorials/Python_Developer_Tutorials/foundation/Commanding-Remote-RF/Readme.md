@@ -41,9 +41,7 @@ UNIT1ID= REPLACEME
 
 ## Execute Tutorial Script
 
-While running the tutorial script you should see the green led (LED #1) and red LED (LED #2) light up on the remote unit.
-
-The tutorial script terminal output during a succesful operation displays raw command packets as transmitted for reference.
+While running the tutorial script you should see the green led (LED #1) and red LED (LED #2) light up on the remote unit. During the actuation of DIGITAL_IO_0 you will measure 3.3V and 0V respectively for ON and OFF commands.
 
 ![Successful Operation Terminal](Images/Output_Example_Success.png "Successful Operation Terminal")
 
@@ -65,22 +63,26 @@ The tutorial code below is very similar to the previous "local commanding" tutor
 ################################
 
 #Turn remote device LED 1 ON
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remote_callsign, remote_id))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): GREEN LED ON"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remote_device_callsign, remote_device_node_id))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
 
 #Turn remote device LED 1 OFF
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remote_callsign, remote_id))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): GREEN LED OFF"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remote_device_callsign, remote_device_node_id))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
 
-#Turn both LED 1 and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
+#Turn both LED 1, LED2, and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): RED LED ON | GREEN LED ON | DIGITAL_IO_0 ON"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_device_callsign, remote_device_node_id, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
 
 #Turn both LED 1 and DIGITAL_IO_0 OFF
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): RED LED OFF | GREEN LED OFF | DIGITAL_IO_0 OFF"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_device_callsign, remote_device_node_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
 ```
@@ -99,4 +101,7 @@ Faraday is actually quite sensitive and having a high power signal transmit betw
 
 #See Also
 
-
+* Faraday 
+  * Packet protocol definitions
+  * Application Layer - Command
+  * Port Definitions
