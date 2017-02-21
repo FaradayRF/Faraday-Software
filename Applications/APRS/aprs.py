@@ -870,7 +870,7 @@ def generatePasscode(callsign):
     length = len(callList)
 
     # Perform hash if length is valid
-    if length <= 10 and length > 1:
+    if length <= 10 and length > 1 and not(callsign == "REPLACEME"):
         callhash = 0x73e2  # Set hash seed
 
         while (i < length):
@@ -889,7 +889,7 @@ def generatePasscode(callsign):
 
     else:
         # Callsign is wrong length
-        logger.error("Callsign '{0}' incorrect length!".format(callsign))
+        logger.error("Callsign '{0}' invalid!".format(callsign))
 
     # Return hash as passcode or None if the operation was erroneous
     logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign,callhash))
