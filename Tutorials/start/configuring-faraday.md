@@ -2,7 +2,7 @@
 
 Now we should configure Faraday itself. The device configuration data is stored in the CC430 Flash memory and is used to store the callsign, ID, static GPS location, telemetry interval, and other settings.
 
-Building upon our previous work, Device Configuration is an application which communicates with Proxy and provides a RESTful interface to communicate with. Configuration data can both be read and written to hardware using this program.
+In the deviceconfiguration folder located in the Applications folder lives our Device Configuration program, `deviceconfiguration.py`, which is a Flask application that is run in the background waiting to be given data to program on Faraday. It exposes a RESTful API to do so and communicates with Proxy in order to configure the radio. `simpleconfig.py` is a script which reads the `faraday_config.ini` file and sends HTTP POST and GET queries to the `deviceconfiguration.py` server.
 
 The application files are located:
 
@@ -12,7 +12,7 @@ The application files are located:
 
 ## Device Configuration Setup
 
-`Deviceconfiguration.py` uses two .ini files, one to talk to Proxy and one to program Faraday hardware with. First we should ensure the program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`
+First we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`
 
 `[FLASK]`: Flask server configuration values
  * `HOST`: IP Address or hostname of flask server
@@ -26,7 +26,7 @@ The application files are located:
 
 ## Faraday Configuration
 
-Now that `deviceconfiguration.py` is configured it could be run and will sit in the background until prompted to read `faraday_config.ini`. However, let's just update this file now. For now just update the `CALLSIGN` and `ID` fields. If you do not have a GPS you may update the GPS section with relevant information as well.
+Now you should update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. For now just update the `CALLSIGN` and `ID` as well as any placeholder GPS fields. Simpleconfig will error with relevant information about what is wrong in your configuration.
 
 `[BASIC]`
  * `CONFIGBOOTBITMASK` Keep set to 1, indicates configuration has occured.
@@ -61,19 +61,21 @@ Now that `deviceconfiguration.py` is configured it could be run and will sit in 
 We are almost there! Eventually this will be automated but for now this is what we have. The following steps will start the Device Configuration application server and then send a POST command to it in order to initiate programming. Please ensure Proxy is running prior to these steps.
 
 1. Navigate to `deviceconfiguration` folder in Explorer or terminal
-2. Run device configuration
+2. Run `deviceconfiguration.py`
   * Windows: double-click on `deviceconfiguration.py`
   * Linux: `python deviceconfiguration.py`
 3. Run `simpleconfig.py` to send configuration data to Faraday
+4. Press `ctrl+c` to exit simpleconfig when complete after reviewing changes
+5. Close `deviceconfiguration.py` window
 
-Successful operation of `simpleconfig.py` will quickly exit. In Windows the command window will disappear if run by double-click. Below, we see Linux configuring Faraday with simpleconfig. This example changed KB1LQC-1 into KB1LQC-5.
+Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming the script queries Faraday over UART to send its Flash contents so we can confirm proper programming.
 ![Simpleconfig.py output](images/simpleconfig.png)
 
-If you are running the telemetry program in the background you will actually be able to see the switch-over occur. Look at the image below to see the last two telemetry packets where the switch occured.
-![Faraday Telemetry application when configuring](images/faradayconfigurationtelemetry.png)
+Note:
+ * Some fields such as `BOOT_FREQUENCY_MHZ` and bitmasks return MSP430 specific values which differ from configuration values or bitmasks.
 
 ## Proxy Considerations
-Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials.
+Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.
 
 # Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTfup API. Next step, [turn on the LED's](hello-world.md)!
+With the Proxy setup we now have the ability to communicate with Faraday using a RESTful API. Next step, [run the  Telemetry application](telemetrystart.md) and use the Faraday API to see data in your web browser!

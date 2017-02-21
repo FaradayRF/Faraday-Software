@@ -4,7 +4,7 @@ With hardware connected as well as Proxy configured and running you are ready to
 
 > NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or guaranteed to be received.
 
-###Prerequisits
+###Prerequisites
  * Faraday radio connected via USB to the computer
  * Proxy configured and running
  
@@ -19,7 +19,7 @@ This subpackage contains the class proxyio which abstracts the RESTful interface
 This subpackage abstracts commands one might wish to send to Faraday. IT contains functions which build up generic commands such as ```CommandLocal()``` or task-specific commands such as ```CommandLocalGPIOLED1On()``` which turns on LED1.
 
 ##LED Code
-The following code example will enter an infinite loop to turn LED1 ON (green) and OFF in a total of one second.
+The following code example will enter an infinite loop to turn LED1 ON (green) and OFF in a total of one second. `hello-world.py` should be modified with your callsign and node ID where `REPLACEME` has been added. Below is `hello-world.py` modified for use by KB1LQD-1.
 ```
 import os
 import sys
@@ -47,7 +47,7 @@ while(1):
     time.sleep(0.5)
 ```
 
-To run the code example we've placed hello-world.py in the start folder
+To run the code example we've placed `hello-world.py` in the start folder
 ### Windows
  * Double-click on hello-world.py and run with python
  * Navigate to `C:\faradayrf\faraday-software\Tutorials\start' and run `python hello-world.py`
@@ -55,10 +55,14 @@ To run the code example we've placed hello-world.py in the start folder
 Ensure that Proxy is running in the background!
  
 ### Linux (Debian-based)
- * Navigate in terminal to `/git/faraday-software/Tutorials/start` and run `sudo python hello-world.py`
+ * Navigate in terminal to `/git/faraday-software/Python_Developer_Tutorials/start` and run `sudo python hello-world.py`
   * sudo is needed to ensure you can write to `/dev/ttyUSB0`
   
 Ensure that Proxy is running in the background!
 
 # Congratulations
-Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide. We highly encourage you to check out our standard core programs such as [Telemetry](../../Applications/Telemetry) or [APRS](../../Applications/APRS). You should also learn more about our API. We're providing the building blocks to experiment, lets go!
+Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide.
+
+We highly encourage you to check out our standard core programs such as [Telemetry](../../Applications/Telemetry) or [APRS](../../Applications/APRS). Once accustomed to Faraday we encourage you to dive into our developer tutorials. 
+
+We're providing the building blocks to experiment, lets go!
