@@ -256,7 +256,7 @@ def sendPositions(stations, socket):
                 try:
                     socket.sendall(positionString)
 
-                except socket.error as e:
+                except IOError as e:
                     logger.error(e)
 
             elif node == destNode:
@@ -355,8 +355,8 @@ def sendtelemetry(stations, telemSequence, socket):
             try:
                 socket.sendall(telemetry)
 
-            except socket.error as e:
-                logger.error(e)
+            except IOError as e:
+                    logger.error(e)
 
         elif node == destNode:
             # APRS string is for local node
@@ -384,7 +384,7 @@ def sendtelemetry(stations, telemSequence, socket):
             try:
                 socket.sendall(telemetry)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
         # Check for telemetry sequence rollover
@@ -482,7 +482,7 @@ def sendTelemLabels(stations, socket):
             try:
                 socket.sendall(labels)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
         elif node == destNode:
@@ -525,7 +525,7 @@ def sendTelemLabels(stations, socket):
             try:
                 socket.sendall(labels)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
 def sendParameters(stations, socket):
@@ -614,7 +614,7 @@ def sendParameters(stations, socket):
             try:
                 socket.sendall(parameters)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
         elif node == destNode:
@@ -657,7 +657,7 @@ def sendParameters(stations, socket):
             try:
                 socket.sendall(parameters)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
 def sendEquations(stations, socket):
@@ -753,7 +753,7 @@ def sendEquations(stations, socket):
             try:
                 socket.sendall(equations)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
         elif node == destNode:
@@ -800,7 +800,7 @@ def sendEquations(stations, socket):
             try:
                 socket.sendall(equations)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
 def connectAPRSIS():
@@ -837,7 +837,7 @@ def connectAPRSIS():
                 aprssock.connect((server, port))
                 aprssock.sendall(logon_string)
 
-            except socket.error as e:
+            except IOError as e:
                 logger.error(e)
 
             else:
