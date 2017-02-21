@@ -263,8 +263,8 @@ class DeviceConfigClass:
 
         # Check Altitude formatting and bounds
         alt_check = ((len(altitude_str) <= self.MAX_ALTITUDE_LEN) and
-                     (float(altitude_str) >= MIN_ALTITUDE_METERS) and
-                     (float(altitude_str) <= MAX_ALTITUDE_METERS))
+                     (float(altitude_str) >= self.MIN_ALTITUDE_METERS) and
+                     (float(altitude_str) <= self.MAX_ALTITUDE_METERS))
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
 
         # Format altitude with prepended bytes if needed
@@ -285,7 +285,7 @@ class DeviceConfigClass:
 
         else:
             print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
-            print "ERROR: Altitude must be %g-%g" % (MIN_ALTITUDE_METERS, MAX_ALTITUDE_METERS)
+            print "ERROR: Altitude must be %g-%g" % (self.MIN_ALTITUDE_METERS, self.MAX_ALTITUDE_METERS)
             print "ERROR: Only numbers and a single decimal allowed"
             return False
 
