@@ -82,10 +82,8 @@ Suggesting enhancements is one of the most important factors to driving innovati
 
 If you are not sure how to start off contributing to the project browse the tagged begginner issues below.
 
-* Begginner Issues - Simple issues where the solution is likley a few lines of code or less
-* Documentation Updates - Clear and consitant documenation is key to building a knowlegable and growing community
-
-**TODO:** Add links to Github issue filters for the above.
+* [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
+* [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
 
 ##Pull Requests <a name="pull_requests"></a>
