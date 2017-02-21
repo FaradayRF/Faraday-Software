@@ -11,18 +11,16 @@ This application provides a socket link to APRS-IS servers and sends data from F
  * Packets sent to APRS-IS are intended to not rebroadcast over RF (yet). However, this is not guaranteed and could end up on RF anyways.
  
 # Configuration
-Before you can connect to the APRS-IS network you need to update your `login.ini` file with your callsign and APRS passcode.
+Before you can connect to the APRS-IS network you need to update your `aprs.ini` file with your callsign.
 
  1. Navitage to the `Applications/APRS` folder
- 2. Copy `login-template.ini` to `login.ini`
- 3. Open `login.ini` in a text editor and update the information requested
+ 2. Open `aprs.ini` in a text editor and update the information requested
  
- * `[CREDENTIALS]`: APRS-IS credentials section
-  * `CALLSIGN`: Farday base station control operation callsign
-  * `PASSCODE`: APRS-IS passcode
+ * `[APRSIS]`: APRS-IS credentials section
+  * `CALLSIGN`: APRS-IS login callsign
 
 ## Obtaining an APRS Passcode
-The APRS passcode is extremely easy to obtain. 2E0SQL over at [MagicBug](http://magicbug.co.uk/) provides an beautifully simple open source [APRS Passcode Generator](http://apps.magicbug.co.uk/passcode/).
+2E0SQL over at [MagicBug](http://magicbug.co.uk/) provides an beautifully simple open source [APRS Passcode Generator](http://apps.magicbug.co.uk/passcode/). The APRS application implements a python version of the passcode generator with the [generatePasscode()](https://github.com/FaradayRF/Faraday-Software/blob/issue91/Applications/APRS/aprs.py#L855) function. There is no need to enter your passcode, your amateur radio callsign will be used to automatically generate it.
 
 # Running APRS
 As a prerequisit, you must have the following programs running in the background while Faraday is connected to the computer:
