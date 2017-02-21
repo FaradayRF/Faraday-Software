@@ -32,10 +32,6 @@ logger = logging.getLogger('APRS')
 aprsConfig = ConfigParser.RawConfigParser()
 aprsConfig.read('aprs.ini')
 
-# Read in APRS-IS Credentials
-aprsISConfig = ConfigParser.RawConfigParser()
-aprsISConfig.read('login.ini')
-
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
@@ -48,7 +44,7 @@ def aprs_worker(config, sock):
     :param sock: Internet socket
     :return: None
     """
-    logger.info('Starting aprs_worker thread')
+    logger.debug('Starting aprs_worker thread')
     rate = config.getint("APRSIS", "RATE")
 
     # Local variable initialization
@@ -288,7 +284,7 @@ def sendPositions(stations, socket):
                 try:
                     socket.sendall(positionString)
 
-                except socket.error as e:
+                except IOError as e:
                     logger.error(e)
 
 def sendtelemetry(stations, telemSequence, socket):
@@ -815,39 +811,90 @@ def connectAPRSIS():
     """
 
     # Read APRS-IS login credentials from configuration file
-    callsign = aprsISConfig.get('CREDENTIALS', 'CALLSIGN').upper()
-    passcode = aprsISConfig.getint('CREDENTIALS', 'PASSCODE')
+    callsign = aprsConfig.get('APRSIS', 'CALLSIGN').upper()
+
+    # APRS-IS passcode generator
+    passcode = generatePasscode(callsign)
 
     # Read APRS-IS server address from configuration file
     server = aprsConfig.get("APRSIS", "SERVER")
     port = aprsConfig.getint("APRSIS", "PORT")
 
-    logger.info("Connecting to APRS-IS as: " + str(callsign))
-    logger.info("Server: " + str(server) + ":" + str(port))
+    if passcode != None:
+        logger.info("Connecting to APRS-IS as: " + str(callsign))
+        logger.debug("Server: " + str(server) + ":" + str(port))
 
-    # Set socket up
-    aprssock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Set socket up
+        aprssock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Infinite loop until connection is successful
-    while True:
-        try:
-            # Create login string and connect to server
-            logon_string = 'user' + ' ' + callsign + ' ' + 'pass' + ' ' + str(
-                passcode) + ' vers "FaradayRF APRS-IS application" \r'
-            logger.debug(logon_string)
-            aprssock.connect((server, port))
-            aprssock.sendall(logon_string)
+        # Infinite loop until connection is successful
+        while True:
+            try:
+                # Create login string and connect to server
+                logon_string = 'user' + ' ' + callsign + ' ' + 'pass' + ' ' + str(
+                    passcode) + ' vers "FaradayRF APRS-IS application" \r'
+                logger.debug(logon_string)
+                aprssock.connect((server, port))
+                aprssock.sendall(logon_string)
 
-        except socket.error as e:
-            logger.error(e)
+            except socket.error as e:
+                logger.error(e)
 
-        else:
-            logger.info("Connection successful!")
-            return aprssock
-            break
+            else:
+                logger.info("Connection successful!")
+                return aprssock
+                break
 
-        sleep(10)  # Try to reconnect every 10 seconds
-    return aprssock
+            sleep(10)  # Try to reconnect every 10 seconds
+        return aprssock
+    else:
+        while(True):
+            logger.error("APRS-IS LOGIN ERROR!")
+            sleep(1)
+
+def generatePasscode(callsign):
+    """
+    Generates an APRS-IS compliant passcode.
+
+    Based on the open-source work of magicbug at https://github.com/magicbug/PHP-APRS-Passcode. Thanks!
+
+    :param callsign: Uppercase callsign string
+    :return: APRS-IS Passcode if successful, None if error
+    """
+    # Initialize variables
+    callhash = None
+    i = 0
+
+    # Convert callsign to list and obtain length
+    callList = list(callsign)
+    length = len(callList)
+
+    # Perform hash if length is valid
+    if length <= 10 and length > 1:
+        callhash = 0x73e2  # Set hash seed
+
+        while (i < length):
+            try:
+                callhash ^= ord(callList[i])<<8
+                callhash ^= ord(callList[i+1])
+                i += 2
+
+            except StandardError as e:
+                logger.error(e)
+                callhash = None
+                break
+
+        if callhash != None:
+            callhash = callhash & 0x7ffff  # Ensure passcode is always positive
+
+    else:
+        # Callsign is wrong length
+        logger.error("Callsign '{0}' incorrect length!".format(callsign))
+
+    # Return hash as passcode or None if the operation was erroneous
+    logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign,callhash))
+    return callhash
+
 
 def main():
     """
