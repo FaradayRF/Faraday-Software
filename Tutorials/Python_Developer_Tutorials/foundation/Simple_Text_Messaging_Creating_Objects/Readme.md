@@ -1,34 +1,72 @@
 
 # Tutorial - Simple Text Messaging Class Object
 
-The previous tutorial created a simple messaging application that utilized the Faraday  proxy interface and directly coupled a simple user interface. Proper applications should implement a more modular approach by separating the user interface from core application, ideally using a RESTful interface (FLASK). This tutorial presents an example program that utilizes a transmit/receive threaded class object providing a python interface and buffer, a useful step towards a fully FLASK interface!
+The previous tutorial created a simple messaging application that utilized the Faraday  proxy interface and directly implemented a user interface. Proper application modularity should separate the user interface from core application, ideally using a RESTful interface. 
 
+This tutorial reconfigured the prior "Simple Messaging Application" transmit and receive classes into multi-threaded class objects. The example program `message_application_example.py` utilizes the functionality of `faraday_msg.py` in threaded class objects contained in `msg_object.py`. Queues are established (FIFO's) that allow buffering of transmit and receive messages if multiple are received prior to polling the receiver for new messages. The example program can therefor operate both transmit and receive in a single script independently.
 
+This allows for modular interfacing to the classes where a future tutorial can implement a RESTful API.
+
+### Prerequisites
+* Properly configured and connected proxy
+  * x2 Faraday connected to local computer
+ 
+> Note: Keep the units seperated a few feet apart and ensure the RF power settings are below ~20 to avoid desensing the CC430 front end receiver!
+
+> Note: Until proxy auto-configuration functionality is added it is possible that proxy's assigned callsign is different than the units actual configuration callsign. Please keep these matching unless you know what you're doing.
+
+An example proxy.ini with two units connected is shown below.
+
+```Python
+[FLASK]
+HOST=127.0.0.1
+PORT=8000
+
+[PROXY]
+UNITS=2
+
+[UNIT0]
+CALLSIGN = KB1LQD
+NODEID = 1
+COM = COM106
+BAUDRATE = 115200
+TIMEOUT = 5
+
+[UNIT1]
+CALLSIGN = KB1LQD
+NODEID = 2
+COM = COM112
+BAUDRATE = 115200
+TIMEOUT = 5
+```
 
 
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to **BOTH** locally (USB) connected Faraday digital radios.
+* Open `configuration-template.ini` with a text editor
+* Transmitter
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+  * Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Receiver
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+  * Update `NODEID` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+* Save the file as `configuration.ini`
 
-
-
-## Edit `message_application_example.py` Callsigns and IDs
-
-Edit the example applications callsign and ID numbers with those of your Faraday devices and proxy application assignments.
-
-> NOTE: This application assumes that the proxy assigned callsigns match those of the units. This is usually the case and hopefully in the future dynamic allocation will resolve this potential discrepensy.
-
-The code block below shows the two Faraday devices `KB1LQD-1` and `KB1LQD-2` assigned. The variables are not case sensitive.
+> NOTE: Ideally the proxy assigned callsign/ID matches the unit device configuration but this is not controlled or required and care should be taken.
 
 ```python
-#Unit designation constants
-# NOTE: Assumes proxy assignent is equal to the real unit programmed callsigns and IDs
-unit_1_callsign = 'kb1lqd'
-unit_1_callsign_id = 1
-unit_2_callsign = 'kb1lqd'
-unit_2_callsign_id = 2
+[DEVICES]
+UNITS=2
+
+; Transmitter - This should match the connected Faraday unit as assigned in Proxy configuration
+UNIT0CALL=REPLACEME
+UNIT0ID= REPLACEME
+
+; Receiver - This should match the programmed callsign of the remote Faraday device to be commanded (receive)
+UNIT1CALL=REPLACEME
+UNIT1ID= REPLACEME
 ```
 
 ## Run `message_application_example.py`
@@ -47,7 +85,6 @@ Congratulations! We've taken a mighty step to creating a powerful transmit/recie
 
 Ideas for the reader to experiment with the example program.
 
-* Swap `Unit 1` and `Unit 2` transmit and receive operation in the example program
 * Modify the example code to example sending more than one message prior to receiving. This will build up messages in the queue.
 * Write an automated response message to transmit back after reception.
 * Break the `message_application_example.py` application into two programs each dedicated to a specific device. Enable transmit/receive between two units generically.
@@ -91,9 +128,9 @@ class TransmitObject(object):
 
 ### Receiver Object
 
-The reciever object must run in the background constantly looking for new data (packet fragments) received in the proxy interface buffers and perform reassembly if available. When a full message has been reconstructed it is placed into a FIFO (Queue) for retrieval.
+The reciever object must run in the background constantly looking for new data (packet fragments) received in the proxy interface buffers and perform reassembly as needed. When a full message has been reconstructed it is placed into a FIFO (Queue) for retrieval.
 
-The [Python threading module](https://pymotw.com/2/threading/) was used to run the objects `run()` function indefinietely as a seperate process. The module also allows for querying for the number of received messages waiting in the FIFO as well as a function to return the next item from it.
+The [Python threading module](https://pymotw.com/2/threading/) was used to run the objects `run()` function indefinietely as a seperate process.
 
 ```python
 class ReceiveObject(threading.Thread):

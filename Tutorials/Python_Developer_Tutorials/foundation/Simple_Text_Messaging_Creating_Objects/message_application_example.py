@@ -1,40 +1,49 @@
+import os
 import time
 import msg_object
+import ConfigParser
 
-#Unit designation constants
-# NOTE: Assumes proxy assignment is equal to the real unit programmed callsigns and IDs
-unit_1_callsign = 'kb1lqd'
-unit_1_callsign_id = 1
-unit_2_callsign = 'kb1lqd'
-unit_2_callsign_id = 2
+#Open configuration INI
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("configuration.ini")
+config.read(filename)
+
+#Definitions
+
+#Variables
+transmitter_device_callsign = config.get("DEVICES", "UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+transmitter_device_node_id = config.getint("DEVICES", "UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+transmitter_device_callsign = str(transmitter_device_callsign).upper()
+receiver_device_callsign = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+receiver_device_node_id = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+receiver_device_callsign = str(receiver_device_callsign).upper()
 
 # Create messaging unit objects with the two device connected to local proxy
-unit_1 = msg_object.MessageObject(unit_1_callsign, unit_1_callsign_id)
-unit_2 = msg_object.MessageObject(unit_2_callsign, unit_2_callsign_id)
+transmitter = msg_object.MessageObject(transmitter_device_callsign, transmitter_device_node_id)
+receiver = msg_object.MessageObject(receiver_device_callsign, receiver_device_node_id)
 
-print "Initialized Faraday Messaging Objects"
 
-# Check Queue receive sizes (should contain no messages)
-print "Unit 1 Queue Size:", unit_1.receive.getqueuesize()
-print "Unit 2 Queue Size:", unit_2.receive.getqueuesize()
+
+# # Check Queue receive sizes (should contain no messages)
 
 while 1:
     print "\n *** Transmit Message ***"
     # Send user input from Unit #1 to Unit #2
     user_input = raw_input("Enter message: ")
-    unit_1.transmit.send(unit_2_callsign, unit_2_callsign_id, str(user_input))
+    transmitter.transmit.send(receiver_device_callsign, receiver_device_node_id, str(user_input))
 
     # sleep to allow buffers to fill
     time.sleep(1)
 
     #Check Queue size of Unit #2 and receive packet (if recieved due to non-ARQ protocol)
     print "\n *** Receiving Message ***"
-    queuesize_unit2 = unit_2.receive.getqueuesize()
+    queuesize_unit2 = receiver.receive.getqueuesize()
     if queuesize_unit2 > 0:
-        while unit_2.receive.getqueuesize() > 0:
+        print "Initialized Faraday Messaging Objects"
+        print "Receive Queue Size:", receiver.receive.getqueuesize()
+        while receiver.receive.getqueuesize() > 0:
             try:
-                print "Unit 2 Queue Size:", unit_2.receive.getqueuesize()
-                received_item = unit_2.receive.getqueueitem()
+                received_item = receiver.receive.getqueueitem()
                 print "From:", received_item['source_callsign']
                 print "Received (Message):", received_item['message']
             except:
