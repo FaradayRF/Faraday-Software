@@ -65,9 +65,6 @@ class MsgStateMachineTx(object):
         """
         list_message_fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
                                   range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
-        for item in list_message_fragments:
-            print item, "Frag Length", len(item)
-        print repr(list_message_fragments)
         return list_message_fragments
 
     def createmsgpackets(self, src_call, src_id, msg):
@@ -101,9 +98,7 @@ class MsgStateMachineTx(object):
 
         for i in range(0, len(list_msg_fragments), 1):
             data_packet = self.createdataframe(i, list_msg_fragments[i])
-            print "Pre-Pack:", repr(data_packet), len(data_packet)
             data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
-            print "Post-Pack:", repr(data_packet), len(data_packet)
             list_data_packets.append(data_packet)
 
         # Insert all packets into final packet list in order of transmission
@@ -127,7 +122,6 @@ class MsgStateMachineTx(object):
         """
         # Calculate the number of fragmented packets
         frag_cnt = self.fragmentcount(msg_len)
-        print frag_cnt
         # Create packet
         packet = self.pkt_start.pack(src_call, len(src_call), src_id, frag_cnt)
         # Return packet created
@@ -144,9 +138,7 @@ class MsgStateMachineTx(object):
 
         :Return: A DATA packet
         """
-        print "create:", repr(data), len(data)
         packet = self.pkt_data.pack(sequence, len(data), data)
-        print "created:", repr(packet), len(packet)
         return packet
 
     def createendframe(self, msg_len):
@@ -212,7 +204,7 @@ class MessageAppTx(object):
         self.command = self.faraday_cmd.CommandLocalExperimentalRfPacketForward(self.destination_callsign,
                                                                                 self.destination_id,
                                                                                 payload)
-        print "Transmitting message:", repr(payload), "length:", len(payload)
+        #print "Transmitting message:", repr(payload), "length:", len(payload)
         self.faraday_1.POST(self.transmitter_device_callsign, self.transmitter_device_node_id, self.faraday_1.CMD_UART_PORT,
                             self.command)
 
