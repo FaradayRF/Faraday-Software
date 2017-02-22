@@ -1,9 +1,9 @@
 
 # Tutorial - Simple Text Messaging Application Using Experimental RF Command
 
-As shown in the previous tutorial it is possible to send short packets between two Faraday's using only python code and use of the "Experimental RF Packet Forward" functionality. Transmitting messages longer than a single packet is not possible without introducing the concent of packet fragmentation and encapsulation. ***This tutorial program will allow the transmission and reception of abritrarally long messages between two Faraday devices using RF transmissions.***
+As shown in the previous tutorial it is possible to send short packets between two Faraday's using only python code and use of the "Experimental RF Packet Forward" functionality. Transmitting messages longer than a single packet is not possible without introducing the concent of packet fragmentation and encapsulation. ***This tutorial program will allow the transmission and reception of messages larger than a single packet between two Faraday devices using RF transmissions.***
 
-The key concept to understand for this tutorial is packet fragmentation. Packet fragmentation breaks a large packet into smaller "chunks" for transmission, the receiver reassembles these chunks of data piece by piece until the original packet has been recreated. 
+Packet fragmentation breaks a large packet into smaller "chunks" for transmission, the receiver reassembles these chunks of data piece by piece until the original packet has been recreated. 
 
 ![Packet Fragmentation And Reassembly](Images/Packet-Fragmentation.png "Packet Fragmentation And Reassembly")
 
@@ -12,43 +12,80 @@ Packet encapsulation is the act of placing one packet (or portions of a packet) 
 * Ordering of fragmented packets needs to be maintained
 * Receiver must know when to start and stop reassembling a fragmented packet
 
-There are also several key items that will NOT be addressed:
+> This simplistic fragmentation protocol uses a single byte in the packet protocol to indicate the number of packets to expect. This means that up to 256 fragments are usable. There are methods that allows abritrarly length but this was a sufficiently large and simple constraint.
 
-* Error detection and correction will not be addressed for simplicity
-* All commands must be addressed to the intended Faraday; Experiemental RF packet forward command cannout be "broadcasted" to all devices.
-  * A more complicated dedicated messaging program will achieve this
+### Prerequisites
+* Properly configured and connected proxy
+  * x2 Faraday connected to local computer
+ 
+> Note: Keep the units seperated a few feet apart and ensure the RF power settings are below ~20 to avoid desensing the CC430 front end receiver!
+
+> Note: Until proxy auto-configuration functionality is added it is possible that proxy's assigned callsign is different than the units actual configuration callsign. Please keep these matching unless you know what you're doing.
+
+An example proxy.ini with two units connected is shown below.
+
+```Python
+[FLASK]
+HOST=127.0.0.1
+PORT=8000
+
+[PROXY]
+UNITS=2
+
+[UNIT0]
+CALLSIGN = KB1LQD
+NODEID = 1
+COM = COM106
+BAUDRATE = 115200
+TIMEOUT = 5
+
+[UNIT1]
+CALLSIGN = KB1LQD
+NODEID = 2
+COM = COM112
+BAUDRATE = 115200
+TIMEOUT = 5
+```
 
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to **BOTH** locally (USB) connected Faraday digital radios.
+* Open `configuration-template.ini` with a text editor
+* Transmitter
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+  * Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Receiver
+  * Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+  * Update `NODEID` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
+* Save the file as `configuration.ini`
 
-## Modify Configuration Files
+> NOTE: Ideally the proxy assigned callsign/ID matches the unit device configuration but this is not controlled or required and care should be taken.
 
-Basic configuration for the local and remote Faraday devices need to be updated in the `receiver_configuration.ini` and `transmiter_configuration.ini` files. The `[local]` and `[remote]` INI file sections are respective to the configuration file.
+```python
+[DEVICES]
+UNITS=2
 
-### Transmiter INI Configuration
+; Transmitter - This should match the connected Faraday unit as assigned in Proxy configuration
+UNIT0CALL=REPLACEME
+UNIT0ID= REPLACEME
+
+; Receiver - This should match the programmed callsign of the remote Faraday device to be commanded (receive)
+UNIT1CALL=REPLACEME
+UNIT1ID= REPLACEME
+```
+
+##Transmit Python Script(s)
+
+There are two transmitter scripts provided that are used to send UART data to the intended transmitter Faraday which in turn forwards that data over a wireless transmission.
+
+* `tx.py` - Transmits a hardcoded message
+* `tx_user_input.py` - Transmits user input text
 
 
-* **[local]**
-  * Referenced to the local proxy device callsign and ID as set in the proxy configuration INI file.
+## Receiver Python Script
 
-* **[remote]**
-  * Referenced to the actual callsign and ID assigned to the remote unit's device configuration Flash memory. *This callsign and ID are used to address the RF packets to the correct device.*
-
-For example to transmit from a proxy device `KB1LQD-1` to a remote unit of `KB1LQD-2`:
-
-![Example Transmiter Configuration](Images/TX_Config.png "Example Transmiter Configuration")
-
-### Receiver INI Configuration
-
-* **[local]**
-  * Referenced to the local proxy device callsign and ID as set in the proxy configuration INI file.
-
-In this example `KB1LQD-2` is the receiving device and both the proxy allocation and the device programming are "`KB1LQD-2`. 
-
-![Example Receiver Configuration](Images/RX_Config.png "Example Receiver Configuration")
+The `rx.py` script is used to create the "receiver" for the received data packet(s) from the experimental packet forward command application "port". It continuously queries proxy for new packets on this port and if so it retrieves, parses, and displays them.
 
 ## Run The Receiver Program `rx.py`
 
@@ -62,11 +99,17 @@ Execute the `tx.py` program to transmit a long (larger than a single 41 byte Exp
 
 The message saved (feel free to edit you're own message in!) is `This is a test of a very long message that will be fragmented and reassembled!`. 
 
+![Fixed Length Message Received](Images/tx_message_Feb17.png "Fixed Length Message Received")
+
+The transmission propmt displays the fragment packets being transmitted. The first and last fragments are always the START and STOP packets.
+
 After transmission observe the receiver terminal, the message should have been received!
 
 ![Fixed Length Message Received](Images/rx_receive_fixed_length.png "Fixed Length Message Received")
 
-Note that original message has been recieved 100% correct. Although this message was split between 2 data packets and a START/END packet the message was reasembled. There is no error correction in this simple program, if corruption or loss occurs the message contents will not be 100% correct.
+Although this message was split between 2 data packets, START, and an END packet the message was reasembled.
+
+> There is no error correction in this simple program, if corruption or loss occurs the message contents will not be 100% correct.
 
 ## Run The User Input Transmitter Program `tx_user_input.py`
 
@@ -78,11 +121,11 @@ This transmitter program accepts user text input and after hitting the ENTER key
 
 ## Program Structure
 
-The transmit and receive messaging funcitons are provided by two class objects `MsgStateMachineTx()` and `MessageAppRx()` respectively in the `faradaymsg.py` script. These objects contain the fragmentation, sequencing, and other functions that create the simple messaging program. 
+The transmit and receive messaging funcitons are provided by two class objects `MsgStateMachineTx()` and `MessageAppRx()` respectively in the `faradaymsg.py` script. These objects contain the fragmentation, sequencing, and other functions that create the simple messaging protocol. 
 
 ## Fragmentation Packets
 
-Fragmentation of the packets must be accompanied by a method for the receiver to know when a new message has started, stopped, and the order of the received fragments. Three packet types have been created and are encapsulated inside a simple fixed length "Frame" (header) that indicates which packet type was received.
+Fragmentation of the packets to be transmitted must be accompanied by a method for the receiver to know when a new message has started, stopped, and the order of the received fragments. Three packet types have been created and are encapsulated inside a simple fixed length "Frame" (header) that indicates which packet type was received.
 
 ![Packet Types](Images/Fragmentation-Packets-States.png "Packet Types")
 
@@ -92,8 +135,18 @@ Fragmentation of the packets must be accompanied by a method for the receiver to
 
 * **END Packet:** Indicates the message transmission has completed and contains a final message size in bytes. The message size in bytes is a very simple error detection method although not very reliable (it will detect lost packets).
 
+in `class MsgStateMachineTx(object)`:
+
+``` Python
+        # Frame Definitions
+        self.pkt_datagram_frame = struct.Struct('1B 40s')  # Fixed
+        self.pkt_start = struct.Struct('9s 3B')  # Fixed
+        self.pkt_data = struct.Struct('2B 38s')  # Variable  Data Length
+        self.pkt_end = struct.Struct('1B')  # Fixed
+```
 
 ## Receiver - Assembling Fragmented Data
+The receiver program class is a simple state machine that detects and reassembles fragmented data messages. The state machine states are listed below.
 
 * **IDLE:** Program waits here until a new message to receive is detected (START packet)
 
@@ -107,7 +160,7 @@ Fragmentation of the packets must be accompanied by a method for the receiver to
 
 The code block below is from the `faraday_msg.py` receiver class `MessageAppRx(object)` and the function `parsepacketfromdatagram()` performs the parsing of the recieved packets. The state machine diagram above was implemented into code as shown below. 
 
-> Note: The state machine implementation is not strong and allows free movement to any state (i.e. END packet directly following a START packet).
+> Note: The state machine implementation is not strong and allows free movement to any state (i.e. END packet directly following a START packet). This may cause unintended operation in off nominal situations.
 
 ```python
  def parsepacketfromdatagram(self, datagram):    
@@ -178,7 +231,7 @@ for i in range(0, len(faraday_tx_msg_sm.list_packets), 1):
     faraday_tx_msg_object.transmitframe(faraday_tx_msg_sm.list_packets[i])
 ```
 
-The function `createmsgpackets()` in `faraday_msg.py` transmitter object `MsgStateMachineTx()` performs all of the packet and fragment creation. Note the DATA packet creation implemented, the program will pring debug information as seen in the tutorial script execution that gives insight into the pre/post fragmentation operations.
+The function `createmsgpackets()` in `faraday_msg.py` transmitter object `MsgStateMachineTx()` performs all of the packet and fragment creation.
 
 ```python
     def createmsgpackets(self, src_call, src_id, msg):
@@ -209,7 +262,7 @@ The function `createmsgpackets()` in `faraday_msg.py` transmitter object `MsgSta
 
 ```
 
-In the `faraday_msg.py` transmitter object the `fragmentmsg()` breaks the larger message into smaller sized packets that are within the MTU of the system.
+In the `faraday_msg.py` transmitter object the `fragmentmsg()` breaks the larger message into smaller sized packets that are within the MTU of the end-to-end network stack.
 
 ```python
     def fragmentmsg(self, msg):
@@ -239,7 +292,7 @@ for i in range(0, len(faraday_tx_msg_sm.list_packets), 1):
     faraday_tx_msg_object.transmitframe(faraday_tx_msg_sm.list_packets[i])
 ```
 
-Transmission is performed using the message application object predefined function that simply implements a standard `proxy.py` interface POST.
+Transmission is performed using the standard `proxy.py` interface POST.
 
 ```python
 def transmitframe(self, payload):
@@ -257,10 +310,6 @@ def transmitframe(self, payload):
 #Apendix
 
 ## Frame and Packet Definitions
-
-(Make better!)
-
-![Packets](Images/Packets.png "Packets")
-
+Placeholder
 
 

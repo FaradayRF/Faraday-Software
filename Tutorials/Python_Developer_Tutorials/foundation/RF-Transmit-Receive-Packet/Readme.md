@@ -79,9 +79,9 @@ UNIT1CALL=REPLACEME
 UNIT1ID= REPLACEME
 ```
 
-## Edit Local/Remote Device Information
 
-###Transmit Python Script(s)
+
+##Transmit Python Script(s)
 
 There are two transmitter scripts provided that are used to send UART data to the intended transmitter Faraday which in turn forwards that data over a wireless transmission.
 
@@ -89,7 +89,7 @@ There are two transmitter scripts provided that are used to send UART data to th
 * `Tutorial_Exp_RF_Packet_TX-User-Input.py` - Transmits user input text
 
 
-### Receiver Python Script
+## Receiver Python Script
 
 The `Tutorial_Exp_RF_Packet_RX.py` script is used to create the "receiver" for the received data packet(s) from the experimental packet forward command application "port". It continuously queries proxy for new packets on this port and if so it retrieves, parses, and displays them.
 
