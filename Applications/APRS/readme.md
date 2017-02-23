@@ -32,4 +32,5 @@ With these running simply run `aprs.py` and the application will startup. It con
  
 ## Correctly Running APRS Application
 ![APRS application running with fixed GPS location](images/APRS_Running_FixedPosition.exe.png "APRS Application")
+
 The application running above is nominal and connected to a `KB1LQC-1` Faraday radio through [Proxy](../../Proxy) which doesn't have a GPS. Since GPS Fix is therefore zero APRS simply warns that the unit has a bad GPS Fix. However, since we know it's configured with a fixed location in Flash memory this can be disregarded.
