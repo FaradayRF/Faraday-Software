@@ -285,7 +285,7 @@ class DeviceConfigClass:
 
         else:
             print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
-            print "ERROR: Altitude must be %g-%g" % (self.MIN_ALTITUDE_METERS, self.MAX_ALTITUDE_METERS)
+            print "ERROR: Altitude must be {0}-{1}".format(self.MIN_ALTITUDE_METERS, self.MAX_ALTITUDE_METERS)
             print "ERROR: Only numbers and a single decimal allowed"
             return False
 
