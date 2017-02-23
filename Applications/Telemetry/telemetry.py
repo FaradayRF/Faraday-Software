@@ -330,7 +330,7 @@ def stations():
         timespan = request.args.get("timespan", 5*60)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
-        callsign = request.args.get("callsign", None)
+        callsign = request.args.get("callsign", "%")
         nodeId = request.args.get("nodeid", "%")
 
         # Timespan will allways be an integer
