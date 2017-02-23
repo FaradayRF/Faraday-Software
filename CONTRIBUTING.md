@@ -2,11 +2,11 @@
 
 First, we would like to thank you for contributing to the open source project!
 
-This document contains information relavent to anyone wishing to contribute the [Faraday digital radio](https://faradayrf.com) host computer software. Our core mission is laid out in our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) and all contributions to the main project should help enable these goal set out.
+This document contains information relevant to anyone wishing to contribute the [Faraday digital radio](https://faradayrf.com) host computer software. Our core mission is laid out in our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) and all contributions to the main project should help enable these goal set out.
 
 [What should I know before I get started](#get_started)
 
-* [Code of Coduct](#code_of_conduct)
+* [Code of Conduct](#code_of_conduct)
 * [Software Design and Purpose](#software_design)
 * [Language(s)](#language)
 * [Tools](#tools)
@@ -20,7 +20,7 @@ This document contains information relavent to anyone wishing to contribute the 
 
 [Styleguides](#styleguides)
 
-* [Documentaion](#documentation)
+* [Documentation](#documentation)
 * [Python - PEP8](#pep8)
 
 #What Should I Know Before I Get Started <a name="get_started"></a>
@@ -40,7 +40,7 @@ Faraday Software is written in [Python 2.7](https://www.python.org/downloads/).
 ###Notable Python Modules <a name="notable_python_modules"></a>
 Notable additional Python modules in use are:
 
-* [FLASK](http://flask.pocoo.org/) - A microframework for web development that is used to transfer information between Faraday and applications over a network interface (primarally localhost)
+* [FLASK](http://flask.pocoo.org/) - A microframework for web development that is used to transfer information between Faraday and applications over a network interface (primarily localhost)
 
 ## Tools<a name="tools"></a>
 Please use the tools of your choice but we recommend:
@@ -59,7 +59,7 @@ Following these simple guidelines will help the maintainers better understand yo
 * **Perform basic debugging**
   * Are you using the latest version?
   * Have you changed your configuration of both software or Faraday device from default? (if so please specify)
-  * Are multiple programs running that may be interferring?
+  * Are multiple programs running that may be interfering?
 * **Use a clear and descriptive title****
 * **Describe the exact steps used to reproduce the bug**
 * **Describe the exact problem behavior you observed**
@@ -78,14 +78,12 @@ Suggesting enhancements is one of the most important factors to driving innovati
 * **Explain why this is a useful enhancement to the community**
 
 
-## Begginer Contributions <a name="beginner_contributions"></a>
+## Beginner Contributions <a name="beginner_contributions"></a>
 
-If you are not sure how to start off contributing to the project browse the tagged begginner issues below.
+If you are not sure how to start off contributing to the project browse the tagged beginner issues below.
 
-* Begginner Issues - Simple issues where the solution is likley a few lines of code or less
-* Documentation Updates - Clear and consitant documenation is key to building a knowlegable and growing community
-
-**TODO:** Add links to Github issue filters for the above.
+* [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
+* [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
 
 ##Pull Requests <a name="pull_requests"></a>
@@ -105,7 +103,7 @@ All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/p
 
 ## Documentation <a name="documentation"></a>
 
-Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx}(http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documenation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
+Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx](http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documentation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
 
 * [Sphinx Documentation](http://www.sphinx-doc.org/en/stable/contents.html)
 * [Examples Of Good Python Docstrings](http://www.sphinx-doc.org/en/stable/ext/example_google.html)
