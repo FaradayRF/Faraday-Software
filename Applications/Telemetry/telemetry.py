@@ -330,7 +330,7 @@ def stations():
         timespan = request.args.get("timespan", 5*60)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
-        callsign = request.args.get("callsign", "%")
+        callsign = request.args.get("callsign", "%").upper()
         nodeId = request.args.get("nodeid", "%")
 
         # Timespan will allways be an integer
@@ -587,21 +587,16 @@ def queryStationsDb(parameters):
     sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
 
     # detect if callsign/nodeid provided, return the last time it was heard
-    if parameters["CALLSIGN"] != None:
-        # Since a callsign was specified, simply search the entire db for it
-        # and return the last epoch time it was heard.
-        timeTuple = (0, time.time())
+    # Since a callsign was specified, simply search the entire db for it
+    # and return the last epoch time it was heard.
+    timeTuple = (0, time.time())
 
-        # Update the sqlWhere and sqlEnd strings for this query
-        sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ? AND SOURCEID LIKE ? "
-        sqlEnd = sqlEnd + " LIMIT 1"
+    # Update the sqlWhere and sqlEnd strings for this query
+    sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ? AND SOURCEID LIKE ? "
+    sqlEnd = sqlEnd + " LIMIT 1"
 
-        # Create paramTuple for SQLite3 execute function
-        paramTuple = timeTuple + (str(parameters["CALLSIGN"]), parameters["NODEID"])
-    else:
-        # No callsign was provided, keep SQL query as defined
-        # Create paramTuple from only timeTuple
-        paramTuple = timeTuple
+    # Create paramTuple for SQLite3 execute function
+    paramTuple = timeTuple + (parameters["CALLSIGN"], parameters["NODEID"])
 
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
