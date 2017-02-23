@@ -237,7 +237,7 @@ def proxy():
                 # Required
                 raise StandardError("Missing 'callsign' parameter")
             else:
-                # Ensure callsign value is a stringe
+                # Ensure callsign value is a string
                 callsign = str(callsign)
             if nodeid is None:
                 # Required
