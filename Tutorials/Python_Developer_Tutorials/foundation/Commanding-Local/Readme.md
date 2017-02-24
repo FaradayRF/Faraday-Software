@@ -83,7 +83,7 @@ If any bits are HIGH (1) in the bitmask bytes then the respective ON/OFF action 
 * Toggles PORT 3 BIT 1 pin HIGH
 * Toggles PORT 4 BIT 3 pin LOW
 
-Bitwise operations are possible to simplified and consolidate the syntax to command multiple GPIO's.
+Bitwise operations allow multiple GPIO's to be commanded simultaneously.
 
 `faraday_cmd.CommandLocalGPIO(BIT1|BIT5|BIT6, 0, 0, 0, 0, 0)`
 
@@ -110,9 +110,9 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ```
 ## Code - Command ECHO
 
-A simple ECHO like command is programmed into Faraday's command program that will simply send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
+A simple ECHO like command is provided that will send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
 
-This command example is pretty self explaining and simply sends the string `"This will ECHO back on UART"` to the local Faraday device and retrieves, parses, and displays the ECHO'd packet. Note the padding bytes likely visible due to fixed length UART transport packet formatting appended to the original message. Also, this command accepts binary data values (not just ASCII string text)!
+This example sends the string `"This will ECHO back on UART"` to the local Faraday device and retrieves, parses, and displays the ECHO'd packet. Note the appended padding bytes visible due to fixed length UART transport packet.
 
 ```python
 ###############
@@ -153,6 +153,5 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 #Bonus Exercise
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
-* Can you do this variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
-  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) framing (packet) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
+  * Can you support variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
 
