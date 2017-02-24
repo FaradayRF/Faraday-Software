@@ -7,12 +7,20 @@ __pycache__/
 # Sphinx documentation
 docs/_build/
 
+# APRS application
+Applications/APRS/aprs.ini
+
+# Device Configuration
+Applications/deviceconfiguration/deviceconfiguration.ini
+Applications/deviceconfiguration/faraday_config.ini
+
 # Telemetry database
+Applications/Telemetry/telemetry.ini
 Applications/Telemetry/*.db
 Applications/Telemetry/*.db-journal
 
-# APRS application
-Applications/APRS/login.ini
+# Proxy
+proxy/proxy.ini
 
 #IDE (Pycharm)
 .idea*
