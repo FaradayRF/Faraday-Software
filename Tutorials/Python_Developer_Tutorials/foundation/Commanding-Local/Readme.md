@@ -1,22 +1,28 @@
 
-# Tutorial - Proxy Interaction Basics
+# Tutorial - Command Local
 
-This tutorial will introduce commanding a local Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
-
-To clarify the tutorials subjects covered in detail in prior tutorials are not overviewed in the tutorials that follow (i.e. Imports or initializing proxy tool modules).
+This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
 
 The example tutorial code focuses on how to:
 
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
-> NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
+> NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or garenteed to be received.
+
+### Prerequisites
+* Properly configured and connected proxy
+  * Single Faraday
 
 #Running The Tutorial Example Script
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
+* Open `configuration-template.ini` with a text editor
+* Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+* Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Save the file as `configuration.ini`
+
 
 
 ## Tutorial Output Examples
@@ -114,6 +120,7 @@ This command example is pretty self explaining and simply sends the string `"Thi
 ###############
 ## ECHO MESSAGE
 ###############
+print "\n** Beginning ECHO command test** \n"
 #Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
 originalmsg = "This will ECHO back on UART" #Cannot be longer than max UART payload size!
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
@@ -127,10 +134,12 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
+print "**Sending**\n"
 print "Original Message: ", originalmsg
-print "RAW Received BASE64 ECHO'd Message:", b64_data
-print "Decoded received ECHO'd Message:", echo_decoded #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
-
+print "\n**Receiving**\n"
+print "Decoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 ```
 
 
@@ -146,12 +155,6 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 #Bonus Excersize
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
-* Can you do this variably given any string length using only the packets sent and received?
-  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
-
-#See Also
-
-* [Proxy Tool - FaradayIO](http://faraday-software.readthedocs.io/en/latest/faradayio.html)
-* [Proxy Tool - TelemetryParser](http://faraday-software.readthedocs.io/en/latest/telemetryparser.html)
-* Command Application
+* Can you do this variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
+  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) framing (packet) and [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
 

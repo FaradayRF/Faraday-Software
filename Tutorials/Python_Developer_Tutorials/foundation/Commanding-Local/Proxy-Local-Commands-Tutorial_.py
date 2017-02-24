@@ -3,7 +3,11 @@
 
 #Imports - General
 
-import os, sys
+import os
+import sys
+import time
+import ConfigParser
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -11,14 +15,18 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import gpioallocations
 
-import time
+
+#Open configuration INI
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("configuration.ini")
+config.read(filename)
 
 #Definitions
 
-
 #Variables
-local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.get("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = str(local_device_callsign).upper()
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -66,7 +74,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ###############
 ## ECHO MESSAGE
 ###############
-print "/n** Beginning ECHO command test** /n"
+print "\n** Beginning ECHO command test** \n"
 #Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
 originalmsg = "This will ECHO back on UART" #Cannot be longer than max UART payload size!
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
@@ -80,8 +88,18 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
+print "**Sending**\n"
 print "Original Message: ", originalmsg
-print "RAW Received BASE64 ECHO'd Message:", b64_data
-print "Decoded received ECHO'd Message:", echo_decoded #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\n**Receiving**\n"
+print "Decoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 
 
+
+print "************************************"
+print "\nQuit with ctrl+c"
+while(True):
+    #Loop until user presses ctrl+c so they can read response
+    time.sleep(1)
+    pass
