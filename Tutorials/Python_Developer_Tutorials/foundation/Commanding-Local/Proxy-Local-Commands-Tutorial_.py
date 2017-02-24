@@ -57,12 +57,12 @@ time.sleep(1)
 
 # Turn LED 2 OFF LOCAL
 print "Turning Off the Red LED (LED #2)"
-command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.LED_2, 0, 0)  # This examples how the non predefined LED GPIO commanding is created. Multiple GPIO's can be toggled at once using ||'s
+command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.LED_2, 0, 0)  # This examples how the non predefined LED GPIO commanding is created.
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)  # Delay so it is obvious that both LED's turn on at the same time in the next command
 
 # Turn Both LED 1 and LED 2 ON simultaneously
-print "Turning ON both the Green and Red LED (LED #1 + LED #2)"
+print "Turning ON both the Green and Red LED (LED #1 | LED #2)"
 command = faraday_cmd.CommandLocalGPIO((gpioallocations.LED_1 | gpioallocations.LED_2), 0, 0, 0, 0, 0)
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
@@ -72,20 +72,21 @@ print "Turning Off both the Green and Red LED (LED #1 + LED #2)"
 command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.LED_1 | gpioallocations.LED_2), 0, 0)
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 
+
 ###############
 ## ECHO MESSAGE
 ###############
 print "\n** Beginning ECHO command test** \n"
-# Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
-originalmsg = "This will ECHO back on UART"  # Cannot be longer than max UART payload size!
+originalmsg = "This will ECHO back on UART"  # Cannot be longer than max UART Transport layer payload size!
+#  Create command packet
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
+#  Send command
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
-
-# Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or return False).
+#  Retrive waiting data packet in UART Transport service number for the COMMAND application (Use GETWait() to block until ready or timeout
 rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
                                 sec_timeout=3)  # Wait for up to 3 seconds for data to arrive
 
-# Now parse data again
+# Decode BASE 64 encoded data from Proxy - Only using the [0] index packet (first) if multiple are retrieved
 b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
