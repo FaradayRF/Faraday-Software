@@ -86,17 +86,21 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 rx_echo_raw = faraday_1.GETWait(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
                                 sec_timeout=3)  # Wait for up to 3 seconds for data to arrive
 
-# Decode BASE 64 encoded data from Proxy - Only using the [0] index packet (first) if multiple are retrieved
-b64_data = rx_echo_raw[0]['data']
-echo_decoded = faraday_1.DecodeRawPacket(b64_data)
+try:
+    # Decode BASE 64 encoded data from Proxy - Only using the [0] index packet (first) if multiple are retrieved
+    b64_data = rx_echo_raw[0]['data']
+    echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
-# Display information
-print "**Sending**\n"
-print "Original Message: ", originalmsg
-print "\n**Receiving**\n"
-print "Decoded received ECHO'd Message:", echo_decoded  # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
-print "\nRAW Received BASE64 ECHO'd Message:", b64_data
-print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
+    # Display information
+    print "**Sending**\n"
+    print "Original Message: ", originalmsg
+    print "\n**Receiving**\n"
+    print "Decoded received ECHO'd Message:", echo_decoded  # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+    print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+    print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
+
+except Exception as e:
+    print "Failed ECHO:", e
 
 print "************************************"
 print "\nQuit with ctrl+c"
