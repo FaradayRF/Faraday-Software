@@ -8,7 +8,7 @@ The example tutorial code focuses on how to:
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
-> NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or garenteed to be received.
+> NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or guaranteed to be received.
 
 ### Prerequisites
 * Properly configured and connected proxy
@@ -19,7 +19,7 @@ The example tutorial code focuses on how to:
 ## Configuration
 
 * Open `configuration-template.ini` with a text editor
-* Update `CALLSIGN` Replace ```REPLACEME``` to match the callsign of the Faraday unit **as assigned** in proxy
+* Update `CALLSIGN` Replace `REPLACEME` to match the callsign of the Faraday unit **as assigned** in proxy
 * Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
 * Save the file as `configuration.ini`
 
@@ -27,9 +27,9 @@ The example tutorial code focuses on how to:
 
 ## Tutorial Output Examples
 
-below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is runing to observe them turing ON and off.
+below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turing ON and off.
 
-> Note: GPIO's being commanded may be recieving other commands and not work as intended if multiple programs are controlling a single GPIO (i.e. RED due to RF TX indication)
+> Note: GPIO's being commanded may be receiving other commands and not work as intended if multiple programs are controlling a single GPIO (i.e. RED due to RF TX indication)
 
 
 ![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
@@ -69,7 +69,7 @@ time.sleep(1)
 
 ## Code - Toggle GPIO's (LEDs) Bitmask
 
-The previous code used pre-defined functions for toggling GPIO and left LED #2 ON. Those predefined functions are actually just providing an abstraction of the raw command for GPIO bitmask control. The GPIO bitmask control is part of the Command Application and provides both ON/OFF control of many GPIO in a single command while also guarding potentially damaging GPIO from being accidently changed (i.e. removes ability to manually toggle the RF amplifier control GPIO).
+The previous code used pre-defined functions for toggling GPIO and left LED #2 ON. Those predefined functions are actually just providing an abstraction of the raw command for GPIO bitmask control. The GPIO bitmask control is part of the Command Application and provides both ON/OFF control of many GPIO in a single command while also guarding potentially damaging GPIO from being accidentally changed (i.e. removes ability to manually toggle the RF amplifier control GPIO).
 
 The Python module function `faraday_cmd.CommandLocalGPIO()` contains 6 function arguments:
 
@@ -112,7 +112,7 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ```
 ## Code - Command ECHO
 
-A simple ECHO like command is programmed into Farday's command program that will simply send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
+A simple ECHO like command is programmed into Faraday's command program that will simply send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
 
 This command example is pretty self explaining and simply sends the string `"This will ECHO back on UART"` to the local Faraday device and retrieves, parses, and displays the ECHO'd packet. Note the padding bytes likely visible due to fixed length UART transport packet formatting appended to the original message. Also, this command accepts binary data values (not just ASCII string text)!
 
@@ -152,7 +152,7 @@ below is a screenshot of the partial output of the tutorial script when run in a
 
 The padding bytes are clearly visible appended to the end of the returned ECHO'd string. 
 
-#Bonus Excersize
+#Bonus Exercise
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
 * Can you do this variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
