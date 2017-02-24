@@ -124,7 +124,7 @@ def proxy():
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
             port = request.args.get("port")
-            callsign = request.args.get("callsign")
+            callsign = request.args.get("callsign").upper()
             nodeid = request.args.get("nodeid")
 
             # Check for parameters and ensure all required are present and of
@@ -145,8 +145,8 @@ def proxy():
                 # Required
                 raise StandardError("Missing 'callsign' parameter")
             else:
-                # Ensure callsign value is a string and all uppercase
-                callsign = str(callsign).upper()
+                # Ensure callsign value is a string
+                callsign = str(callsign)
 
             if nodeid is None:
                 # Required
@@ -173,7 +173,7 @@ def proxy():
 
         # Create station name and check for presents of postDicts queue.
         # Error if not present since this means unit not in proxy.ini configs
-        station = str(callsign) + "-" + str(nodeid)
+        station = callsign + "-" + str(nodeid)
         try:
             postDicts[station]
         except KeyError as e:
@@ -208,7 +208,7 @@ def proxy():
         try:
             port = request.args.get("port")
             limit = request.args.get("limit", 100)
-            callsign = request.args.get("callsign")
+            callsign = request.args.get("callsign").upper()
             nodeid = request.args.get("nodeid")
 
         except ValueError as e:
@@ -237,8 +237,8 @@ def proxy():
                 # Required
                 raise StandardError("Missing 'callsign' parameter")
             else:
-                # Ensure callsign value is a string and all uppercase
-                callsign = str(callsign).upper()
+                # Ensure callsign value is a string
+                callsign = str(callsign)
             if nodeid is None:
                 # Required
                 raise StandardError("Missing 'nodeid' parameter")
@@ -250,7 +250,7 @@ def proxy():
                         "Faraday Node ID's valid integer between 0-255")
 
             # Make sure port exists before checking it's contents and length
-            station = str(callsign) + "-" + str(nodeid)
+            station = callsign + "-" + str(nodeid)
             try:
                 getDicts[station][port]
             except KeyError as e:
@@ -285,13 +285,13 @@ def proxy():
         # Return data from queue to RESTapi
         # If data is in port queu, turn it into JSON and return
         try:
-            if (len(getDicts[str(callsign) + "-" + str(nodeid)][port]) > 0):
+            if (len(getDicts[callsign + "-" + str(nodeid)][port]) > 0):
                 queryTime = time.asctime(time.localtime(time.time()))
                 data = []
-                while getDicts[str(callsign) + "-" + str(nodeid)][port]:
+                while getDicts[callsign + "-" + str(nodeid)][port]:
                     packet = \
                         getDicts[
-                            str(callsign) + "-" + str(nodeid)][port].popleft()
+                            callsign + "-" + str(nodeid)][port].popleft()
                     data.append(packet)
                     if len(data) >= limit:
                         break
@@ -331,8 +331,9 @@ def callsign2COM():
     units = range(0, num)
 
     for unit in units:
+        # TODO We don't really check for valid input here yet
         item = "UNIT" + str(unit)
-        callsign = proxyConfig.get(item, "callsign")
+        callsign = proxyConfig.get(item, "callsign").upper()
         nodeid = proxyConfig.get(item, "nodeid")
         com = proxyConfig.get(item, "com")
         baudrate = proxyConfig.getint(item, "baudrate")
