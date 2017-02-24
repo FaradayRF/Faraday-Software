@@ -1,7 +1,7 @@
 
 # Tutorial - Command Local
 
-This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
+This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the Faraday Commands module.
 
 The example tutorial code focuses on how to:
 
@@ -12,9 +12,9 @@ The example tutorial code focuses on how to:
 
 ### Prerequisites
 * Properly configured and connected proxy
-  * Single Faraday
+  * 1x Faraday
 
-#Running The Tutorial Example Script
+# Running The Tutorial Example Script
 
 ## Configuration
 
@@ -27,9 +27,7 @@ The example tutorial code focuses on how to:
 
 ## Tutorial Output Examples
 
-below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turing ON and off.
-
-> Note: GPIO's being commanded may be receiving other commands and not work as intended if multiple programs are controlling a single GPIO (i.e. RED due to RF TX indication)
+below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turing ON and OFF.
 
 
 ![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
@@ -39,7 +37,7 @@ below is a screen-shot of the partial output of the tutorial script when run in 
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
 
-The Faraday command module object pre-defines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
+The Faraday command module object predefine's many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
 
 `faraday_cmd.CommandLocalGPIOLED1On()` returns a completed command packet ready to be sent to the local device over the proxy interface (UART) and must be sent over the correct UART service port (PORT 2) for the command application running on Faraday's CC430. This is predefined as the class variable `faraday_1.CMD_UART_PORT`.
 
@@ -69,14 +67,14 @@ time.sleep(1)
 
 ## Code - Toggle GPIO's (LEDs) Bitmask
 
-The previous code used pre-defined functions for toggling GPIO and left LED #2 ON. Those predefined functions are actually just providing an abstraction of the raw command for GPIO bitmask control. The GPIO bitmask control is part of the Command Application and provides both ON/OFF control of many GPIO in a single command while also guarding potentially damaging GPIO from being accidentally changed (i.e. removes ability to manually toggle the RF amplifier control GPIO).
+The predefined functions are actually just providing an abstraction of the `CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off)` function that provides GPIO bitmask control of all controllable GPIO pins. This functionality is part of the Command Application and provides control of all GPIO in a single command while also guarding potentially damaging GPIO from being accidentally changed (i.e. removes ability to manually toggle the RF amplifier GPIO).
 
 The Python module function `faraday_cmd.CommandLocalGPIO()` contains 6 function arguments:
 
 * 3 function arguments for commanding GPIO ports 3, 4, 5 pins ON
 * 3 function arguments for commanding GPIO ports 3, 4, 5 pins OFF
 
-If any bits are HIGH (1) in the bitmask bytes then that respective pin will be toggled ON (HIGH), if a bit is left LOW (0) then no action will take place and the bit will remain in it's current HIGH/LOW state.
+If any bits are HIGH (1) in the bitmask bytes then the respective ON/OFF action will be applied to that bitmask's pin, if a bit is left LOW (0) then no action will take place and the pin will remain in it's current HIGH/LOW state. Commanding both and HIGH and LOW for the same port/pin is not allowed.
 
 **For Example:**
 
