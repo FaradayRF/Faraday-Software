@@ -41,6 +41,8 @@ class DeviceConfigClass:
         self.MAX_GPS_LONGITUDE_LEADING_LEN = 5
         self.MAX_GPS_LONGITUDE_TRAILING_LEN = 4
         self.MAX_GPS_LONGITUDE_DIR_LEN = 1
+        self.MIN_ALTITUDE_METERS = 0
+        self.MAX_ALTITUDE_METERS = 17999.99
         self.MAX_ALTITUDE_LEN = 8
         self.MAX_ALTITUDE_UNITS_LEN = 1
         self.CONFIG_PACKET_LENGTH = 116
@@ -259,10 +261,10 @@ class DeviceConfigClass:
                                                                                       0x30)
             longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
 
-        # Check Altitude formatting
-        alt_check = len(altitude_str) <= self.MAX_ALTITUDE_LEN
-        if float(altitude_str) < 0 or float(altitude_str) > 17999.9: # Don't accept negative altitude for now...
-            alt_check = False
+        # Check Altitude formatting and bounds
+        alt_check = ((len(altitude_str) <= self.MAX_ALTITUDE_LEN) and
+                     (float(altitude_str) >= self.MIN_ALTITUDE_METERS) and
+                     (float(altitude_str) <= self.MAX_ALTITUDE_METERS))
         alt_units_check = len(altitude_units_str) <= self.MAX_ALTITUDE_UNITS_LEN
 
         # Format altitude with prepended bytes if needed
@@ -283,7 +285,7 @@ class DeviceConfigClass:
 
         else:
             print "ERROR: GPS string(s) too long OR NMEA DMM formatting incorrect"
-            print "ERROR: Altitude must be 0-17999.99"
+            print "ERROR: Altitude must be {0}-{1}".format(self.MIN_ALTITUDE_METERS, self.MAX_ALTITUDE_METERS)
             print "ERROR: Only numbers and a single decimal allowed"
             return False
 
