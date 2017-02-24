@@ -150,6 +150,12 @@ below is a screenshot of the partial output of the tutorial script when run in a
 
 The padding bytes are clearly visible appended to the end of the returned ECHO'd string. 
 
+### ECHO Exception - Failure
+
+There is a [known bug](https://github.com/FaradayRF/Faraday-Software/issues/50) that may cause the first packet from Proxy to not properly be retrieved and this has caused ECHO to fail. The workaround to this until it is patched is to simply re-run the tutorial script **without** restarting proxy.
+
+![Output from the Commanding - Local Tutorial](Images/Echo_Exception.png "Output from the Commanding - Local Tutorial")
+
 #Bonus Exercise
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
