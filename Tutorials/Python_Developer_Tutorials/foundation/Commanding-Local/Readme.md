@@ -155,3 +155,7 @@ The padding bytes are clearly visible appended to the end of the returned ECHO'd
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
   * Can you support variably given any string length using only the packets sent and received ("Decoded BASE64 RAW Bytes")?
 
+# To-Do
+* Additional tutorials/documentation
+  * Command Application documentation
+  * UART protocol documentation
