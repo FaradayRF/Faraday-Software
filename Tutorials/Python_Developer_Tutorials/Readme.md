@@ -1,7 +1,12 @@
 
 # Faraday Python Developer Tutorials
 
-This tutorial series is focused on introducing Faraday as a digital radio platform. The reader will begin by learning fundamental commands used to used to both communicate with a locally connected Faraday as well as commands used to control and transfer data to remote Faraday radios using wireless transmissions. Each tutorial series builds upon the prior to create a simple wireless transmission program capable of transmitting both text and arbitrary data from one Faraday to another.
+This tutorial series is focused on introducing Faraday as a digital radio platform. The tutorial is focused on:
+
+* Learning fundamental commands used to command/communicate with a locally connected Faraday
+* Learning commands used to transfer data to a remote Faraday radio using wireless transmissions
+
+Each tutorial series builds upon the prior to create a simple wireless transmission program capable of transmitting both text and arbitrary data from one Faraday to another.
 
 **Key Concepts**
 
@@ -31,4 +36,5 @@ This tutorial series is focused on introducing Faraday as a digital radio platfo
 * **[Simple Text Messaging](foundation/Simple_Text_Messaging/) (OUTDATED - UPDATE IN PROGRESS)**
   * Utilizing the experimental RF packet forwarding command to build a simple text messaging application.
 * **[Simple Text Messaging - Creating Functional Objects](foundation/Simple_Text_Messaging_Creating_Objects/) (OUTDATED - UPDATE IN PROGRESS)**
-  * This example tutorial implements the "Simple Text Messaging" application into a generic transmitter/receiver python object. This is a major step towards implemented a RESTful FLASK based application interface. 
+  * This example tutorial implements the "Simple Text Messaging" application into a generic transmitter/receiver python object. This is a major step towards implementing a RESTful Flask based application interface.
+
