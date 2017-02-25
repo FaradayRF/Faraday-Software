@@ -26,7 +26,7 @@ config.read(filename)
 # Variables
 local_device_callsign = config.get("DEVICES",
                                    "UNIT0CALL")  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = config.get("DEVICES",
+local_device_node_id = config.getint("DEVICES",
                                   "UNIT0ID")  # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_callsign = str(local_device_callsign).upper()
 
