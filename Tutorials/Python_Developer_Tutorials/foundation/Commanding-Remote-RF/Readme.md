@@ -1,24 +1,24 @@
 
 # Tutorial - Remote RF Command
 
-This tutorial introduces basic wireless commanding between two Farday devices. 
+This tutorial introduces basic wireless commanding between two Faraday devices.
 
 ### Prerequisites
 * Properly configured and connected proxy
   * x1 Faraday connected to local computer
-  * x1 Faraday powered within radio range
+  * x1 Faraday powered within radio range (can be USB powered on same computer)
  
 > Note: Keep the units separated a few feet apart and ensure the RF power settings are below ~20 to avoid de-sensing the CC430 front end receiver!
 
-#Running The Tutorial Example Script
+# Running The Tutorial Example Script
 
 ## Configuration
 
 * Open `commanding-remote.sample.ini` with a text editor
-* Transmitter
+* **Transmitter**
   * Update `REPLACEME` from `CALLSIGN` to match the callsign of the Faraday unit **as assigned** in proxy
   * Update `REPLACEME` from `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
-* Receiver
+* **Receiver**
   * Update `REPLACEME` from `CALLSIGN` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
   * Update `REPLACEME` from `NODEID` to match the callsign of the remote Faraday unit as configured in the devices FLASH memory configuration
 * Save the file as `commanding-remote.ini`
