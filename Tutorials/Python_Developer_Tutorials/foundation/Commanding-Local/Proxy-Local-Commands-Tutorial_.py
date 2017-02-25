@@ -18,7 +18,7 @@ from FaradayIO import gpioallocations
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("configuration.ini")
+filename = os.path.abspath("command_local.sample.ini")
 config.read(filename)
 
 # Definitions

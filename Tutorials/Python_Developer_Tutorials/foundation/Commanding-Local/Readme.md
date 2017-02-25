@@ -18,7 +18,7 @@ The example tutorial code focuses on how to:
 
 ## Configuration
 
-* Open `configuration-template.ini` with a text editor
+* Open `command_local.sample.ini` with a text editor
 * Update `CALLSIGN` Replace `REPLACEME` to match the callsign of the Faraday unit **as assigned** in proxy
 * Update `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
 * Save the file as `configuration.ini`
