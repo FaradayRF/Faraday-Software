@@ -18,7 +18,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 
 #Open configuration INI
 config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("configuration.ini")
+filename = os.path.abspath("commanding-remote.ini")
 config.read(filename)
 
 #Definitions
