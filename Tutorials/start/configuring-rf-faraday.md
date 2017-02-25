@@ -1,35 +1,38 @@
-# Configuring Faraday
+# Configuring Faraday for RF Operation
 
-Now we should configure Faraday itself. The device configuration data is stored in the CC430 Flash memory and is used to store the callsign, ID, static GPS location, telemetry interval, and other settings.
+Having [configured Faraday](configuring-faraday.imd) for local USB connected telemetry and LED commanding you are now ready to configure Faraday for RF operation. The default configuration file does not enable the RF transmitter. Now we will enable and configure Faraday to transmit with your FCC Part 97 callsign on the 33cm ham band.
 
-In the deviceconfiguration folder located in the Applications folder lives our Device Configuration program, `deviceconfiguration.py`, which is a Flask application that is run in the background waiting to be given data to program on Faraday. It exposes a RESTful API to do so and communicates with Proxy in order to configure the radio. `simpleconfig.py` is a script which reads the `faraday_config.ini` file and sends HTTP POST and GET queries to the `deviceconfiguration.py` server.
-
+We will again be using the `deviceconfiguration` Application to configure Faraday
 The application files are located:
 
  * `~/Applications/deviceconfiguration`
+
+Proxy and deviceconfiguration should be configured to communicate with the Faraday being programmed. Therefore if you already programmed `KB1LQC-1` and are now programming a second radio `KB1LQC-2` then `proxy.ini` should be updated along with `deviceconfiguration.ini`
 
 > NOTE: Device Configuration using the application tool in this tutorial is currently limited to programming a single device at a time. Also, this process will be automated in the future.
 
 ## Device Configuration Setup
 
-First we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`
+First we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`. Update `UNIT0CALL` and `UNIT0ID` to refer to the correct Faraday radio currently attached to Proxy.
 
-`[FLASK]`: Flask server configuration values
- * `HOST`: IP Address or hostname of flask server
- * `PORT`: Network port to serve data
-
-
-`[DEVICES]`: Unit 0 Proxy configuration values section
- * `UNITS`: Quantity of Faraday radios to configure (supports one at this time)
- * `UNIT0CALL`: Callsign to associate with radio connected to Proxy
- * `UNIT0ID`: Node ID of radio connected to Proxy
 
 ## Faraday Configuration
 
-Now you should update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. For now just update the `CALLSIGN` and `ID` as well as any placeholder GPS fields. Simpleconfig will error with relevant information about what is wrong in your configuration.
+Now you should update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. Simpleconfig will error with relevant information about what is wrong in your configuration if you made a mistake.
+
+To program a unit for initial RF operation with default settings, the following values should be updated:
+
+ * `CALLSIGN=<Intended Callsign>`
+ * `ID=<intended ID>`
+ * `BOOT_RF_POWER=<Power setting 0-152 (min-max)>`
+ * `RF_TELEMETRY_BOOT_BIT=<Set to 1 for automatic RF telemetry transmissions ater boot-up>`
+ * `TELEMETRY_DEFAULT_RF_INTERVAL=<Value in seconds for RF telemetry packet transmissions>`
+
+ These are the absolute must-have configured items for RF transmission. We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be maximum output.
+
+ Below is a reference of the entire `faraday_config.ini`. It should be taken into consideration if you would like to power on the GPS or program a default lat/lon.
 
 `[BASIC]`
- * `CONFIGBOOTBITMASK` Keep set to 1, indicates configuration has occured.
  * `CALLSIGN` Faraday radio callsign (9 characters)
  * `ID` Faraday radio node ID (0-255)
  * `GPIO_P3` Default CC430 P3 IO state, all considerd outputs at this time
@@ -78,5 +81,4 @@ Note:
 ## Proxy Considerations
 Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.
 
-# Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTful API. Next step, [run the  Telemetry application](telemetrystart.md) and use the Faraday API to see data in your web browser!
+# Using RF Telemetry
