@@ -18,7 +18,7 @@ from FaradayIO import gpioallocations
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("command_local.sample.ini")
+filename = os.path.abspath("command_local.ini")
 config.read(filename)
 
 # Definitions
@@ -101,7 +101,7 @@ try:
     print "\nRAW Received BASE64 ECHO'd Message:", b64_data
     print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 
-except TypeError as e:
+except Exception as e:
     print "Failed ECHO due to type error:", e
 
 print "************************************"
