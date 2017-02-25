@@ -25,10 +25,9 @@ config.read(filename)
 
 # Variables
 local_device_callsign = config.get("DEVICES",
-                                   "UNIT0CALL")  # Should match the connected Faraday unit as assigned in Proxy configuration
+                                   "UNIT0CALL").upper()  # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_node_id = config.getint("DEVICES",
                                   "UNIT0ID")  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_callsign = str(local_device_callsign).upper()
 
 # Start the proxy server after configuring the configuration file correctly
 # Setup a Faraday IO object
@@ -78,6 +77,11 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ###############
 print "\n** Beginning ECHO command test** \n"
 originalmsg = "This will ECHO back on UART"  # Cannot be longer than max UART Transport layer payload size!
+
+# Display information
+print "**Sending**\n"
+print "Original Message: ", originalmsg
+
 #  Create command packet
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
 #  Send command
@@ -92,15 +96,13 @@ try:
     echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
     # Display information
-    print "**Sending**\n"
-    print "Original Message: ", originalmsg
     print "\n**Receiving**\n"
     print "Decoded received ECHO'd Message:", echo_decoded  # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
     print "\nRAW Received BASE64 ECHO'd Message:", b64_data
     print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 
-except Exception as e:
-    print "Failed ECHO:", e
+except TypeError as e:
+    print "Failed ECHO due to type error:", e
 
 print "************************************"
 print "\nQuit with ctrl+c"
