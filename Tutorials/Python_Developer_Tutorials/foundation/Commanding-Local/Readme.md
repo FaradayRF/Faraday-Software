@@ -160,8 +160,3 @@ There is a [known bug](https://github.com/FaradayRF/Faraday-Software/issues/50) 
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
   * Can you do this with variable length ECHO data?
-
-# To-Do
-* Additional tutorials/documentation
-  * Command Application documentation
-  * UART protocol documentation
