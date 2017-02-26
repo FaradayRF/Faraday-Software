@@ -12,7 +12,9 @@ Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true t
  4. [Configuring Proxy](configuring-proxy.md)
  5. [Configuring Faraday](configuring-faraday.md)
  6. [Starting With Telemetry](telemetrystart.md)
- 6. [Turn on The LED's](hello-world.md)
+ 7. [Turn on The LED's](hello-world.md)
+ 8. [Configuring RF](configuring-rf-faraday.md)
+ 9. [RF Playground](rfplaygrond.md)
  
 ## Using Applications
 Once setup and familiar with the basics of Faraday we encourage you to explore our core applications. At this time you've already played a little with [Telemetry](../../Applications/Telemetry) using the web browser. Head over the documentation again and install DB Browser for SQLite as it is extremely useful when working with telemetry as you can sort and plot data as well as export to CSV files.

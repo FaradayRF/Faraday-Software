@@ -1,26 +1,13 @@
 # Configuring Faraday for RF Operation
+Congrats on powering through local telemetry viewing and LED commanding with Faraday! Having [configured Faraday](configuring-faraday.imd) for local USB connected use it's time to configure a second Faraday (or any) to transmit R using `deviceconfiguration` again. By default the configuration disables the RF transmitter so let's turn it on!
 
-Having [configured Faraday](configuring-faraday.imd) for local USB connected telemetry and LED commanding you are now ready to configure Faraday for RF operation. The default configuration file does not enable the RF transmitter. Now we will enable and configure Faraday to transmit with your FCC Part 97 callsign on the 33cm ham band.
+> Remember you need `proxy` properly configured and running to run `deviceconfiguration`.
 
-We will again be using the `deviceconfiguration` Application to configure Faraday
-The application files are located:
-
- * `~/Applications/deviceconfiguration`
-
-Proxy and deviceconfiguration should be configured to communicate with the Faraday being programmed. Therefore if you already programmed `KB1LQC-1` and are now programming a second radio `KB1LQC-2` then `proxy.ini` should be updated along with `deviceconfiguration.ini`
-
-> NOTE: Device Configuration using the application tool in this tutorial is currently limited to programming a single device at a time. Also, this process will be automated in the future.
-
-## Device Configuration Setup
-
-First we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`. Update `UNIT0CALL` and `UNIT0ID` to refer to the correct Faraday radio currently attached to Proxy.
-
+A base station or remote node could be configured for RF transmissions. Base stations sending out telemetry to the remote nodes or other base stations is useful.
 
 ## Faraday Configuration
 
-Now you should update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. Simpleconfig will error with relevant information about what is wrong in your configuration if you made a mistake.
-
-To program a unit for initial RF operation with default settings, the following values should be updated:
+To program a unit for initial RF operation with default settings, the following values should be updated in `faraday_config.ini`:
 
  * `CALLSIGN=<Intended Callsign>`
  * `ID=<intended ID>`
@@ -28,16 +15,30 @@ To program a unit for initial RF operation with default settings, the following 
  * `RF_TELEMETRY_BOOT_BIT=<Set to 1 for automatic RF telemetry transmissions ater boot-up>`
  * `TELEMETRY_DEFAULT_RF_INTERVAL=<Value in seconds for RF telemetry packet transmissions>`
 
- These are the absolute must-have configured items for RF transmission. We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be maximum output.
+We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be the maximum output. Also, please make sure the "Callsign-NodeID" combination is unique for every readio!
 
- Below is a reference of the entire `faraday_config.ini`. It should be taken into consideration if you would like to power on the GPS or program a default lat/lon.
+A Faraday radio configured for RF use might look like this:
+ * `CALLSIGN=KB1LQC`
+ * `ID=2`
+ * `BOOT_RF_POWER=140`
+ * `RF_TELEMETRY_BOOT_BIT=1`
+ * `TELEMETRY_DEFAULT_RF_INTERVAL=10`
+
+It is also highly recommended to program default GPS location and altitudes in even if you have a GPS installed. Simply setting them to zero can be a good failsafe
+
+ * `DEFAULT_LATITUDE=0000.0000`
+ * `DEFAULT_LONGITUDE=00000.0000`
+ * `DEFAULT_ALTITUDE=00000.00`
+
+### Configuration Reference
+ Below is a reference of the entire `faraday_config.ini` with an explanation of each setting.
 
 `[BASIC]`
  * `CALLSIGN` Faraday radio callsign (9 characters)
  * `ID` Faraday radio node ID (0-255)
- * `GPIO_P3` Default CC430 P3 IO state, all considerd outputs at this time
- * `GPIO_P4` Default CC430 P4 IO state, all considerd outputs at this time
- * `GPIO_P5` Default CC430 P5 IO state, all considerd outputs at this time
+ * `GPIO_P3` Default CC430 P3 IO state, all considered outputs at this time
+ * `GPIO_P4` Default CC430 P4 IO state, all considered outputs at this time
+ * `GPIO_P5` Default CC430 P5 IO state, all considered outputs at this time
 
 `[RF]`
  * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot, 914.5 MHz is current default. Range is 902-928MHz
@@ -81,4 +82,5 @@ Note:
 ## Proxy Considerations
 Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.
 
-# Using RF Telemetry
+# Let's Transmit (You probably already are)!
+Now that Faraday has been configured to enable RF transmissions and automatically rebooted it is already transmitting at the `TELEMETRY_DEFAULT_RF_INTERVAL` it was programmed to. Let's [play with RF](rfplayground.md)!
