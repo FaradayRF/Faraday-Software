@@ -472,6 +472,7 @@ def sqlInsert(data):
     except conn.ProgrammingError as e:
         logger.error(e)
         logger.error(telem)
+        conn.rollback()
     except ValueError as e:
         logger.error("ValueError: " + str(e))
     except IndexError as e:
