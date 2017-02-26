@@ -81,4 +81,4 @@ Base stations use the APRS "#" symbol representing a "digi" as shown below on [a
 ![APRS.fi Base Station](images/APRSfiDigi.png)
 
 # Conclusion
-Now you've played with Faraday sufficiently to have a decent idea of what it is capable of. Congrats! We suggest you head back to the [project overview](../../readme.md) and explore until ready to learn to develop applications for Faraday.
+Now you've played with Faraday sufficiently to have a decent idea of what it is capable of. Congrats! We suggest you head back to the [project overview](../../README.md) and explore until ready to learn to develop applications for Faraday.
