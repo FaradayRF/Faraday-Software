@@ -356,9 +356,11 @@ def stations():
     parameters["ENDTIME"] = endTime
     parameters["CALLSIGN"] = callsign.upper()
     parameters["NODEID"] = nodeId
+    print parameters
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
     data = queryStationsDb(parameters)
+    print data
 
     # Check if no stations returned, if not, return HTTP 204
     if len(data) <= 0:
@@ -467,6 +469,9 @@ def sqlInsert(data):
         with conn:
             conn.execute(sql,telem)
 
+    except conn.ProgrammingError as e:
+        logger.error(e)
+        logger.error(telem)
     except ValueError as e:
         logger.error("ValueError: " + str(e))
     except IndexError as e:
@@ -530,6 +535,9 @@ def queryDb(parameters):
         cur.execute(sql,paramTuple)
         rows = cur.fetchall()
 
+    except conn.ProgrammingError as e:
+        logger.error(e)
+        logger.error(paramTuple)
     except ValueError as e:
         logger.error("ValueError: " + str(e))
     except IndexError as e:
@@ -565,8 +573,9 @@ def queryStationsDb(parameters):
     Takes in parameters to query the SQLite database, returns the results
 
     Performs a SQL query to retrieve data about stations in the SQLite db.
-    Can retrieve all stations ever heard, in a specific time range, or in
-    a timespan before now. Returns all results as a list of JSON dictionaries
+    Can retrieve all stations ever heard, a base callsign, in a specific
+    time range, or in a timespan. Returns all results as a list of JSON
+    dictionaries
     """
 
     # Check for whether a time range or timespan is being specified
@@ -587,16 +596,20 @@ def queryStationsDb(parameters):
     sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
 
     # detect if callsign/nodeid provided, return the last time it was heard
-    # Since a callsign was specified, simply search the entire db for it
-    # and return the last epoch time it was heard.
-    timeTuple = (0, time.time())
+    if parameters["CALLSIGN"] != "%":
+        # Since a callsign was specified, simply search the entire db for it
+        # and return the last epoch time it was heard.
+        timeTuple = (0, time.time())
 
-    # Update the sqlWhere and sqlEnd strings for this query
-    sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ? AND SOURCEID LIKE ? "
-    sqlEnd = sqlEnd + " LIMIT 1"
+        # Update the sqlWhere and sqlEnd strings for this query
+        sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ?"
 
-    # Create paramTuple for SQLite3 execute function
-    paramTuple = timeTuple + (parameters["CALLSIGN"], parameters["NODEID"])
+        # Create paramTuple for SQLite3 execute function
+        paramTuple = timeTuple + (parameters["CALLSIGN"],)
+    else:
+        # Create paramTuple for SQLite3 execute function
+        paramTuple = timeTuple
+
 
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
@@ -611,7 +624,12 @@ def queryStationsDb(parameters):
         cur = conn.cursor()
         cur.execute(sql,paramTuple)
         rows = cur.fetchall()
+        for row in rows:
+            print "ROW:", row
 
+    except conn.ProgrammingError as e:
+        logger.error(e)
+        logger.error(paramTuple)
     except StandardError as e:
         logger.error("StandardError: " + str(e))
     except ValueError as e:
