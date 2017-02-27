@@ -1,4 +1,5 @@
 ![FaradayRF Logo](images/FaradayRF_Logo_small_150px.png)
+
 by [FaradayRF](https://www.faradayrf.com)
 
 Faraday is a 33cm (902-928MHz) amateur radio band digital radio. It is more than just another Industrial, Scientific, and Medical band transceiver (ISM). Faraday takes advantage of the ISM hardware in order to let us focus on the real tasks we want to accomplish, pushing ham radio forward. The FaradayRF [Master Plan](https://faradayrf.com/faradayrf-master-plan/) details these tasks. Providing a well documented and educational digital wireless ham radio platform enabling an infrastructure to be built from is among the first of our goals. This repository is our software to enable this goal.
@@ -6,14 +7,15 @@ Faraday is a 33cm (902-928MHz) amateur radio band digital radio. It is more than
 Our mission is simple
 >To educate and enable radio amateurs to advance the state of ham radio
 
-Join our [mailing list](http://eepurl.com/cdsu21)!
-
 ![Faraday Rev D1 radio](images/FaradayTop_VCC_MOSFET_1500w_LowRes.jpg)
 
 > Faraday software is in a pre-alpha. This means we have not developed all necessary software or performed extensive testing. Your help will not only help advance ham radio but give you a voice in its direction.
 
+## Newsletter
+Join our [mailing list](http://eepurl.com/cdsu21)!
+
 ## RESTfully Ham Radio
-You will quickly notice that the Faraday software aims to bridge the radio world with the web development world. Making web developers feel at home and leveraging web toolkits and libraries is a powerful asset to the radio community. Our software operates RESTfully, using HTTP calls to interface software and hardware. Doing so allows us to use the web browser as a user interface among many other benefits.
+You will quickly notice that the Faraday software aims to bridge the radio world with the web development world. Making web developers feel at home and leveraging web toolkits and libraries is a powerful asset to the radio community.
 
 # Quick-Start
 Just purchase or build a Faraday radio? Check out our [quick-start](Tutorials/start) guide to get up and running fast.
@@ -42,4 +44,4 @@ Absolutely! Join us in developing the future of ham radio. Check out [our contri
  * Solve one of our [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner). These are specifically marked as easy problems we need help with that could be your first pull request!
  * Submit an [issue ticket](https://github.com/FaradayRF/Faraday-Software/issues) to tell us about a bug, feature request, documentation error, or documentation improvement.
 
-The project maintainers are @KB1LQC and @KB1LQD. We're more than happy to answer any questions. You may also reach us at Support@FaradayRF.com. You should also follow us on Twitter [@FaradayRF](https://twitter.com/faradayrf).
+The project maintainers are [@KB1LQC](https://github.com/kb1lqc) and [@KB1LQD](https://github.com/kb1lqd). We're more than happy to answer any questions. You may also reach us at Support@FaradayRF.com. You should also follow us on Twitter [@FaradayRF](https://twitter.com/faradayrf). We love Twitter.
