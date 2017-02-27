@@ -1,5 +1,5 @@
 # Configuring Faraday for RF Operation
-Congrats on powering through local telemetry viewing and LED commanding with Faraday! Having [configured Faraday](configuring-faraday.imd) for local USB connected use it's time to configure a second Faraday (or any) to transmit R using `deviceconfiguration` again. By default the configuration disables the RF transmitter so let's turn it on!
+Congrats on powering through local telemetry viewing and LED commanding with Faraday! Having [configured Faraday](configuring-faraday.imd) for local USB connected use it's time to configure a second Faraday (or any) to transmit RF using `deviceconfiguration` again. By default the configuration disables the RF transmitter. So let's turn it on!
 
 > Remember you need `proxy` properly configured and running to run `deviceconfiguration`.
 
@@ -11,13 +11,14 @@ To program a unit for initial RF operation with default settings, the following 
 
  * `CALLSIGN=<Intended Callsign>`
  * `ID=<intended ID>`
- * `BOOT_RF_POWER=<Power setting 0-152 (min-max)>`
- * `RF_TELEMETRY_BOOT_BIT=<Set to 1 for automatic RF telemetry transmissions ater boot-up>`
- * `TELEMETRY_DEFAULT_RF_INTERVAL=<Value in seconds for RF telemetry packet transmissions>`
+ * `BOOT_RF_POWER=20`
+ * `RF_TELEMETRY_BOOT_BIT=1`
+ * `TELEMETRY_DEFAULT_RF_INTERVAL=10`
 
-We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be the maximum output. Also, please make sure the "Callsign-NodeID" combination is unique for every readio!
+We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be the maximum output. Also, please make sure the "Callsign-NodeID" combination is unique for every radio!
 
 A Faraday radio configured for RF use might look like this:
+
  * `CALLSIGN=KB1LQC`
  * `ID=2`
  * `BOOT_RF_POWER=140`
@@ -68,11 +69,12 @@ We are almost there! Eventually this will be automated but for now this is what 
 2. Run `deviceconfiguration.py`
   * Windows: double-click on `deviceconfiguration.py`
   * Linux: `python deviceconfiguration.py`
+  * Mac OS X: `python deviceconfiguration.py`
 3. Run `simpleconfig.py` to send configuration data to Faraday
 4. Press `ctrl+c` to exit simpleconfig when complete after reviewing changes
 5. Close `deviceconfiguration.py` window
 
-Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming the script queries Faraday over UART to send its Flash contents so we can confirm proper programming.
+Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming, the script queries Faraday over UART to send its flash memory contents so we can confirm proper programming.
 
 ![Simpleconfig.py output](images/simpleconfig.png)
 
