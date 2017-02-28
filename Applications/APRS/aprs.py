@@ -55,6 +55,10 @@ def aprs_worker(config, sock):
         # Query telemetry database for station data
         stations = getStations()
         stationData = getStationData(stations)
+        
+        # Indicate number of stations tracking
+        str="Tracking {0} Faraday stations..."
+        logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data
         sendPositions(stationData, sock)
@@ -219,7 +223,7 @@ def sendPositions(stations, socket):
 
             # If GPSFix is not valid warn user
             if gpsFix <= 0:
-                logger.warning(node + " No GPS Fix")
+                logger.debug(node + " No GPS Fix")
 
             if node != destNode:
                 # APRS string is for remote RF node
@@ -230,10 +234,6 @@ def sendPositions(stations, socket):
                                lonString +\
                                longitudeDir +\
                                symbol
-                try:
-                    logger.info(aprsPosition)
-                except:
-                    pass
 
                 positionString = node +\
                                  '>' +\
