@@ -60,9 +60,5 @@ Ensure that Proxy is running in the background!
   
 Ensure that Proxy is running in the background!
 
-# Congratulations
-Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate with the radio over USB serial. This concludes the quickstart guide.
-
-We highly encourage you to check out our standard core programs such as [Telemetry](../../Applications/Telemetry) or [APRS](../../Applications/APRS). Once accustomed to Faraday we encourage you to dive into our developer tutorials. 
-
-We're providing the building blocks to experiment, lets go!
+## Time To Play With RF
+This concludes the quickstart section on how to interact with a Faraday connected locally over USB. Our next quickstart section focuses on RF telemetry. Head on over and [learn how to configure Faraday to transmit RF](configuring-rf-faraday.md). We gaurantee it will be fun!
