@@ -356,11 +356,9 @@ def stations():
     parameters["ENDTIME"] = endTime
     parameters["CALLSIGN"] = callsign.upper()
     parameters["NODEID"] = nodeId
-    print parameters
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
     data = queryStationsDb(parameters)
-    print data
 
     # Check if no stations returned, if not, return HTTP 204
     if len(data) <= 0:
@@ -625,8 +623,6 @@ def queryStationsDb(parameters):
         cur = conn.cursor()
         cur.execute(sql,paramTuple)
         rows = cur.fetchall()
-        for row in rows:
-            print "ROW:", row
 
     except conn.ProgrammingError as e:
         logger.error(e)
