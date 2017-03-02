@@ -101,10 +101,12 @@ try:
     print "\nRAW Received BASE64 ECHO'd Message:", b64_data
     print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 
-except Exception as e:
-    print "Failed ECHO due to type error:", e
+except KeyError as e:
+    print "\nFailed ECHO due to Key error:", e
+    print "This is a KNOWN BUG (https://github.com/FaradayRF/Faraday-Software/issues/50)"
+    print "Retry script execution without restarting proxy"
 
-print "************************************"
+print "\n************************************"
 print "\nQuit with ctrl+c"
 while (True):
     # Loop until user presses ctrl+c so they can read response
