@@ -876,6 +876,8 @@ def generatePasscode(callsign):
 
     # Convert callsign to list and obtain length
     callList = list(callsign)
+    if len(callList) % 2 != 0:
+        callList.append('\0')
     length = len(callList)
 
     # Perform hash if length is valid
