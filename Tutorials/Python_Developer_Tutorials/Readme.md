@@ -19,7 +19,7 @@ Each tutorial series builds upon the prior to create a simple wireless transmiss
 
 ##Introduction To Faraday Proxy Programming
 
-* **[Commanding - Local](foundation/Commanding-Local/)
+* [Commanding - Local](foundation/Commanding-Local/)
   * How to send commands to a locally connected Faraday digital radio.
 * **[Telemetry Parsing](foundation/Telemetry-Parsing) (OUTDATED - UPDATE IN PROGRESS)**
   * Using the parsing module to parse all packet types of telemetry data from a Faraday digital radio.
