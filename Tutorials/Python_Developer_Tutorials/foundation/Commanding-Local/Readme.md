@@ -1,29 +1,45 @@
 
-# Tutorial - Proxy Interaction Basics
+# Tutorial - Command Local
 
-This tutorial will introduce commanding a local Faraday device using the Proxy server interface. Several key commands are used although many more exist within the FardayCommands module.
-
-To clarify the tutorials subjects covered in detail in prior tutorials are not overviewed in the tutorials that follow (i.e. Imports or initializing proxy tool modules).
+This tutorial will introduce how to command a local (USB-UART) Faraday device using the Proxy server interface. Several key commands are used although many more exist within the Faraday Commands module.
 
 The example tutorial code focuses on how to:
 
 * Send local device GPIO commands (LEDs)
 * Send an "ECHO" command that echos UART payload data back to the host computer
 
-> NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or garenteed to be received.
+> NOTE: All commands are checked for corruption by the CC430 prior to execution but they are not currently acknowledged or guaranteed to be received.
 
-#Running The Tutorial Example Script
+### Prerequisites
+* Properly configured and connected proxy
+  * 1x Faraday
 
-## Start The Proxy Interface
+# Running The Tutorial Example Script
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to a locally (USB) connected Faraday digital radio.
+This section will describe how to setup and run the example script provided.
+
+## Configuration
+
+* Open `command_local.sample.ini` with a text editor
+* Update `REPLACEME` from `CALLSIGN` to match the callsign of the Faraday unit **as assigned** in proxy
+* Update `REPLACEME` from `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* Save the file as `command_local.ini`
+
+## Running The Example Script
+
+Run the Python script 'Proxy-Local-Commands-Tutorial.py' by double-clicking or running through the command line.
+
+### ECHO Exception - Failure
+
+There is a [known bug](https://github.com/FaradayRF/Faraday-Software/issues/50) that may cause the first packet from Proxy to not properly be retrieved and this has caused ECHO to fail. The workaround to this until it is patched is to simply re-run the tutorial script **without** restarting proxy.
+
+![Output from the Commanding - Local Tutorial](Images/Echo_Exception.png "Output from the Commanding - Local Tutorial")
+
 
 
 ## Tutorial Output Examples
 
-below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is runing to observe them turing ON and off.
-
-> Note: GPIO's being commanded may be recieving other commands and not work as intended if multiple programs are controlling a single GPIO (i.e. RED due to RF TX indication)
+Below is a screenshot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turning ON and OFF.
 
 
 ![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
@@ -33,7 +49,7 @@ below is a screen-shot of the partial output of the tutorial script when run in 
 
 ## Code - Toggle GPIO's (LEDs) Predefined Functions
 
-The Faraday command module object pre-defines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
+The Faraday command module object predefines many common actions such as turning ON/OFF the on-board LED's. Using `faraday_cmd.CommandLocalGPIOLED1On()` will command the LED #1 to an ON state and light up the LED. Alternatively `faraday_cmd.CommandLocalGPIOLED1Off()` turns the LED OFF.
 
 `faraday_cmd.CommandLocalGPIOLED1On()` returns a completed command packet ready to be sent to the local device over the proxy interface (UART) and must be sent over the correct UART service port (PORT 2) for the command application running on Faraday's CC430. This is predefined as the class variable `faraday_1.CMD_UART_PORT`.
 
@@ -63,14 +79,14 @@ time.sleep(1)
 
 ## Code - Toggle GPIO's (LEDs) Bitmask
 
-The previous code used pre-defined functions for toggling GPIO and left LED #2 ON. Those predefined functions are actually just providing an abstraction of the raw command for GPIO bitmask control. The GPIO bitmask control is part of the Command Application and provides both ON/OFF control of many GPIO in a single command while also guarding potentially damaging GPIO from being accidently changed (i.e. removes ability to manually toggle the RF amplifier control GPIO).
+The predefined functions are actually just providing an abstraction of the `CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off)` function that provides GPIO bitmask control of all controllable GPIO pins. This functionality is part of the Command Application and provides control of all GPIO in a single command while also guarding against changing GPIO values which could damage Faraday (i.e. removes ability to manually toggle the RF amplifier GPIO).
 
 The Python module function `faraday_cmd.CommandLocalGPIO()` contains 6 function arguments:
 
 * 3 function arguments for commanding GPIO ports 3, 4, 5 pins ON
 * 3 function arguments for commanding GPIO ports 3, 4, 5 pins OFF
 
-If any bits are HIGH (1) in the bitmask bytes then that respective pin will be toggled ON (HIGH), if a bit is left LOW (0) then no action will take place and the bit will remain in it's current HIGH/LOW state.
+If any bits are HIGH (1) in the bitmask bytes then the respective ON/OFF action will be applied to that bitmask's pin, if a bit is left LOW (0) then no action will take place and the pin will remain in it's current HIGH/LOW state. Commanding both and HIGH and LOW for the same port/pin is not allowed.
 
 **For Example:**
 
@@ -79,7 +95,7 @@ If any bits are HIGH (1) in the bitmask bytes then that respective pin will be t
 * Toggles PORT 3 BIT 1 pin HIGH
 * Toggles PORT 4 BIT 3 pin LOW
 
-Bitwise operations are possible to simplified and consolidate the syntax to command multiple GPIO's.
+Bitwise operations allow multiple GPIO's to be commanded simultaneously.
 
 `faraday_cmd.CommandLocalGPIO(BIT1|BIT5|BIT6, 0, 0, 0, 0, 0)`
 
@@ -106,14 +122,15 @@ faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_P
 ```
 ## Code - Command ECHO
 
-A simple ECHO like command is programmed into Farday's command program that will simply send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
+A simple ECHO like command is provided that will send the supplied data payload back to the host computer. The ECHO command only accepts a single UART transport packet so it is limited in size to the 124 byte maximum transmissible unit of the current UART network stack.
 
-This command example is pretty self explaining and simply sends the string `"This will ECHO back on UART"` to the local Faraday device and retrieves, parses, and displays the ECHO'd packet. Note the padding bytes likely visible due to fixed length UART transport packet formatting appended to the original message. Also, this command accepts binary data values (not just ASCII string text)!
+This example sends the string `"This will ECHO back on UART"` to the local Faraday device retrieving, parsing, and displaying the ECHO'd packet. Note the appended padding bytes visible due to fixed length UART transport packet.
 
 ```python
 ###############
 ## ECHO MESSAGE
 ###############
+print "\n** Beginning ECHO command test** \n"
 #Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
 originalmsg = "This will ECHO back on UART" #Cannot be longer than max UART payload size!
 command = faradaycommands.commandmodule.create_command_datagram(faraday_cmd.CMD_ECHO, originalmsg)
@@ -127,10 +144,12 @@ b64_data = rx_echo_raw[0]['data']
 echo_decoded = faraday_1.DecodeRawPacket(b64_data)
 
 #Display information
+print "**Sending**\n"
 print "Original Message: ", originalmsg
-print "RAW Received BASE64 ECHO'd Message:", b64_data
-print "Decoded received ECHO'd Message:", echo_decoded #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
-
+print "\n**Receiving**\n"
+print "Decoded received ECHO'd Message:", echo_decoded # Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+print "\nRAW Received BASE64 ECHO'd Message:", b64_data
+print "\nDecoded BASE64 RAW Bytes:", repr(echo_decoded)
 ```
 
 
@@ -143,15 +162,7 @@ below is a screenshot of the partial output of the tutorial script when run in a
 
 The padding bytes are clearly visible appended to the end of the returned ECHO'd string. 
 
-#Bonus Excersize
+# Bonus Exercise
 
 * Modify the the example script to remove the padding bytes and display only the original ECHO'd string.
-* Can you do this variably given any string length using only the packets sent and received?
-  * *Hint: [Application layer](https://en.wikipedia.org/wiki/OSI_model) packet [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(networking))*
-
-#See Also
-
-* [Proxy Tool - FaradayIO](http://faraday-software.readthedocs.io/en/latest/faradayio.html)
-* [Proxy Tool - TelemetryParser](http://faraday-software.readthedocs.io/en/latest/telemetryparser.html)
-* Command Application
-
+  * Can you do this with variable length ECHO data?
