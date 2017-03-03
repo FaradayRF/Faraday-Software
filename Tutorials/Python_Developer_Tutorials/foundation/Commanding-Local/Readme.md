@@ -16,7 +16,7 @@ The example tutorial code focuses on how to:
 
 # Running The Tutorial Example Script
 
-This section will describe out to setup and run the example script provided.
+This section will describe how to setup and run the example script provided.
 
 ## Configuration
 
@@ -39,7 +39,7 @@ There is a [known bug](https://github.com/FaradayRF/Faraday-Software/issues/50) 
 
 ## Tutorial Output Examples
 
-below is a screen-shot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turning ON and OFF.
+Below is a screenshot of the partial output of the tutorial script when run in a python interpreter (PyCharm). Be sure to look at the two LED's on Faraday as the script is running to observe them turning ON and OFF.
 
 
 ![Example Tutorial Operation](Images/Output.png "Example Tutorial Operation")
