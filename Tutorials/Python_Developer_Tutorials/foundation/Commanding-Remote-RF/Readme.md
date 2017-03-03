@@ -38,7 +38,7 @@ UNIT1ID=REPLACEME
 
 ## Running Tutorial_Remote_Command.py
 
-While running the tutorial script you should see the green led (LED #1) and red LED (LED #2) light up on the remote unit. During the actuation of DIGITAL_IO_0 you will measure 3.3V and 0V respectively for ON and OFF commands.
+While running the tutorial script you should see the green and red LEDs (LED #1 and #2) light up on the remote unit. During the actuation of DIGITAL_IO_0 you will measure 3.3V and 0V respectively for ON and OFF commands.
 
 ![Successful Operation Terminal](Images/Output_Example_Success.png "Successful Operation Terminal")
 
@@ -52,7 +52,7 @@ The `DIGITAL_IO_0` pin is a GPIO header pin that can be measured for voltage tog
 
 ## Code - Toggle LED & Digital GPIO pin 
 
-The tutorial code below is very similar to the previous "local commanding" tutorial however you'll notice that all command destined to be executed on a remote device are commanded using the "command" number `9` (remote command) with the actual command to be execute as payload. Command `9` simply transmits a command packet to the remote device and upon reception the remote device will execute the payload (encapsulated local command packet) as a local command.
+The tutorial code below is very similar to the previous "local commanding" tutorial however you'll notice that all commands destined to be executed on a remote device are commanded using the "command" number `9` (remote command) with the actual command to be execute as payload. Command `9` simply transmits a command packet to the remote device and upon reception the remote device will execute the payload (encapsulated local command packet) as a local command.
 
 ```python
 ################################
@@ -94,4 +94,4 @@ Check that the callsign and ID number of the remote device is correct (as progra
 
 **RF Power - Desensing**
 
-Faraday is actually quite sensitive and having a high-power signal transmit between two close units can cause the receiving device to not hear the transmission. This is called radio desensing. The solution is to either turn the power down or increase the distance between transmitter and receiver. Typically for a separation of a foot or two with a power setting under 20 works well.
+Faraday is actually quite sensitive to high-power signals transmitting in-band nearby. This is called radio desensing. The solution is to either turn the power down or increase the distance between transmitter and receiver. Typically for a separation of a foot or two with a power setting under 20 works well.
