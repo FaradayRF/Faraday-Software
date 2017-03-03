@@ -69,6 +69,7 @@ We are almost there! Eventually this will be automated but for now this is what 
 5. Close `deviceconfiguration.py` window
 
 Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming the script queries Faraday over UART to send its Flash contents so we can confirm proper programming.
+
 ![Simpleconfig.py output](images/simpleconfig.png)
 
 Note:
