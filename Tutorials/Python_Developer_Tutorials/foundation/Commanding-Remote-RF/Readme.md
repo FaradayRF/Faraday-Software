@@ -1,50 +1,58 @@
 
 # Tutorial - Remote RF Command
 
-This tutorial will example how to interact with other Faraday digital radios wirelessly using RF commanding. This tutorial requires the use of two Faraday units connected to proxy, although they will both be connect to the same computer (for convienience) the communication is performed using the CC430 radio. This can be verified by commanding a Faraday unit while being battery powered!
+This tutorial introduces basic wireless commanding between two Faraday devices.
 
-#Running The Tutorial Example Script
+### Prerequisites
+* Properly configured and connected proxy
+  * x1 Faraday connected to local computer
+  * x1 Faraday powered within radio range (can be USB powered on same computer)
+ 
+> Note: Keep the units separated a few feet apart and ensure the RF power settings are below ~20 to avoid de-sensing the CC430 front end receiver!
 
-## Start The Proxy Interface
+## Configuration
 
-Following the [Configuring Proxy](../../0-Welcome_To_Faraday/Configuring_Proxy/) tutorial configure, start, and ensure a successful connection to **BOTH** locally (USB) connected Faraday digital radios.
+* Open `commanding-remote.sample.ini` with a text editor
+* **Transmitter**
+  * Update `REPLACEME` from `CALLSIGN` to match the callsign of the Faraday unit **as assigned** in proxy
+  * Update `REPLACEME` from `NODEID` to match the callsign node ID of the Faraday unit **as assigned** in proxy
+* **Receiver**
+  * Update `REPLACEME` from `CALLSIGN` to match the callsign of the remote Faraday unit as configured in the remote receiver Faraday's FLASH memory
+  * Update `REPLACEME` from `NODEID` to match the node ID of the remote receiver Faraday's flash memory configuration
+* Save the file as `commanding-remote.ini`
 
-## Edit Local/Remote Device Information
+> NOTE: Ideally the proxy assigned callsign/ID matches the unit device configuration but this is not controlled or required and care should be taken to ensure the information is correctly configured.
 
-The tutorial script variables listed below hold the local and remote Faraday device callsign/ID numbers. The local device communicates through the proxy interface and regardless of actual assigned callsign/ID the variables must match that assigned by the *"proxy.ini"* file. The remote device callsign/ID variable is used to address the RF packet and must match that of the remote unit device configuration to be communicated with.
+```
+[DEVICES]
+UNITS=2
 
-> NOTE: Ideally the proxy assigned callsign/ID matches the unit device configuration but this is not controlled or required and care should be taken.
+; Transmitter - This should match the connected Faraday unit as assigned in Proxy configuration
+UNIT0CALL=REPLACEME
+UNIT0ID=REPLACEME
 
-```python
-#Local device information (Must match proxy assigned information)
-local_device_callsign = 'kb1lqd'  #case independent
-local_device_node_id = 1
-
-#Remote device information (Must match unit programming)
-remote_callsign = 'kb1lqd'  #case independent
-remote_id = 2
+; Receiver - This should match the programmed callsign of the remote Faraday device to be commanded (receive)
+UNIT1CALL=REPLACEME
+UNIT1ID=REPLACEME
 ```
 
+## Running Tutorial_Remote_Command.py
 
-## Execute Tutorial Script
-
-While running the tutorial script you should see the green led (LED #1) light up on the remote unit and the red LED flashing on the local unit. Default Faraday operation enables the red LED whenever RF transmissions are occuring.
-
-The tutorial script terminal output during a succesful operation displays raw command packets as transmitted for reference.
+While running the tutorial script you should see the green and red LEDs (LED #1 and #2) light up on the remote unit. During the actuation of DIGITAL_IO_0 you will measure 3.3V and 0V respectively for ON and OFF commands.
 
 ![Successful Operation Terminal](Images/Output_Example_Success.png "Successful Operation Terminal")
 
 # RF Commanding Design Summary
 
-The command functionality on Faraday is operating in an application running on Faraday itself and parses a command application packet protocol to determine actions needed. This is common between both local and RF commands however sending and RF command simply encapsulates a local command (for the remote unit) within a local "transmit RF command" command (packet). This results in the remote device receiving a "local" command from a remote device, it knows no difference.
+The command functionality on Faraday is operating in an application running on Faraday itself and parses command application packets to determine actions needed. This is common between both local and RF commands, however sending an RF command simply encapsulates a local command (for the remote unit) within a wireless packet transmission addressed to the intended device and respective command application "port". This results in the remote device receiving a "local" command from a remote device, it knows no difference.
 
-The `DIGITAL_IO_0` pin is a PGIO header pin that can be measured for voltage toggling but no visible effect occures.
+The `DIGITAL_IO_0` pin is a GPIO header pin that can be measured for voltage toggling but no visible effect occurs. These pins are useful to add additional functionality to your Faraday radio.
 
 #Code Overview
 
 ## Code - Toggle LED & Digital GPIO pin 
 
-The tutorial code below is very similar to the previous "local commanding" tutorial however you'll notice that all command destined to be executed on a remote device are commanded using the function argument `9` (command number) with the actual command to be execute as payload. Command `9` simply transmits a command packet to the remote device and upon reception the remote device knows to execute the payload as a local command.
+The tutorial code below is very similar to the previous "local commanding" tutorial however you'll notice that all commands destined to be executed on a remote device are commanded using the "command" number `9` (remote command) with the actual command to be execute as payload. Command `9` simply transmits a command packet to the remote device and upon reception the remote device will execute the payload (encapsulated local command packet) as a local command.
 
 ```python
 ################################
@@ -52,38 +60,38 @@ The tutorial code below is very similar to the previous "local commanding" tutor
 ################################
 
 #Turn remote device LED 1 ON
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remote_callsign, remote_id))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): GREEN LED ON"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remote_device_callsign, remote_device_node_id))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
 
 #Turn remote device LED 1 OFF
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remote_callsign, remote_id))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): GREEN LED OFF"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remote_device_callsign, remote_device_node_id))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
 
-#Turn both LED 1 and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
+#Turn both LED 1, LED2, and DIGITAL_IO_0 ON, This requires a slightly more low level function and bitmask. Prior function were high level abstractions of this command
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): RED LED ON | GREEN LED ON | DIGITAL_IO_0 ON"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_device_callsign, remote_device_node_id, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(1)
 
 #Turn both LED 1 and DIGITAL_IO_0 OFF
-command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_callsign, remote_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.DIGITAL_IO_0, 0, 0))
+print "Transmitting(" + local_device_callsign + "-" + str(local_device_node_id) + ") To Remote Faraday (" + remote_device_callsign + "-" + str(remote_device_node_id) + "): RED LED OFF | GREEN LED OFF | DIGITAL_IO_0 OFF"
+command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remote_device_callsign, remote_device_node_id, 0, 0, 0, gpioallocations.LED_1 | gpioallocations.LED_2 | gpioallocations.DIGITAL_IO_0, 0, 0))
 faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
 time.sleep(0.5)
 ```
 
 # Troubleshooting
 
-The addition of wireless communications invites more chances for setup and reliability issues. Below are a few quick items to check if you are not able to runing the tutorial script is not commanding the remote unit correctly.
+The addition of wireless communications invites more chances for setup and reliability issues. Below are a few quick items to check if you are experiencing problems.
 
 **Remote Callsign/ID**
 
-Check that the correct callsign and ID number of the remote device is correct (as programmed) or the MAC layer protocol will not allow the remote unit to accept the command. All commands accepted by a unit over RF must match be properlly addressed.
+Check that the callsign and ID number of the remote device is correct (as programmed) or the MAC layer protocol will not allow the remote unit to accept the command. All commands accepted by a unit over RF must match.
 
 **RF Power - Desensing**
 
-Faraday is actually quite sensitive and having a high power signal transmit between two close units can cause the receiving device to not hear the transmission. This is called radio de-sensing. The solution is to turn the power down, typically for a foot or two I've found a setting under 20 works well.
-
-#See Also
-
-
+Faraday is actually quite sensitive to high-power signals transmitting in-band nearby. This is called radio desensing. The solution is to either turn the power down or increase the distance between transmitter and receiver. Typically for a separation of a foot or two with a power setting under 20 works well.
