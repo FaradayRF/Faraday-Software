@@ -26,7 +26,7 @@ Each tutorial series builds upon the prior to create a simple wireless transmiss
     * Telemetry - Device settings
     * Telemetry - Debug
     * Telemetry - Faraday Telemetry
-* **[Commanding - Remote (RF)](foundation/Commanding-Remote-RF)
+* [Commanding - Remote (RF)](foundation/Commanding-Remote-RF)
   * How to send commands to a remote Faraday device over RF.
 * **[Experimental RF Packet Forwarding](foundation/RF-Transmit-Receive-Packet) (OUTDATED - UPDATE IN PROGRESS)**
   * An introduction to using the simple RF packet forward command that sends a local UART payload over RF to a specified remote Faraday device. This is the basis for more advanced programs such as messaging and data/file transfers.
