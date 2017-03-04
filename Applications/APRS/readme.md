@@ -11,11 +11,13 @@ This application provides a socket link to APRS-IS servers and sends data from F
  * Packets sent to APRS-IS are intended to not rebroadcast over RF (yet). However, this is not guaranteed and could end up on RF anyways.
  
 # Configuration
-Before you can connect to the APRS-IS network you need to update your `aprs.ini` file with your callsign.
-
- 1. Navitage to the `Applications/APRS` folder
- 2. Open `aprs.ini` in a text editor and update the information requested
+Before you can connect to the APRS-IS network you need to create an `aprs.ini` file with your callsign.
  
+ 1. Navigate to the `Applications/APRS` folder
+ 2. Create a copy of `aprs.sample.ini` and rename the new file `aprs.ini`
+ 3. Open `aprs.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 
+Configuring APRS consists of changing one parameters for basic use:`CALLSIGN`.
  * `[APRSIS]`: APRS-IS credentials section
   * `CALLSIGN`: APRS-IS login callsign
 

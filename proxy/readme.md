@@ -12,6 +12,21 @@ A flask server runs in the main process which provides a RESTful interface for t
 
 Checks the proxy queue for the specified port. If packets are present in the qeue they are returned as a JSON dictionary as an HTTP response. Additionally, the POST method will add packets to the POST queue which are sent to Faraday on a periodica basis. Invalid parameters are responded with appropriate HTTP responses and relevant warning messages.
 
+## Configuration
+ 
+Before Proxy can connect to any radio hardware, it needs to be configured using the `proxy.ini` file with your callsign and the serial port.
+ 
+ 1. Navigate to the `proxy` folder
+ 2. Create a copy of `proxy.sample.ini` and rename the new file `proxy.ini`
+ 3. Open `proxy.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 
+Configuring Proxy consists of changing three parameters for basic use:`CALLSIGN`, `NODEID` and `COM`. These will let Telemetry properly query Proxy to obtain the correct telemetry data.  
+ 
+* `[UNIT0]` Telemetry application section
+ * `CALLSIGN` Quantity of Faraday radios connected to computer
+ * `NODEID` Callsign of first radio
+ * `COM` Node ID of first radio
+
 ## Examples
 ### GET
 ```

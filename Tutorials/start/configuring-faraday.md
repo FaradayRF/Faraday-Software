@@ -11,22 +11,23 @@ The application files are located:
 > NOTE: Device Configuration using the application tool in this tutorial is currently limited to programming a single device at a time. Also, this process will be automated in the future.
 
 ## Device Configuration Setup
-
-First we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to edit the `[DEVICES]` section of `deviceconfiguration.ini` to contain the same configuration Proxy is configured with in `proxy.ini`
-
+ 
+First, we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to create the `deviceconfiguration.ini` file from `deviceconfiguration.sample.ini` as we did for Proxy.  Next, edit the `[DEVICES]` section to contain the same configuration Proxy is configured with in `proxy.ini`
+ 
 `[FLASK]`: Flask server configuration values
  * `HOST`: IP Address or hostname of flask server
  * `PORT`: Network port to serve data
-
-
+ 
+ 
 `[DEVICES]`: Unit 0 Proxy configuration values section
  * `UNITS`: Quantity of Faraday radios to configure (supports one at this time)
  * `UNIT0CALL`: Callsign to associate with radio connected to Proxy
  * `UNIT0ID`: Node ID of radio connected to Proxy
-
+ 
 ## Faraday Configuration
-
-Now you should update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. For now just update the `CALLSIGN` and `ID` as well as any placeholder GPS fields. Simpleconfig will error with relevant information about what is wrong in your configuration.
+ 
+Now you should create and update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. For now just update the `CALLSIGN` and `ID` as well as any placeholder GPS fields. Simpleconfig will error with relevant information about what is wrong in your configuration.
+ 
 
 `[BASIC]`
  * `CONFIGBOOTBITMASK` Keep set to 1, indicates configuration has occured.

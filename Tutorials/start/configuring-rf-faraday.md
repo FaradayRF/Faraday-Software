@@ -7,7 +7,7 @@ A base station or remote node could be configured for RF transmissions. Base sta
 
 ## Faraday Configuration
 
-To program a unit for initial RF operation with default settings, the following values should be updated in `faraday_config.ini`:
+To program a unit for initial RF operation with default settings,  `faraday_config.sample.ini` should be copied to a new file named  `faraday_config.ini` and the following values should be updated in the new `faraday_config.ini` file:
 
  * `CALLSIGN=<Intended Callsign>`
  * `ID=<intended ID>`

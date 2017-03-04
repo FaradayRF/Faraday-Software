@@ -6,8 +6,21 @@ Basing Telemetry on a [Flask](http://flask.pocoo.org/) server allows it to provi
 This also allows us to use a standard web browser for basic debugging. We can easily see telemetry data with a simple URL query as we will show you shortly. [DB Browser for SQLite](http://sqlitebrowser.org/) is also a great tool which allows you to manipulate the database and perform simple plotting. It's simple to use the program to export a CSV for plotting in Excel as well.
 
 ## Configuration
+ 
+Before Telemetry can connect to Proxy and save data to an SQLite database, you need to create a `telemetry.ini` file with your callsign.
+ 
+ 1. Navigate to the `Applications/Telemetry` folder
+ 2. Create a copy of `telemetry.sample.ini` and rename the new file `telemetry.ini`
+ 3. Open `telemetry.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 
+Configuring Telemetry consists of changing two parameters for basic use:`UNIT0CALL` and `UNIT0ID`. These will let Telemetry properly query Proxy to obtain the correct telemetry data. 
+ 
+* `[TELEMETRY]` Telemetry application section
+ * `UNITS` Quantity of Faraday radios connected to computer
+ * `UNIT0CALL` Callsign of first radio
+ * `UNIT0ID` Node ID of first radio
 
-Telemetry uses [telemetry.ini](telemetry.ini) to properly connect to Proxy and save data to a SQLite database. This configuration file contains the following:
+This configuration file also contains the following:
 
 * `[FLASK]` Flask telemetry server section
  * `HOST` Flask hostname or IP address
@@ -16,13 +29,6 @@ Telemetry uses [telemetry.ini](telemetry.ini) to properly connect to Proxy and s
 * `[DATABASE]` Telemetry SQlite database section
  * `FILENAME` Database filename "x.db"
  * `SCHEMANAME` SQLite schema file to setup tables "x.sql"
-
-* `[TELEMETRY]` Telemetry application section
- * `UNITS` Quantity of Faraday radios connected to computer
- * `UNIT0CALL` Callsign of first radio
- * `UNIT0ID` Node ID of first radio
-
-Configuring Telemetry consists of changing three parameters for basic use. The three configs to change are `UNITS`, `UNIT0CALL`, and `UNIT0ID`. These will let Telemetry properly query Proxy to obtain the correct telemetry data. Simply replace these values with appropriate data similar to how one configured [proxy.ini](../proxy/proxy.ini).
 
 ## Running Telemetry
 
