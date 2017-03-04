@@ -15,7 +15,7 @@ Before you can connect to the APRS-IS network you need to create an `aprs.ini` f
  
  1. Navigate to the `Applications/APRS` folder
  2. Create a copy of `aprs.sample.ini` and rename the new file `aprs.ini`
- 3. Open `aprs.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 3. Open `aprs.ini` in a text editor and update the requested information noted by `REPLACEME`
  
 Configuring APRS consists of changing one parameters for basic use:`CALLSIGN`.
  * `[APRSIS]`: APRS-IS credentials section

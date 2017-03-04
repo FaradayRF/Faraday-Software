@@ -11,7 +11,7 @@ Before Telemetry can connect to Proxy and save data to an SQLite database, you n
  
  1. Navigate to the `Applications/Telemetry` folder
  2. Create a copy of `telemetry.sample.ini` and rename the new file `telemetry.ini`
- 3. Open `telemetry.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 3. Open `telemetry.ini` in a text editor and update the requested information noted by `REPLACEME`
  
 Configuring Telemetry consists of changing two parameters for basic use:`UNIT0CALL` and `UNIT0ID`. These will let Telemetry properly query Proxy to obtain the correct telemetry data. 
  

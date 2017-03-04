@@ -22,10 +22,10 @@ Before Proxy can connect to any radio hardware, it needs to be configured using 
  
 Configuring Proxy consists of changing three parameters for basic use:`CALLSIGN`, `NODEID` and `COM`. These will let Telemetry properly query Proxy to obtain the correct telemetry data.  
  
-* `[UNIT0]` Telemetry application section
- * `CALLSIGN` Quantity of Faraday radios connected to computer
- * `NODEID` Callsign of first radio
- * `COM` Node ID of first radio
+* `[UNIT0]`: Unit 0 Proxy configuration values section
+  * `CALLSIGN`: Callsign to associate with radio on this USB port
+  * `NODEID`: Node ID of radio connected on this USB port
+  * `COM`: COM/serial Port associated with the radio connected
 
 ## Examples
 ### GET

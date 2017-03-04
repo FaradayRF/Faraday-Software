@@ -12,14 +12,14 @@ The application files are located:
 
 ## Device Configuration Setup
  
-First, we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to create the `deviceconfiguration.ini` file from `deviceconfiguration.sample.ini` as we did for Proxy.  Next, edit the `[DEVICES]` section to contain the same configuration Proxy is configured with in `proxy.ini`
+First, we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to create the `deviceconfiguration.ini` file from `deviceconfiguration.sample.ini` as we did for Proxy. Next, edit the `[DEVICES]` section to contain the same configuration Proxy is configured with in `proxy.ini`
  
 `[FLASK]`: Flask server configuration values
  * `HOST`: IP Address or hostname of flask server
  * `PORT`: Network port to serve data
  
  
-`[DEVICES]`: Unit 0 Proxy configuration values section
+`[DEVICES]`: Section for unit Callsigns and Node IDs
  * `UNITS`: Quantity of Faraday radios to configure (supports one at this time)
  * `UNIT0CALL`: Callsign to associate with radio connected to Proxy
  * `UNIT0ID`: Node ID of radio connected to Proxy

@@ -7,14 +7,14 @@
 >This guide will walk you through these steps for the proxy configuration file.  The config files for other applications are modified in the same way.
 
 ### Configuration Files
-Some applications require user specific information in order to operate.  Most commonly, `CALLSIGN` and `NODEID` are required so the software knows which radio to communicate with.  Each application that needs user information looks for it in a configuration file.  In general, a given application `ex: application.py` it will gather configuration information from the *.ini* file in the same folder with the same name as the application `ex: application.ini`.  Since these configuration files contain user specific information, they are listed in the .gitignore file to prevent contributors from committing their personal configs to the repository by accident.  For each application, a default file is stored in the git repository  with *.sample* added to the file name before the extension `ex: application.sample.ini`.  This file contains all of the required fields with either default information or  `REPLACEME` noting that user information is required.
+Some applications require user specific information in order to operate. Most commonly, `CALLSIGN` and `NODEID` are required so the software knows which radio to communicate with. Each application that needs user information looks for it in a configuration file. In general, a given application `ex: application.py` it will gather configuration information from the *.ini* file in the same folder with the same name as the application `ex: application.ini`. Since these configuration files contain user specific information, they are listed in the .gitignore file to prevent contributors from committing their personal configs to the repository by accident. For each application, a default file is stored in the git repository  with *.sample* added to the file name before the extension `ex: application.sample.ini`. This file contains all of the required fields with either default information or `REPLACEME` noting that user information is required.
  
 Before you can use an application that requires user specific information, you need to create the *.ini* file with your info.
  
  1. Navigate to the folder with the application
  2. Create a copy of `application.sample.ini` in the same folder
- 3. Remove the *.sample* from the name of the new file leaving  `application.ini`
- 4. Open `application.ini` in a text editor and update the requested information noted  by `REPLACEME`
+ 3. Remove the *.sample* from the name of the new file leaving `application.ini`
+ 4. Open `application.ini` in a text editor and update the requested information noted by `REPLACEME`
  
 ### Proxy Configs Overview
 Proxy.ini is a plaintext ASCII file which contains the necessary configuration values to properly connect with and identify hardware when Proxy is initialized. Multiple Radios can be connected at once by simple extension of the [UNITx] sections where x is the zero-indexed enumeration of Faraday radios connected to the computer.
