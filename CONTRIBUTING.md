@@ -108,7 +108,8 @@ Documentation is mandatory to ensure that all contributors clearly understand ho
 * [Sphinx Documentation](http://www.sphinx-doc.org/en/stable/contents.html)
 * [Examples Of Good Python Docstrings](http://www.sphinx-doc.org/en/stable/ext/example_google.html)
 
-#Configuration files
+##Configuration files
+
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`.  Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore.  The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
 
 Use the following format within configuration files:
