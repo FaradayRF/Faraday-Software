@@ -181,6 +181,8 @@ def rawTelemetry():
     provides non-SQLite database dequeu results. Each query can pop data off of
     a queu, thus ensuring there are no duplicates and acting like a proxy with
     decoded data instead of BASE64 encoded data.
+
+    :return: JSON formatted string with data or error message
     """
 
     try:
@@ -189,14 +191,8 @@ def rawTelemetry():
         nodeId = request.args.get("nodeid", None)
         limit = request.args.get("limit", None)
 
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+    except IOError as e:
+        logger.error("IOError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
     # Check to see that required parameters are present
@@ -205,8 +201,8 @@ def rawTelemetry():
         # If callsign is present then nodeid is required
         if callsign is not None:
             if nodeId is None:
+                raise ValueError("Missing 'nodeid' parameter")
 
-                raise StandardError("Missing 'nodeid' parameter")
             else:
                 # Convert nodeId to int and callsign to uppercase string
                 nodeId = int(nodeId)
@@ -221,17 +217,19 @@ def rawTelemetry():
            pass
 
         if limit is None:
-            # Optional, set limit to largest value of any radio queue size
+            #  Optional, set limit to largest value of any radio queue size
             temp = []
+            #  telemetryDicts is telemetryWorker queue
             for key, value in telemetryDicts.iteritems():
                 temp.append(len(value))
             limit = int(max(temp))
+
         else:
             # Limit provided, convert to int and check if it's valid
             limit = int(limit)
             if limit <= 0:
                 message = "Error: Limit '{0}' is invalid".format(limit)
-                return json.dumps({"error": message}), 400
+                raise ValueError(message)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -246,7 +244,7 @@ def rawTelemetry():
         logger.error("StandardError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    # Ready to get data from the queue. We have to cases: callsign and nodeid
+    # Ready to get data from the queue. We have two cases: callsign and nodeid
     # are present or they are not. The resulting dictionary created needs to
     # be different in both cases. Use try statement to fail cleanly
     try:
@@ -257,6 +255,7 @@ def rawTelemetry():
         # queue data.
         if callsign == None and nodeId == None:
             # Iterate through each faraday radio connected via USB
+            #  telemetryDicts is telemetryWorker queue
             for key, value in telemetryDicts.iteritems():
                 # Make sure queue actually has data in it
                 if (len(value) > 0):
@@ -274,8 +273,10 @@ def rawTelemetry():
                         stationData.append(packet)
                     # All necessary data from radio obtained, add to dictionary
                     station[key] = stationData
+
             # The data list is a list of dictionaries for json.dumps()
             data.append(station)
+
         else:
             # Local radio has been specified, only return data from it
             stationData = []
@@ -309,7 +310,7 @@ def rawTelemetry():
         logger.error("StandardError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    # Completed our query for "/raw", return json.dumos() and HTTP 200
+    # Completed our query for "/raw", return json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
@@ -354,7 +355,7 @@ def stations():
     parameters["TIMESPAN"] = timespan
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
-    parameters["CALLSIGN"] = callsign.upper()
+    parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeId
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
@@ -490,12 +491,27 @@ def queryDb(parameters):
     Takes in parameters to query the SQLite database, returns the results
 
     Performs a SQL query to retrieve data from specific times, stations, or
-    ranges of time. Returns all results as a list of JSON dictionaries
+    ranges of time. Returns all results as a list of JSON dictionaries.
+    Parameters:
+    "CALLSIGN":Uppercase callsign
+    "NODEID": Node ID
+    "LIMIT": Number of SQL rows to return
+    "DIRECTION": Specify if callsign-nodeid to search is local (0) or remote (1)
+    "STARTTIME": ISO8601 time to start search
+    "ENDTIME": ISO8601 time to end search
+    "TIMESPAN": Number of seconds to search over, ending at current time
+
+    :param parameters: Search parameter dictionary
+    :return: List of SQL output where each item is a dictionary
     """
+
+    #Declare local variables
+    sqlData = []
+
     # Use supplied parameters to generate a Tuple of epoch start/stop times
     # SQLite3 parameters need to be Tuples
     timeTuple = generateStartStopTimes(parameters)
-    callsign = parameters["CALLSIGN"].upper()
+    callsign = parameters["CALLSIGN"]
     nodeid = parameters["NODEID"]
     limit = parameters["LIMIT"]
 
@@ -522,32 +538,45 @@ def queryDb(parameters):
 
     # Create  SQL Query string
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
+    logger.debug(sql)
 
     # Open configuration file
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except telemetryConfig.Error as e:
+        logger.error(e)
+        return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(dbFilename)
-        conn.row_factory = sqlite3.Row  # Row_factory returns column/values
-        cur = conn.cursor()
-        cur.execute(sql,paramTuple)
-        rows = cur.fetchall()
 
-    except conn.ProgrammingError as e:
-        logger.error(e)
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        return sqlData
 
+    conn.row_factory = sqlite3.Row  # Row_factory returns column/values
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql,paramTuple)
+
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
+        logger.error(paramTuple)
+        conn.close()
+        return sqlData
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        conn.close()
+        return sqlData
 
     # Iterate through resulting data and create a list of dictionaries for JSON
     try:
-        sqlData = []
+        rows = cur.fetchall()
         for row in rows:
             rowData = {}
             for parameter in row.keys():
@@ -556,12 +585,8 @@ def queryDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        conn.close()
+        return sqlData
 
     # Completed query, close database, return sqlData list of dictionaries
     conn.close()
@@ -625,7 +650,7 @@ def queryStationsDb(parameters):
         rows = cur.fetchall()
 
     except conn.ProgrammingError as e:
-        logger.error(e)
+        logger.error("ProgrammingError: " + str(e))
         logger.error(paramTuple)
     except StandardError as e:
         logger.error("StandardError: " + str(e))
