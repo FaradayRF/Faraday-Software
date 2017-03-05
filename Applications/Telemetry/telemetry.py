@@ -713,25 +713,6 @@ def queryStationsDb(parameters):
     sqlData = []
 
     timeTuple = generateStartStopTimes(parameters)
-    # # Check for whether a time range or timespan is being specified
-    # if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
-    #     # Start end end times provided, ignore timespan
-    #     startTime = str(parameters["STARTTIME"])
-    #     endTime = str(parameters["ENDTIME"])
-    #     timeTuple = iso8601ToEpoch(startTime,endTime)
-    #     print startTime
-    #
-    # elif parameters["STARTTIME"] != None:
-    #     # Start time provided, use current time as end, ignore timespan
-    #     startTime = str(parameters["STARTTIME"])
-    #     endTime = time.strftime("%Y-%m-%dT%H:%M:%S")
-    #     timeTuple = iso8601ToEpoch(startTime,endTime)
-    #
-    # else:
-    #     # We should use the timespan provided to generate start and stop times
-    #     endEpoch = time.time()
-    #     startEpoch = endEpoch - int(parameters["TIMESPAN"])
-    #     timeTuple = (startEpoch, endEpoch)
 
     # Specify and create SQL command string
     sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY "
