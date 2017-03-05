@@ -392,10 +392,20 @@ def pageNotFound(error):
 
 # Database Functions
 def initDB():
-    """Initialize database, if not present then create it"""
-    # Obtain configuration filenames
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-    dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+    """
+    Initialize database, creates it if not present
+
+    :return: True or False if successful
+    """
+
+    # Obtain configuration file names
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
 
     # Check if database exists
     if os.path.isfile(dbFilename):
@@ -403,100 +413,133 @@ def initDB():
     else:
         # Open database schema SQL file and execute the SQL functions inside
         # after connecting. Close the database when complete.
-        with open(dbSchema, 'rt') as f:
-            conn = sqlite3.connect(dbFilename)
-            cur = conn.cursor()
-            schema = f.read()
-            cur.executescript(schema)
-        conn.close()
+        try:
+            with open(dbSchema, 'rt') as f:
+                conn = sqlite3.connect(dbFilename)
+                cur = conn.cursor()
+                schema = f.read()
+                cur.executescript(schema)
+            conn.close()
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+    return True
 
 def createTelemetryList(data):
-    """Converts data dictionary into a defined list for insertion into SQLite db"""
+    """
+    Converts data dictionary into a defined list for insertion into SQLite db
+
+    SQLite3 insertions require that the data be ordered correctly. Python dictionaries
+    do not guarantee order so a list is greated from the dictionary.
+
+    :param data: Telemetry dictionary
+    :return: list that contains telemetry data
+    """
 
     # Create list of dictionary data in appropriate order
     # First statement in None for KeyID
-    temp = [None,
-            data["SOURCECALLSIGN"],
-            data["SOURCEID"],
-            data["DESTINATIONCALLSIGN"],
-            data["DESTINATIONID"],
-            data["RTCSEC"],
-            data["RTCMIN"],
-            data["RTCHOUR"],
-            data["RTCDAY"],
-            data["RTCDOW"],
-            data["RTCMONTH"],
-            data["RTCYEAR"],
-            data["GPSLATITUDE"],
-            data["GPSLATITUDEDIR"],
-            data["GPSLONGITUDE"],
-            data["GPSLONGITUDEDIR"],
-            data["GPSALTITUDE"],
-            data["GPSALTITUDEUNITS"],
-            data["GPSSPEED"],
-            data["GPSFIX"],
-            data["GPSHDOP"],
-            data["GPIOSTATE"],
-            data["RFSTATE"],
-            data["ADC0"],
-            data["ADC1"],
-            data["ADC2"],
-            data["ADC3"],
-            data["ADC4"],
-            data["ADC5"],
-            data["VCC"],
-            data["BOARDTEMP"],
-            data["ADC8"],
-            data["HABTIMERSTATE"],
-            data["HABCUTDOWNSTATE"],
-            data["HABTRIGGERTIME"],
-            data["HABTIMER"],
-            data["EPOCH"]
-            ]
+    try:
+        temp = [None,
+                data["SOURCECALLSIGN"],
+                data["SOURCEID"],
+                data["DESTINATIONCALLSIGN"],
+                data["DESTINATIONID"],
+                data["RTCSEC"],
+                data["RTCMIN"],
+                data["RTCHOUR"],
+                data["RTCDAY"],
+                data["RTCDOW"],
+                data["RTCMONTH"],
+                data["RTCYEAR"],
+                data["GPSLATITUDE"],
+                data["GPSLATITUDEDIR"],
+                data["GPSLONGITUDE"],
+                data["GPSLONGITUDEDIR"],
+                data["GPSALTITUDE"],
+                data["GPSALTITUDEUNITS"],
+                data["GPSSPEED"],
+                data["GPSFIX"],
+                data["GPSHDOP"],
+                data["GPIOSTATE"],
+                data["RFSTATE"],
+                data["ADC0"],
+                data["ADC1"],
+                data["ADC2"],
+                data["ADC3"],
+                data["ADC4"],
+                data["ADC5"],
+                data["VCC"],
+                data["BOARDTEMP"],
+                data["ADC8"],
+                data["HABTIMERSTATE"],
+                data["HABCUTDOWNSTATE"],
+                data["HABTRIGGERTIME"],
+                data["HABTIMER"],
+                data["EPOCH"]
+                ]
+
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        temp = []
 
     return temp
 
 
 def sqlInsert(data):
-    """Takes in a data tuple and inserts int into the telemetry SQLite table"""
+    """
+    Takes in a data tuple and inserts int into the telemetry SQLite table
 
-    # Read in name of telemetry databse
-    db = telemetryConfig.get("DATABASE", "FILENAME")
+    :param data: Telemetry dictionary
+    :return: Status True or False on SQL insertion success
+    """
 
+    # Read in name of telemetry database
+    try:
+        db = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # Change dictionary into list with proper order
     telem = createTelemetryList(data)
 
-    # Create parameter substitute "?" string for SQL query then create SQL
-    numKeys = len(telem)
-    paramSubs = "?" * (numKeys)
-    paramSubs = ",".join(paramSubs)
-    sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
+    # Check if length of telem is correct
+    if len(telem) > 0:
+        # Create parameter substitute "?" string for SQL query then create SQL
+        numKeys = len(telem)
+        paramSubs = "?" * (numKeys)
+        paramSubs = ",".join(paramSubs)
+        sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
 
-    # Connect to database, create SQL query, execute query, and close database
-    try:
-        conn = sqlite3.connect(db)
+        # Connect to database, create SQL query, execute query, and close database
+        try:
+            conn = sqlite3.connect(db)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
         cursor = conn.cursor()
 
-        # Use connection as context manager to rollback automatically if error
-        with conn:
-            conn.execute(sql,telem)
+        try:
+            # Use connection as context manager to rollback automatically if error
+            with conn:
+                conn.execute(sql,telem)
 
-    except conn.ProgrammingError as e:
-        logger.error(e)
-        logger.error(telem)
-        conn.rollback()
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
-    except sqlite3.OperationalError as e:
-        # TODO: cleanup
-        logger.error(e)
-        initDB()
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            conn.close()
+            return False
 
-    # Completed, close database
-    conn.close()
+        # Completed, close database and return True
+        conn.close()
+        return True
+
+    else:
+        return False
 
 def queryDb(parameters):
     """
@@ -526,6 +569,15 @@ def queryDb(parameters):
     callsign = parameters["CALLSIGN"]
     nodeid = parameters["NODEID"]
     limit = parameters["LIMIT"]
+
+    #Check for timeTuple = None
+    try:
+        if timeTuple == None:
+            raise StandardError("Start and Stop times caused and error")
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return sqlData
 
     # Detect the direction, this will change the query from searching for
     # the source or destination radio. Must generate two slightly different
@@ -557,7 +609,7 @@ def queryDb(parameters):
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
 
     except ConfigParser.Error as e:
-        logger.error(e)
+        logger.error("ConfigParse.Error: " + str(e))
         return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
@@ -663,7 +715,7 @@ def queryStationsDb(parameters):
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
 
     except ConfigParser.Error as e:
-        logger.error(e)
+        logger.error("ConfigParse.Error: " + str(e))
         return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
@@ -707,7 +759,12 @@ def queryStationsDb(parameters):
     return sqlData
 
 def generateStartStopTimes(parameters):
-    """Use parameters dictionary to build up a Tuple of start/stop time values"""
+    """
+    Use parameters dictionary to build up a Tuple of start/stop time values
+
+    :param parameters: dictionary with 'STARTTIME', 'ENDTIME' ISO 8601 keys:val
+    :return: Tuple containing epoch times from input ISO 8601 times
+    """
 
     # Check if start and stop times were provided in ISO 8610 format,
     # if not then generate epoch from timespan
@@ -728,16 +785,29 @@ def generateStartStopTimes(parameters):
 
 
 def iso8601ToEpoch(startTime, endTime):
+    """
+    Converts ISO 8601 start and stop times into epoch time values
+
+    :param startTime: ISO 8601 time
+    :param endTime: ISO 8601 time
+    :return: tuple with EPOCH times (START,STOP). None if error.
+    """
+
     # Date format is ISO 8601
     fmt = "%Y-%m-%dT%H:%M:%S"
 
-    # Generate start and stop time tuples
-    start = time.strptime(startTime,fmt)
-    end = time.strptime(endTime,fmt)
+    try:
+        # Generate start and stop time tuples
+        start = time.strptime(startTime,fmt)
+        end = time.strptime(endTime,fmt)
 
-    # Convert time tuples to epoch times
-    startEpoch = time.mktime(start)
-    endEpoch = time.mktime(end)
+        # Convert time tuples to epoch times
+        startEpoch = time.mktime(start)
+        endEpoch = time.mktime(end)
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return None
 
     # Create a tuple of the start and stop time, return it
     timeTuple = (startEpoch, endEpoch)
@@ -745,7 +815,11 @@ def iso8601ToEpoch(startTime, endTime):
 
 
 def main():
-    """Main function which starts telemery worker thread + Flask server."""
+    """
+    Main function which starts telemery worker thread + Flask server.
+
+    :return: Nothing
+    """
     logger.info('Starting telemetry server')
 
     # Initialize local variables
@@ -759,8 +833,14 @@ def main():
     t.start()
 
     # Start the flask server on localhost:8001
-    telemetryHost = telemetryConfig.get("FLASK", "HOST")
-    telemetryPort = telemetryConfig.getint("FLASK", "PORT")
+    try:
+        telemetryHost = telemetryConfig.get("FLASK", "HOST")
+        telemetryPort = telemetryConfig.getint("FLASK", "PORT")
+
+    except ConfigParser.Error as e:
+        while True:
+            logger.error("ConfigParse.Error: " + str(e))
+            time.sleep(1)
 
     app.run(host=telemetryHost, port=telemetryPort, threaded=True)
 
