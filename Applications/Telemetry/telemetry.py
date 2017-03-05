@@ -29,30 +29,46 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
-logger = logging.getLogger('telemetry')
+try:
+    logging.config.fileConfig('loggingConfig.ini')
+    logger = logging.getLogger('telemetry')
+
+except ConfigParser.Error as e:
+    #  File missing, indicate error and infinite loop. Logger isn't available.
+    while True:
+        print("ERROR: loggingConfig.ini missing")
+        time.sleep(1)
 
 # Load Telemetry Configuration from telemetry.ini file
-# Should have common file for apps...
 telemetryConfig = ConfigParser.RawConfigParser()
-telemetryConfig.read('telemetry.ini')
+telemetryFile = telemetryConfig.read('telemetry.ini')
+
+if len(telemetryFile) == 0:
+    #  File missing, indicate error and infinite loop
+    while True:
+            logger.error("telemetry.ini missing")
+            time.sleep(1)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
-
 def telemetry_worker(config):
     """
-    Interface Faraday Proxy to obtain telemtry
+    Interface Faraday Proxy to obtain telemetry
 
     This function interfaces the Proxy application via its RESTful interface.
     It is a one-way operation as it makes no sense to POST data to proxy for
-    telemetry to a specific unit with this application.
+    telemetry to a specific unit with this application. This function runs
+    in an infinite loop continually querying for data.
+
+    :param config: telemetry.ini ConfigParser object
+    :return: Nothing
     """
     logger.info('Starting telemetry_worker thread')
 
     # initialize variables
     stations = {}
+    count = 0
 
     # Initialize proxy object
     proxy = faradaybasicproxyio.proxyio()
@@ -60,21 +76,36 @@ def telemetry_worker(config):
     # Initialize Faraday parser
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
-    # Open configuration file
-    dbFilename = config.get("DATABASE", "FILENAME")
+    try:
+        # Open configuration file
+        dbFilename = config.get("DATABASE", "FILENAME")
 
-    # Pragmatically create descriptors for each Faraday connected to Proxy
-    count = config.getint("TELEMETRY", "UNITS")
+        # Pragmatically create descriptors for each Faraday connected to Proxy
+        count = config.getint("TELEMETRY", "UNITS")
+
+    except ConfigParser.Error as e:
+            #  Error reading in configs so get stuck in infinite loop indicating problem
+            while True:
+                logger.error("ConfigParse.Error: " + str(e))
+                time.sleep(1)
 
     for num in range(count):
-        callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
-        nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
+        try:
+            callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
+            nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
+
+        except ConfigParser.Error as e:
+            #  Error reading in configs so get stuck in infinite loop indicating problem
+            while True:
+                logger.error("ConfigParse.Error: " + str(e))
+                time.sleep(1)
+
         stations["UNIT" + str(num) + "CALL"] = callsign
         stations["UNIT" + str(num) + "ID"] = nodeid
         telemetryDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
 
-    # check for data on telemetry port, if True place into deque
-    while(1):
+    #  Check for data on telemetry port with infinite loop.
+    while True:
          for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
@@ -125,7 +156,13 @@ def dbTelemetry():
     Serves JSON responses to the "/" URL containing output of SQLite queries.
     Specific SQLite queries can return data from specified ranges and source
     stations as
+
+    :return: JSON formatted string with data or error message and HTTP response
     """
+
+    #  Initialize local variables
+    parameters = {}
+    data = []
 
     try:
         # Obtain URL parameters
@@ -137,22 +174,16 @@ def dbTelemetry():
         timespan = request.args.get("timespan", 5*60)
         limit = request.args.get("limit")
 
-        nodeid = str(nodeid)
-        direction = int(direction)
-        callsign = str(callsign).upper()
-        timespan = int(timespan)
-        if limit != None:
-            limit = int(limit)
+    except IOError as e:
+        logger.error("IOError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
 
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
+    nodeid = str(nodeid)
+    direction = int(direction)
+    callsign = str(callsign).upper()
+    timespan = int(timespan)
+    if limit != None:
+        limit = int(limit)
 
     # Validate timespan
     if timespan <= 0:
@@ -160,7 +191,6 @@ def dbTelemetry():
         return json.dumps({"error": message}), 400
 
     # Create tuple of parameters for SQLite3
-    parameters = {}
     parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeid
     parameters["DIRECTION"] = direction
@@ -169,7 +199,6 @@ def dbTelemetry():
     parameters["TIMESPAN"] = timespan
     parameters["LIMIT"] = limit
 
-    data = []
     data = queryDb(parameters)
 
     # Check if data returned, if not, return HTTP 204
