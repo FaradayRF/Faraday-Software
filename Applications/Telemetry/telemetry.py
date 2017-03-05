@@ -729,17 +729,24 @@ def queryStationsDb(parameters):
     sqlWhere = "WHERE EPOCH BETWEEN ? AND ? "
     sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
 
-    # detect if callsign/nodeid provided, return the last time it was heard
+    #  Check if callsign/nodeid provided, return the last time it was heard
     if parameters["CALLSIGN"] != "%":
-        # Since a callsign was specified, simply search the entire db for it
-        # and return the last epoch time it was heard.
-        timeTuple = (0, time.time())
 
         # Update the sqlWhere strings for this query
         sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ?"
 
         # Create paramTuple for SQLite3 execute function
         paramTuple = timeTuple + (parameters["CALLSIGN"],)
+
+        #  Check if nodeid was given, add into SQL query if it was
+        if parameters["NODEID"] != "%":
+
+            # Update the sqlWhere strings for this query
+            sqlWhere = sqlWhere + " AND SOURCEID LIKE ?"
+
+            # Create paramTuple for SQLite3 execute function
+            paramTuple += (parameters["NODEID"],)
+            
     else:
         # Create paramTuple for SQLite3 execute function do not include callsign
         paramTuple = timeTuple
