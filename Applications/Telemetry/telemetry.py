@@ -182,8 +182,10 @@ def rawTelemetry():
     a queu, thus ensuring there are no duplicates and acting like a proxy with
     decoded data instead of BASE64 encoded data.
 
-    :return: JSON formatted string with data or error message
+    :return: JSON formatted string with data or error. HTTP204 if no data
     """
+    #  Initialize local variables
+    stationData = []
 
     try:
         # Obtain URL parameters
@@ -259,7 +261,6 @@ def rawTelemetry():
             for key, value in telemetryDicts.iteritems():
                 # Make sure queue actually has data in it
                 if (len(value) > 0):
-                    stationData = []
                     station = {}
                     while value:
                         # While data is still in the queue pop off items
@@ -269,13 +270,15 @@ def rawTelemetry():
                         if len(stationData) >= limit:
                             # Hit the limit, break out of the while loop early
                             break
+                            #  Unsure if break will cause multiple locally connected
+                            #  units to not have data
+
                         # Append packet to stationData list
                         stationData.append(packet)
+
                     # All necessary data from radio obtained, add to dictionary
                     station[key] = stationData
-
-            # The data list is a list of dictionaries for json.dumps()
-            data.append(station)
+                    data.append(station)
 
         else:
             # Local radio has been specified, only return data from it
@@ -310,6 +313,11 @@ def rawTelemetry():
         logger.error("StandardError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
+    if len(stationData) == 0:
+        #  No new data is in queue
+        logger.info("No station data is in queue")
+        return '', 204  # HTTP 204 response cannot have message data
+
     # Completed our query for "/raw", return json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
@@ -324,6 +332,8 @@ def stations():
     the time they were heard. If no timespan or range is specified then it
     defaults to the last 5 minutes. If a specific station is specified, then
     the last time it was heard is returned.
+
+    :return: JSON formatted string with data or error. HTTP204 if no data
     """
 
     try:
@@ -334,17 +344,14 @@ def stations():
         callsign = request.args.get("callsign", "%").upper()
         nodeId = request.args.get("nodeid", "%")
 
-        # Timespan will allways be an integer
+        # Timespan will always be an integer
         timespan = int(timespan)
 
+    except IOError as e:
+        logger.error("IOError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
     except ValueError as e:
         logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
         return json.dumps({"error": str(e)}), 400
     except StandardError as e:
         logger.error("StandardError: " + str(e))
@@ -363,7 +370,7 @@ def stations():
 
     # Check if no stations returned, if not, return HTTP 204
     if len(data) <= 0:
-        logger.info("Station(s) not heard in last %d seconds", timespan)
+        logger.info("No Station have been heard in last %d seconds", timespan)
         return '', 204  # HTTP 204 response cannot have message data
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
@@ -372,7 +379,12 @@ def stations():
 
 @app.errorhandler(404)
 def pageNotFound(error):
-    """HTTP 404 response for incorrect URL"""
+    """
+    HTTP 404 response for incorrect URL
+
+    :param error: HTTP Error
+    :return: JSON formatted string with error description
+    """
 
     # Completed handling of unknown URL, return json error message and HTTP 404
     logger.error("Error: " + str(error))
@@ -544,7 +556,7 @@ def queryDb(parameters):
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
 
-    except telemetryConfig.Error as e:
+    except ConfigParser.Error as e:
         logger.error(e)
         return sqlData
 
@@ -563,14 +575,9 @@ def queryDb(parameters):
     try:
         cur.execute(sql,paramTuple)
 
-
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
-        conn.close()
-        return sqlData
-    except StandardError as e:
-        logger.error("StandardError: " + str(e))
         conn.close()
         return sqlData
 
@@ -600,7 +607,21 @@ def queryStationsDb(parameters):
     Can retrieve all stations ever heard, a base callsign, in a specific
     time range, or in a timespan. Returns all results as a list of JSON
     dictionaries
+
+    Parameters:
+    "CALLSIGN":Uppercase callsign
+    "NODEID": Node ID
+    "DIRECTION": Specify if callsign-nodeid to search is local (0) or remote (1)
+    "STARTTIME": ISO8601 time to start search
+    "ENDTIME": ISO8601 time to end search
+    "TIMESPAN": Number of seconds to search over, ending at current time
+
+    :param parameters: Search parameter dictionary
+    :return: List of SQL output where each item is a dictionary
     """
+
+    #  Initialize local variables
+    sqlData = []
 
     # Check for whether a time range or timespan is being specified
     if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
@@ -625,46 +646,51 @@ def queryStationsDb(parameters):
         # and return the last epoch time it was heard.
         timeTuple = (0, time.time())
 
-        # Update the sqlWhere and sqlEnd strings for this query
+        # Update the sqlWhere strings for this query
         sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ?"
 
         # Create paramTuple for SQLite3 execute function
         paramTuple = timeTuple + (parameters["CALLSIGN"],)
     else:
-        # Create paramTuple for SQLite3 execute function
+        # Create paramTuple for SQLite3 execute function do not include callsign
         paramTuple = timeTuple
-
 
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
 
-    # Get telemetry databse name from configuration file
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    # Get telemetry database name from configuration file
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error(e)
+        return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(dbFilename)
-        conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
-        cur = conn.cursor()
-        cur.execute(sql,paramTuple)
-        rows = cur.fetchall()
 
-    except conn.ProgrammingError as e:
-        logger.error("ProgrammingError: " + str(e))
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.error: " + str(e))
         logger.error(paramTuple)
-    except StandardError as e:
-        logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        return sqlData
+
+    conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql,paramTuple)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.error: " + str(e))
+        logger.error(paramTuple)
+        conn.close()
+        return sqlData
 
     # Parse through rows and create key:value dictionaries for each row.
     # Then build up a list of dictionaries for all results.
     try:
-        sqlData = []
+        rows = cur.fetchall()
         for row in rows:
             rowData = {}
             for parameter in row.keys():
@@ -673,12 +699,8 @@ def queryStationsDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        conn.close()
+        return sqlData
 
     # Completed query, close database, return list of dictionary data for JSON
     conn.close()
