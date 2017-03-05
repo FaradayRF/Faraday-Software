@@ -80,29 +80,38 @@ def telemetry_worker(config):
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
 
-            # Iterate through each packet and unpack into dictionary
-            if data != None:
-                for item in data:
-                    try:
-                        # Decode BASE64 JSON data packet into
-                        unPackedItem = proxy.DecodeRawPacket(item["data"])
-                        # Unpack packet into datagram elements
-                        datagram = faradayParser.UnpackDatagram(unPackedItem,False)
-                        # Extract the payload length from payload since padding could be used
-                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"],faradayParser.packet_3_len)
-                        # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
-                        parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
+            try:
+                if data.has_key("error"):
+                    logger.error("StandardError: " + str(data))
+                    break
 
-                    except ValueError as e:
-                        logger.error("ValueError: " + str(e))
-                    except IndexError as e:
-                        logger.error("IndexError: " + str(e))
-                    except KeyError as e:
-                        logger.error("KeyError: " + str(e))
+            except StandardError as e:
+                pass
 
-                    else:
-                        sqlInsert(parsedTelemetry)
-                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
+            else:
+                # Iterate through each packet and unpack into dictionary
+                if data != None:
+                    for item in data:
+                        try:
+                            # Decode BASE64 JSON data packet into
+                            unPackedItem = proxy.DecodeRawPacket(item["data"])
+                            # Unpack packet into datagram elements
+                            datagram = faradayParser.UnpackDatagram(unPackedItem,False)
+                            # Extract the payload length from payload since padding could be used
+                            telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"],faradayParser.packet_3_len)
+                            # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
+                            parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
+
+                        except ValueError as e:
+                            logger.error("ValueError: " + str(e))
+                        except IndexError as e:
+                            logger.error("IndexError: " + str(e))
+                        except KeyError as e:
+                            logger.error("KeyError: " + str(e))
+
+                        else:
+                            sqlInsert(parsedTelemetry)
+                            telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
 
          time.sleep(1) # should slow down
 
