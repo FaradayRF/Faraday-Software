@@ -63,25 +63,22 @@ Tools we find make developing for Faraday-Software better
 * [Notepad++](https://notepad-plus-plus.org/) - Free and powerful text editor
 * [pep8](https://pypi.python.org/pypi/pep8) - PEP8 Python module
 
-# How To Contribute <a name="how_to_contribute"></a>
+## How To Contribute
 
----
+## Reporting a Bug <a name="reporting_a_bug"></a>
 
-## Bug Reporting <a name="bug_reporting"></a>
+Following these simple guidelines will help the maintainers better understand your bug report. Not all guidelines may be applicable to a given situation, please use your best judgement.
 
-Following these simple guidelines will help the maintainers better understand your bug report and to ensure a quality solution. Not all guidelines may be applicable to a given situation, please provide as much as possible.
-
-* **Perform basic debugging**
-  * Are you using the latest version?
-  * Have you changed your configuration of both software or Faraday device from default? (if so please specify)
-  * Are multiple programs running that may be interfering?
-* **Use a clear and descriptive title****
-* **Describe the exact steps used to reproduce the bug**
-* **Describe the exact problem behavior you observed**
-* **Provide a demonstration if possible**
-  * An application script, log file, screenshots, video, etc...
-* **Explain what behavior you expected to see and why**
-* **When in doubt provide as much information as possible**!
+* Perform basic debugging
+* Are you using the latest version of the software?
+* Have you changed your configuration of both software or Faraday device from default? (if so please provide your configuration files on a [Gist](https://gist.github.com/))
+* Are multiple programs running that may be interfering?
+* Use a clear and descriptive title
+* Describe the exact steps used to reproduce the bug
+* Describe the exact problem behavior you observed
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) Gif uploaded to ticket, etc)
+* Explain what behavior you expected to see and why
+* When in doubt provide as much information as possible!
 
 ## Enhancement Suggestions <a name="enhancement_suggestions"></a>
 
