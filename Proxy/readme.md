@@ -16,7 +16,7 @@ Checks the proxy queue for the specified port. If packets are present in the qeu
  
 Before Proxy can connect to any radio hardware, it needs to be configured using the `proxy.ini` file with your callsign and the serial port.
  
- 1. Navigate to the `proxy` folder
+ 1. Navigate to the `Proxy` folder
  2. Create a copy of `proxy.sample.ini` and rename the new file `proxy.ini`
  3. Open `proxy.ini` in a text editor and update the requested information noted  by `REPLACEME`
  
