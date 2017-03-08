@@ -1,8 +1,20 @@
 # Contributor Guidelines
 
-First, we would like to thank you for contributing to the open source project!
+Faraday-Software is the software that interfaces the Faraday radio designed and manufactured by [FaradayRF](https://faradayrf.com/). We're excited you are considering helping out. We need it! FaradayRF was formed to provide the necessary hardware and software to enable the shift towards a data-centric amateur radio.
 
-This document contains information relevant to anyone wishing to contribute the [Faraday digital radio](https://faradayrf.com) host computer software. Our core mission is laid out in our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) and all contributions to the main project should help enable these goal set out.
+> Data is the future of amateur radio and we believe it will be open
+
+By contributing to this project you are helping an open source project. That means that while FaradayRF benefits from it, so does the amateur radio community as a whole. Everyone has access to the work, everyone can use it. We like that.
+
+## Essential Reading
+
+You may wonder why we have made some of the decisions with the direction and functionality of this project. Our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) outlines our goals clearly.
+
+ 1. Educate the Masses
+ 2. Build New Infrastructure
+ 3. Expand Spectrum Use
+
+This points to why we may argue that Faraday software or hardware isn't designed to be the competitive with high bandwidth WiFi or why we are not currently developing a Mesh network. These items add complexity that do not help us accomplish these three goals.
 
 [What should I know before I get started](#get_started)
 
