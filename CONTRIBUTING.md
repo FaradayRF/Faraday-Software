@@ -16,24 +16,29 @@ You may wonder why we have made some of the decisions with the direction and fun
 
 This points to why we may argue that Faraday software or hardware isn't designed to be the competitive with high bandwidth WiFi or why we are not currently developing a Mesh network. These items add complexity that do not help us accomplish these three goals.
 
-[What should I know before I get started](#get_started)
+## Before Getting Started
 
+### Overview
 * [Code of Conduct](#code_of_conduct)
-* [Software Design and Purpose](#software_design)
-* [Language(s)](#language)
-* [Tools](#tools)
+* [Core Principles](#core_principles)
+* [Suggested Tools](#suggested_tools)
 
-[How To Contribute](#how_to_contribute)
+### How To Contribute
 
-* [Bug Reports](#bug_reporting)
-* [Suggesting Enhancements](#enhancement_suggestions)
-* [Beginner Contributions](#beginner_contributions)
+* [Reporting a Bug](#reporting_a_bug)
+* [Feature Requests](#feature_requests)
+* [Beginners Start Here](#beginners_start_here)
 * [Pull Requests](#pull_requests)
 
-[Styleguides](#styleguides)
+### Style Guides
 
+* [Git](#git)
+* [Writing](#writing) 
 * [Documentation](#documentation)
-* [Python - PEP8](#pep8)
+* [Python](#python)
+* [Javascript](#javascript)
+* [HTML](#html)
+* [C](#c)
 
 #What Should I Know Before I Get Started <a name="get_started"></a>
 ---
