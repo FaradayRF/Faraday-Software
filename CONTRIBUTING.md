@@ -47,27 +47,21 @@ FaradayRF in interested in developing better technology and educational resource
 
 If you feel that you or someone participating in this project is being harassed please contact Support@FaradayRF.com.
 
-##Software Design and Purpose <a name="software_design"></a>
-The Faraday software is responsible for providing host computer functionality when a locally connected Faraday digital radio is connected. As described on the [Code Overview](https://faradayrf.com/code/) page, this software provides:
+## Core Principles <a name="core_principles"></a>
+Faraday-Software is being developed for the [Faraday radio](https://faradayrf.com/faraday/). However, this open source project also strives to push ham radio forward. Not just for FaradayRF but for everyone. Therefore we ask that all contributors take the following principles to heart:
 
-* RESTful API interface to interact with a local Faraday
-* Application toolset to utilize the RESTful API in a Python script
-* Core applications
+* Applications and supporting programs shall strive to be [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)
+* Functionality of the software shall attempt to be agnostic of radio hardware design where appropriate
+* An [API](https://en.wikipedia.org/wiki/Application_programming_interface) should be used to communicate between different applications and progams
 
+## Suggested Tools<a name="suggested_tools"></a>
+Tools we find make developing for Faraday-Software better
 
-## Language <a name="language"></a>
-Faraday Software is written in [Python 2.7](https://www.python.org/downloads/).
-
-###Notable Python Modules <a name="notable_python_modules"></a>
-Notable additional Python modules in use are:
-
-* [FLASK](http://flask.pocoo.org/) - A microframework for web development that is used to transfer information between Faraday and applications over a network interface (primarily localhost)
-
-## Tools<a name="tools"></a>
-Please use the tools of your choice but we recommend:
-
-* [PyCharm](https://www.jetbrains.com/pycharm/?fromMenu) - Feature rich Python IDE with built it tools such as a PEP8 syntax checker.
-* [PyScripter](https://sourceforge.net/projects/pyscripter/) - A lightweight Python IDE (for Windows)
+* [Git](https://git-scm.com/) - If you want to contribute you will need Git
+* [PyCharm](https://www.jetbrains.com/pycharm/?fromMenu) - Python IDE
+* [PyScripter](https://sourceforge.net/projects/pyscripter/) - Python IDE
+* [Notepad++](https://notepad-plus-plus.org/) - Free and powerful text editor
+* [pep8](https://pypi.python.org/pypi/pep8) - PEP8 Python module
 
 # How To Contribute <a name="how_to_contribute"></a>
 
