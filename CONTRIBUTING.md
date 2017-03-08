@@ -40,8 +40,12 @@ This points to why we may argue that Faraday software or hardware isn't designed
 * [HTML](#html)
 * [C](#c)
 
-#What Should I Know Before I Get Started <a name="get_started"></a>
----
+##Overview
+
+## Code of Conduct<a name="code_of_conduct"></a>
+FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be a harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
+
+If you feel that you or someone participating in this project is being harassed please contact Support@FaradayRF.com.
 
 ##Software Design and Purpose <a name="software_design"></a>
 The Faraday software is responsible for providing host computer functionality when a locally connected Faraday digital radio is connected. As described on the [Code Overview](https://faradayrf.com/code/) page, this software provides:
