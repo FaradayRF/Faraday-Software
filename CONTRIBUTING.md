@@ -62,6 +62,7 @@ Tools we find make developing for Faraday-Software better
 * [PyScripter](https://sourceforge.net/projects/pyscripter/) - Python IDE
 * [Notepad++](https://notepad-plus-plus.org/) - Free and powerful text editor
 * [pep8](https://pypi.python.org/pypi/pep8) - PEP8 Python module
+* [LICap](http://www.cockos.com/licecap/) - Easy to use GIF window capture
 
 ## How To Contribute
 
