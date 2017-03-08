@@ -77,7 +77,7 @@ Following these simple guidelines will help the maintainers better understand yo
 * Use a clear and descriptive title
 * Describe the exact steps used to reproduce the bug
 * Describe the exact problem behavior you observed
-* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) Gif uploaded to ticket, etc)
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
 * Explain what behavior you expected to see and why
 * When in doubt provide as much information as possible!
 
