@@ -80,10 +80,10 @@ Alternatively one can simply run proxy from command line:
 For example `python C:\faradayrf\software\Proxy\proxy.py`
 
 ###Linux (Debian-Based)
-For example `python faradayrf/software/proxy/Proxy.py`
+For example `python faradayrf/software/Proxy/proxy.py`
 
 ###Mac OS X
-For example `python faradayrf/software/proxy/Proxy.py`
+For example `python faradayrf/software/Proxy/proxy.py`
 
 ###Proxy Running
 With Faraday connected and `proxy.py` properly configured you will see a screen similar to that shown below upon initialization.
