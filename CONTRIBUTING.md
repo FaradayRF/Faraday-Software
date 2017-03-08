@@ -97,15 +97,13 @@ FaradayRF welcomes all help. Even if you've never made an open source contributi
 * [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowlege of programming and can help learn how Faraday software ticks
 * [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
+## Pull Requests <a name="pull_requests"></a>
 
-##Pull Requests <a name="pull_requests"></a>
-
-* Include examples/screenshots/videos of your pull request if applicable
 * Include a detailed description of the pull requests purpose
-* Follow our code [style guidelines](#styleguides)
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
+* Follow our code Style Guide wherever possible
 * Avoid platform dependent code
  
-
 #Styleguides <a name="styleguides"></a>
 ---
 
