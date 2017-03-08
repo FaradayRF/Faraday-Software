@@ -106,6 +106,22 @@ FaradayRF welcomes all help. Even if you've never made an open source contributi
  
 ## Style Guides
 
+### Git<a name="git"></a>
+
+#### Branches
+* Choose short and descriptive branch names. i.e. `issue100`, `aprslib`
+* Reference issue tickets in commits where applicable
+* Delete your branch after it is merged unless there is reason not to
+
+#### Commits
+* Commits should be [atomic](https://seesparkbox.com/foundry/atomic_commits_with_git) i.e. one commit per logical change. Do not combine logical changes with formatting changes.
+* Every commit should have a message associated with it describing the changes made
+* Commit messages should reference issue ticket s i.e. "issue #90" and/or commits where appropriate
+
+#### Merges
+* Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward.
+* Test code prior to merging
+
 ## Python PEP8 <a name="pep8"></a>
 
 All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/pep-0008/), existing code that does not meet this style guide is being updated to comply. There are several automatic PEP8 syntax checking programs such as the [PyCharm PEP8 Syntax Module](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/).
@@ -116,7 +132,6 @@ Documentation is mandatory to ensure that all contributors clearly understand ho
 
 * [Sphinx Documentation](http://www.sphinx-doc.org/en/stable/contents.html)
 * [Examples Of Good Python Docstrings](http://www.sphinx-doc.org/en/stable/ext/example_google.html)
-
 ##Configuration files
 
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
