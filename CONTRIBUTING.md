@@ -42,19 +42,19 @@ This points to why we may argue that Faraday software or hardware isn't designed
 
 ##Overview
 
-## Code of Conduct<a name="code_of_conduct"></a>
+### Code of Conduct<a name="code_of_conduct"></a>
 FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be a harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
 
 If you feel that you or someone participating in this project is being harassed please contact Support@FaradayRF.com.
 
-## Core Principles <a name="core_principles"></a>
+### Core Principles <a name="core_principles"></a>
 Faraday-Software is being developed for the [Faraday radio](https://faradayrf.com/faraday/). However, this open source project also strives to push ham radio forward. Not just for FaradayRF but for everyone. Therefore we ask that all contributors take the following principles to heart:
 
 * Applications and supporting programs shall strive to be [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)
 * Functionality of the software shall attempt to be agnostic of radio hardware design where appropriate
 * An [API](https://en.wikipedia.org/wiki/Application_programming_interface) should be used to communicate between different applications and progams
 
-## Suggested Tools<a name="suggested_tools"></a>
+### Suggested Tools<a name="suggested_tools"></a>
 Tools we find make developing for Faraday-Software better
 
 * [Git](https://git-scm.com/) - If you want to contribute you will need Git
