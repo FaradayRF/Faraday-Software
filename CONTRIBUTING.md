@@ -90,12 +90,11 @@ Suggesting enhancements is one of the most important factors to driving innovati
   * In addition to text screenshots, diagrams, etc... are welcome if they better explain your suggestion
 * **Explain why this is a useful enhancement to the community**
 
-
-## Beginner Contributions <a name="beginner_contributions"></a>
-
-If you are not sure how to start off contributing to the project browse the tagged beginner issues below.
+## Beginners Start Here <a name="beginners_start_here"></a>
+FaradayRF welcomes all help. Even if you've never made an open source contribution before or don't even know how to program. We've marked bugs and enhancements that you may be able to contribute to the project with.
 
 * [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
+* [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowlege of programming and can help learn how Faraday software ticks
 * [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
 
