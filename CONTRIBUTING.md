@@ -81,14 +81,14 @@ Following these simple guidelines will help the maintainers better understand yo
 * Explain what behavior you expected to see and why
 * When in doubt provide as much information as possible!
 
-## Enhancement Suggestions <a name="enhancement_suggestions"></a>
+## Feature Requests <a name="feature_requests"></a>
 
-Suggesting enhancements is one of the most important factors to driving innovation within the Faraday digital amateur radio community! Please follow as best as possible these guidelines to ensure that maintainers clearly understand the request.
+We love new ideas. If you think we should add functionality to the Faraday Software we want to hear about it. Please follow these guidelines as best as possible to help us understand your request. We cannot guarantee the feature will be implemented. In most cases the best way to get a feature into Faraday is to write the code and submit a Pull Request!
 
-* **Use a clear and descriptive title**
-* **Provide a descriptive overview of the enhancements operation(s)**
-  * In addition to text screenshots, diagrams, etc... are welcome if they better explain your suggestion
-* **Explain why this is a useful enhancement to the community**
+* Use a clear and descriptive title
+* Provide a descriptive overview of the enhancements operation(s)
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
+* Explain why this is a useful enhancement to the community
 
 ## Beginners Start Here <a name="beginners_start_here"></a>
 FaradayRF welcomes all help. Even if you've never made an open source contribution before or don't even know how to program. We've marked bugs and enhancements that you may be able to contribute to the project with.
