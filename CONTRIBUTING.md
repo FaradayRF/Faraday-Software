@@ -66,7 +66,7 @@ Tools we find make developing for Faraday-Software better
 
 ## How To Contribute
 
-## Reporting a Bug <a name="reporting_a_bug"></a>
+### Reporting a Bug <a name="reporting_a_bug"></a>
 
 Following these simple guidelines will help the maintainers better understand your bug report. Not all guidelines may be applicable to a given situation, please use your best judgement.
 
@@ -81,7 +81,7 @@ Following these simple guidelines will help the maintainers better understand yo
 * Explain what behavior you expected to see and why
 * When in doubt provide as much information as possible!
 
-## Feature Requests <a name="feature_requests"></a>
+### Feature Requests <a name="feature_requests"></a>
 
 We love new ideas. If you think we should add functionality to the Faraday Software we want to hear about it. Please follow these guidelines as best as possible to help us understand your request. We cannot guarantee the feature will be implemented. In most cases the best way to get a feature into Faraday is to write the code and submit a Pull Request!
 
@@ -90,22 +90,21 @@ We love new ideas. If you think we should add functionality to the Faraday Softw
 * Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
 * Explain why this is a useful enhancement to the community
 
-## Beginners Start Here <a name="beginners_start_here"></a>
+### Beginners Start Here <a name="beginners_start_here"></a>
 FaradayRF welcomes all help. Even if you've never made an open source contribution before or don't even know how to program. We've marked bugs and enhancements that you may be able to contribute to the project with.
 
 * [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
 * [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowlege of programming and can help learn how Faraday software ticks
 * [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
-## Pull Requests <a name="pull_requests"></a>
+### Pull Requests <a name="pull_requests"></a>
 
 * Include a detailed description of the pull requests purpose
 * Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
 * Follow our code Style Guide wherever possible
 * Avoid platform dependent code
  
-#Styleguides <a name="styleguides"></a>
----
+## Style Guides
 
 ## Python PEP8 <a name="pep8"></a>
 
