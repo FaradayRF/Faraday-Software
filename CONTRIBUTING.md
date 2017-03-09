@@ -130,6 +130,14 @@ There are many instances where one might find themselves writing for Faraday-Sof
 * Use one space after a period for new sentences
 * When referencing variables, functions, classes, or folders use `code` formatting
 
+### Documentation
+Open source projects strive then they are documented well. This allows everyone to understand what is going on in the code and how to use it. Please follow the following conventions:
+
+* Use comments in sourcecode to explain a piece of code when the code does not speak for itself
+* When writing functions and classes always use [Docstrings](https://www.python.org/dev/peps/pep-0257/)
+* Every program, application, or library should have an associated `readme.md` describing what the code is, how to install it, and how to use it.
+* If images are necessary, create an `images` folder within the project/application folder to hold them.
+
 ## Python PEP8 <a name="pep8"></a>
 
 All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/pep-0008/), existing code that does not meet this style guide is being updated to comply. There are several automatic PEP8 syntax checking programs such as the [PyCharm PEP8 Syntax Module](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/).
