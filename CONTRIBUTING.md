@@ -162,12 +162,6 @@ Like JavaScript HTML is often used for displaying information and as a response 
 ### C
 If C is used for Faraday-Software please follow the [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html) as best as possible.
 
-## Documentation <a name="documentation"></a>
-
-Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx](http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documentation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
-
-* [Sphinx Documentation](http://www.sphinx-doc.org/en/stable/contents.html)
-* [Examples Of Good Python Docstrings](http://www.sphinx-doc.org/en/stable/ext/example_google.html)
 ##Configuration files
 
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
