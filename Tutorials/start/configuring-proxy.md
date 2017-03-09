@@ -35,7 +35,7 @@ Proxy.ini is a plaintext ASCII file which contains the necessary configuration v
  
 > There is no need to change any other Proxy.ini settings unless you know what you're doing!
  
- 1. Navigate to the `proxy` folder
+ 1. Navigate to the `Proxy` folder
  2. Create a copy of `proxy.sample.ini` and rename the new file `proxy.ini`
  3. Open the `proxy.ini` file in a text editor to edit `[UNIT0]` values
  4. Change `CALLSIGN` Replace `REPLACEME` to match your callsign
@@ -51,7 +51,7 @@ A proper configuration file will look similar to the configuration below. Notice
  
 > There is no need to change any other Proxy.ini settings unless you know what you're doing!
  
- 1. Open `proxy.sample.ini` with a text editor i.e `gedit git/faradayrf/software/proxy/proxy.sample.ini`
+ 1. Open `proxy.sample.ini` with a text editor i.e `gedit git/faradayrf/software/Proxy/proxy.sample.ini`
  2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
  3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
@@ -63,7 +63,7 @@ A proper configuration file will look similar to the configuration below. Notice
  
 > There is no need to change any other Proxy.ini settings unless you know what you're doing!
  
- 1. Open `proxy.sample.ini` with a text editor `faradayrf/software/proxy/proxy.sample.ini`
+ 1. Open `proxy.sample.ini` with a text editor `faradayrf/software/Proxy/proxy.sample.ini`
  2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
  3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
  4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
@@ -77,13 +77,13 @@ Double-click on `proxy.py` to run it from a file explorer.
 Alternatively one can simply run proxy from command line:
 
 ### Windows
-For example `python C:\faradayrf\software\proxy\proxy.py`
+For example `python C:\faradayrf\software\Proxy\proxy.py`
 
 ###Linux (Debian-Based)
-For example `python faradayrf/software/proxy/proxy.py`
+For example `python faradayrf/software/Proxy/proxy.py`
 
 ###Mac OS X
-For example `python faradayrf/software/proxy/proxy.py`
+For example `python faradayrf/software/Proxy/proxy.py`
 
 ###Proxy Running
 With Faraday connected and `proxy.py` properly configured you will see a screen similar to that shown below upon initialization.
