@@ -138,9 +138,20 @@ Open source projects strive then they are documented well. This allows everyone 
 * Every program, application, or library should have an associated `readme.md` describing what the code is, how to install it, and how to use it.
 * If images are necessary, create an `images` folder within the project/application folder to hold them.
 
-## Python PEP8 <a name="pep8"></a>
+### Python
+Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time.
 
-All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/pep-0008/), existing code that does not meet this style guide is being updated to comply. There are several automatic PEP8 syntax checking programs such as the [PyCharm PEP8 Syntax Module](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/).
+* [PEP8 Python Module](https://pypi.python.org/pypi/pep8) - Run on sourcecode from command line to print out PEP8 violations
+* [Pycharm PEP8 Support](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/) - Pycharm IDE has built-in PEP8 checking. Use it!
+
+#### Naming Conventions
+Faraday-Software started out with various naming schemes from its original developers. We are standardizing on PEP8 compliant naming schemes.
+
+* **Function** names should be lowercase, with words seperated by underscores as necessary to improve readability
+* **Variables** should also be lowercase and only deviating to improve readability
+* **Class Names** should use CapWords convention
+* **Package and module names** should use all lowercase names unless necessary then use underscores
+* **Constants** should be all UPPERCASE
 
 ## Documentation <a name="documentation"></a>
 
