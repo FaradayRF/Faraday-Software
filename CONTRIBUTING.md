@@ -138,6 +138,18 @@ Open source projects strive then they are documented well. This allows everyone 
 * Every program, application, or library should have an associated `readme.md` describing what the code is, how to install it, and how to use it.
 * If images are necessary, create an `images` folder within the project/application folder to hold them.
 
+### Configuration files
+
+For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
+
+Use the following format within configuration files:
+* Uppercase [SECTION] and NAME fields but values can be upper or lowercase
+`[SECTION]`
+* No spaces before or after = separating the NAME from the value
+`NAME=value`
+* Comments must be on their own line and cannot be inline comments
+`;this is a comment`
+
 ### Python
 Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combinging PEP8 updates to old code with new commits unles you are updating the code that is being changes to PEP8. Separate formatting and logical commits per out Git style guide!
 
@@ -161,15 +173,3 @@ Like JavaScript HTML is often used for displaying information and as a response 
 
 ### C
 If C is used for Faraday-Software please follow the [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html) as best as possible.
-
-### Configuration files
-
-For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
-
-Use the following format within configuration files:
-* Uppercase [SECTION] and NAME fields but values can be upper or lowercase
-`[SECTION]`
-* No spaces before or after = separating the NAME from the value
-`NAME=value`
-* Comments must be on their own line and cannot be inline comments
-`;this is a comment`
