@@ -35,6 +35,7 @@ This points to why we may argue that Faraday software or hardware isn't designed
 * [Git](#git)
 * [Writing](#writing) 
 * [Documentation](#documentation)
+* [Configuration Files](#configuration_files)
 * [Python](#python)
 * [JavaScript](#javascript)
 * [HTML](#html)
@@ -122,7 +123,7 @@ FaradayRF welcomes all help. Even if you've never made an open source contributi
 * Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward.
 * Test code prior to merging
 
-### Writing
+### Writing<a name="writing"></a>
 There are many instances where one might find themselves writing for Faraday-Software. Mostly this will be documentation or comments. This project aims to be as clear as possible. Therefore we suggest abiding by the following conventions or you might find yourself being asked to fix your pull request.
 
 * Spelling errors should be eliminated
@@ -130,7 +131,7 @@ There are many instances where one might find themselves writing for Faraday-Sof
 * Use one space after a period for new sentences
 * When referencing variables, functions, classes, or folders use `code` formatting
 
-### Documentation
+### Documentation<a name="documentation"></a>
 Open source projects strive then they are documented well. This allows everyone to understand what is going on in the code and how to use it. Please follow the following conventions:
 
 * Use comments in sourcecode to explain a piece of code when the code does not speak for itself
@@ -138,7 +139,7 @@ Open source projects strive then they are documented well. This allows everyone 
 * Every program, application, or library should have an associated `readme.md` describing what the code is, how to install it, and how to use it.
 * If images are necessary, create an `images` folder within the project/application folder to hold them.
 
-### Configuration files
+### Configuration files<a name="configuration_files"></a>
 
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
 
@@ -150,7 +151,7 @@ Use the following format within configuration files:
 * Comments must be on their own line and cannot be inline comments
 `;this is a comment`
 
-### Python
+### Python<a name="python"></a>
 Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combinging PEP8 updates to old code with new commits unles you are updating the code that is being changes to PEP8. Separate formatting and logical commits per out Git style guide!
 
 * [PEP8 Python Module](https://pypi.python.org/pypi/pep8) - Run on sourcecode from command line to print out PEP8 violations
@@ -165,11 +166,11 @@ Faraday-Software started out with various naming schemes from its original devel
 * **Package and module names** should use all lowercase names unless necessary then use underscores
 * **Constants** should be all UPPERCASE
 
-### JavaScript
+### JavaScript<a name="javascript"></a>
 Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the [jQuery JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
 
-### HTML
+### HTML<a name="html"></a>
 Like JavaScript HTML is often used for displaying information and as a response for RESTful requests that return an HTML file. Please make an attempt to follow the [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/)
 
-### C
+### C<a name="c"></a>
 If C is used for Faraday-Software please follow the [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html) as best as possible.
