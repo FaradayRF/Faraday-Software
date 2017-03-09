@@ -122,6 +122,14 @@ FaradayRF welcomes all help. Even if you've never made an open source contributi
 * Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward.
 * Test code prior to merging
 
+### Writing
+There are many instances where one might find themselves writing for Faraday-Software. Mostly this will be documentation or comments. This project aims to be as clear as possible. Therefore we suggest abiding by the following conventions or you might find yourself being asked to fix your pull request.
+
+* Spelling errors should be eliminated
+* Try to be as clear and concise as possible
+* Use one space after a period for new sentences
+* When referencing variables, functions, classes, or folders use `code` formatting
+
 ## Python PEP8 <a name="pep8"></a>
 
 All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/pep-0008/), existing code that does not meet this style guide is being updated to comply. There are several automatic PEP8 syntax checking programs such as the [PyCharm PEP8 Syntax Module](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/).
