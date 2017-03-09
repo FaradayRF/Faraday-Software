@@ -14,7 +14,7 @@ You may wonder why we have made some of the decisions with the direction and fun
  2. Build New Infrastructure
  3. Expand Spectrum Use
 
-This points to why we may argue that Faraday software or hardware isn't designed to be the competitive with high bandwidth WiFi or why we are not currently developing a Mesh network. These items add complexity that do not help us accomplish these three goals.
+This points to why we may argue that Faraday software or hardware isn't designed to be competitive with high bandwidth WiFi or why we are not currently developing a mesh network. These items add complexity that do not help us accomplish these three goals.
 
 ## Before Getting Started
 
@@ -44,7 +44,7 @@ This points to why we may argue that Faraday software or hardware isn't designed
 ##Overview
 
 ### Code of Conduct<a name="code_of_conduct"></a>
-FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be a harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
+FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
 
 If you feel that you or someone participating in this project is being harassed please contact Support@FaradayRF.com.
 
@@ -53,7 +53,7 @@ Faraday-Software is being developed for the [Faraday radio](https://faradayrf.co
 
 * Applications and supporting programs shall strive to be [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)
 * Functionality of the software shall attempt to be agnostic of radio hardware design where appropriate
-* An [API](https://en.wikipedia.org/wiki/Application_programming_interface) should be used to communicate between different applications and progams
+* An [API](https://en.wikipedia.org/wiki/Application_programming_interface) should be used to communicate between different applications and programs
 
 ### Suggested Tools<a name="suggested_tools"></a>
 Tools we find make developing for Faraday-Software better
@@ -95,7 +95,7 @@ We love new ideas. If you think we should add functionality to the Faraday Softw
 FaradayRF welcomes all help. Even if you've never made an open source contribution before or don't even know how to program. We've marked bugs and enhancements that you may be able to contribute to the project with.
 
 * [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
-* [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowlege of programming and can help learn how Faraday software ticks
+* [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowledge of programming and can help learn how Faraday software ticks
 * [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
 ### Pull Requests <a name="pull_requests"></a>
@@ -117,10 +117,10 @@ FaradayRF welcomes all help. Even if you've never made an open source contributi
 #### Commits
 * Commits should be [atomic](https://seesparkbox.com/foundry/atomic_commits_with_git) i.e. one commit per logical change. Do not combine logical changes with formatting changes.
 * Every commit should have a message associated with it describing the changes made
-* Commit messages should reference issue ticket s i.e. "issue #90" and/or commits where appropriate
+* Commit messages should reference issue tickets i.e. "...issue #90..." and/or commit hashes where appropriate
 
 #### Merges
-* Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward.
+* Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward
 * Test code prior to merging
 
 ### Writing<a name="writing"></a>
@@ -144,6 +144,7 @@ Open source projects strive then they are documented well. This allows everyone 
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
 
 Use the following format within configuration files:
+
 * Uppercase [SECTION] and NAME fields but values can be upper or lowercase
 `[SECTION]`
 * No spaces before or after = separating the NAME from the value
@@ -152,7 +153,7 @@ Use the following format within configuration files:
 `;this is a comment`
 
 ### Python<a name="python"></a>
-Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combinging PEP8 updates to old code with new commits unles you are updating the code that is being changes to PEP8. Separate formatting and logical commits per out Git style guide!
+Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combining PEP8 updates to old code with new commits unless you are updating the code that is being changed to PEP8. Separate formatting and logical commits per out Git style guide!
 
 * [PEP8 Python Module](https://pypi.python.org/pypi/pep8) - Run on sourcecode from command line to print out PEP8 violations
 * [Pycharm PEP8 Support](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/) - Pycharm IDE has built-in PEP8 checking. Use it!
@@ -160,7 +161,7 @@ Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](htt
 #### Naming Conventions
 Faraday-Software started out with various naming schemes from its original developers. We are standardizing on PEP8 compliant naming schemes.
 
-* **Function** names should be lowercase, with words seperated by underscores as necessary to improve readability
+* **Function** names should be lowercase, with words separated by underscores as necessary to improve readability
 * **Variables** should also be lowercase and only deviating to improve readability
 * **Class Names** should use CapWords convention
 * **Package and module names** should use all lowercase names unless necessary then use underscores
