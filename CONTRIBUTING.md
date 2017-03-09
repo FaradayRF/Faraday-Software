@@ -139,7 +139,7 @@ Open source projects strive then they are documented well. This allows everyone 
 * If images are necessary, create an `images` folder within the project/application folder to hold them.
 
 ### Python
-Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time.
+Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combinging PEP8 updates to old code with new commits unles you are updating the code that is being changes to PEP8. Separate formatting and logical commits per out Git style guide!
 
 * [PEP8 Python Module](https://pypi.python.org/pypi/pep8) - Run on sourcecode from command line to print out PEP8 violations
 * [Pycharm PEP8 Support](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/) - Pycharm IDE has built-in PEP8 checking. Use it!
