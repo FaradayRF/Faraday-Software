@@ -22,6 +22,7 @@ This points to why we may argue that Faraday software or hardware isn't designed
 * [Code of Conduct](#code_of_conduct)
 * [Core Principles](#core_principles)
 * [Suggested Tools](#suggested_tools)
+* [Slack Channel](#slack)
 
 ### How To Contribute
 
@@ -41,7 +42,7 @@ This points to why we may argue that Faraday software or hardware isn't designed
 * [HTML](#html)
 * [C](#c)
 
-##Overview
+## Overview
 
 ### Code of Conduct<a name="code_of_conduct"></a>
 FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
@@ -64,6 +65,11 @@ Tools we find make developing for Faraday-Software better
 * [Notepad++](https://notepad-plus-plus.org/) - Free and powerful text editor
 * [pep8](https://pypi.python.org/pypi/pep8) - PEP8 Python module
 * [LICap](http://www.cockos.com/licecap/) - Easy to use GIF window capture
+
+### FaradayRF Slack Channel<a name="slack"></a>
+We often use our slack channel to communicate in near real-time. It is also a place to meet other developers and FaradayRF owners. We can't make it open to signup for everyone due to Slack rules but send us an email at Support@FaradayRF.com asking for an invitation and we'd be happy to send the invite!
+
+* [FaradayRF Slack Channel](https://faradayrf.slack.com)
 
 ## How To Contribute
 
