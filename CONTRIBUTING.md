@@ -154,7 +154,7 @@ Faraday-Software started out with various naming schemes from its original devel
 * **Constants** should be all UPPERCASE
 
 ### JavaScript
-Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the jQuery [JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
+Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the [jQuery JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
 
 ### HTML
 Like JavaScript HTML is often used for displaying information and as a response for RESTful requests that return an HTML file. Please make an attempt to follow the [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/)
