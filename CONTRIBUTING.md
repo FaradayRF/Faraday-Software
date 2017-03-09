@@ -159,6 +159,9 @@ Javascript is often used for display functionality such as GUI interfaces or RES
 ### HTML
 Like JavaScript HTML is often used for displaying information and as a response for RESTful requests that return an HTML file. Please make an attempt to follow the [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/)
 
+### C
+If C is used for Faraday-Software please follow the [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html) as best as possible.
+
 ## Documentation <a name="documentation"></a>
 
 Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx](http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documentation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
