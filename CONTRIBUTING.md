@@ -36,7 +36,7 @@ This points to why we may argue that Faraday software or hardware isn't designed
 * [Writing](#writing) 
 * [Documentation](#documentation)
 * [Python](#python)
-* [Javascript](#javascript)
+* [JavaScript](#javascript)
 * [HTML](#html)
 * [C](#c)
 
@@ -152,6 +152,9 @@ Faraday-Software started out with various naming schemes from its original devel
 * **Class Names** should use CapWords convention
 * **Package and module names** should use all lowercase names unless necessary then use underscores
 * **Constants** should be all UPPERCASE
+
+### JavaScript
+Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the jQuery [JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
 
 ## Documentation <a name="documentation"></a>
 
