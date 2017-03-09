@@ -156,6 +156,9 @@ Faraday-Software started out with various naming schemes from its original devel
 ### JavaScript
 Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the jQuery [JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
 
+### HTML
+Like JavaScript HTML is often used for displaying information and as a response for RESTful requests that return an HTML file. Please make an attempt to follow the [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/)
+
 ## Documentation <a name="documentation"></a>
 
 Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx](http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documentation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
