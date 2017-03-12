@@ -1,121 +1,183 @@
 # Contributor Guidelines
 
-First, we would like to thank you for contributing to the open source project!
+Faraday-Software is the software that interfaces the Faraday radio designed and manufactured by [FaradayRF](https://faradayrf.com/). We're excited you are considering helping out. We need it! FaradayRF was formed to provide the necessary hardware and software to enable the shift towards a data-centric amateur radio.
 
-This document contains information relevant to anyone wishing to contribute the [Faraday digital radio](https://faradayrf.com) host computer software. Our core mission is laid out in our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) and all contributions to the main project should help enable these goal set out.
+> Data is the future of amateur radio and we believe it will be open
 
-[What should I know before I get started](#get_started)
+By contributing to this project you are helping an open source project. That means that while FaradayRF benefits from it, so does the amateur radio community as a whole. Everyone has access to the work, everyone can use it. We like that.
 
+## Essential Reading
+
+You may wonder why we have made some of the decisions with the direction and functionality of this project. Our [Master Plan](https://faradayrf.com/faradayrf-master-plan/) outlines our goals clearly.
+
+ 1. Educate the Masses
+ 2. Build New Infrastructure
+ 3. Expand Spectrum Use
+
+This points to why we may argue that Faraday software or hardware isn't designed to be competitive with high bandwidth WiFi or why we are not currently developing a mesh network. These items add complexity that do not help us accomplish these three goals.
+
+## Before Getting Started
+
+### Overview
 * [Code of Conduct](#code_of_conduct)
-* [Software Design and Purpose](#software_design)
-* [Language(s)](#language)
-* [Tools](#tools)
+* [Core Principles](#core_principles)
+* [Suggested Tools](#suggested_tools)
+* [Slack Channel](#slack)
 
-[How To Contribute](#how_to_contribute)
+### How To Contribute
 
-* [Bug Reports](#bug_reporting)
-* [Suggesting Enhancements](#enhancement_suggestions)
-* [Beginner Contributions](#beginner_contributions)
+* [Reporting a Bug](#reporting_a_bug)
+* [Feature Requests](#feature_requests)
+* [Beginners Start Here](#beginners_start_here)
 * [Pull Requests](#pull_requests)
 
-[Styleguides](#styleguides)
+### Style Guides
 
+* [Git](#git)
+* [Writing](#writing) 
 * [Documentation](#documentation)
-* [Python - PEP8](#pep8)
+* [Configuration Files](#configuration_files)
+* [Python](#python)
+* [JavaScript](#javascript)
+* [HTML](#html)
+* [C](#c)
 
-#What Should I Know Before I Get Started <a name="get_started"></a>
----
+## Overview
 
-##Software Design and Purpose <a name="software_design"></a>
-The Faraday software is responsible for providing host computer functionality when a locally connected Faraday digital radio is connected. As described on the [Code Overview](https://faradayrf.com/code/) page, this software provides:
+### Code of Conduct<a name="code_of_conduct"></a>
+FaradayRF in interested in developing better technology and educational resources for ham radio. It's that simple. This means FaradayRF and all contributors pledge to foster a welcoming atmosphere for everyone. Participating with this project shall be harassment-free irrespective of nationality, age, body size, ethnicity, gender identity and expression, any disabilities, level of experience, personal appearance, race, religion, or sexual identity/orientation.
 
-* RESTful API interface to interact with a local Faraday
-* Application toolset to utilize the RESTful API in a Python script
-* Core applications
+If you feel that you or someone participating in this project is being harassed please contact Support@FaradayRF.com.
 
+### Core Principles <a name="core_principles"></a>
+Faraday-Software is being developed for the [Faraday radio](https://faradayrf.com/faraday/). However, this open source project also strives to push ham radio forward. Not just for FaradayRF but for everyone. Therefore we ask that all contributors take the following principles to heart:
 
-## Language <a name="language"></a>
-Faraday Software is written in [Python 2.7](https://www.python.org/downloads/).
+* Applications and supporting programs shall strive to be [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer)
+* Functionality of the software shall attempt to be agnostic of radio hardware design where appropriate
+* An [API](https://en.wikipedia.org/wiki/Application_programming_interface) should be used to communicate between different applications and programs
 
-###Notable Python Modules <a name="notable_python_modules"></a>
-Notable additional Python modules in use are:
+### Suggested Tools<a name="suggested_tools"></a>
+Tools we find make developing for Faraday-Software better
 
-* [FLASK](http://flask.pocoo.org/) - A microframework for web development that is used to transfer information between Faraday and applications over a network interface (primarily localhost)
+* [Git](https://git-scm.com/) - If you want to contribute you will need Git
+* [PyCharm](https://www.jetbrains.com/pycharm/?fromMenu) - Python IDE
+* [PyScripter](https://sourceforge.net/projects/pyscripter/) - Python IDE
+* [Notepad++](https://notepad-plus-plus.org/) - Free and powerful text editor
+* [pep8](https://pypi.python.org/pypi/pep8) - PEP8 Python module
+* [LICap](http://www.cockos.com/licecap/) - Easy to use GIF window capture
 
-## Tools<a name="tools"></a>
-Please use the tools of your choice but we recommend:
+### FaradayRF Slack Channel<a name="slack"></a>
+We often use our slack channel to communicate in near real-time. It is also a place to meet other developers and FaradayRF owners. We can't make it open to signup for everyone due to Slack rules but send us an email at Support@FaradayRF.com asking for an invitation and we'd be happy to send the invite!
 
-* [PyCharm](https://www.jetbrains.com/pycharm/?fromMenu) - Feature rich Python IDE with built it tools such as a PEP8 syntax checker.
-* [PyScripter](https://sourceforge.net/projects/pyscripter/) - A lightweight Python IDE (for Windows)
+* [FaradayRF Slack Channel](https://faradayrf.slack.com)
 
-# How To Contribute <a name="how_to_contribute"></a>
+## How To Contribute
 
----
+### Reporting a Bug <a name="reporting_a_bug"></a>
 
-## Bug Reporting <a name="bug_reporting"></a>
+Following these simple guidelines will help the maintainers better understand your bug report. Not all guidelines may be applicable to a given situation, please use your best judgement.
 
-Following these simple guidelines will help the maintainers better understand your bug report and to ensure a quality solution. Not all guidelines may be applicable to a given situation, please provide as much as possible.
+* Perform basic debugging
+* Are you using the latest version of the software?
+* Have you changed your configuration of both software or Faraday device from default? (if so please provide your configuration files on a [Gist](https://gist.github.com/))
+* Are multiple programs running that may be interfering?
+* Use a clear and descriptive title
+* Describe the exact steps used to reproduce the bug
+* Describe the exact problem behavior you observed
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
+* Explain what behavior you expected to see and why
+* When in doubt provide as much information as possible!
 
-* **Perform basic debugging**
-  * Are you using the latest version?
-  * Have you changed your configuration of both software or Faraday device from default? (if so please specify)
-  * Are multiple programs running that may be interfering?
-* **Use a clear and descriptive title****
-* **Describe the exact steps used to reproduce the bug**
-* **Describe the exact problem behavior you observed**
-* **Provide a demonstration if possible**
-  * An application script, log file, screenshots, video, etc...
-* **Explain what behavior you expected to see and why**
-* **When in doubt provide as much information as possible**!
+### Feature Requests <a name="feature_requests"></a>
 
-## Enhancement Suggestions <a name="enhancement_suggestions"></a>
+We love new ideas. If you think we should add functionality to the Faraday Software we want to hear about it. Please follow these guidelines as best as possible to help us understand your request. We cannot guarantee the feature will be implemented. In most cases the best way to get a feature into Faraday is to write the code and submit a Pull Request!
 
-Suggesting enhancements is one of the most important factors to driving innovation within the Faraday digital amateur radio community! Please follow as best as possible these guidelines to ensure that maintainers clearly understand the request.
+* Use a clear and descriptive title
+* Provide a descriptive overview of the enhancements operation(s)
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
+* Explain why this is a useful enhancement to the community
 
-* **Use a clear and descriptive title**
-* **Provide a descriptive overview of the enhancements operation(s)**
-  * In addition to text screenshots, diagrams, etc... are welcome if they better explain your suggestion
-* **Explain why this is a useful enhancement to the community**
-
-
-## Beginner Contributions <a name="beginner_contributions"></a>
-
-If you are not sure how to start off contributing to the project browse the tagged beginner issues below.
+### Beginners Start Here <a name="beginners_start_here"></a>
+FaradayRF welcomes all help. Even if you've never made an open source contribution before or don't even know how to program. We've marked bugs and enhancements that you may be able to contribute to the project with.
 
 * [Beginner Issues](https://github.com/FaradayRF/Faraday-Software/labels/Beginner) - Simple issues where the solution is likely a few lines of code or less
+* [Help Wanted](https://github.com/FaradayRF/Faraday-Software/labels/help%20wanted) - More involved tasks that require some knowledge of programming and can help learn how Faraday software ticks
 * [Documentation Updates](https://github.com/FaradayRF/Faraday-Software/labels/Documentation) - Clear and consistent documentation is key to building a knowledgeable and growing community
 
+### Pull Requests <a name="pull_requests"></a>
 
-##Pull Requests <a name="pull_requests"></a>
-
-* Include examples/screenshots/videos of your pull request if applicable
 * Include a detailed description of the pull requests purpose
-* Follow our code [style guidelines](#styleguides)
+* Provide a demonstration if possible (Youtube, [LICap](http://www.cockos.com/licecap/) GIF uploaded to ticket, etc)
+* Follow our code Style Guide wherever possible
 * Avoid platform dependent code
  
+## Style Guides
 
-#Styleguides <a name="styleguides"></a>
----
+### Git<a name="git"></a>
 
-## Python PEP8 <a name="pep8"></a>
+#### Branches
+* Choose short and descriptive branch names. i.e. `issue100`, `aprslib`
+* Reference issue tickets in commits where applicable
+* Delete your branch after it is merged unless there is reason not to
 
-All Faraday Python code is styled using [PEP8](https://www.python.org/dev/peps/pep-0008/), existing code that does not meet this style guide is being updated to comply. There are several automatic PEP8 syntax checking programs such as the [PyCharm PEP8 Syntax Module](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/).
+#### Commits
+* Commits should be [atomic](https://seesparkbox.com/foundry/atomic_commits_with_git) i.e. one commit per logical change. Do not combine logical changes with formatting changes.
+* Every commit should have a message associated with it describing the changes made
+* Commit messages should reference issue tickets i.e. "...issue #90..." and/or commit hashes where appropriate
 
-## Documentation <a name="documentation"></a>
+#### Merges
+* Rebase branch to the branch it will be merged with to keep history simple and allow a fast-forward
+* Test code prior to merging
 
-Documentation is mandatory to ensure that all contributors clearly understand how to use, enhance, and fix additions to the project. Faraday uses [Sphinx](http://www.sphinx-doc.org/en/stable/index.html) to provide dynamic documentation and is hosted on [Faraday's Read The Doc's Page](http://faraday-software.readthedocs.io/en/latest/).
+### Writing<a name="writing"></a>
+There are many instances where one might find themselves writing for Faraday-Software. Mostly this will be documentation or comments. This project aims to be as clear as possible. Therefore we suggest abiding by the following conventions or you might find yourself being asked to fix your pull request.
 
-* [Sphinx Documentation](http://www.sphinx-doc.org/en/stable/contents.html)
-* [Examples Of Good Python Docstrings](http://www.sphinx-doc.org/en/stable/ext/example_google.html)
+* Spelling errors should be eliminated
+* Try to be as clear and concise as possible
+* Use one space after a period for new sentences
+* When referencing variables, functions, classes, or folders use `code` formatting
 
-##Configuration files
+### Documentation<a name="documentation"></a>
+Open source projects strive when they are documented well. This allows everyone to understand what is going on in the code and how to use it. Please follow the following conventions:
+
+* Use comments in sourcecode to explain a piece of code when the code does not speak for itself
+* When writing functions and classes always use [Docstrings](https://www.python.org/dev/peps/pep-0257/)
+* Every program, application, or library should have an associated `readme.md` describing what the code is, how to install it, and how to use it.
+* If images are necessary, create an `images` folder within the project/application folder to hold them.
+
+### Configuration files<a name="configuration_files"></a>
 
 For any application that requires user specific configuration, add a sample configuration file with `.sample` added to the file name before the `.ini`. Use proxy as an example where `proxy.py` uses configuration from `proxy.ini`, but `proxy.sample.ini` is stored in git and `proxy.ini` is in .gitignore. The end user needs to create their own local copy of the configuration file that contains their information by editing the file and renaming it without the `.sample`.
 
 Use the following format within configuration files:
+
 * Uppercase [SECTION] and NAME fields but values can be upper or lowercase
 `[SECTION]`
 * No spaces before or after = separating the NAME from the value
 `NAME=value`
 * Comments must be on their own line and cannot be inline comments
 `;this is a comment`
+
+### Python<a name="python"></a>
+Most code on Faraday-Software is Python. We are adhering to the [PEP8 style](https://www.python.org/dev/peps/pep-0257/) wherever possible. In most cases it is easy to abide but when cases arise that would be clearer to break PEP8 compliance we will consider this. Much of early Faraday-Software was written before PEP8 compliance was sought after and is therefore being updated over time. Please avoid combining PEP8 updates to old code with new commits unless you are updating the code that is being changed to PEP8. Separate formatting and logical commits per out Git style guide!
+
+* [PEP8 Python Module](https://pypi.python.org/pypi/pep8) - Run on sourcecode from command line to print out PEP8 violations
+* [Pycharm PEP8 Support](https://blog.jetbrains.com/pycharm/2013/02/long-awaited-pep-8-checks-on-the-fly-improved-doctest-support-and-more-in-pycharm-2-7/) - Pycharm IDE has built-in PEP8 checking. Use it!
+
+#### Naming Conventions
+Faraday-Software started out with various naming schemes from its original developers. We are standardizing on PEP8 compliant naming schemes.
+
+* **Function** names should be lowercase, with words separated by underscores as necessary to improve readability
+* **Variables** should also be lowercase and only deviating to improve readability
+* **Class Names** should use CapWords convention
+* **Package and module names** should use all lowercase names unless necessary then use underscores
+* **Constants** should be all UPPERCASE
+
+### JavaScript<a name="javascript"></a>
+Javascript is often used for display functionality such as GUI interfaces or RESTful responses that return an HTML file. Please make an attempt to follow the [jQuery JavaScript Style Guide](https://contribute.jquery.org/style-guide/js/).
+
+### HTML<a name="html"></a>
+Like JavaScript HTML is often used for displaying information and as a response for RESTful requests that return an HTML file. Please make an attempt to follow the [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/)
+
+### C<a name="c"></a>
+If C is used for Faraday-Software please follow the [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html) as best as possible.
