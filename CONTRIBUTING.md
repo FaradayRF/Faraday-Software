@@ -138,7 +138,7 @@ There are many instances where one might find themselves writing for Faraday-Sof
 * When referencing variables, functions, classes, or folders use `code` formatting
 
 ### Documentation<a name="documentation"></a>
-Open source projects strive then they are documented well. This allows everyone to understand what is going on in the code and how to use it. Please follow the following conventions:
+Open source projects strive when they are documented well. This allows everyone to understand what is going on in the code and how to use it. Please follow the following conventions:
 
 * Use comments in sourcecode to explain a piece of code when the code does not speak for itself
 * When writing functions and classes always use [Docstrings](https://www.python.org/dev/peps/pep-0257/)
