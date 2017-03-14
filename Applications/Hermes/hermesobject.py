@@ -1,4 +1,4 @@
-import faraday_msg
+import hermesmessage as hermesmessage
 import threading
 import Queue
 
@@ -14,11 +14,11 @@ class TransmitObject(object):
         self.local_device_callsign = local_device_callsign
         self.local_device_node_id = local_device_node_id
         # Create messaging application objects needed for transmissions
-        self.faraday_tx_msg_sm = faraday_msg.MsgStateMachineTx()
-        self.faraday_tx_msg_object = faraday_msg.MessageAppTx(self.local_device_callsign,
+        self.faraday_tx_msg_sm = hermesmessage.MsgStateMachineTx()
+        self.faraday_tx_msg_object = hermesmessage.MessageAppTx(self.local_device_callsign,
                                                               self.local_device_node_id)
         # Create receiver application object
-        self.faraday_rx_msg_object = faraday_msg.MessageAppRx()
+        self.faraday_rx_msg_object = hermesmessage.MessageAppRx()
         self.rx_uart_service_port_application_number = 3
         self.GETWAIT_TIMEOUT = 2
 
@@ -56,7 +56,7 @@ class ReceiveObject(threading.Thread):
         self.GETWAIT_TIMEOUT = 0.5
 
         # Create receiver application object
-        self.faraday_rx_msg_object = faraday_msg.MessageAppRx()
+        self.faraday_rx_msg_object = hermesmessage.MessageAppRx()
         threading.Thread.__init__(self)
         self.fifo = Queue.Queue(0)
         return
