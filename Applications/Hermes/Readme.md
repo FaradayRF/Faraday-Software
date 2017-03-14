@@ -1,4 +1,6 @@
 
+#OUTDATED - NEEDS UPDATING - DO NOT USE
+
 # Tutorial - Simple Text Messaging Class Object
 
 The previous tutorial created a simple messaging application that utilized the Faraday  proxy interface and directly implemented a user interface. Proper application modularity should separate the user interface from core application, ideally using a RESTful interface. 
