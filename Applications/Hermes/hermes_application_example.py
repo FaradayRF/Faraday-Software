@@ -5,7 +5,7 @@ import ConfigParser
 
 #Open configuration INI
 config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("configuration.ini")
+filename = os.path.abspath("hermes.ini")
 config.read(filename)
 
 #Definitions
