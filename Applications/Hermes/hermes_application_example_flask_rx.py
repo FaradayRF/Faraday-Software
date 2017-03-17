@@ -58,7 +58,8 @@ def getQueue():
     #TEMP: Return as string (Flask safe)
     queuesize_unit2 = str(queuesize_unit2)
 
-    return queuesize_unit2
+    return json.dumps(queuesize_unit2, indent=1), 200, \
+       {'Content-Type': 'application/json'}
 
 def main():
     """Main function which starts the Flask server."""
