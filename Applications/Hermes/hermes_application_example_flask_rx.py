@@ -44,8 +44,9 @@ def getMessage():
 
         #TEMP: Return only the message as text (Flask safe)
         received_item = received_item['message']
-        
-        return received_item
+
+        return json.dumps(received_item, indent=1), 200, \
+           {'Content-Type': 'application/json'}
 
 
 @app.route('/queue', methods=['GET'])
