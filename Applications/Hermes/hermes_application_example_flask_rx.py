@@ -41,6 +41,17 @@ def getMessage():
     else:
         return "Hello!"
 
+@app.route('/queue', methods=['GET'])
+def getQueue():
+    """This function returns the number of packets in the receiver queue."""
+    #Check Queue size of Unit #2 and receive packet (if recieved due to non-ARQ protocol)
+    queuesize_unit2 = receiver.receive.getqueuesize()
+
+    #TEMP: Return as string (Flask safe)
+    queuesize_unit2 = str(queuesize_unit2)
+
+    return queuesize_unit2
+
 def main():
     """Main function which starts the Flask server."""
 
