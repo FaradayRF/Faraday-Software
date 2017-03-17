@@ -42,10 +42,13 @@ def getMessage():
         #Get next message from queue
         received_item = receiver.receive.getqueueitem()
 
-        #TEMP: Return only the message as text (Flask safe)
-        received_item = received_item['message']
+        #Pickle dictionary data
+        received_data_pickle = cPickle.dumps(received_item)
 
-        return json.dumps(received_item, indent=1), 200, \
+        #Encode to BASE64
+        received_item_64 = base64.b64encode(received_data_pickle)
+
+        return json.dumps(received_item_64, indent=1), 200, \
            {'Content-Type': 'application/json'}
 
 
