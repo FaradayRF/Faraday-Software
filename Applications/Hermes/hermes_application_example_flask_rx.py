@@ -39,7 +39,14 @@ def getMessage():
     if request.method == "POST":
         return False
     else:
-        return "Hello!"
+        #Get next message from queue
+        received_item = receiver.receive.getqueueitem()
+
+        #TEMP: Return only the message as text (Flask safe)
+        received_item = received_item['message']
+        
+        return received_item
+
 
 @app.route('/queue', methods=['GET'])
 def getQueue():
