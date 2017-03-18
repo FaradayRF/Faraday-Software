@@ -56,12 +56,17 @@ def getMessage():
 def getQueue():
     """This function returns the number of packets in the receiver queue."""
     #Check Queue size of Unit #2 and receive packet (if recieved due to non-ARQ protocol)
-    queuesize_unit2 = receiver.receive.getqueuesize()
+    data = {}
+    data['queuesize'] = receiver.receive.getqueuesize()
 
-    #TEMP: Return as string (Flask safe)
-    queuesize_unit2 = str(queuesize_unit2)
 
-    return json.dumps(queuesize_unit2, indent=1), 200, \
+    # Pickle dictionary data
+    data_pickle = cPickle.dumps(data)
+
+    # Encode to BASE64
+    data_64 = base64.b64encode(data_pickle)
+
+    return json.dumps(data_64, indent=1), 200, \
        {'Content-Type': 'application/json'}
 
 def main():
