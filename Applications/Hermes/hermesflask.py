@@ -39,8 +39,10 @@ app = Flask(__name__)
 def getMessage():
     #If POST
     if request.method == 'POST':
-        print "POST!"
-        
+        destcallsign = request.args.get("callsign").upper()
+        destnodeid = request.args.get("nodeid")
+        print "POST!", destcallsign, destnodeid
+
     #If GET
     else:
         #Get next message from queue
