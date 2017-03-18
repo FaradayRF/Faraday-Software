@@ -8,16 +8,17 @@ def getQueueSize():
         queue_raw = queuelen.json()
         queue_b64 = base64.b64decode(queuelen.json())
         queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
-        return queue_b64_pickle
+        return queue_b64_pickle['queuesize']
 
 
 def main():
     while 1:
         #Sleep to release python process
         time.sleep(0.5)
+
         #Check if items in queue
         queue_b64_pickle = getQueueSize()
-        if queue_b64_pickle['queuesize'] > 0:
+        if queue_b64_pickle > 0:
             rxdata = requests.get('http://127.0.0.1:8005')
             rx_raw = rxdata.json()
             rx_b64 = base64.b64decode(rxdata.json())
