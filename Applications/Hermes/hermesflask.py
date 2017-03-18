@@ -34,10 +34,14 @@ receiver = hermesobject.MessageObject(receiver_device_callsign, receiver_device_
 # Initialize Flask microframework
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
+
+@app.route('/', methods=['GET', 'POST'])
 def getMessage():
-    if request.method == "POST":
-        return False
+    #If POST
+    if request.method == 'POST':
+        print "POST!"
+        
+    #If GET
     else:
         #Get next message from queue
         received_item = receiver.receive.getqueueitem()
