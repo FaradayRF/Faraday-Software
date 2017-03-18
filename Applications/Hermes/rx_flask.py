@@ -3,15 +3,19 @@ import base64
 import cPickle
 import time
 
+def getQueueSize():
+        queuelen = requests.get('http://127.0.0.1:8005/queue')
+        queue_raw = queuelen.json()
+        queue_b64 = base64.b64decode(queuelen.json())
+        queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
+        return queue_b64_pickle
+
 
 while 1:
     #Sleep to release python process
-    time.sleep(5)
+    time.sleep(0.5)
     #Check if items in queue
-    queuelen = requests.get('http://127.0.0.1:8005/queue')
-    queue_raw = queuelen.json()
-    queue_b64 = base64.b64decode(queuelen.json())
-    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
+    queue_b64_pickle = getQueueSize()
     if queue_b64_pickle['queuesize'] > 0:
         rxdata = requests.get('http://127.0.0.1:8005')
         rx_raw = rxdata.json()
