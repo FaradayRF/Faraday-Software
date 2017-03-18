@@ -1,11 +1,14 @@
 import requests
 import base64
 import cPickle
+import time
 
 #r = requests.get('http://127.0.0.1:8005/queue')
 #print "Queue:", r.json()
 
 while 1:
+    #Sleep to release python process
+    time.sleep(5)
     #Check if items in queue
     queuelen = requests.get('http://127.0.0.1:8005/queue')
     queue_raw = queuelen.json()
