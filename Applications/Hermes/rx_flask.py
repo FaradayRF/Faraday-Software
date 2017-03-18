@@ -17,8 +17,7 @@ def main():
         time.sleep(0.5)
 
         #Check if items in queue
-        queue_b64_pickle = getQueueSize()
-        if queue_b64_pickle > 0:
+        while getQueueSize() > 0:
             rxdata = requests.get('http://127.0.0.1:8005')
             rx_raw = rxdata.json()
             rx_b64 = base64.b64decode(rxdata.json())
