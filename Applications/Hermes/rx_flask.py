@@ -14,7 +14,7 @@ def getQueueSize():
 def main():
     while 1:
         #Sleep to release python process
-        time.sleep(0.5)
+        time.sleep(0.1)
 
         #Check if items in queue
         while getQueueSize() > 0:
