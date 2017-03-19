@@ -30,7 +30,6 @@ faradaycallsign = str(faradaycallsign).upper()
 # Create messaging unit objects with the two device connected to local proxy
 faradayhermesobj = hermesobject.MessageObject(faradaycallsign, faradaynodeid)
 
-
 # Initialize Flask microframework
 app = Flask(__name__)
 
@@ -41,7 +40,14 @@ def getMessage():
     if request.method == 'POST':
         destcallsign = request.args.get("callsign").upper()
         destnodeid = request.args.get("nodeid")
+        faradayhermesobj.transmit.send('KB1LQD', 1, 'test')
         print "POST!", destcallsign, destnodeid
+
+        return json.dumps(
+            {"status": "Posted Packet(s)"
+                }), 200
+
+
 
     #If GET
     else:
