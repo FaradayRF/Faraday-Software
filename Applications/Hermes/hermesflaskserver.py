@@ -39,9 +39,9 @@ def getMessage():
     #If POST
     if request.method == 'POST':
         destcallsign = request.args.get("callsign").upper()
-        destnodeid = request.args.get("nodeid")
-        faradayhermesobj.transmit.send('KB1LQD', 1, 'test')
-        print "POST!", destcallsign, destnodeid
+        destnodeid = int(request.args.get("nodeid"))
+        data = request.args.get("data")
+        faradayhermesobj.transmit.send(destcallsign, destnodeid, data)
 
         return json.dumps(
             {"status": "Posted Packet(s)"
