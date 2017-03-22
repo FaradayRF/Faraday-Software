@@ -66,10 +66,20 @@ def getMessage():
 
     #If POST
     if request.method == 'POST':
-        destcallsign = request.args.get("callsign").upper()
-        destnodeid = int(request.args.get("nodeid"))
+        print "POST"
+        localcallsign = request.args.get("localcallsign").upper()
+        localnodeid = request.args.get("localnodeid")
+        destinationcallsign = request.args.get("destinationcallsign").upper()
+        destinationnodeid = request.args.get("destinationnodeid")
         data = request.args.get("data")
-        #dictmsgobj[].transmit.send(destcallsign, destnodeid, data)
+        print "Local Callsign:", localcallsign
+        print "Local nodeid", localnodeid
+        print "Destination Callsign:", destinationcallsign
+        print "Destination nodeid", destinationnodeid, type(destinationnodeid)
+        print "data", data
+        print "NODE:", localcallsign + '-' + localnodeid
+        unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
+        unitmsgobj.transmit.send(destinationcallsign, int(destinationnodeid), str(data))
 
         return json.dumps(
             {"status": "Posted Packet(s)"

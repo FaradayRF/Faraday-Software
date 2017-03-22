@@ -17,7 +17,7 @@ def main():
         #Sleep to release python process
         time.sleep(0.1)
 
-        print getQueueSize('kb1lqd', 2)
+        print getQueueSize('kb1lqd', 2), 'kb1lqd', 2
 
         #Check if items in queue
         while getQueueSize('kb1lqd', 2) > 0:
