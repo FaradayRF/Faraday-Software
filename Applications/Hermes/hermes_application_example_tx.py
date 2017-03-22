@@ -11,12 +11,19 @@ config.read(filename)
 #Definitions
 
 #Variables
-transmitter_device_callsign = config.get("DEVICES", "UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
-transmitter_device_node_id = config.getint("DEVICES", "UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
-transmitter_device_callsign = str(transmitter_device_callsign).upper()
-receiver_device_callsign = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-receiver_device_node_id = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-receiver_device_callsign = str(receiver_device_callsign).upper()
+# transmitter_device_callsign = config.get("DEVICES", "UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+# transmitter_device_node_id = config.getint("DEVICES", "UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+# transmitter_device_callsign = str(transmitter_device_callsign).upper()
+# receiver_device_callsign = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+# receiver_device_node_id = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+# receiver_device_callsign = str(receiver_device_callsign).upper()
+
+#TEMP
+transmitter_device_callsign = 'KB1LQD'
+transmitter_device_node_id = 1
+
+receiver_device_callsign = 'KB1LQD'
+receiver_device_node_id = 2
 
 # Create messaging unit objects with the two device connected to local proxy
 transmitter = hermesobject.MessageObject(transmitter_device_callsign, transmitter_device_node_id)
