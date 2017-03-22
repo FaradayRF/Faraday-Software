@@ -22,13 +22,17 @@ config.read(filename)
 # transmitter_device_callsign = config.get("DEVICES", "UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
 # transmitter_device_node_id = config.getint("DEVICES", "UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
 # transmitter_device_callsign = str(transmitter_device_callsign).upper()
-faradaycallsign = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-faradaynodeid = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-faradaycallsign = str(faradaycallsign).upper()
+faradaycallsign0 = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+faradaynodeid0 = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+faradaycallsign0 = str(faradaycallsign0).upper()
+
+faradaycallsign1 = config.get("DEVICES", "UNIT0CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+faradaynodeid1 = config.getint("DEVICES", "UNIT0ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+faradaycallsign1 = str(faradaycallsign1).upper()
 
 
 # Create messaging unit objects with the two device connected to local proxy
-faradayhermesobj = hermesobject.MessageObject(faradaycallsign, faradaynodeid)
+faradayhermesobj = hermesobject.MessageObject(faradaycallsign0, faradaynodeid0)
 
 # Initialize Flask microframework
 app = Flask(__name__)
