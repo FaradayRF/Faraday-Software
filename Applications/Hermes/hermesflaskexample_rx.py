@@ -14,7 +14,7 @@ localcallsign = config.get('UNIT0', 'CALLSIGN')
 localnodeid = int(config.get('UNIT0', 'NODEID'))
 
 
-def getQueueSize(callsign, nodeid):
+def getRxQueueSize(callsign, nodeid):
     """
     :param callsign: Callsign of the local device being queried
     :param nodeid: Node ID of the local device being queried
@@ -41,7 +41,7 @@ def main():
         time.sleep(0.1)
 
         #Check if items in queue
-        while getQueueSize(localcallsign, localnodeid) > 0:
+        while getRxQueueSize(localcallsign, localnodeid) > 0:
             payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
             rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
             rx_raw = rxdata.json()
