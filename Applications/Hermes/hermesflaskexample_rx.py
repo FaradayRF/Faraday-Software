@@ -10,8 +10,8 @@ config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("hermes.ini")
 config.read(filename)
 
-localcallsign = config.get('UNIT1', 'CALLSIGN')
-localnodeid = int(config.get('UNIT1', 'NODEID'))
+localcallsign = config.get('UNIT0', 'CALLSIGN')
+localnodeid = int(config.get('UNIT0', 'NODEID'))
 
 
 def getQueueSize(callsign, nodeid):
@@ -30,7 +30,7 @@ def main():
 
         #Check if items in queue
         while getQueueSize(localcallsign, localnodeid) > 0:
-            payload = {'localcallsign': 'kb1lqd', 'localnodeid': 2}
+            payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
             rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
             rx_raw = rxdata.json()
             rx_b64 = base64.b64decode(rxdata.json())
