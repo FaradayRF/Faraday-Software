@@ -21,12 +21,12 @@ def getRxQueueSize(callsign, nodeid):
     :return: The RX queue size
     """
 
-        payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
-        queuelen = requests.get('http://127.0.0.1:8005/queue', params = payload)
-        queue_raw = queuelen.json()
-        queue_b64 = base64.b64decode(queuelen.json())
-        queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
-        return queue_b64_pickle['queuesize']
+    payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
+    queuelen = requests.get('http://127.0.0.1:8005/queue', params = payload)
+    queue_raw = queuelen.json()
+    queue_b64 = base64.b64decode(queuelen.json())
+    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
+    return queue_b64_pickle['queuesize']
 
 
 def main():
