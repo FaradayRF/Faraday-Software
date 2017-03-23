@@ -84,11 +84,11 @@ NODEID=REPLACEME
 
 Flask Server | Transmitter Example | Receiver Example
 
-![All Hermes programs started](file:///C:/Users/Brent/Documents/Faraday_GIthub_Software/Issue130/Faraday-Software/Applications/Hermes/Images/Start.png)
+![All Hermes programs started](Images/Start.png)
 
 Successful transmission of data.
 
-![Successful transmission of data](file:///C:/Users/Brent/Documents/Faraday_GIthub_Software/Issue130/Faraday-Software/Applications/Hermes/Images/TX-RX-Data.png)
+![Successful transmission of data](Images/TX-RX-Data.png)
 
 ### Transmitter/Receiver Specification
 
