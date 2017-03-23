@@ -103,8 +103,7 @@ def getQueue():
 
     """This function returns the number of packets in the receiver queue."""
     #Check Queue size of Unit #2 and receive packet (if recieved due to non-ARQ protocol)
-    data = {}
-    data['queuesize'] = unitmsgobj.receive.getqueuesize()
+    data = {"queuesize": unitmsgobj.receive.getqueuesize()}
 
 
     # Pickle dictionary data
