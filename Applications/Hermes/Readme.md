@@ -85,7 +85,7 @@ NODEID=REPLACEME
 
 The transmitter and receiver units are specific in the example RX and TX scripts. The configuration file `hermes.ini` is parsed for `UNIT0` and `UNIT1` and the example scripts choose the functionality of either. Each unit has TX/RX functionality using Hermes.
 
-The transmitter script by default assigns `UNIT1` as the "local" unit used for transmission and `UNIT0` as the destination (receiving) unit as shown below.
+The transmitter script by default assigns `UNIT0` as the "local" unit used for transmission and `UNIT1` as the destination (receiving) unit as shown below.
 
 
 ``` Python

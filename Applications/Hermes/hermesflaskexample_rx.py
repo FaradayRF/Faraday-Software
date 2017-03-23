@@ -10,8 +10,8 @@ config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("hermes.ini")
 config.read(filename)
 
-localcallsign = config.get('UNIT0', 'CALLSIGN')
-localnodeid = int(config.get('UNIT0', 'NODEID'))
+localcallsign = config.get('UNIT1', 'CALLSIGN')
+localnodeid = int(config.get('UNIT1', 'NODEID'))
 
 
 def getrxqueuesize(callsign, nodeid):
