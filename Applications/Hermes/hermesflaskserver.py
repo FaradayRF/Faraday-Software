@@ -20,7 +20,7 @@ config.read(filename)
 dictmsgobj = {}
 
 def configparse():
-    """ Associate configuration callsigns with serial COM ports"""
+    """ Parses configuration file for callsigns and node ID and returns them in JSON format"""
     local = {}
     num = int(config.get('PROXY', 'UNITS'))
     units = range(0, num)
@@ -45,7 +45,7 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def getMessage():
+def message():
     # Global variables
     global dictmsgobj
 
