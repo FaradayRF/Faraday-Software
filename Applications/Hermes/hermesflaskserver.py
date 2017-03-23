@@ -38,7 +38,6 @@ def callsign2COM():
     """ Associate configuration callsigns with serial COM ports"""
     local = {}
     num = int(config.get('PROXY', 'UNITS'))
-    print "UNITS:", num
     units = range(0, num)
 
     for unit in units:
@@ -66,18 +65,11 @@ def getMessage():
 
     #If POST
     if request.method == 'POST':
-        print "POST"
         localcallsign = request.args.get("localcallsign").upper()
         localnodeid = request.args.get("localnodeid")
         destinationcallsign = request.args.get("destinationcallsign").upper()
         destinationnodeid = request.args.get("destinationnodeid")
         data = request.args.get("data")
-        print "Local Callsign:", localcallsign
-        print "Local nodeid", localnodeid
-        print "Destination Callsign:", destinationcallsign
-        print "Destination nodeid", destinationnodeid, type(destinationnodeid)
-        print "data", data
-        print "NODE:", localcallsign + '-' + localnodeid
         unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
         unitmsgobj.transmit.send(destinationcallsign, int(destinationnodeid), str(data))
 
@@ -89,10 +81,6 @@ def getMessage():
     else:
         localcallsign = request.args.get("localcallsign").upper()
         localnodeid = request.args.get("localnodeid")
-        print "Started"
-        print "Callsign:", localcallsign
-        print "nodeid", localnodeid
-        print "NODE:", dictmsgobj[localcallsign + '-' + localnodeid]
         unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
 
         #Get next message from queue
@@ -113,10 +101,6 @@ def getQueue():
 
     localcallsign = request.args.get("localcallsign").upper()
     localnodeid = request.args.get("localnodeid")
-    print "Started"
-    print "Callsign:", localcallsign
-    print "nodeid", localnodeid
-    print "NODE:", dictmsgobj[localcallsign + '-' + localnodeid]
     unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
 
     """This function returns the number of packets in the receiver queue."""
@@ -145,17 +129,14 @@ def main():
     hermesHost = config_host
     hermesPort = config_port
 
-
     units = callsign2COM()
 
     # Print units from config
-    print "***Units:***"
     for key in units:
         unitcallsign = units[key]['callsign']
         unitnodeid = units[key]['nodeid']
         unitname = unitcallsign + '-' + unitnodeid
         dictmsgobj[unitname] = hermesobject.MessageObject(unitcallsign, unitnodeid)
-    print "\n Dict Unit:", dictmsgobj
 
     app.run(host=hermesHost, port=hermesPort, threaded=True)
 
