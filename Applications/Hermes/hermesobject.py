@@ -16,7 +16,7 @@ class TransmitObject(object):
         # Create messaging application objects needed for transmissions
         self.faraday_tx_msg_sm = hermesmessage.MsgStateMachineTx()
         self.faraday_tx_msg_object = hermesmessage.MessageAppTx(self.local_device_callsign,
-                                                              self.local_device_node_id)
+                                                                self.local_device_node_id)
         # Create receiver application object
         self.faraday_rx_msg_object = hermesmessage.MessageAppRx()
         self.rx_uart_service_port_application_number = 3
@@ -74,7 +74,6 @@ class ReceiveObject(threading.Thread):
                                                                    self.GETWAIT_TIMEOUT)
             if rx_message_dict is not None:
                 self.fifo.put(rx_message_dict)
-                rx_message_dict = None
             else:
                 pass  # No messages received
 
