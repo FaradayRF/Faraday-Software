@@ -1,9 +1,6 @@
 import os
-import time
 import hermesobject as hermesobject
 import ConfigParser
-import logging.config
-import sys
 import json
 import base64
 import cPickle
@@ -11,13 +8,14 @@ import cPickle
 from flask import Flask
 from flask import request
 
-#Open configuration INI
+# Open configuration INI
 config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("hermes.ini")
 config.read(filename)
 
-#Global variables
+# Global variables
 dictmsgobj = {}
+
 
 def configparse():
     """ Parses configuration file for callsigns and node ID and returns them in JSON format"""
@@ -31,16 +29,17 @@ def configparse():
         callsign = config.get(item, "callsign").upper()
         nodeid = config.get(item, "nodeid")
 
-        local[str(item)] =\
+        local[str(item)] = \
             {
-            "callsign": callsign,
-            "nodeid": nodeid,
+                "callsign": callsign,
+                "nodeid": nodeid,
             }
 
     local = json.dumps(local)
     return json.loads(local)
 
-# Initialize Flask microframework
+
+# Initialize Flask micro-framework
 app = Flask(__name__)
 
 
@@ -73,7 +72,7 @@ def message():
     # Global variables
     global dictmsgobj
 
-    #If POST
+    # If POST
     if request.method == 'POST':
         # Parse Flask arguments
         localcallsign = request.args.get("localcallsign").upper()
@@ -91,9 +90,9 @@ def message():
         # Return status
         return json.dumps(
             {"status": "Posted Packet(s)"
-                }), 200
+             }), 200
 
-    #If GET
+    # If GET
     else:
         # Parse Flask arguments
         localcallsign = request.args.get("localcallsign").upper()
@@ -102,21 +101,21 @@ def message():
         # Get hermes TX/RX object from global dictionary
         unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
 
-        #Get next message from RX queue
+        # Get next message from RX queue
         received_item = unitmsgobj.receive.getqueueitem()
 
-        #Pickle dictionary data
+        # Pickle dictionary data
         received_data_pickle = cPickle.dumps(received_item)
 
-        #Encode to BASE64
+        # Encode to BASE64
         received_item_64 = base64.b64encode(received_data_pickle)
 
         return json.dumps(received_item_64, indent=1), 200, \
-           {'Content-Type': 'application/json'}
+            {'Content-Type': 'application/json'}
 
 
 @app.route('/queue', methods=['GET'])
-def getQueue():
+def getqueue():
     """
     Flask function that returns the size of the receiver queue of the specified local unit.
 
@@ -136,9 +135,8 @@ def getQueue():
     unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
 
     """This function returns the number of packets in the receiver queue."""
-    #Check Queue size of Unit #2 and receive packet (if recieved due to non-ARQ protocol)
+    # Check Queue size of Unit #2 and receive packet (if received due to non-ARQ protocol)
     data = {"queuesize": unitmsgobj.receive.getqueuesize()}
-
 
     # Pickle dictionary data
     data_pickle = cPickle.dumps(data)
@@ -147,20 +145,21 @@ def getQueue():
     data_64 = base64.b64encode(data_pickle)
 
     return json.dumps(data_64, indent=1), 200, \
-       {'Content-Type': 'application/json'}
+           {'Content-Type': 'application/json'}
+
 
 def main():
     """Main function which starts the Flask server."""
     # Global variables
     global dictmsgobj
 
-    #Get INI file configuration for Flask server
+    # Get INI file configuration for Flask server
     config_host = config.get("FLASK", "HOST")
     config_port = config.get("FLASK", "PORT")
 
     # Start the flask server on localhost:8001
-    hermesHost = config_host
-    hermesPort = config_port
+    hermeshost = config_host
+    hermesport = config_port
 
     units = configparse()
 
@@ -171,8 +170,7 @@ def main():
         unitname = unitcallsign + '-' + unitnodeid
         dictmsgobj[unitname] = hermesobject.MessageObject(unitcallsign, unitnodeid)
 
-    app.run(host=hermesHost, port=hermesPort, threaded=True)
-
+    app.run(host=hermeshost, port=hermesport, threaded=True)
 
 
 if __name__ == '__main__':
