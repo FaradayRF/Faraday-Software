@@ -3,8 +3,8 @@ import struct
 import sys
 import os
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__),
+                             "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
 # noinspection PyPep8
 from FaradayIO import faradaybasicproxyio
 # noinspection PyPep8
@@ -40,7 +40,7 @@ class MsgStateMachineTx(object):
         """
         This function calculations the number of fragmentation "chucks" or packets will be needed to break the supplied
         message length into smaller fragmented pieces. If a message length smaller than a single packet is supplied
-        then the fragmentation count will be 0. The fragementation byte count is determined by the
+        then the fragmentation count will be 0. The fragmentation byte count is determined by the
         self.MAX_MSG_DATA_LENGTH class variable.
 
         :param msg_len: The length of the packet to be fragmented
@@ -66,9 +66,9 @@ class MsgStateMachineTx(object):
         """
         list_message_fragments = [msg[i:i + self.MAX_MSG_DATA_LENGTH] for i in
                                   range(0, len(msg), self.MAX_MSG_DATA_LENGTH)]
-        #for item in list_message_fragments:
+        # for item in list_message_fragments:
         #    print item, "Frag Length", len(item)
-        #print repr(list_message_fragments)
+        # print repr(list_message_fragments)
         return list_message_fragments
 
     def createmsgpackets(self, src_call, src_id, msg):
@@ -102,9 +102,9 @@ class MsgStateMachineTx(object):
 
         for i in range(0, len(list_msg_fragments), 1):
             data_packet = self.createdataframe(i, list_msg_fragments[i])
-            #print "Pre-Pack:", repr(data_packet), len(data_packet)
+            # print "Pre-Pack:", repr(data_packet), len(data_packet)
             data_packet = self.pkt_datagram_frame.pack(self.MSG_DATA, data_packet)
-            #print "Post-Pack:", repr(data_packet), len(data_packet)
+            # print "Post-Pack:", repr(data_packet), len(data_packet)
             list_data_packets.append(data_packet)
 
         # Insert all packets into final packet list in order of transmission
@@ -117,8 +117,8 @@ class MsgStateMachineTx(object):
 
     def createstartframe(self, src_call, src_id, msg_len):
         """
-        This function creates a START packet (frame) that resets the receivers state machine to prepare for a new message. In
-        the START frame information about the message/data is stored.
+        This function creates a START packet (frame) that resets the receivers state machine to prepare for a new
+        message. In the START frame information about the message/data is stored.
 
         :param src_call: Source device callsign
         :param src_id: Source device callsign ID number
@@ -128,7 +128,7 @@ class MsgStateMachineTx(object):
         """
         # Calculate the number of fragmented packets
         frag_cnt = self.fragmentcount(msg_len)
-        #print frag_cnt
+        # print frag_cnt
         # Create packet
         packet = self.pkt_start.pack(src_call, len(src_call), src_id, frag_cnt)
         # Return packet created
@@ -145,9 +145,9 @@ class MsgStateMachineTx(object):
 
         :returns A DATA packet
         """
-        #print "create:", repr(data), len(data)
+        # print "create:", repr(data), len(data)
         packet = self.pkt_data.pack(sequence, len(data), data)
-        #print "created:", repr(packet), len(packet)
+        # print "created:", repr(packet), len(packet)
         return packet
 
     def createendframe(self, msg_len):
@@ -175,8 +175,8 @@ class MessageAppTx(object):
         # Identification Variables
         self.local_device_callsign = str(local_callsign).upper()
         self.local_device_node_id = int(local_callsign_id)
-        self.remote_callsign = ''#str(destination_callsign).upper()
-        self.remote_id = 0 #int(destination_id)
+        self.remote_callsign = ''  # str(destination_callsign).upper()
+        self.remote_id = 0  # int(destination_id)
 
         # Initialize objects
         self.faraday_1 = faradaybasicproxyio.proxyio()
@@ -215,7 +215,7 @@ class MessageAppTx(object):
         self.command = self.faraday_cmd.CommandLocalExperimentalRfPacketForward(destination_callsign,
                                                                                 destination_id,
                                                                                 payload)
-        #print "Transmitting message:", repr(payload), "length:", len(payload)
+        # print "Transmitting message:", repr(payload), "length:", len(payload)
         self.faraday_1.POST(self.local_device_callsign, self.local_device_node_id, self.faraday_1.CMD_UART_PORT,
                             self.command)
 
@@ -266,13 +266,13 @@ class MsgStateMachineRx(object):
             self.changestate(self.STATE_RX_INIT)
             self.message = ''
             callsign_len = int(data[1])
-            #fragments = data[3]
+            # fragments = data[3]
             self.rx_station = str(data[0][0:callsign_len]) + '-' + str(data[2])
             return None
         # Data
         elif frame_type == self.MSG_DATA:
             self.changestate(self.STATE_RX_FRAGMENT)
-            #data_sequence = data[0]
+            # data_sequence = data[0]
             data_len = data[1]
             data_data = str(data[2])[0:data_len]
             self.message += data_data
@@ -280,7 +280,7 @@ class MsgStateMachineRx(object):
         # Stop
         elif frame_type == self.MSG_END:
             self.changestate(self.STATE_RX_END)
-            #fragments = data[0]
+            # fragments = data[0]
             message_assembled = {'source_callsign': self.rx_station, 'message': self.message}
             return message_assembled
         # Else Type (Error)
@@ -319,7 +319,7 @@ class MessageAppRx(object):
 
     def parsepacketfromdatagram(self, datagram):
         """
-        This function parses recevied data packets (datagrams) and performs receiver state machine reassembly functions
+        This function parses received data packets (datagrams) and performs receiver state machine reassembly functions
         respectively.
 
         :param datagram: The received packet to be parsed
@@ -357,7 +357,7 @@ class MessageAppRx(object):
         """
         This function is used as the main high level "receiver" loop to check for new message/data fragments received
         and parse them accordingly. If a new fully reassembled message/data has been completed the function will
-        return the data/message. This function should be called regularly from the receiver program on a reoccuring
+        return the data/message. This function should be called regularly from the receiver program on a reoccurring
         interval.
 
         :param local_callsign: Callsign of the local device to retrieve received data packet from
