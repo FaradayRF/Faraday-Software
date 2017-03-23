@@ -46,6 +46,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def getMessage():
+    # Global variables
     global dictmsgobj
 
     #If POST
@@ -83,6 +84,8 @@ def getMessage():
 
 @app.route('/queue', methods=['GET'])
 def getQueue():
+    # Global variables
+    global dictmsgobj
 
     localcallsign = request.args.get("localcallsign").upper()
     localnodeid = request.args.get("localnodeid")
@@ -105,6 +108,8 @@ def getQueue():
 
 def main():
     """Main function which starts the Flask server."""
+    # Global variables
+    global dictmsgobj
 
     #Get INI file configuration for Flask server
     config_host = config.get("FLASK", "HOST")
