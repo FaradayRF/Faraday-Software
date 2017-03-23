@@ -2,6 +2,8 @@ import requests
 import base64
 import cPickle
 import time
+import ConfigParser
+import os
 
 config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("hermes.ini")
