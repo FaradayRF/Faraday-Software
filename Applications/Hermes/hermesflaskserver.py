@@ -51,25 +51,34 @@ def getMessage():
 
     #If POST
     if request.method == 'POST':
+        # Parse Flask arguments
         localcallsign = request.args.get("localcallsign").upper()
         localnodeid = request.args.get("localnodeid")
         destinationcallsign = request.args.get("destinationcallsign").upper()
         destinationnodeid = request.args.get("destinationnodeid")
         data = request.args.get("data")
+
+        # Get hermes TX/RX object from global dictionary
         unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
+
+        # Transmit data to remote device
         unitmsgobj.transmit.send(destinationcallsign, int(destinationnodeid), str(data))
 
+        # Return status
         return json.dumps(
             {"status": "Posted Packet(s)"
                 }), 200
 
     #If GET
     else:
+        # Parse Flask arguments
         localcallsign = request.args.get("localcallsign").upper()
         localnodeid = request.args.get("localnodeid")
+
+        # Get hermes TX/RX object from global dictionary
         unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
 
-        #Get next message from queue
+        #Get next message from RX queue
         received_item = unitmsgobj.receive.getqueueitem()
 
         #Pickle dictionary data
@@ -87,6 +96,7 @@ def getQueue():
     # Global variables
     global dictmsgobj
 
+    # Parse Flask arguments
     localcallsign = request.args.get("localcallsign").upper()
     localnodeid = request.args.get("localnodeid")
     unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
@@ -121,7 +131,7 @@ def main():
 
     units = configparse()
 
-    # Print units from config
+    # Parse and save unit callsign-nodeid into global dictionary as keys to hermes objects
     for key in units:
         unitcallsign = units[key]['callsign']
         unitnodeid = units[key]['nodeid']
