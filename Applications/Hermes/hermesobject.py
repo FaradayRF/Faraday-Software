@@ -1,4 +1,4 @@
-import hermesmessage as hermesmessage
+import hermesmessage
 import threading
 import Queue
 
