@@ -81,6 +81,15 @@ NODEID=REPLACEME
   * If text was not properly received ensure configuration is correct and try again
 
 
+
+Flask Server | Transmitter Example | Receiver Example
+
+![All Hermes programs started](file:///C:/Users/Brent/Documents/Faraday_GIthub_Software/Issue130/Faraday-Software/Applications/Hermes/Images/Start.png)
+
+Successful transmission of data.
+
+![Successful transmission of data](file:///C:/Users/Brent/Documents/Faraday_GIthub_Software/Issue130/Faraday-Software/Applications/Hermes/Images/TX-RX-Data.png)
+
 ### Transmitter/Receiver Specification
 
 The transmitter and receiver units are specific in the example RX and TX scripts. The configuration file `hermes.ini` is parsed for `UNIT0` and `UNIT1` and the example scripts choose the functionality of either. Each unit has TX/RX functionality using Hermes.

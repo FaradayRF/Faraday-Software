@@ -34,6 +34,8 @@ def main():
     if data is present by querying the receive queue size, if data is present it retrieves ALL data each packet at a
     time until the queue is empty.
     """
+
+    print "Receiver Started On: ", localcallsign.upper() + '-' + str(localnodeid)
     while 1:
         # Sleep to release python process
         time.sleep(0.1)
