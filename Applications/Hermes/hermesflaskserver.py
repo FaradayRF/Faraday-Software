@@ -46,6 +46,30 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def message():
+    """
+    Flask function that provides the "transmit" and "receive" functionality.
+
+    POST:
+
+    Transmits a provided payload data from a specified local unit to a specific remote unit.
+
+    :param localcallsign: Flask parameter - Local unit callsign to transmit from
+    :param localnodeid: Flask parameter - Local unit node ID to transmit from
+    :param destinationcallsign: Flask parameter - Remote unit callsign to transmit to
+    :param destinationnodeid: Flask parameter - Remote unit node ID to transmit to
+    :param data: Flask parameter: Data payload to transmit to remote unit
+
+    :return: Returns JSON success status for Flask server after transmission
+
+    GET:
+
+    Returns a JSON element containing the next received data from the receiver queue of the specified local unit.
+
+    :param localcallsign: Flask parameter - Local unit callsign to transmit from
+    :param localnodeid: Flask parameter - Local unit node ID to transmit from
+
+    :return: Returns JSON element containing the next received data from the receiver queue
+    """
     # Global variables
     global dictmsgobj
 
@@ -93,6 +117,16 @@ def message():
 
 @app.route('/queue', methods=['GET'])
 def getQueue():
+    """
+    Flask function that returns the size of the receiver queue of the specified local unit.
+
+    GET:
+
+    :param localcallsign: Flask parameter - Local unit callsign to transmit from
+    :param localnodeid: Flask parameter - Local unit node ID to transmit from
+
+    :return:
+    """
     # Global variables
     global dictmsgobj
 
