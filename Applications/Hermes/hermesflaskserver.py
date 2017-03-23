@@ -19,7 +19,7 @@ config.read(filename)
 #Global variables
 dictmsgobj = {}
 
-def callsign2COM():
+def configparse():
     """ Associate configuration callsigns with serial COM ports"""
     local = {}
     num = int(config.get('PROXY', 'UNITS'))
@@ -119,7 +119,7 @@ def main():
     hermesHost = config_host
     hermesPort = config_port
 
-    units = callsign2COM()
+    units = configparse()
 
     # Print units from config
     for key in units:
