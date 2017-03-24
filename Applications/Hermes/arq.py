@@ -13,7 +13,7 @@ STATE_RETRY = 5 # Retry current transmission data, update/check counters in case
 
 
 
-class transmitArqStateMachine(object):
+class TransmitArqStateMachine(object):
 
     def __init__(self):
         """
