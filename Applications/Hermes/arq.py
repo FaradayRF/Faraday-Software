@@ -26,6 +26,7 @@ class TransmitArqStateMachine(object):
         self.state = STATE_IDLE
         self.retries = 0
         self.dataqueue = Queue.Queue()
+        self.currentdata = ''
         self.statedict = {
             STATE_IDLE: self.stateidle,
             STATE_START: self.statestart,
@@ -92,6 +93,14 @@ class TransmitArqStateMachine(object):
         """
         print "NEXT DATA"
 
+        if self.dataqueue.empty():
+            # No more data
+            self.updatestate(STATE_IDLE)
+        else:
+            # Get next data packet
+            self.currentdata = self.dataqueue.get_nowait()
+
+
         # Updated state
         self.updatestate(STATE_TX)
 
@@ -103,7 +112,7 @@ class TransmitArqStateMachine(object):
         """
 
         print "TX"
-        self.functionpointer_tx(self.)
+        self.functionpointer_tx()
 
         # Updated state
         self.updatestate(STATE_GETACK)
