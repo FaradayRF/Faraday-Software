@@ -17,7 +17,7 @@ ACKINTERVAL = 5 # Time to wait for the receiver to send ACK
 
 class TransmitArqStateMachine(object):
 
-    def __init__(self, funcptr_tx):
+    def __init__(self, datalist, funcptr_tx):
         """
         This class provides the state machine functionality for the transmitter portion of a basic stop-and-wait ARQ
         protocol.
@@ -27,6 +27,8 @@ class TransmitArqStateMachine(object):
         self.retries = 0
         self.dataqueue = Queue.Queue()
         self.currentdata = ''
+        self.acksuccess = False
+
         self.statedict = {
             STATE_IDLE: self.stateidle,
             STATE_START: self.statestart,
@@ -35,6 +37,9 @@ class TransmitArqStateMachine(object):
             STATE_GETACK: self.stategetack,
             STATE_RETRY: self.stateretry,
         }
+
+        # Initialize data into queue
+        self.newdataqueue(datalist)
 
     def newdataqueue(self, datalist):
         """
@@ -82,6 +87,8 @@ class TransmitArqStateMachine(object):
 
         print "START"
 
+        self.acksuccess = False
+
         # Updated state
         self.updatestate(STATE_GETNEXTDATA)
 
@@ -99,10 +106,10 @@ class TransmitArqStateMachine(object):
         else:
             # Get next data packet
             self.currentdata = self.dataqueue.get_nowait()
+            # Updated state
+            self.updatestate(STATE_TX)
 
 
-        # Updated state
-        self.updatestate(STATE_TX)
 
     def statetx(self):
         """
@@ -112,7 +119,7 @@ class TransmitArqStateMachine(object):
         """
 
         print "TX"
-        self.functionpointer_tx()
+        self.functionpointer_tx(self.currentdata)
 
         # Updated state
         self.updatestate(STATE_GETACK)
@@ -126,6 +133,15 @@ class TransmitArqStateMachine(object):
 
         print "GET ACK"
 
+        if self.acksuccess:
+            # ACK received
+            self.updatestate(STATE_GETNEXTDATA)
+        else:
+            # ACK not received
+            pass
+
+
+
     def stateretry(self):
         """
         Prior transmission failed to receive an ACK from receiver. Update counters and retry transmission unless max
@@ -135,4 +151,7 @@ class TransmitArqStateMachine(object):
         """
 
         print "Retry"
+
+    def ackreceived(self):
+        self.acksuccess = True
 
