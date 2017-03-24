@@ -17,11 +17,12 @@ ACKINTERVAL = 5 # Time to wait for the receiver to send ACK
 
 class TransmitArqStateMachine(object):
 
-    def __init__(self):
+    def __init__(self, funcptr_tx):
         """
         This class provides the state machine functionality for the transmitter portion of a basic stop-and-wait ARQ
         protocol.
         """
+        self.functionpointer_tx = funcptr_tx
         self.state = STATE_IDLE
         self.retries = 0
         self.dataqueue = Queue.Queue()
@@ -40,7 +41,7 @@ class TransmitArqStateMachine(object):
         :param datalist: A list of data packets to transmit from index [0] to max index
         :return:
         """
-        self.dataqueue.clear()
+        self.dataqueue.queue.clear()
         self.retries = 0
         for item in datalist:
             self.dataqueue.put(item)
@@ -102,6 +103,7 @@ class TransmitArqStateMachine(object):
         """
 
         print "TX"
+        self.functionpointer_tx(self.)
 
         # Updated state
         self.updatestate(STATE_GETACK)
