@@ -1,15 +1,35 @@
 import arq
+import threading
+import time
+import timer
+
+
+
+
+
 
 listdata = ['this ', 'is', ' a', ' test', '.']
 
 def transmitroutine( data):
     print "Transmitting: ", data
 
+def tx():
+    print "TX'ing!"
+
+tmr = timer.TimerClass(tx, 0.5)
+tmr.start()
+
+time.sleep(3)
+
+tmr.stop()
+
 # Create object
 testtxsm = arq.TransmitArqStateMachine(listdata, transmitroutine)
 
 # Insert new data
 testtxsm.newdataqueue(listdata)
+
+
 
 # # Set state machine to start
 # testtxsm.updatestate(arq.STATE_START)
