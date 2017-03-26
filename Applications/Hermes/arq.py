@@ -182,5 +182,6 @@ class TransmitArqStateMachine(object):
             self.updatestate(STATE_TX)
 
     def ackreceived(self):
+        print "ACK RECEIVED!"
         self.acksuccess = True
 
