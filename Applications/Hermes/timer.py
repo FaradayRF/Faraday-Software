@@ -1,9 +1,10 @@
 import threading
 import time
 
+DEFAULT_INTERVAL = 0.01
 
 class TimerClass(threading.Thread):
-    def __init__(self, funcptr, timeinterval):
+    def __init__(self, funcptr, timeinterval = DEFAULT_INTERVAL):
         """
         This timer function is an abritrary threaded objects that executes the supplied function passed by
         reference on a periodic interval. The thread can also be stopped manually.

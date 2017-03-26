@@ -6,8 +6,6 @@ import timer
 
 
 
-
-
 listdata = ['this ', 'is', ' a', ' test', '.']
 
 def transmitroutine( data):
@@ -16,7 +14,7 @@ def transmitroutine( data):
 def tx():
     print "TX'ing!"
 
-tmr = timer.TimerClass(tx, 0.5)
+tmr = timer.TimerClass(tx)
 tmr.start()
 
 time.sleep(3)
