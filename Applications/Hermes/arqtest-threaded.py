@@ -18,5 +18,7 @@ testtxsm = arq.TransmitArqStateMachine(listdata, transmitroutine)
 testtxsm.newdataqueue(listdata)
 
 
-time.sleep(4)
+time.sleep(6)
+testtxsm.ackreceived()
+time.sleep(2)
 testtxsm.ackreceived()
