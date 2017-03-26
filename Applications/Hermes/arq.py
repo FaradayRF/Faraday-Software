@@ -12,7 +12,7 @@ STATE_GETACK = 4 # Wait for acknowledgement from receiver
 STATE_RETRY = 5 # Retry current transmission data, update/check counters in case of timeout
 
 MAXRETRIES = 3 # Maximum number of retries to attempt before timing out
-ACKINTERVAL = 5 # Time to wait for the receiver to send ACK
+ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
 
 
 class TransmitArqStateMachine(object):
@@ -169,7 +169,16 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "Retry"
+        print "Retry", self.retries
+        # Check retry count
+        if self.retries > MAXRETRIES:
+            # Timeout
+            self.arqtimer.stop()
+            print "TIMED OUT!"
+        else:
+            # Update retry count and retry transmission
+            self.retries += 1
+            self.updatestate(STATE_TX)
 
     def ackreceived(self):
         self.acksuccess = True
