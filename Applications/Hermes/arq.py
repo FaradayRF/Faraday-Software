@@ -1,7 +1,7 @@
 import time
 import threading
 import Queue
-
+import timer
 
 # Definitions
 STATE_IDLE = 0 # IDLE state to wait for commanded start state
@@ -41,6 +41,10 @@ class TransmitArqStateMachine(object):
         # Initialize data into queue
         self.newdataqueue(datalist)
 
+        # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
+        self.arqtimer = timer.TimerClass(self.runstate)
+        self.arqtimer.start()
+
     def newdataqueue(self, datalist):
         """
         Reset and fill data queue with new data.
@@ -51,6 +55,9 @@ class TransmitArqStateMachine(object):
         self.retries = 0
         for item in datalist:
             self.dataqueue.put(item)
+
+        # Updated state to START
+            self.updatestate(STATE_START)
 
     def runstate(self):
         """
@@ -75,7 +82,7 @@ class TransmitArqStateMachine(object):
         IDLE simple waits for a commanded START state.
         :return:
         """
-        print "IDLE"
+        #print "IDLE"
 
     def statestart(self):
         """

@@ -11,16 +11,6 @@ listdata = ['this ', 'is', ' a', ' test', '.']
 def transmitroutine( data):
     print "Transmitting: ", data
 
-def tx():
-    print "TX'ing!"
-
-tmr = timer.TimerClass(tx)
-tmr.start()
-
-time.sleep(3)
-
-tmr.stop()
-
 # Create object
 testtxsm = arq.TransmitArqStateMachine(listdata, transmitroutine)
 
