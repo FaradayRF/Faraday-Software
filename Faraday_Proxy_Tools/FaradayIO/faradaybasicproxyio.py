@@ -8,12 +8,10 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import json # probably don't need if using requests .json()
 import requests
 import base64
 import time
 import logging
-import sys
 
 class proxyio(object):
     """

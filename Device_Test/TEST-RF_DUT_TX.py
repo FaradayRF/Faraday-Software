@@ -9,10 +9,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-from FaradayIO import commandmodule
-
-import time
 
 #Definitions
 

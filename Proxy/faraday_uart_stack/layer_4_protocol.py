@@ -8,9 +8,6 @@
 # Copyright:   (c) Brent 2015
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-import Queue
-import threading
-import time
 #import Layer_2_Service
 import struct
 

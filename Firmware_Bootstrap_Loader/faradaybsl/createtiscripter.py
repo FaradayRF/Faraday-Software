@@ -9,7 +9,6 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import array
-import sys
 
 #filename = sys.argv[1]
 # filename = 'RF_Test_Firmware_1-17-17.txt'

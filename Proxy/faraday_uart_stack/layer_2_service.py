@@ -12,8 +12,6 @@
 import layer_2_protocol
 import threading
 import time
-import os
-import random
 import Queue
 
 #test_tx = layer_2_protocol.Faraday_Datalink_Device()

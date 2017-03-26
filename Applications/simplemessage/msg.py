@@ -1,5 +1,4 @@
 #imports
-import time
 import struct
 import textwrap
 import sys
@@ -9,7 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to 
 
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
 
 
 

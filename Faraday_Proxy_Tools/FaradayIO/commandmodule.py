@@ -9,7 +9,6 @@
 #-------------------------------------------------------------------------------
 import cc430radioconfig
 import struct
-import gpioallocations
 import Checksum as checksum
 
 COMMAND_DATAGRAM_LEN = 123

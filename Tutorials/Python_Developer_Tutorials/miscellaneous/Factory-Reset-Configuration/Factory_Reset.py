@@ -7,7 +7,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Pro
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
-from FaradayIO import cc430radioconfig
 
 import time
 
