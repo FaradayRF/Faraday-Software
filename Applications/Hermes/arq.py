@@ -42,7 +42,7 @@ class TransmitArqStateMachine(object):
         self.newdataqueue(datalist)
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
-        self.arqtimer = timer.TimerClass(self.runstate, 0.2)
+        self.arqtimer = timer.TimerClass(self.runstate, 0.5)
         self.arqtimer.start()
         self.arqstarttime = time.time()
 
@@ -153,7 +153,8 @@ class TransmitArqStateMachine(object):
         else:
             # Check for ACK
             if self.acksuccess:
-                # ACK received
+                # ACK received - Reset ACK flag and get next data
+                self.acksuccess = False
                 self.updatestate(STATE_GETNEXTDATA)
             else:
                 # ACK not received

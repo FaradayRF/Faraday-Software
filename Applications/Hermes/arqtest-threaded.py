@@ -18,49 +18,5 @@ testtxsm = arq.TransmitArqStateMachine(listdata, transmitroutine)
 testtxsm.newdataqueue(listdata)
 
 
-
-# # Set state machine to start
-# testtxsm.updatestate(arq.STATE_START)
-#
-# # Run state machine operations - START
-# testtxsm.runstate()
-# print "1"
-#
-# # Run state machine operations - next Data
-# testtxsm.runstate()
-# print "2"
-#
-# # Run state machine operations - TX
-# testtxsm.runstate()
-# print '3'
-#
-# # Run state machine operations - Get ACK
-# testtxsm.runstate()
-# print '4'
-# # Receive ACK
-# testtxsm.ackreceived()
-# print '5'
-# testtxsm.runstate() # ACK RX'd now moving to next data
-#
-# print '6'
-#
-# # Get next data
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.ackreceived()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.ackreceived()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.ackreceived()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.ackreceived()
-# testtxsm.runstate()
-# testtxsm.runstate()
-# testtxsm.runstate()
+time.sleep(4)
+testtxsm.ackreceived()
