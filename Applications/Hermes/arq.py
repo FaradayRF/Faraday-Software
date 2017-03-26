@@ -42,8 +42,9 @@ class TransmitArqStateMachine(object):
         self.newdataqueue(datalist)
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
-        self.arqtimer = timer.TimerClass(self.runstate)
+        self.arqtimer = timer.TimerClass(self.runstate, 0.2)
         self.arqtimer.start()
+        self.arqstarttime = time.time()
 
     def newdataqueue(self, datalist):
         """
@@ -128,6 +129,9 @@ class TransmitArqStateMachine(object):
         print "TX"
         self.functionpointer_tx(self.currentdata)
 
+        # Reset the ARQ base time
+        self.arqstarttime = time.time()
+
         # Updated state
         self.updatestate(STATE_GETACK)
 
@@ -138,14 +142,22 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "GET ACK"
+        # Compute ARQ timeout time
+        timeouttime = time.time() - self.arqstarttime
 
-        if self.acksuccess:
-            # ACK received
-            self.updatestate(STATE_GETNEXTDATA)
+        print "GET ACK", timeouttime
+
+        if timeouttime > ACKINTERVAL:
+            # Retry
+            self.updatestate(STATE_RETRY)
         else:
-            # ACK not received
-            pass
+            # Check for ACK
+            if self.acksuccess:
+                # ACK received
+                self.updatestate(STATE_GETNEXTDATA)
+            else:
+                # ACK not received
+                pass
 
 
 
