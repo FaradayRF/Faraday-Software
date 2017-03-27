@@ -17,6 +17,9 @@ import Queue
 import struct
 
 
+DEBUG = False
+
+
 #####################################################
 ##
 ## uart_interface_class()
@@ -129,7 +132,8 @@ class faraday_uart_object(threading.Thread):
 
     def process_received_datagram(self, datagram):
         parsed_datagram_dict = layer_4_protocol.parse_packet(datagram)
-        #print "RX'd:", parsed_datagram_dict
+        if DEBUG:
+            print "RX'd:", parsed_datagram_dict
 
     def RxPortHasItem(self,service_number):
         try:

@@ -24,12 +24,6 @@ import Queue
 
 
 
-def initialize_services(port, baud, timeout):
-    #global layer_initialized, device
-    layer_2_protocol.init_layer(port, baud,timeout)
-    device = device_1()
-    layer_initialized = True
-
 class Layer2Object(object):
     def __init__(self, port, baud, timeout):
         self.protocol_object = layer_2_protocol.layer_2_object(port, baud, timeout)

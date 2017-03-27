@@ -9,6 +9,8 @@ from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
 from FaradayIO import gpioallocations
 
+DEBUG = False
+
 #Variables
 local_device_callsign = 'nocall' # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_node_id = 1 # Should match the connected Faraday unit as assigned in Proxy configuration
@@ -119,7 +121,8 @@ def ResetDebugFlash():
     print "*** Pre-Debug RESET ***"
     rx_debug_data_parsed_initial = GetDebugFlash()
 
-    #print repr(rx_debug_data_parsed_initial)
+    if DEBUG:
+        print repr(rx_debug_data_parsed_initial)
 
     # Reset the device debug flash counters and data
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
@@ -130,16 +133,18 @@ def ResetDebugFlash():
     print "*** Post-Debug RESET ***"
     rx_debug_data_parsed_reset = GetDebugFlash()
 
-    #print repr(rx_debug_data_parsed_reset)
+    if DEBUG:
+        print repr(rx_debug_data_parsed_reset)
 
     debug_test_pass = True
 
     for key in rx_debug_data_parsed_reset:
         if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
-            pass
-            #print key, rx_debug_data_parsed_reset[key]
+            if DEBUG:
+                print key, rx_debug_data_parsed_reset[key]
         else:
-            #print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
+            if DEBUG:
+                print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
             debug_test_pass = False
 
     if debug_test_pass == True:
@@ -237,9 +242,6 @@ def ReadGPSTelem(telem):
     strLon = telem['GPSLONGITUDE']
     strLatDir = telem['GPSLATITUDEDIR']
     strLonDir = telem['GPSLONGITUDEDIR']
-    strAlt = telem['GPSALTITUDE']
-    strAltUnit = telem['GPSALTITUDEUNITS']
-    floatSpeed = telem['GPSSPEED']
     strHDOP = telem['GPSHDOP']
     if boolFix and float(strHDOP) > 0:
         print "VALID GPS Signal Lock!"

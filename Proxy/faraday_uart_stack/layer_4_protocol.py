@@ -19,7 +19,6 @@ def create_packet(service_number, payload_length, payload):
     #[payload, service_number]
 
     #Serialize packet data
-    service_number_string = str(service_number)
     service_number_hex_byte_char = chr(service_number)
     payload_length_hex = chr(payload_length)
     datagram_ready = service_number_hex_byte_char + payload_length_hex + str(payload)

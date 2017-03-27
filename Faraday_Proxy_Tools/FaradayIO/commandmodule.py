@@ -84,7 +84,6 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
     """
     #Cheack if callsign is too long
     if(len(dest_callsign)<DEST_CALLSIGN_MAX_LEN):
-        payload_len = len(payload)
         #Define packet structures
         pkt_cmd_datagram_struct = struct.Struct('2B25s') #Command packect to be run on remote unit as local command
         pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H') #Command packect to be run on remote unit as local command Error Detection

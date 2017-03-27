@@ -108,7 +108,6 @@ def getStationData(stations):
         # Extract station identification data from active stations
         callsign = station["SOURCECALLSIGN"]
         nodeid = station["SOURCEID"]
-        epoch = station["EPOCH"]
 
         # Construct request dictionary payload
         payload = {"callsign": callsign, "nodeid": nodeid, "timespan": age, "limit": 1}
@@ -300,7 +299,6 @@ def sendtelemetry(stations, telemSequence, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
         gpioValues = station["GPIOSTATE"]
         rfValues = station["RFSTATE"]
 
@@ -408,7 +406,6 @@ def sendTelemLabels(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration
@@ -543,7 +540,6 @@ def sendParameters(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration
@@ -677,7 +673,6 @@ def sendEquations(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration
