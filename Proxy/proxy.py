@@ -262,7 +262,7 @@ def proxy():
 
             if limit is None:
                 # Optional
-                limit = len(queDict[port])
+                limit = len(getDicts[station][port])
             else:
                 limit = int(limit)
                 # Check for less than or equal to zero case

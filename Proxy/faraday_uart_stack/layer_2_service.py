@@ -24,12 +24,6 @@ import Queue
 
 
 
-class Layer2Object(object):
-    def __init__(self, port, baud, timeout):
-        self.protocol_object = layer_2_protocol.layer_2_object(port, baud, timeout)
-        self.service_object = device_1(self.protocol_object)
-        self.layer_initialized = True
-
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):
         test_ser_queue_1 = Queue.Queue() # Infinite

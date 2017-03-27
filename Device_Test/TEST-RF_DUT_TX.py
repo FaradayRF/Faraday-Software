@@ -17,6 +17,7 @@ from FaradayIO import faradaycommands
 local_device_callsign = 'KB1LQD'
 local_device_node_id = 1
 
+remote_device_callsign = 'KB1LQD'
 remote_device_node_id = 0
 
 #Start the proxy server after configuring the configuration file correctly

@@ -215,7 +215,7 @@ class faraday_uart_object(threading.Thread):
                     self.receive_service_queue_put(parsed_l4_packet[2], parsed_l4_packet[0])
 
                 except:
-                    print "FAILED PARSING", a
+                    print "FAILED PARSING", rx_datagram
                     pass
             #Check uart datalink receive for new datagrams to parse
             self.uart_layer_receive_link()
