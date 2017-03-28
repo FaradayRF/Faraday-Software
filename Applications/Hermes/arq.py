@@ -246,6 +246,8 @@ class ReceiveArqStateMachine(object):
         """
 
         print "START"
+        self.getreceiveitem()
+
 
 
     def statesendack(self):
@@ -253,3 +255,34 @@ class ReceiveArqStateMachine(object):
         Send ACK to transmitter
         :return:
         """
+
+    def putrxqueue(self, rxdata):
+        """
+        Inserts the supplied data into the receive data queue in the class object.
+        :return:
+        """
+
+        self.dataqueue.put_nowait(rxdata)
+
+    def getrxqueue(self):
+        """
+        This function interacts with the class objects receive data Queue and returns the next item in the queue. It
+        returns False if nothing is to be returned.
+        :return:
+        """
+
+        if self.dataqueue.empty():
+            # Nothing to return, return False
+            return False
+        else:
+            # Return next data item
+            return self.dataqueue.get_nowait()
+
+    def getreceiveitem(self):
+        """
+        Attempt to get the next item waiting to be received. This function assumes the functionpointer_rx() returns
+        the next received item or False if no items are waiting to be retrieved.
+        :return:
+        """
+        rxitem = self.functionpointer_rx()
+        print rxitem
