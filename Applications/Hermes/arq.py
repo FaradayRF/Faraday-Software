@@ -10,6 +10,7 @@ STATE_GETNEXTDATA = 2 # Get the next data item to be transmitted
 STATE_TX = 3 # Transmit data
 STATE_GETACK = 4 # Wait for acknowledgement from receiver
 STATE_RETRY = 5 # Retry current transmission data, update/check counters in case of timeout
+STATE_SENDACK = 6 # Send acknowledgement to transmitter
 
 MAXRETRIES = 3 # Maximum number of retries to attempt before timing out
 ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
@@ -185,3 +186,70 @@ class TransmitArqStateMachine(object):
         print "ACK RECEIVED!"
         self.acksuccess = True
 
+
+class ReceiveArqStateMachine(object):
+
+    def __init__(self, datalist, funcptr_tx, funcptr_rx):
+        """
+        This class provides the state machine functionality for the receiver portion of a basic stop-and-wait ARQ
+        protocol.
+        """
+        self.functionpointer_tx = funcptr_tx
+        self.functionpointer_rx = funcptr_rx
+        self.state = STATE_IDLE
+        self.retries = 0
+        self.dataqueue = Queue.Queue()
+
+        self.statedict = {
+            STATE_IDLE: self.stateidle,
+            STATE_START: self.statestart,
+            STATE_SENDACK: self.statesendack,
+        }
+
+        # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
+        self.arqtimer = timer.TimerClass(self.runstate, 0.5)
+        self.arqtimer.start()
+        self.arqstarttime = time.time()
+
+
+    def runstate(self):
+        """
+        Check the current state and run the states function.
+        :return:
+        """
+        # Use the current objects state to run the intended state function
+        self.statedict[self.state]()
+
+    def updatestate(self, state):
+        """
+        Change the current state of the state machine object.
+        :param state: The new state of the state machine object to change too
+        :return:
+        """
+        self.state = state
+
+    def stateidle(self):
+        """
+        IDLE state function:
+
+        IDLE simple waits for a commanded START state.
+        :return:
+        """
+        print "IDLE"
+
+    def statestart(self):
+        """
+        START State Function:
+
+        * Reset variables/counters/etc... to default values
+        :return:
+        """
+
+        print "START"
+
+
+    def statesendack(self):
+        """
+        Send ACK to transmitter
+        :return:
+        """
