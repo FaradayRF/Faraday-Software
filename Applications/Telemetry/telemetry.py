@@ -559,11 +559,9 @@ def sqlInsert(data):
             logger.error("Sqlite3.Error: " + str(e))
             return False
 
-    # Connect to database, create SQL query, execute query, and close database
-    try:
-        conn = sqlite3.connect(db)
-
+        # Connect to database, create SQL query, execute query, and close database
         try:
+            conn = sqlite3.connect(db)
             # Use connection as context manager to rollback automatically if error
             with conn:
                 conn.execute(sql,telem)
@@ -574,8 +572,7 @@ def sqlInsert(data):
             conn.close()
             return False
 
-        # Completed, close 
-        base and return True
+        # Completed, close database and return True
         conn.close()
         return True
 
