@@ -568,6 +568,7 @@ def sqlInsert(data):
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
+            conn.rollback()
             conn.close()
             return False
 
