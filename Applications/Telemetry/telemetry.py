@@ -77,9 +77,6 @@ def telemetry_worker(config):
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
     try:
-        # Open configuration file
-        dbFilename = config.get("DATABASE", "FILENAME")
-
         # Pragmatically create descriptors for each Faraday connected to Proxy
         count = config.getint("TELEMETRY", "UNITS")
 
