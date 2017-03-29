@@ -29,30 +29,46 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
-logger = logging.getLogger('telemetry')
+try:
+    logging.config.fileConfig('loggingConfig.ini')
+    logger = logging.getLogger('telemetry')
+
+except ConfigParser.Error as e:
+    #  File missing, indicate error and infinite loop. Logger isn't available.
+    while True:
+        print("ERROR: loggingConfig.ini missing")
+        time.sleep(1)
 
 # Load Telemetry Configuration from telemetry.ini file
-# Should have common file for apps...
 telemetryConfig = ConfigParser.RawConfigParser()
-telemetryConfig.read('telemetry.ini')
+telemetryFile = telemetryConfig.read('telemetry.ini')
+
+if len(telemetryFile) == 0:
+    #  File missing, indicate error and infinite loop
+    while True:
+            logger.error("telemetry.ini missing")
+            time.sleep(1)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
-
 def telemetry_worker(config):
     """
-    Interface Faraday Proxy to obtain telemtry
+    Interface Faraday Proxy to obtain telemetry
 
     This function interfaces the Proxy application via its RESTful interface.
     It is a one-way operation as it makes no sense to POST data to proxy for
-    telemetry to a specific unit with this application.
+    telemetry to a specific unit with this application. This function runs
+    in an infinite loop continually querying for data.
+
+    :param config: telemetry.ini ConfigParser object
+    :return: Nothing
     """
     logger.info('Starting telemetry_worker thread')
 
     # initialize variables
     stations = {}
+    count = 0
 
     # Initialize proxy object
     proxy = faradaybasicproxyio.proxyio()
@@ -60,28 +76,52 @@ def telemetry_worker(config):
     # Initialize Faraday parser
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
-    # Open configuration file
-    dbFilename = config.get("DATABASE", "FILENAME")
+    try:
+        # Open configuration file
+        dbFilename = config.get("DATABASE", "FILENAME")
 
-    # Pragmatically create descriptors for each Faraday connected to Proxy
-    count = config.getint("TELEMETRY", "UNITS")
+        # Pragmatically create descriptors for each Faraday connected to Proxy
+        count = config.getint("TELEMETRY", "UNITS")
+
+    except ConfigParser.Error as e:
+            #  Error reading in configs so get stuck in infinite loop indicating problem
+            while True:
+                logger.error("ConfigParse.Error: " + str(e))
+                time.sleep(1)
 
     for num in range(count):
-        callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
-        nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
+        try:
+            callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
+            nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
+
+        except ConfigParser.Error as e:
+            #  Error reading in configs so get stuck in infinite loop indicating problem
+            while True:
+                logger.error("ConfigParse.Error: " + str(e))
+                time.sleep(1)
+
         stations["UNIT" + str(num) + "CALL"] = callsign
         stations["UNIT" + str(num) + "ID"] = nodeid
         telemetryDicts[str(callsign) + str(nodeid)] = deque([], maxlen=1000)
 
-    # check for data on telemetry port, if True place into deque
-    while(1):
+    #  Check for data on telemetry port with infinite loop.
+    while True:
          for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
 
-            # Iterate through each packet and unpack into dictionary
-            if data != None:
+            if type(data) is dict:
+                #  A dict means something is wrong with GET, print error JSON
+                logger.info(data["error"])
+
+            elif data == None:
+                #  No data is available from Proxy
+                logger.debug("telemetryworker data GET response = None")
+
+            else:
+                # Iterate through each packet and unpack into dictionary
+                logger.debug("Proxy data: " + repr(data))
                 for item in data:
                     try:
                         # Decode BASE64 JSON data packet into
@@ -103,8 +143,7 @@ def telemetry_worker(config):
                     else:
                         sqlInsert(parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
-
-         time.sleep(1) # should slow down
+         time.sleep(1) #  Slow down main while loop
 
 # Initialize Flask microframework
 app = Flask(__name__)
@@ -117,7 +156,13 @@ def dbTelemetry():
     Serves JSON responses to the "/" URL containing output of SQLite queries.
     Specific SQLite queries can return data from specified ranges and source
     stations as
+
+    :return: JSON formatted string with data or error message and HTTP response
     """
+
+    #  Initialize local variables
+    parameters = {}
+    data = []
 
     try:
         # Obtain URL parameters
@@ -129,22 +174,16 @@ def dbTelemetry():
         timespan = request.args.get("timespan", 5*60)
         limit = request.args.get("limit")
 
-        nodeid = str(nodeid)
-        direction = int(direction)
-        callsign = str(callsign).upper()
-        timespan = int(timespan)
-        if limit != None:
-            limit = int(limit)
+    except IOError as e:
+        logger.error("IOError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
 
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
+    nodeid = str(nodeid)
+    direction = int(direction)
+    callsign = str(callsign).upper()
+    timespan = int(timespan)
+    if limit != None:
+        limit = int(limit)
 
     # Validate timespan
     if timespan <= 0:
@@ -152,7 +191,6 @@ def dbTelemetry():
         return json.dumps({"error": message}), 400
 
     # Create tuple of parameters for SQLite3
-    parameters = {}
     parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeid
     parameters["DIRECTION"] = direction
@@ -161,7 +199,6 @@ def dbTelemetry():
     parameters["TIMESPAN"] = timespan
     parameters["LIMIT"] = limit
 
-    data = []
     data = queryDb(parameters)
 
     # Check if data returned, if not, return HTTP 204
@@ -181,7 +218,11 @@ def rawTelemetry():
     provides non-SQLite database dequeu results. Each query can pop data off of
     a queu, thus ensuring there are no duplicates and acting like a proxy with
     decoded data instead of BASE64 encoded data.
+
+    :return: JSON formatted string with data or error. HTTP204 if no data
     """
+    #  Initialize local variables
+    stationData = []
 
     try:
         # Obtain URL parameters
@@ -189,14 +230,8 @@ def rawTelemetry():
         nodeId = request.args.get("nodeid", None)
         limit = request.args.get("limit", None)
 
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+    except IOError as e:
+        logger.error("IOError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
     # Check to see that required parameters are present
@@ -205,8 +240,8 @@ def rawTelemetry():
         # If callsign is present then nodeid is required
         if callsign is not None:
             if nodeId is None:
+                raise ValueError("Missing 'nodeid' parameter")
 
-                raise StandardError("Missing 'nodeid' parameter")
             else:
                 # Convert nodeId to int and callsign to uppercase string
                 nodeId = int(nodeId)
@@ -221,17 +256,19 @@ def rawTelemetry():
            pass
 
         if limit is None:
-            # Optional, set limit to largest value of any radio queue size
+            #  Optional, set limit to largest value of any radio queue size
             temp = []
+            #  telemetryDicts is telemetryWorker queue
             for key, value in telemetryDicts.iteritems():
                 temp.append(len(value))
             limit = int(max(temp))
+
         else:
             # Limit provided, convert to int and check if it's valid
             limit = int(limit)
             if limit <= 0:
                 message = "Error: Limit '{0}' is invalid".format(limit)
-                return json.dumps({"error": message}), 400
+                raise ValueError(message)
 
     except ValueError as e:
         logger.error("ValueError: " + str(e))
@@ -246,7 +283,7 @@ def rawTelemetry():
         logger.error("StandardError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    # Ready to get data from the queue. We have to cases: callsign and nodeid
+    # Ready to get data from the queue. We have two cases: callsign and nodeid
     # are present or they are not. The resulting dictionary created needs to
     # be different in both cases. Use try statement to fail cleanly
     try:
@@ -257,10 +294,10 @@ def rawTelemetry():
         # queue data.
         if callsign == None and nodeId == None:
             # Iterate through each faraday radio connected via USB
+            #  telemetryDicts is telemetryWorker queue
             for key, value in telemetryDicts.iteritems():
                 # Make sure queue actually has data in it
                 if (len(value) > 0):
-                    stationData = []
                     station = {}
                     while value:
                         # While data is still in the queue pop off items
@@ -270,12 +307,16 @@ def rawTelemetry():
                         if len(stationData) >= limit:
                             # Hit the limit, break out of the while loop early
                             break
+                            #  Unsure if break will cause multiple locally connected
+                            #  units to not have data
+
                         # Append packet to stationData list
                         stationData.append(packet)
+
                     # All necessary data from radio obtained, add to dictionary
                     station[key] = stationData
-            # The data list is a list of dictionaries for json.dumps()
-            data.append(station)
+                    data.append(station)
+
         else:
             # Local radio has been specified, only return data from it
             stationData = []
@@ -309,7 +350,12 @@ def rawTelemetry():
         logger.error("StandardError: " + str(e))
         return json.dumps({"error": str(e)}), 400
 
-    # Completed our query for "/raw", return json.dumos() and HTTP 200
+    if len(stationData) == 0:
+        #  No new data is in queue
+        logger.info("No station data is in queue")
+        return '', 204  # HTTP 204 response cannot have message data
+
+    # Completed our query for "/raw", return json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
@@ -323,6 +369,8 @@ def stations():
     the time they were heard. If no timespan or range is specified then it
     defaults to the last 5 minutes. If a specific station is specified, then
     the last time it was heard is returned.
+
+    :return: JSON formatted string with data or error. HTTP204 if no data
     """
 
     try:
@@ -333,17 +381,14 @@ def stations():
         callsign = request.args.get("callsign", "%").upper()
         nodeId = request.args.get("nodeid", "%")
 
-        # Timespan will allways be an integer
+        # Timespan will always be an integer
         timespan = int(timespan)
 
+    except IOError as e:
+        logger.error("IOError: " + str(e))
+        return json.dumps({"error": str(e)}), 400
     except ValueError as e:
         logger.error("ValueError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-        return json.dumps({"error": str(e)}), 400
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
         return json.dumps({"error": str(e)}), 400
     except StandardError as e:
         logger.error("StandardError: " + str(e))
@@ -354,7 +399,7 @@ def stations():
     parameters["TIMESPAN"] = timespan
     parameters["STARTTIME"] = startTime
     parameters["ENDTIME"] = endTime
-    parameters["CALLSIGN"] = callsign.upper()
+    parameters["CALLSIGN"] = callsign
     parameters["NODEID"] = nodeId
 
     # Provide parameters to queryStationsDb to return the result SQLite rows
@@ -362,7 +407,7 @@ def stations():
 
     # Check if no stations returned, if not, return HTTP 204
     if len(data) <= 0:
-        logger.info("Station(s) not heard in last %d seconds", timespan)
+        logger.info("No stations have been heard in last %d seconds", timespan)
         return '', 204  # HTTP 204 response cannot have message data
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
@@ -371,7 +416,12 @@ def stations():
 
 @app.errorhandler(404)
 def pageNotFound(error):
-    """HTTP 404 response for incorrect URL"""
+    """
+    HTTP 404 response for incorrect URL
+
+    :param error: HTTP Error
+    :return: JSON formatted string with error description
+    """
 
     # Completed handling of unknown URL, return json error message and HTTP 404
     logger.error("Error: " + str(error))
@@ -379,10 +429,20 @@ def pageNotFound(error):
 
 # Database Functions
 def initDB():
-    """Initialize database, if not present then create it"""
-    # Obtain configuration filenames
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-    dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+    """
+    Initialize database, creates it if not present
+
+    :return: True or False if successful
+    """
+
+    # Obtain configuration file names
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
 
     # Check if database exists
     if os.path.isfile(dbFilename):
@@ -390,114 +450,172 @@ def initDB():
     else:
         # Open database schema SQL file and execute the SQL functions inside
         # after connecting. Close the database when complete.
-        with open(dbSchema, 'rt') as f:
-            conn = sqlite3.connect(dbFilename)
-            cur = conn.cursor()
-            schema = f.read()
-            cur.executescript(schema)
-        conn.close()
+        try:
+            with open(dbSchema, 'rt') as f:
+                conn = sqlite3.connect(dbFilename)
+                cur = conn.cursor()
+                schema = f.read()
+                cur.executescript(schema)
+            conn.close()
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+    return True
 
 def createTelemetryList(data):
-    """Converts data dictionary into a defined list for insertion into SQLite db"""
+    """
+    Converts data dictionary into a defined list for insertion into SQLite db
+
+    SQLite3 insertions require that the data be ordered correctly. Python dictionaries
+    do not guarantee order so a list is greated from the dictionary.
+
+    :param data: Telemetry dictionary
+    :return: list that contains telemetry data
+    """
 
     # Create list of dictionary data in appropriate order
     # First statement in None for KeyID
-    temp = [None,
-            data["SOURCECALLSIGN"],
-            data["SOURCEID"],
-            data["DESTINATIONCALLSIGN"],
-            data["DESTINATIONID"],
-            data["RTCSEC"],
-            data["RTCMIN"],
-            data["RTCHOUR"],
-            data["RTCDAY"],
-            data["RTCDOW"],
-            data["RTCMONTH"],
-            data["RTCYEAR"],
-            data["GPSLATITUDE"],
-            data["GPSLATITUDEDIR"],
-            data["GPSLONGITUDE"],
-            data["GPSLONGITUDEDIR"],
-            data["GPSALTITUDE"],
-            data["GPSALTITUDEUNITS"],
-            data["GPSSPEED"],
-            data["GPSFIX"],
-            data["GPSHDOP"],
-            data["GPIOSTATE"],
-            data["RFSTATE"],
-            data["ADC0"],
-            data["ADC1"],
-            data["ADC2"],
-            data["ADC3"],
-            data["ADC4"],
-            data["ADC5"],
-            data["VCC"],
-            data["BOARDTEMP"],
-            data["ADC8"],
-            data["HABTIMERSTATE"],
-            data["HABCUTDOWNSTATE"],
-            data["HABTRIGGERTIME"],
-            data["HABTIMER"],
-            data["EPOCH"]
-            ]
+    try:
+        temp = [None,
+                data["SOURCECALLSIGN"],
+                data["SOURCEID"],
+                data["DESTINATIONCALLSIGN"],
+                data["DESTINATIONID"],
+                data["RTCSEC"],
+                data["RTCMIN"],
+                data["RTCHOUR"],
+                data["RTCDAY"],
+                data["RTCDOW"],
+                data["RTCMONTH"],
+                data["RTCYEAR"],
+                data["GPSLATITUDE"],
+                data["GPSLATITUDEDIR"],
+                data["GPSLONGITUDE"],
+                data["GPSLONGITUDEDIR"],
+                data["GPSALTITUDE"],
+                data["GPSALTITUDEUNITS"],
+                data["GPSSPEED"],
+                data["GPSFIX"],
+                data["GPSHDOP"],
+                data["GPIOSTATE"],
+                data["RFSTATE"],
+                data["ADC0"],
+                data["ADC1"],
+                data["ADC2"],
+                data["ADC3"],
+                data["ADC4"],
+                data["ADC5"],
+                data["VCC"],
+                data["BOARDTEMP"],
+                data["ADC8"],
+                data["HABTIMERSTATE"],
+                data["HABCUTDOWNSTATE"],
+                data["HABTRIGGERTIME"],
+                data["HABTIMER"],
+                data["EPOCH"]
+                ]
+
+    except KeyError as e:
+        logger.error("KeyError: " + str(e))
+        temp = []
 
     return temp
 
 
 def sqlInsert(data):
-    """Takes in a data tuple and inserts int into the telemetry SQLite table"""
+    """
+    Takes in a data tuple and inserts int into the telemetry SQLite table
 
-    # Read in name of telemetry databse
-    db = telemetryConfig.get("DATABASE", "FILENAME")
+    :param data: Telemetry dictionary
+    :return: Status True or False on SQL insertion success
+    """
 
+    # Read in name of telemetry database
+    try:
+        db = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # Change dictionary into list with proper order
     telem = createTelemetryList(data)
 
-    # Create parameter substitute "?" string for SQL query then create SQL
-    numKeys = len(telem)
-    paramSubs = "?" * (numKeys)
-    paramSubs = ",".join(paramSubs)
-    sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
+    # Check if length of telem is correct
+    if len(telem) > 0:
+        # Create parameter substitute "?" string for SQL query then create SQL
+        numKeys = len(telem)
+        paramSubs = "?" * (numKeys)
+        paramSubs = ",".join(paramSubs)
+        sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
 
-    # Connect to database, create SQL query, execute query, and close database
-    try:
-        conn = sqlite3.connect(db)
+        # Connect to database, create SQL query, execute query, and close database
+        try:
+            conn = sqlite3.connect(db)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
         cursor = conn.cursor()
 
-        # Use connection as context manager to rollback automatically if error
-        with conn:
-            conn.execute(sql,telem)
+        try:
+            # Use connection as context manager to rollback automatically if error
+            with conn:
+                conn.execute(sql,telem)
 
-    except conn.ProgrammingError as e:
-        logger.error(e)
-        logger.error(telem)
-        conn.rollback()
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
-    except sqlite3.OperationalError as e:
-        # TODO: cleanup
-        logger.error(e)
-        initDB()
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            conn.rollback()
+            conn.close()
+            return False
 
-    # Completed, close database
-    conn.close()
+        # Completed, close database and return True
+        conn.close()
+        return True
+
+    else:
+        return False
 
 def queryDb(parameters):
     """
     Takes in parameters to query the SQLite database, returns the results
 
     Performs a SQL query to retrieve data from specific times, stations, or
-    ranges of time. Returns all results as a list of JSON dictionaries
+    ranges of time. Returns all results as a list of JSON dictionaries.
+    Parameters:
+    "CALLSIGN":Uppercase callsign
+    "NODEID": Node ID
+    "LIMIT": Number of SQL rows to return
+    "DIRECTION": Specify if callsign-nodeid to search is local (0) or remote (1)
+    "STARTTIME": ISO8601 time to start search
+    "ENDTIME": ISO8601 time to end search
+    "TIMESPAN": Number of seconds to search over, ending at current time
+
+    :param parameters: Search parameter dictionary
+    :return: List of SQL output where each item is a dictionary, empty list when error
     """
+
+    #Declare sqlData
+    sqlData = []
+
     # Use supplied parameters to generate a Tuple of epoch start/stop times
     # SQLite3 parameters need to be Tuples
     timeTuple = generateStartStopTimes(parameters)
-    callsign = parameters["CALLSIGN"].upper()
+    callsign = parameters["CALLSIGN"]
     nodeid = parameters["NODEID"]
     limit = parameters["LIMIT"]
+
+    #Check for timeTuple = None
+    try:
+        if timeTuple == None:
+            raise StandardError("Start and Stop times caused and error")
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return sqlData
 
     # Detect the direction, this will change the query from searching for
     # the source or destination radio. Must generate two slightly different
@@ -522,32 +640,40 @@ def queryDb(parameters):
 
     # Create  SQL Query string
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
+    logger.debug(sql)
 
     # Open configuration file
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(dbFilename)
-        conn.row_factory = sqlite3.Row  # Row_factory returns column/values
-        cur = conn.cursor()
-        cur.execute(sql,paramTuple)
-        rows = cur.fetchall()
 
-    except conn.ProgrammingError as e:
-        logger.error(e)
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        return sqlData
 
+    conn.row_factory = sqlite3.Row  # Row_factory returns column/values
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql,paramTuple)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
+        logger.error(paramTuple)
+        conn.close()
+        return sqlData
 
     # Iterate through resulting data and create a list of dictionaries for JSON
     try:
-        sqlData = []
+        rows = cur.fetchall()
         for row in rows:
             rowData = {}
             for parameter in row.keys():
@@ -556,12 +682,8 @@ def queryDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        conn.close()
+        return sqlData
 
     # Completed query, close database, return sqlData list of dictionaries
     conn.close()
@@ -575,71 +697,87 @@ def queryStationsDb(parameters):
     Can retrieve all stations ever heard, a base callsign, in a specific
     time range, or in a timespan. Returns all results as a list of JSON
     dictionaries
+
+    Parameters:
+    "CALLSIGN":Uppercase callsign
+    "NODEID": Node ID
+    "DIRECTION": Specify if callsign-nodeid to search is local (0) or remote (1)
+    "STARTTIME": ISO8601 time to start search
+    "ENDTIME": ISO8601 time to end search
+    "TIMESPAN": Number of seconds to search over, ending at current time
+
+    :param parameters: Search parameter dictionary
+    :return: List of SQL output where each item is a dictionary
     """
 
-    # Check for whether a time range or timespan is being specified
-    if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
-        # Start end end times provided, ignore timespan
-        startTime = str(parameters["STARTTIME"])
-        endTime = str(parameters["ENDTIME"])
-        timeTuple = iso8601ToEpoch(startTime,endTime)
-    else:
-        # We should use the timespan provided to generate start and stop times
-        endEpoch = time.time()
-        startEpoch = endEpoch - int(parameters["TIMESPAN"])
-        timeTuple = (startEpoch, endEpoch)
+    #  Initialize local variables
+    sqlData = []
+
+    timeTuple = generateStartStopTimes(parameters)
 
     # Specify and create SQL command string
     sqlBeg = "SELECT SOURCECALLSIGN, SOURCEID, EPOCH FROM TELEMETRY "
     sqlWhere = "WHERE EPOCH BETWEEN ? AND ? "
     sqlEnd = "GROUP BY SOURCECALLSIGN, SOURCEID ORDER BY EPOCH DESC"
 
-    # detect if callsign/nodeid provided, return the last time it was heard
+    #  Check if callsign/nodeid provided, return the last time it was heard
     if parameters["CALLSIGN"] != "%":
-        # Since a callsign was specified, simply search the entire db for it
-        # and return the last epoch time it was heard.
-        timeTuple = (0, time.time())
 
-        # Update the sqlWhere and sqlEnd strings for this query
+        # Update the sqlWhere strings for this query
         sqlWhere = sqlWhere + "AND SOURCECALLSIGN LIKE ?"
 
         # Create paramTuple for SQLite3 execute function
         paramTuple = timeTuple + (parameters["CALLSIGN"],)
-    else:
-        # Create paramTuple for SQLite3 execute function
-        paramTuple = timeTuple
 
+        #  Check if nodeid was given, add into SQL query if it was
+        if parameters["NODEID"] != "%":
+
+            # Update the sqlWhere strings for this query
+            sqlWhere = sqlWhere + " AND SOURCEID LIKE ?"
+
+            # Create paramTuple for SQLite3 execute function
+            paramTuple += (parameters["NODEID"],)
+
+    else:
+        # Create paramTuple for SQLite3 execute function do not include callsign
+        paramTuple = timeTuple
 
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
 
-    # Get telemetry databse name from configuration file
-    dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    # Get telemetry database name from configuration file
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(dbFilename)
-        conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
-        cur = conn.cursor()
-        cur.execute(sql,paramTuple)
-        rows = cur.fetchall()
 
-    except conn.ProgrammingError as e:
-        logger.error(e)
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.error: " + str(e))
         logger.error(paramTuple)
-    except StandardError as e:
-        logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        return sqlData
+
+    conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
+    cur = conn.cursor()
+
+    try:
+        cur.execute(sql,paramTuple)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.error: " + str(e))
+        logger.error(paramTuple)
+        conn.close()
+        return sqlData
 
     # Parse through rows and create key:value dictionaries for each row.
     # Then build up a list of dictionaries for all results.
     try:
-        sqlData = []
+        rows = cur.fetchall()
         for row in rows:
             rowData = {}
             for parameter in row.keys():
@@ -648,19 +786,20 @@ def queryStationsDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-    except ValueError as e:
-        logger.error("ValueError: " + str(e))
-    except IndexError as e:
-        logger.error("IndexError: " + str(e))
-    except KeyError as e:
-        logger.error("KeyError: " + str(e))
+        conn.close()
+        return sqlData
 
     # Completed query, close database, return list of dictionary data for JSON
     conn.close()
     return sqlData
 
 def generateStartStopTimes(parameters):
-    """Use parameters dictionary to build up a Tuple of start/stop time values"""
+    """
+    Use parameters dictionary to build up a Tuple of start/stop time values
+
+    :param parameters: dictionary with 'STARTTIME', 'ENDTIME' ISO 8601 keys:val
+    :return: Tuple containing epoch times from input ISO 8601 times
+    """
 
     # Check if start and stop times were provided in ISO 8610 format,
     # if not then generate epoch from timespan
@@ -668,6 +807,12 @@ def generateStartStopTimes(parameters):
         # Start end end times provided, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = str(parameters["ENDTIME"])
+        timeTuple = iso8601ToEpoch(startTime,endTime)
+
+    elif parameters["STARTTIME"] != None:
+        # Start time provided, use current time as end, ignore timespan
+        startTime = str(parameters["STARTTIME"])
+        endTime = time.strftime("%Y-%m-%dT%H:%M:%S")
         timeTuple = iso8601ToEpoch(startTime,endTime)
 
     else:
@@ -681,16 +826,29 @@ def generateStartStopTimes(parameters):
 
 
 def iso8601ToEpoch(startTime, endTime):
+    """
+    Converts ISO 8601 start and stop times into epoch time values
+
+    :param startTime: ISO 8601 time
+    :param endTime: ISO 8601 time
+    :return: tuple with EPOCH times (START,STOP). None if error.
+    """
+
     # Date format is ISO 8601
     fmt = "%Y-%m-%dT%H:%M:%S"
 
-    # Generate start and stop time tuples
-    start = time.strptime(startTime,fmt)
-    end = time.strptime(endTime,fmt)
+    try:
+        # Generate start and stop time tuples
+        start = time.strptime(startTime,fmt)
+        end = time.strptime(endTime,fmt)
 
-    # Convert time tuples to epoch times
-    startEpoch = time.mktime(start)
-    endEpoch = time.mktime(end)
+        # Convert time tuples to epoch times
+        startEpoch = time.mktime(start)
+        endEpoch = time.mktime(end)
+
+    except StandardError as e:
+        logger.error("StandardError: " + str(e))
+        return None
 
     # Create a tuple of the start and stop time, return it
     timeTuple = (startEpoch, endEpoch)
@@ -698,7 +856,11 @@ def iso8601ToEpoch(startTime, endTime):
 
 
 def main():
-    """Main function which starts telemery worker thread + Flask server."""
+    """
+    Main function which starts telemery worker thread + Flask server.
+
+    :return: Nothing
+    """
     logger.info('Starting telemetry server')
 
     # Initialize local variables
@@ -712,8 +874,14 @@ def main():
     t.start()
 
     # Start the flask server on localhost:8001
-    telemetryHost = telemetryConfig.get("FLASK", "HOST")
-    telemetryPort = telemetryConfig.getint("FLASK", "PORT")
+    try:
+        telemetryHost = telemetryConfig.get("FLASK", "HOST")
+        telemetryPort = telemetryConfig.getint("FLASK", "PORT")
+
+    except ConfigParser.Error as e:
+        while True:
+            logger.error("ConfigParse.Error: " + str(e))
+            time.sleep(1)
 
     app.run(host=telemetryHost, port=telemetryPort, threaded=True)
 
