@@ -407,7 +407,7 @@ def stations():
 
     # Check if no stations returned, if not, return HTTP 204
     if len(data) <= 0:
-        logger.info("No Station have been heard in last %d seconds", timespan)
+        logger.info("No stations have been heard in last %d seconds", timespan)
         return '', 204  # HTTP 204 response cannot have message data
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
