@@ -595,7 +595,7 @@ def queryDb(parameters):
     "TIMESPAN": Number of seconds to search over, ending at current time
 
     :param parameters: Search parameter dictionary
-    :return: List of SQL output where each item is a dictionary
+    :return: List of SQL output where each item is a dictionary, empty list when error
     """
 
     #Declare sqlData
