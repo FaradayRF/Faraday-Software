@@ -1,8 +1,8 @@
 # Hermes - Message Application
 
-Hermes is a simple messaging application developed for Faraday. Hermes was the God of messengers so it seemed fitting.
+Hermes is a simple messaging application developed for Faraday. Hermes, the messenger of the gods in mythology, is a fitting name for our first application to transition into messaging between radios.
 
-The messaging functionality is the result of a Flask server that allows Transmit/Receive capability for locally connected Faraday devices. When the Flask server is running, requests sent to the specific port of operation allow the transmission and reception of data messages wirelessly between two (or more) Faraday devices.
+Based on Flask like many other Faraday applications, Hermes provides transmit and receive messaging functionality for Faraday radios within range of each other. Sending a message to the Flask port with an HTTP request will cause Hermes to interface with the local Faraday radio via Proxy to send the message over RF. The reverse is also true for receive.
 
 The `hermesflaskexample_rx.py` and `hermesflaskexample_tx.py` scripts are examples of simple user interface programs utilizing the Flask messaging server and provide functionality to transmit text between two units.
 
@@ -13,28 +13,6 @@ The `hermesflaskexample_rx.py` and `hermesflaskexample_tx.py` scripts are exampl
 > Note: Keep the units separated a few feet apart and ensure the RF power settings are below ~20 to avoid de-sensing the CC430 front end receiver!
 
 > Note: Until proxy auto-configuration functionality is added it is possible that proxy's assigned callsign is different than the units actual configuration callsign. Please keep these matching unless you know what you're doing.
-
-An example hermes.ini with two units connected is shown below.
-
-```Python
-[FLASK]
-HOST=127.0.0.1
-PORT=8005
-
-[PROXY]
-UNITS=2
-
-[UNIT0]
-CALLSIGN=kb1lqd
-NODEID=1
-
-[UNIT1]
-CALLSIGN=kb1lqd
-NODEID=2
-
-
-```
-
 
 #Running The Example Scripts
 
@@ -72,7 +50,7 @@ NODEID=REPLACEME
 
 ## Run
 
-* Run the proxy server with both units properly connected to
+* Run the proxy server with both units properly connected
 * Run the `hermesflaskserver.py` Flask server
 * Run the `hermesflaskexample_rx.py` receiver application example
 * Run the `hermesflaskexample_tx.py` transmitter application example
