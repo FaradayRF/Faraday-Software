@@ -598,9 +598,6 @@ def queryDb(parameters):
     :return: List of SQL output where each item is a dictionary
     """
 
-    #Declare local variables
-    sqlData = []
-
     # Use supplied parameters to generate a Tuple of epoch start/stop times
     # SQLite3 parameters need to be Tuples
     timeTuple = generateStartStopTimes(parameters)
