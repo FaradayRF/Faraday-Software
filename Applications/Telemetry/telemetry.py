@@ -612,7 +612,6 @@ def queryDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-        return sqlData
 
     # Detect the direction, this will change the query from searching for
     # the source or destination radio. Must generate two slightly different
@@ -645,7 +644,6 @@ def queryDb(parameters):
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        return sqlData
 
     # Connect to database, create SQL query, execute query, and close database
     try:
@@ -654,7 +652,6 @@ def queryDb(parameters):
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
-        return sqlData
 
     conn.row_factory = sqlite3.Row  # Row_factory returns column/values
     cur = conn.cursor()
@@ -666,9 +663,10 @@ def queryDb(parameters):
         logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
         conn.close()
-        return sqlData
 
     # Iterate through resulting data and create a list of dictionaries for JSON
+    sqlData = []
+
     try:
         rows = cur.fetchall()
         for row in rows:
