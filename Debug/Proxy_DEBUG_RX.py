@@ -2,7 +2,6 @@
 
 import os
 import sys
-import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
 #Imports - Faraday Specific

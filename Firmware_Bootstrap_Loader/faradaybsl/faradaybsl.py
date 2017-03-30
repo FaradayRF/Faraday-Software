@@ -1,7 +1,6 @@
 import createtiscripter
 import sys
 import subprocess
-import os
 import faradayftdi
 
 filename = sys.argv[1]

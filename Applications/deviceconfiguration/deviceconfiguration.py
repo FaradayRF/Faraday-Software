@@ -15,7 +15,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__),
                              "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
 
 from FaradayIO import faradaybasicproxyio
-from FaradayIO import telemetryparser
 from FaradayIO import faradaycommands
 from FaradayIO import deviceconfig
 

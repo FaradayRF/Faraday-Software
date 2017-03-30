@@ -7,14 +7,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Pro
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
-from FaradayIO import cc430radioconfig
 
 import time
 
 
 #Variables
 local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 0  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object

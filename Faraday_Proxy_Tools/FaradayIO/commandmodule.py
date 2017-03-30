@@ -8,8 +8,8 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import cc430radioconfig
-import struct
 import gpioallocations
+import struct
 import Checksum as checksum
 
 COMMAND_DATAGRAM_LEN = 123
@@ -85,7 +85,6 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
     """
     #Cheack if callsign is too long
     if(len(dest_callsign)<DEST_CALLSIGN_MAX_LEN):
-        payload_len = len(payload)
         #Define packet structures
         pkt_cmd_datagram_struct = struct.Struct('2B25s') #Command packect to be run on remote unit as local command
         pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H') #Command packect to be run on remote unit as local command Error Detection
@@ -291,7 +290,7 @@ def packet_gpio_gps_standby_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 0)
+    return create_gpio_command_packet(3, gpioallocations.GPS_STANDBY, 0)
 
 def packet_gpio_gps_standby_disable():
     """
@@ -301,7 +300,7 @@ def packet_gpio_gps_standby_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 1)
+    return create_gpio_command_packet(3, gpioallocations.GPS_STANDBY, 1)
 
 def packet_gpio_gps_reset_enable():
     """
@@ -311,7 +310,7 @@ def packet_gpio_gps_reset_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 0)
+    return create_gpio_command_packet(3, gpioallocations.GPS_RESET, 0)
 
 def packet_gpio_gps_reset_disable():
     """
@@ -321,7 +320,7 @@ def packet_gpio_gps_reset_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 1)
+    return create_gpio_command_packet(3, gpioallocations.GPS_RESET, 1)
 
 def packet_gpio_mosfet_enable():
     """
@@ -331,7 +330,7 @@ def packet_gpio_mosfet_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 1)
+    return create_gpio_command_packet(5, gpioallocations.MOSFET_CNTL, 1)
 
 def packet_gpio_mosfet_disable():
     """
@@ -341,7 +340,7 @@ def packet_gpio_mosfet_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 0)
+    return create_gpio_command_packet(5, gpioallocations.MOSFET_CNTL, 0)
 
 def packet_gpio_led_1_enable():
     """
@@ -351,7 +350,7 @@ def packet_gpio_led_1_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_1, 1)
+    return create_gpio_command_packet(3, gpioallocations.LED_1, 1)
 
 def packet_gpio_led_1_disable():
     """
@@ -361,7 +360,7 @@ def packet_gpio_led_1_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_1, 0)
+    return create_gpio_command_packet(3, gpioallocations.LED_1, 0)
 
 def packet_gpio_led_2_enable():
     """
@@ -371,7 +370,7 @@ def packet_gpio_led_2_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_2, 1)
+    return create_gpio_command_packet(3, gpioallocations.LED_2, 1)
 
 def packet_gpio_led_2_disable():
     """
@@ -381,7 +380,7 @@ def packet_gpio_led_2_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_2, 0)
+    return create_gpio_command_packet(3, gpioallocations.LED_2, 0)
 
 ##############
 ## Command = READ MEMORY

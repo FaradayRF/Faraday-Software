@@ -12,16 +12,9 @@
 import logging.config
 import threading
 import ConfigParser
-import os
-import sys
 import socket
 import requests
 from time import sleep
-
-# Can we clean this up?
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import telemetryparser
 
 # Start logging after importing modules
 logging.config.fileConfig('loggingConfig.ini')
@@ -115,7 +108,6 @@ def getStationData(stations):
         # Extract station identification data from active stations
         callsign = station["SOURCECALLSIGN"]
         nodeid = station["SOURCEID"]
-        epoch = station["EPOCH"]
 
         # Construct request dictionary payload
         payload = {"callsign": callsign, "nodeid": nodeid, "timespan": age, "limit": 1}
@@ -307,7 +299,6 @@ def sendtelemetry(stations, telemSequence, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
         gpioValues = station["GPIOSTATE"]
         rfValues = station["RFSTATE"]
 
@@ -415,7 +406,6 @@ def sendTelemLabels(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration
@@ -550,7 +540,6 @@ def sendParameters(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration
@@ -684,7 +673,6 @@ def sendEquations(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-        gpsFix = station["GPSFIX"]
 
 
         # Get APRS Telemetry configuration

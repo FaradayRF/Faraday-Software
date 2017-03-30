@@ -262,7 +262,7 @@ def proxy():
 
             if limit is None:
                 # Optional
-                limit = len(queDict[port])
+                limit = len(getDicts[station][port])
             else:
                 limit = int(limit)
                 # Check for less than or equal to zero case
@@ -286,7 +286,6 @@ def proxy():
         # If data is in port queu, turn it into JSON and return
         try:
             if (len(getDicts[callsign + "-" + str(nodeid)][port]) > 0):
-                queryTime = time.asctime(time.localtime(time.time()))
                 data = []
                 while getDicts[callsign + "-" + str(nodeid)][port]:
                     packet = \
@@ -361,9 +360,6 @@ def main():
 
     # Initialize local variables
     threads = []
-
-    # Obtain number of Faraday units connected to Proxy
-    numUnits = int(proxyConfig.get('PROXY', 'units'))
 
     while(1):
         # Initialize a Faraday Radio device

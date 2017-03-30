@@ -15,7 +15,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 
 #Local device information
 local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 0  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Remote device information
 remote_callsign = 'KB1LQD'

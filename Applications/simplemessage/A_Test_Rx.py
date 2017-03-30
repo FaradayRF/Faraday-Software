@@ -1,7 +1,5 @@
 
 import faraday_msg
-import sys
-import time
 
 #sys.path.append(os.path.join(os.path.dirname(__file__), "../../")) #Append path to common tutorial FaradayIO module
 #from FaradayIO import faradaybasicproxyio

@@ -9,10 +9,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-from FaradayIO import commandmodule
-
-import time
 
 #Definitions
 
@@ -21,6 +17,7 @@ import time
 local_device_callsign = 'KB1LQD'
 local_device_node_id = 1
 
+remote_device_callsign = 'KB1LQD'
 remote_device_node_id = 0
 
 #Start the proxy server after configuring the configuration file correctly

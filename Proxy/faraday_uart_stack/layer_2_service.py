@@ -12,8 +12,6 @@
 import layer_2_protocol
 import threading
 import time
-import os
-import random
 import Queue
 
 #test_tx = layer_2_protocol.Faraday_Datalink_Device()
@@ -25,18 +23,6 @@ import Queue
 #DATALINK_PAYLOAD_LENGTH = 125
 
 
-
-def initialize_services(port, baud, timeout):
-    #global layer_initialized, device
-    layer_2_protocol.init_layer(port, baud,timeout)
-    device = device_1()
-    layer_initialized = True
-
-class Layer2Object(object):
-    def __init__(self, port, baud, timeout):
-        self.protocol_object = layer_2_protocol.layer_2_object(port, baud, timeout)
-        self.service_object = device_1(self.protocol_object)
-        self.layer_initialized = True
 
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):

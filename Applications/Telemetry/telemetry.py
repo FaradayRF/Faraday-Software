@@ -77,9 +77,6 @@ def telemetry_worker(config):
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
     try:
-        # Open configuration file
-        dbFilename = config.get("DATABASE", "FILENAME")
-
         # Pragmatically create descriptors for each Faraday connected to Proxy
         count = config.getint("TELEMETRY", "UNITS")
 
@@ -559,9 +556,9 @@ def sqlInsert(data):
             logger.error("Sqlite3.Error: " + str(e))
             return False
 
-        cursor = conn.cursor()
-
+        # Connect to database, create SQL query, execute query, and close database
         try:
+            conn = sqlite3.connect(db)
             # Use connection as context manager to rollback automatically if error
             with conn:
                 conn.execute(sql,telem)
