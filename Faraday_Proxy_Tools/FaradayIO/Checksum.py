@@ -1,9 +1,9 @@
 import struct
 
+
 ##########
 ## Checksum
 ##########
-
 def compute_checksum_16(packet, length):
     """
     Computes a basic 16 bit checksum of a supplied string of bytes (packet) and length. This is used for error detection purposes.

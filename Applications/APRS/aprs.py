@@ -63,6 +63,7 @@ def aprs_worker(config, sock):
         # Sleep for intended update rate (seconds)
         sleep(rate)
 
+
 def getStations():
     """
     Queries telemetry server for active stations
@@ -83,6 +84,7 @@ def getStations():
 
     # Return extracted JSON data
     return results
+
 
 def getStationData(stations):
     """
@@ -125,6 +127,7 @@ def getStationData(stations):
 
     # Return all detailed stationData
     return stationData
+
 
 def nmeaToDegDecMin(latitude,longitude):
     """
@@ -212,7 +215,6 @@ def sendPositions(stations, socket):
             altitude = rawaltitude[0].zfill(6)
             speed = rawspeed[0].zfill(3)
 
-
             # If GPSFix is not valid warn user
             if gpsFix <= 0:
                 logger.debug(node + " No GPS Fix")
@@ -280,6 +282,7 @@ def sendPositions(stations, socket):
                     logger.error("SendPosition")
                     logger.error(e)
 
+
 def sendtelemetry(stations, telemSequence, socket):
     """
     Constructs an APRS telemetry string for each station and sends it to the socket
@@ -289,7 +292,6 @@ def sendtelemetry(stations, telemSequence, socket):
     :param socket: APRS-IS server internet socket
     :return: None
     """
-
 
     for item in stations:
         station = item[0]
@@ -389,6 +391,7 @@ def sendtelemetry(stations, telemSequence, socket):
         # Return telemetrySequence to save count
         return telemSequence
 
+
 def sendTelemLabels(stations, socket):
     """
     Constructs an APRS unit/label string for each station and sends it to the socket
@@ -406,7 +409,6 @@ def sendTelemLabels(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-
 
         # Get APRS Telemetry configuration
         qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
@@ -523,6 +525,7 @@ def sendTelemLabels(stations, socket):
                 logger.error("SendTelemLabels")
                 logger.error(e)
 
+
 def sendParameters(stations, socket):
     """
     Constructs an APRS parameters string for each station and sends it to the socket
@@ -540,7 +543,6 @@ def sendParameters(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-
 
         # Get APRS Telemetry configuration
         qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
@@ -656,6 +658,7 @@ def sendParameters(stations, socket):
                 logger.error("SendParameters")
                 logger.error(e)
 
+
 def sendEquations(stations, socket):
     """
     Constructs an APRS equation string for each station and sends it to the socket
@@ -673,7 +676,6 @@ def sendEquations(stations, socket):
         sourceID = station["SOURCEID"]
         destinationCallsign = station["DESTINATIONCALLSIGN"]
         destinationID = station["DESTINATIONID"]
-
 
         # Get APRS Telemetry configuration
         qConstruct = aprsConfig.get('APRS', 'QCONSTRUCT')
@@ -800,6 +802,7 @@ def sendEquations(stations, socket):
                 logger.error("SendEquations")
                 logger.error(e)
 
+
 def connectAPRSIS():
     """
     Connect to APRS-IS server with login credentials
@@ -848,6 +851,7 @@ def connectAPRSIS():
         while(True):
             logger.error("APRS-IS LOGIN ERROR!")
             sleep(1)
+
 
 def generatePasscode(callsign):
     """
@@ -911,6 +915,7 @@ def main():
     t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
     threads.append(t)
     t.start()
+
 
 if __name__ == '__main__':
     main()

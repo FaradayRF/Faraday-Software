@@ -174,7 +174,6 @@ def unitconfig():
                 pickled_parsed_config_dict = cPickle.dumps(parsed_config_dict)
                 pickled_parsed_config_dict_b64 = base64.b64encode(pickled_parsed_config_dict)
 
-
             except ValueError as e:
                 print e
             except IndexError as e:

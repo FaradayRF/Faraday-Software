@@ -21,9 +21,6 @@ class FtdiD2xxCbusControlObject(object):
         ##Wait x
         time.sleep(10)
 
-
-
-
     def BslModeToggle(self):
         #Toggle CBUS to enter BSL mode
         ##RESET LOW
@@ -129,11 +126,6 @@ class FtdiD2xxCbusControlObject(object):
         def SetResetHigh(self):
                 ##RESET HIGH TEST LOW
                 self.ftd2xxDll.FT_SetBitMode(self.handle, self.BITMASK_IO_OUTPUTS | self.BITMASK_RST, 0x20)
-
-
-
-
-
 
 #Action
 #BslMode()

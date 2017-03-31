@@ -10,7 +10,6 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 
 
-
 class Msg_State_Machine_Tx(object):
     def __init__(self):
         """
@@ -63,8 +62,6 @@ class Msg_State_Machine_Tx(object):
             self.list_packets.append(list_data_packets[i])
         self.list_packets.append(msg_end)
 
-
-
     def CreateStartFrame(self, src_call, src_id, msg_len):
         #Calculate the number of fragmented packets
         frag_cnt = self.FragmentCount(msg_len)
@@ -82,6 +79,7 @@ class Msg_State_Machine_Tx(object):
         frag_cnt = self.FragmentCount(msg_len)
         packet = self.pkt_end.pack(frag_cnt)
         return packet
+
 
 class message_app(object):
     def __init__(self, local_callsign, local_callsign_id, destination_callsign, destination_id):

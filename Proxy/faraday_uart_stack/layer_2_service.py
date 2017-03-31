@@ -23,7 +23,6 @@ import Queue
 #DATALINK_PAYLOAD_LENGTH = 125
 
 
-
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):
         test_ser_queue_1 = Queue.Queue() # Infinite
@@ -64,14 +63,9 @@ class Layer2ServiceObject(threading.Thread):
         self.rx.Abort() #Receiver_Datalink_Device_Class
         self.rx.receiver_class.abort() #Receiver_Datalink_Device_State_Parser_Class
 
-
-
-
     def run(self):
         while(self.enabled):
             time.sleep(0.001)
-
-
 
 ##def uart_datalink_receive_datagram():
 ##    global layer_initialized, device

@@ -177,6 +177,7 @@ class faraday_uart_object(threading.Thread):
             #Nothing in queue
             print "Nothing in queue"
             return False
+
     def uart_layer_receive_link(self):
         rx_item = self.layer_2_object.GET()
         if rx_item:
@@ -193,7 +194,6 @@ class faraday_uart_object(threading.Thread):
                 print "transport fail"
         else:
             pass
-
 
     def Abort(self):
         self.layer_2_object.Abort()#Abort lower layers

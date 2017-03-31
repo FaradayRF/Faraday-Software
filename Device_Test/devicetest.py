@@ -43,7 +43,6 @@ faraday_parser = telemetryparser.TelemetryParse()
 print "/n** Beginning ECHO command test** /n"
 
 
-
 def TestEchoUart():
     #Display information
     status_passes = 0
@@ -85,7 +84,6 @@ def TestEchoUart():
     return {'Result': status_result,
             'Passes': status_passes,
             'Fails': status_fails}
-
 
 
 def GetDebugFlash():
@@ -154,6 +152,7 @@ def ResetDebugFlash():
     else:
         print "DEBUG Flash RESET = FAIL"
 
+
 def TestGPIOLEDs():
     # WARNING: Make sure RED and GREEN LED's are allowed to be commanded in firmware!
     # Turn Both LED 1 and LED 2 ON simultaneously
@@ -196,6 +195,7 @@ def GetTelem3():
 
     return rx_telemetry_packet_parsed
 
+
 def ReadTelemTemp(telemetry_parsed):
     #Get and print current CC430 ("board") temp
     int_boardtemp = telemetry_parsed['BOARDTEMP']
@@ -209,6 +209,7 @@ def ReadTelemTemp(telemetry_parsed):
         print "Temperature Test: FAIL"
         return False
 
+
 def ReadADCTelem(telemetry_parsed):
     # Get and print current CC430 ("board") temp
     int_adc0 = telemetry_parsed['ADC0']
@@ -219,6 +220,7 @@ def ReadADCTelem(telemetry_parsed):
     int_adc5 = telemetry_parsed['ADC5']
     int_adc8 = telemetry_parsed['ADC8']
     return [int_adc0, int_adc1, int_adc2, int_adc3, int_adc4, int_adc5, int_adc5, int_adc8]
+
 
 def ReadVCCTelem(telemetry_parsed):
     # Get and print current CC430 ("board") temp
@@ -237,6 +239,7 @@ def ReadVCCTelem(telemetry_parsed):
     input_vcc = adc_volt / scale
 
     return input_vcc
+
 
 def ReadGPSTelem(telem):
     boolFix = telem['GPSFIX']
@@ -293,6 +296,7 @@ def ReadGPSTelem(telem):
 # ############
 #
 
+
 def VerifyIdealDiodeBlock(telemetry_parsed):
     # Make sure no VCC is applied!
     vcc = ReadVCCTelem(telemetry_parsed)
@@ -303,10 +307,8 @@ def VerifyIdealDiodeBlock(telemetry_parsed):
         return True
 
 
-
 def ResetCONFIGFlash():
     print "*** Pre-Debug RESET ***"
-
 
     # Reset the device CONFIG flash counters and data
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
@@ -315,7 +317,6 @@ def ResetCONFIGFlash():
     # Sleep to allow unit to perform reset and be ready for next command
     time.sleep(3)
     print "RESET"
-
 
 
 def EnableGPIO():

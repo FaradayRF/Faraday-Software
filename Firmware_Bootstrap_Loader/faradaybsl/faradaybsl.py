@@ -6,7 +6,6 @@ import faradayftdi
 filename = sys.argv[1]
 comport = sys.argv[2]
 
-
 print "FILE:", filename
 print "COMM:", comport
 

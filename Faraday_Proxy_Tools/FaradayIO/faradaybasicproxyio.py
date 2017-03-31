@@ -13,6 +13,7 @@ import base64
 import time
 import logging
 
+
 class proxyio(object):
     """
     A basic input and output class object to interact with the Faraday proxy server RESTful API
@@ -28,7 +29,6 @@ class proxyio(object):
 
     """
 
-
     def __init__(self, port = 8000, logger = None):
         #Definitions
         self.FLASK_PORT = port #TCP port
@@ -41,7 +41,6 @@ class proxyio(object):
         else:
             self._logger = logging.getLogger("FaradayBasicProxyIO")
             self._logger.setLevel(logging.WARNING)
-
 
     #Functions
 
@@ -82,7 +81,6 @@ class proxyio(object):
             #Convert supplied data into BASE64 encoding for safe network transmission
             b64_data = base64.b64encode(data) #Converts to Base64
             payload = {'data' : [b64_data]}
-
 
             #POST data to UART service port
             status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
@@ -141,7 +139,6 @@ class proxyio(object):
         except KeyError as e:
             self._logger.error("KeyError: " + str(e))
 
-
     def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout = 1, debug = False, limit=None):
         """
         This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
@@ -189,7 +186,6 @@ class proxyio(object):
             if(debug):
                 print "Failed to get data!", "Timeout =", sec_timeout
             return False
-
 
     def FlushRxPort(self, local_device_callsign, local_device_id, uart_service_number):
         """

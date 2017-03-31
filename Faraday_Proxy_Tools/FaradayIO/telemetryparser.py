@@ -1,6 +1,7 @@
 import struct
 import time
 
+
 class TelemetryParse(object):
     """
     This class object contains all the pre-defined values, packet structures, and functions used to interact (mostly parse) data from the Telemetry application. The telemetry application follows the OSI layer standards for a network stack and therfore contains its own packet
@@ -16,7 +17,6 @@ class TelemetryParse(object):
         self.packet_2_len = 18
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
-
 
     def UnpackDatagram(self, packet, debug = False):
         """
@@ -74,7 +74,6 @@ class TelemetryParse(object):
         .. warning:: This function does not ensure that the returned packet is the intended data packet, it only corrects byte array length!
         """
         return packet[0:packet_len]
-
 
     def UnpackPacket_3(self, packet, debug = False):
         """
@@ -145,9 +144,6 @@ class TelemetryParse(object):
         #del telemetryList[31] # N/A Byte is not needed
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
-
-
-
 
         dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
                             'SOURCECALLSIGNLEN': str(telemetryList[1]),

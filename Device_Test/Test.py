@@ -10,8 +10,6 @@ devicetest.local_device_node_id = proxy_settings.local_device_node_id
 #status_echo_test = devicetest.TestEchoUart()
 #print status_echo_test
 
-
-
 # #ResetDebugFlash()
 # telem = GetTelem3()
 # #print telem

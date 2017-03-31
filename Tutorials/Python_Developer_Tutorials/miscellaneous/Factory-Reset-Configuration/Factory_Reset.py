@@ -52,6 +52,7 @@ def get_telemetry():
 
     print "Parsed packet dictionary:", rx_telemetry_packet_parsed
 
+
 def factory_reset_configuration():
     #Command  Unit Factory Reset
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalFactoryResetConfiguration())

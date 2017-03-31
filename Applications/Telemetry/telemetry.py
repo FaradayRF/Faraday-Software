@@ -52,6 +52,7 @@ if len(telemetryFile) == 0:
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
+
 def telemetry_worker(config):
     """
     Interface Faraday Proxy to obtain telemetry
@@ -142,8 +143,10 @@ def telemetry_worker(config):
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
          time.sleep(1) #  Slow down main while loop
 
+
 # Initialize Flask microframework
 app = Flask(__name__)
+
 
 @app.route('/', methods=['GET'])
 def dbTelemetry():
@@ -205,6 +208,7 @@ def dbTelemetry():
 
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
+
 
 @app.route('/raw', methods=['GET'])
 def rawTelemetry():
@@ -356,6 +360,7 @@ def rawTelemetry():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
+
 @app.route('/stations', methods=['GET'])
 def stations():
     """
@@ -411,6 +416,7 @@ def stations():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
+
 @app.errorhandler(404)
 def pageNotFound(error):
     """
@@ -423,6 +429,7 @@ def pageNotFound(error):
     # Completed handling of unknown URL, return json error message and HTTP 404
     logger.error("Error: " + str(error))
     return json.dumps({"error": "HTTP " + str(error)}), 404
+
 
 # Database Functions
 def initDB():
@@ -460,6 +467,7 @@ def initDB():
             return False
 
     return True
+
 
 def createTelemetryList(data):
     """
@@ -576,6 +584,7 @@ def sqlInsert(data):
     else:
         return False
 
+
 def queryDb(parameters):
     """
     Takes in parameters to query the SQLite database, returns the results
@@ -686,6 +695,7 @@ def queryDb(parameters):
     conn.close()
     return sqlData
 
+
 def queryStationsDb(parameters):
     """
     Takes in parameters to query the SQLite database, returns the results
@@ -790,6 +800,7 @@ def queryStationsDb(parameters):
     conn.close()
     return sqlData
 
+
 def generateStartStopTimes(parameters):
     """
     Use parameters dictionary to build up a Tuple of start/stop time values
@@ -819,7 +830,6 @@ def generateStartStopTimes(parameters):
         timeTuple = (int(startEpoch), int(endEpoch))
 
     return timeTuple
-
 
 
 def iso8601ToEpoch(startTime, endTime):
@@ -881,6 +891,7 @@ def main():
             time.sleep(1)
 
     app.run(host=telemetryHost, port=telemetryPort, threaded=True)
+
 
 if __name__ == '__main__':
     main()
