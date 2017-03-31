@@ -34,7 +34,7 @@ while(1):
     for i in range(0,255,1):
         try:
             data = faraday_1.GET(local_device_callsign, local_device_node_id, i)
-            if (data != None) and (not 'error' in data):
+            if (data != None) and ('error' not in data):
                 print "PORT", i, ":", repr(faraday_1.DecodeRawPacket(data[0]['data']))
         except:
             print "Fail"
