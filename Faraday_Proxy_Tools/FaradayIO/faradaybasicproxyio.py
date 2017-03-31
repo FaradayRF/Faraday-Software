@@ -36,7 +36,7 @@ class proxyio(object):
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
 
-        if logger != None:
+        if logger is not None:
             self._logger = logger
         else:
             self._logger = logging.getLogger("FaradayBasicProxyIO")
@@ -119,7 +119,7 @@ class proxyio(object):
         url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
 
         # If limit is provided, check that it's positive and add to url
-        if limit != None:
+        if limit is not None:
             if int(limit) >= 0:
                 url = url + "&limit=" + str(limit)
 
@@ -171,7 +171,7 @@ class proxyio(object):
         timedelta = 0
         rx_data = None
 
-        while((rx_data == None) and (timedelta<sec_timeout)):
+        while((rx_data is None) and (timedelta<sec_timeout)):
             #Update new timedelta
             timedelta = time.time()-starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?

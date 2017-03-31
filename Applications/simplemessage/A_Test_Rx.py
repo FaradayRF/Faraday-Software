@@ -16,7 +16,7 @@ faraday_rx_msg_object = faraday_msg.MessageAppRx()
 # Loop continuously through the faraday experimental RF command message application RX routine
 while 1:
     rx_message_dict = faraday_rx_msg_object.rxmsgloop(local_device_callsign, local_device_node_id, uart_service_port_application_number, GETWAIT_TIMEOUT)
-    if rx_message_dict != None:
+    if rx_message_dict is not None:
         print '***************************************'
         print "FROM:", rx_message_dict['source_callsign']
         print '\n'

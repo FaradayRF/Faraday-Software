@@ -817,7 +817,7 @@ def connectAPRSIS():
     server = aprsConfig.get("APRSIS", "SERVER")
     port = aprsConfig.getint("APRSIS", "PORT")
 
-    if passcode != None:
+    if passcode is not None:
         logger.info("Connecting to APRS-IS as: " + str(callsign))
         logger.debug("Server: " + str(server) + ":" + str(port))
 
@@ -883,7 +883,7 @@ def generatePasscode(callsign):
                 callhash = None
                 break
 
-        if callhash != None:
+        if callhash is not None:
             callhash = callhash & 0x7ffff  # Ensure passcode is always positive
 
     else:
