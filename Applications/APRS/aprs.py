@@ -48,7 +48,7 @@ def aprs_worker(config, sock):
         # Query telemetry database for station data
         stations = getStations()
         stationData = getStationData(stations)
-        
+
         # Indicate number of stations tracking
         str="Tracking {0} Faraday stations..."
         logger.info(str.format(len(stations)))
