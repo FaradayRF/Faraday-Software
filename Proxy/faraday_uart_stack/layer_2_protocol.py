@@ -64,7 +64,7 @@ class layer_2_protocol(threading.Thread):
         return self.ser.inWaiting()
 
     def run(self):
-        while(self.enabled == True):
+        while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
             time.sleep(0.001) #Shouldn't need this! BSALMI 6/13/16
             if(self.enabled):
@@ -178,7 +178,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         Main class run function to perform a while(1) loop to retrieve waiting data to transmit and transmit it.
         """
-        while(self.enable_flag==True):
+        while self.enable_flag:
             #Delay to allow threaded CPU utilization relaxing
             time.sleep(0.001)
 
@@ -242,7 +242,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         """
         Main while(1) loop for the class object to check for new data to transmit.
         """
-        while(self.enable_flag==True):
+        while self.enable_flag:
             #Check if new data is avaliable in the Queue
             if(not self.tx_data_queue.empty()):
 
@@ -498,7 +498,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
 
 
     def run(self):
-        while(self.enable_flag==True):
+        while self.enable_flag:
             time.sleep(0.001)
             if( not self.receiver_class.rx_packet_queue.empty()):
                 data = self.receiver_class.rx_packet_queue.get()
@@ -556,7 +556,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
         print "Aborting Layer 2 Protocol!"
 
     def run(self):
-        while(self.enable_flag==True):
+        while self.enable_flag:
             time.sleep(0.001)
             if( not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty()):
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
@@ -565,7 +565,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                     rx_byte = rx_byte_raw[i]
                     #PARSE BYTES
                     #Check PACKET STARTED Flag = FALSE (Packet NOT already started)
-                    if(self.logic_startbyte_received == False):
+                    if not self.logic_startbyte_received:
                         #Received byte is start byte - New Packet!
                         if (rx_byte == self.encapsulate_startbyte):
                             self.logic_startbyte_received = True
@@ -574,9 +574,9 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                         else:
                             pass
                     #Check PACKET STARTED Flag = True (Packet already started and being recieved)
-                    elif(self.logic_startbyte_received == True):
+                    elif self.logic_startbyte_received:
                         #Check if current BYTE is being escaped (framing) - FALSE
-                        if((self.logic_escapebyte_received == False)):
+                        if not self.logic_escapebyte_received:
                             #Non-Escaped DATA BYTE received
                             if ((rx_byte != self.encapsulate_escapebyte) and (rx_byte != self.encapsulate_startbyte) and (rx_byte != self.encapsulate_stopbyte)):
                                 self.partial_packet += rx_byte
@@ -595,7 +595,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                             else:
                                 print"ERROR:", self.partial_packet
                         #Check if current BYTE is being escaped (framing) - TRUE
-                        elif((self.logic_escapebyte_received == True)):
+                        elif self.logic_escapebyte_received:
                             #Escaped Packet data received
                             if ((rx_byte == self.encapsulate_escapebyte) or (rx_byte == self.encapsulate_startbyte) or (rx_byte == self.encapsulate_stopbyte)):
                                 self.logic_escapebyte_received = False

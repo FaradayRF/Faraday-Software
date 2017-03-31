@@ -179,7 +179,7 @@ class faraday_uart_object(threading.Thread):
             return False
     def uart_layer_receive_link(self):
         rx_item = self.layer_2_object.GET()
-        if(rx_item != False):
+        if rx_item:
             try:
                 unpacked_transport = self.transport_packet_struct.unpack(rx_item)
                 rx_service_number = int(unpacked_transport[0])
@@ -208,7 +208,7 @@ class faraday_uart_object(threading.Thread):
                 tx_datagram = self.transmit_datagram_queue_get()
                 self.layer_2_object.POST(tx_datagram)
             #check for receive items
-            if(self.receive_datagram_queue_hasitem() != False):
+            if self.receive_datagram_queue_hasitem():
                 rx_datagram = self.receive_datagram_queue_get()
                 try:
                     parsed_l4_packet = layer_4_protocol.parse_packet(rx_datagram)

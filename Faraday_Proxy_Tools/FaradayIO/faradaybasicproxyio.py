@@ -179,7 +179,7 @@ class proxyio(object):
             #Attempt to get data
             rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit = limit)
         #Determine if timeout or got data
-        if(rx_data != False):
+        if rx_data:
             if(debug):
                 print "Got Data!", "Time In-waiting:", timedelta, "Seconds"
             else:
@@ -210,7 +210,7 @@ class proxyio(object):
             True
         """
         data = True
-        while(data != False):
+        while data:
             try:
                 self.GET(local_device_callsign, local_device_id, uart_service_number)
                 return True

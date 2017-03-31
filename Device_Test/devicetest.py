@@ -139,7 +139,7 @@ def ResetDebugFlash():
     debug_test_pass = True
 
     for key in rx_debug_data_parsed_reset:
-        if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
+        if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass:
             if DEBUG:
                 print key, rx_debug_data_parsed_reset[key]
         else:
@@ -147,7 +147,7 @@ def ResetDebugFlash():
                 print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
             debug_test_pass = False
 
-    if debug_test_pass == True:
+    if debug_test_pass:
         print "DEBUG Flash RESET = PASS"
     else:
         print "DEBUG Flash RESET = FAIL"
