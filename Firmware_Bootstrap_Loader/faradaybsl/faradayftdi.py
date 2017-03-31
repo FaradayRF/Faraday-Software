@@ -144,7 +144,3 @@ class FtdiD2xxCbusControlObject(object):
 #bytesWritten = ctypes.wintypes.DWORD()
 #assert self.ftd2xxDll.FT_Write(self.handle, writeBuffer, len(writeBuffer)-1, ctypes.byref(bytesWritten)) == 0
 #print bytesWritten.value
-
-
-
-

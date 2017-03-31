@@ -219,6 +219,3 @@ class faraday_uart_object(threading.Thread):
                     pass
             #Check uart datalink receive for new datagrams to parse
             self.uart_layer_receive_link()
-
-
-

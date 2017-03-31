@@ -108,7 +108,3 @@ else:
         #Loop until user presses ctrl+c so they can read response
         time.sleep(1)
         pass
-
-
-
-

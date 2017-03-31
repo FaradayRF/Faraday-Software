@@ -85,6 +85,3 @@ print "Unit Callsign-ID:\n", str(unit_configuration_dict['local_callsign'])[0:un
 print "RAW Unit JSON Data:", unit_configuration_dict
 
 print "************************************"
-
-
-

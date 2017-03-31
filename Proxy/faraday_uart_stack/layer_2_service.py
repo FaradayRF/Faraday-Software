@@ -94,4 +94,3 @@ class Layer2ServiceObject(threading.Thread):
 ##            print "Payload Too Long!", len(payload)
 ##    else:
 ##            print "Layer not initialized!"
-

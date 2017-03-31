@@ -32,7 +32,3 @@ def parse_packet(datagram):
 
     #Return parsed datagram
     return parsedpacket
-
-
-
-

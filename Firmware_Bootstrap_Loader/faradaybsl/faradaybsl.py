@@ -21,4 +21,3 @@ device_bsl = faradayftdi.FtdiD2xxCbusControlObject()
 device_bsl.EnableBslMode()
 subprocess.call(['faradaybsl/bsl-scripter-windows.exe', 'faradaybsl/FaradayFirmwareUpgradeScript.txt'])
 device_bsl.DisableBslMode()
-

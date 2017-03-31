@@ -51,4 +51,3 @@ for i in range(0,5):
     #print repr(command)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
-
