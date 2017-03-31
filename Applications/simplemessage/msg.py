@@ -29,7 +29,7 @@ class Msg_State_Machine_Tx(object):
         self.MSG_DATA = 254
         self.MSG_END = 253
         #Variables
-        self.list_packets = [];
+        self.list_packets = []
         #Frame Definitions
         self.pkt_datagram_frame = struct.Struct('1B 19s')
         self.pkt_start = struct.Struct('9s 3B')
