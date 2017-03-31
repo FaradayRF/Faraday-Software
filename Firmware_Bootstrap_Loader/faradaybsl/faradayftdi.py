@@ -1,4 +1,5 @@
-import ctypes, ctypes.wintypes
+import ctypes
+import ctypes.wintypes
 import time
 
 
