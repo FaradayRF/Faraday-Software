@@ -1,6 +1,7 @@
 import struct
 import time
 
+
 class TelemetryParse(object):
     """
     This class object contains all the pre-defined values, packet structures, and functions used to interact (mostly parse) data from the Telemetry application. The telemetry application follows the OSI layer standards for a network stack and therfore contains its own packet
@@ -16,7 +17,6 @@ class TelemetryParse(object):
         self.packet_2_len = 18
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
-
 
     def UnpackDatagram(self, packet, debug = False):
         """
@@ -47,7 +47,7 @@ class TelemetryParse(object):
                           }
 
         #Perform debug actions if needed
-        if(debug == True):
+        if debug:
             print "\n--- Telemetry Datagram ---"
             print "Telemetry Packet Type:", dictionaryData['PacketType']
             print "Telemetry RF Source:", dictionaryData['RFSource']
@@ -74,7 +74,6 @@ class TelemetryParse(object):
         .. warning:: This function does not ensure that the returned packet is the intended data packet, it only corrects byte array length!
         """
         return packet[0:packet_len]
-
 
     def UnpackPacket_3(self, packet, debug = False):
         """
@@ -146,9 +145,6 @@ class TelemetryParse(object):
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
 
-
-
-
         dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
                             'SOURCECALLSIGNLEN': str(telemetryList[1]),
                             'SOURCEID': int(telemetryList[2]),
@@ -193,7 +189,7 @@ class TelemetryParse(object):
         #print dictionaryData["ADC8"]
 
         #Perform debug actions if needed
-        if(debug == True):
+        if debug:
             print "--- Telemetry Packet #3 ---"
             print "Source Callsign", dictionaryData['SOURCECALLSIGN']
             print "Source Callsign Length", dictionaryData['SOURCECALLSIGNLEN']
@@ -289,7 +285,7 @@ class TelemetryParse(object):
                           }
 
         #Perform debug actions if needed
-        if(debug == True):
+        if debug:
             print "--- Telemetry Packet #2 ---"
             print "Index[0]: Boot Count", dictionaryData['BootCounter']
             print "Index[1]: Reset Count", dictionaryData['ResetCounter']
@@ -338,7 +334,7 @@ class TelemetryParse(object):
                           }
 
         #Perform debug actions if needed
-        if(debug == True):
+        if debug:
             print "--- Telemetry Packet #1 ---"
             print "Index[0]: RF Freq 2", dictionaryData['RF_Freq_2']
             print "Index[1]: RF Freq 1", dictionaryData['RF_Freq_1']
@@ -388,7 +384,7 @@ class TelemetryParse(object):
         parsed_packet = self.flash_config_info_d_struct.unpack(packet)
 
         #Perform debug actions if needed
-        if(debug == True):
+        if debug:
             print "--- Flash Information Segment D ---"
             print "Index[0]: Flash Config Bitmask", format(parsed_packet[0], '#010b')
             print "Index[1]: Local Callsign", parsed_packet[1]

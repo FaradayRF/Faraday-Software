@@ -104,6 +104,7 @@ def uart_worker(modem, getDicts, units):
             # Slow down while loop to something reasonable
             time.sleep(0.001)
 
+
 # Initialize Flask microframework
 app = Flask(__name__)
 
@@ -395,6 +396,7 @@ def main():
     proxyPort = proxyConfig.getint("FLASK", "port")
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
+
 
 if __name__ == '__main__':
     main()

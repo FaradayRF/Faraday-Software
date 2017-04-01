@@ -1,6 +1,7 @@
 #Imports - General
 
-import os, sys
+import os
+import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
@@ -50,6 +51,7 @@ def get_telemetry():
     rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_datagram_extracted, debug = True) #Debug ON
 
     print "Parsed packet dictionary:", rx_telemetry_packet_parsed
+
 
 def factory_reset_configuration():
     #Command  Unit Factory Reset

@@ -13,6 +13,7 @@ import base64
 import time
 import logging
 
+
 class proxyio(object):
     """
     A basic input and output class object to interact with the Faraday proxy server RESTful API
@@ -28,7 +29,6 @@ class proxyio(object):
 
     """
 
-
     def __init__(self, port = 8000, logger = None):
         #Definitions
         self.FLASK_PORT = port #TCP port
@@ -36,12 +36,11 @@ class proxyio(object):
         self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124 #123
 
-        if logger != None:
+        if logger is not None:
             self._logger = logger
         else:
             self._logger = logging.getLogger("FaradayBasicProxyIO")
             self._logger.setLevel(logging.WARNING)
-
 
     #Functions
 
@@ -83,7 +82,6 @@ class proxyio(object):
             b64_data = base64.b64encode(data) #Converts to Base64
             payload = {'data' : [b64_data]}
 
-
             #POST data to UART service port
             status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
 
@@ -119,7 +117,7 @@ class proxyio(object):
         url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
 
         # If limit is provided, check that it's positive and add to url
-        if limit != None:
+        if limit is not None:
             if int(limit) >= 0:
                 url = url + "&limit=" + str(limit)
 
@@ -140,7 +138,6 @@ class proxyio(object):
             self._logger.error("IndexError: " + str(e))
         except KeyError as e:
             self._logger.error("KeyError: " + str(e))
-
 
     def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout = 1, debug = False, limit=None):
         """
@@ -171,7 +168,7 @@ class proxyio(object):
         timedelta = 0
         rx_data = None
 
-        while((rx_data == None) and (timedelta<sec_timeout)):
+        while((rx_data is None) and (timedelta<sec_timeout)):
             #Update new timedelta
             timedelta = time.time()-starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
@@ -179,7 +176,7 @@ class proxyio(object):
             #Attempt to get data
             rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit = limit)
         #Determine if timeout or got data
-        if(rx_data != False):
+        if rx_data:
             if(debug):
                 print "Got Data!", "Time In-waiting:", timedelta, "Seconds"
             else:
@@ -189,7 +186,6 @@ class proxyio(object):
             if(debug):
                 print "Failed to get data!", "Timeout =", sec_timeout
             return False
-
 
     def FlushRxPort(self, local_device_callsign, local_device_id, uart_service_number):
         """
@@ -210,7 +206,7 @@ class proxyio(object):
             True
         """
         data = True
-        while(data != False):
+        while data:
             try:
                 self.GET(local_device_callsign, local_device_id, uart_service_number)
                 return True

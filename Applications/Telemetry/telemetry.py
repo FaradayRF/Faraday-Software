@@ -52,6 +52,7 @@ if len(telemetryFile) == 0:
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
+
 def telemetry_worker(config):
     """
     Interface Faraday Proxy to obtain telemetry
@@ -112,7 +113,7 @@ def telemetry_worker(config):
                 #  A dict means something is wrong with GET, print error JSON
                 logger.info(data["error"])
 
-            elif data == None:
+            elif data is None:
                 #  No data is available from Proxy
                 logger.debug("telemetryworker data GET response = None")
 
@@ -142,8 +143,10 @@ def telemetry_worker(config):
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
          time.sleep(1) #  Slow down main while loop
 
+
 # Initialize Flask microframework
 app = Flask(__name__)
+
 
 @app.route('/', methods=['GET'])
 def dbTelemetry():
@@ -179,7 +182,7 @@ def dbTelemetry():
     direction = int(direction)
     callsign = str(callsign).upper()
     timespan = int(timespan)
-    if limit != None:
+    if limit is not None:
         limit = int(limit)
 
     # Validate timespan
@@ -205,6 +208,7 @@ def dbTelemetry():
 
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
+
 
 @app.route('/raw', methods=['GET'])
 def rawTelemetry():
@@ -289,7 +293,7 @@ def rawTelemetry():
 
         # If callsign and nodeId are not present, return all connected radio
         # queue data.
-        if callsign == None and nodeId == None:
+        if callsign is None and nodeId is None:
             # Iterate through each faraday radio connected via USB
             #  telemetryDicts is telemetryWorker queue
             for key, value in telemetryDicts.iteritems():
@@ -356,6 +360,7 @@ def rawTelemetry():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
+
 @app.route('/stations', methods=['GET'])
 def stations():
     """
@@ -411,6 +416,7 @@ def stations():
     return json.dumps(data, indent=1), 200,\
             {'Content-Type': 'application/json'}
 
+
 @app.errorhandler(404)
 def pageNotFound(error):
     """
@@ -423,6 +429,7 @@ def pageNotFound(error):
     # Completed handling of unknown URL, return json error message and HTTP 404
     logger.error("Error: " + str(error))
     return json.dumps({"error": "HTTP " + str(error)}), 404
+
 
 # Database Functions
 def initDB():
@@ -460,6 +467,7 @@ def initDB():
             return False
 
     return True
+
 
 def createTelemetryList(data):
     """
@@ -576,6 +584,7 @@ def sqlInsert(data):
     else:
         return False
 
+
 def queryDb(parameters):
     """
     Takes in parameters to query the SQLite database, returns the results
@@ -607,7 +616,7 @@ def queryDb(parameters):
 
     #Check for timeTuple = None
     try:
-        if timeTuple == None:
+        if timeTuple is None:
             raise StandardError("Start and Stop times caused and error")
 
     except StandardError as e:
@@ -629,7 +638,7 @@ def queryDb(parameters):
     sqlBeg = "SELECT * FROM TELEMETRY "
     sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
     sqlEnd = "ORDER BY KEYID DESC"
-    if limit != None:
+    if limit is not None:
         sqlEnd = sqlEnd + " LIMIT ?"
         paramTuple = (callsign, nodeid) + timeTuple + (limit,)
     else:
@@ -685,6 +694,7 @@ def queryDb(parameters):
     # Completed query, close database, return sqlData list of dictionaries
     conn.close()
     return sqlData
+
 
 def queryStationsDb(parameters):
     """
@@ -790,6 +800,7 @@ def queryStationsDb(parameters):
     conn.close()
     return sqlData
 
+
 def generateStartStopTimes(parameters):
     """
     Use parameters dictionary to build up a Tuple of start/stop time values
@@ -800,13 +811,13 @@ def generateStartStopTimes(parameters):
 
     # Check if start and stop times were provided in ISO 8610 format,
     # if not then generate epoch from timespan
-    if parameters["STARTTIME"] != None and parameters["ENDTIME"] != None:
+    if parameters["STARTTIME"] is not None and parameters["ENDTIME"] is not None:
         # Start end end times provided, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = str(parameters["ENDTIME"])
         timeTuple = iso8601ToEpoch(startTime,endTime)
 
-    elif parameters["STARTTIME"] != None:
+    elif parameters["STARTTIME"] is not None:
         # Start time provided, use current time as end, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = time.strftime("%Y-%m-%dT%H:%M:%S")
@@ -819,7 +830,6 @@ def generateStartStopTimes(parameters):
         timeTuple = (int(startEpoch), int(endEpoch))
 
     return timeTuple
-
 
 
 def iso8601ToEpoch(startTime, endTime):
@@ -881,6 +891,7 @@ def main():
             time.sleep(1)
 
     app.run(host=telemetryHost, port=telemetryPort, threaded=True)
+
 
 if __name__ == '__main__':
     main()

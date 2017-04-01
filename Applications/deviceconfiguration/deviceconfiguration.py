@@ -110,7 +110,7 @@ def unitconfig():
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_UART_INTERVAL']),
                 int(device_telemetry_dict['TELEMETRY_DEFAULT_RF_INTERVAL']))
 
-            if (status_basic == True and status_gps == True and status_rf == True and status_telem == True):
+            if (status_basic and status_gps and status_rf and status_telem):
                 # Create the raw device configuration packet to send to unit
                 device_config_packet = device_config_object.create_config_packet()
 
@@ -173,7 +173,6 @@ def unitconfig():
                 # Encoded dictionary data for save network transit
                 pickled_parsed_config_dict = cPickle.dumps(parsed_config_dict)
                 pickled_parsed_config_dict_b64 = base64.b64encode(pickled_parsed_config_dict)
-
 
             except ValueError as e:
                 print e

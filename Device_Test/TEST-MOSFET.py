@@ -13,4 +13,3 @@ while user_input != 'q':
     if user_input == '':
         print "Activating MOSFET!"
         devicetest.ActiveMOSFETCutdown()
-
