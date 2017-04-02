@@ -1,5 +1,9 @@
 #Warning - Must run the "deviceconfiguration" proxy application
 
+# readconfig.py is a simple script that only reads/displays the current programmed flash configuration without
+# programming the flash configuration of the unit as defined in the "deviceconfiguration.ini" configuration file.
+# Simply run the script with a valid "deviceconfiguration.ini" file
+
 #Imports - General
 
 import os
