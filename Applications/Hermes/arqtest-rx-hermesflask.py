@@ -9,17 +9,29 @@ import ConfigParser
 import cPickle
 import base64
 
-##################Test IO Routines and Queues ###########################
-
 # Transmitter
 # Receiver
 rx_testproxyqueue = Queue.Queue()
+
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("hermes.ini")
+config.read(filename)
+
+localcallsign = config.get('UNIT1', 'CALLSIGN')
+localnodeid = int(config.get('UNIT1', 'NODEID'))
+destinationcallsign = config.get('UNIT0', 'CALLSIGN')
+destinationnodeid = int(config.get('UNIT0', 'NODEID'))
+
+
 
 
 def rx_transmitroutine(data):
     print "RX: Transmitting: ", data
     #Place data into TX receive
     #tx_rxtestproxyqueue.put(data)
+    payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid,
+               'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid, 'data': data}
+    requests.post('http://127.0.0.1:8005/', params=payload)
 
 def rx_receiveroutine():
     if getrxqueuesize(localcallsign, localnodeid) > 0:
@@ -28,19 +40,10 @@ def rx_receiveroutine():
         rx_b64_pickle = cPickle.loads(base64.b64decode(rxdata.json()))
         print "\nFROM:", rx_b64_pickle['source_callsign']
         print "Message:", rx_b64_pickle['message']
+        return rx_b64_pickle['message']
 ###################################
 
-config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("hermes.ini")
-config.read(filename)
 
-localcallsign = config.get('UNIT1', 'CALLSIGN')
-localnodeid = int(config.get('UNIT1', 'NODEID'))
-#destinationcallsign = config.get('UNIT1', 'CALLSIGN')
-#destinationnodeid = int(config.get('UNIT1', 'NODEID'))
-
-# Create ARQ Receive object
-testrxsm = arq.ReceiveArqStateMachine(rx_transmitroutine, rx_receiveroutine)
 
 
 def getrxqueuesize(callsign, nodeid):
@@ -61,6 +64,10 @@ def main():
     Main function of the transmit example of Hermes messaging application using Flask. This function loops continuously
     getting user input text to transmit to the Flask server for wireless transmission to the intended remote device.
     """
+
+    # Create ARQ Receive object
+    testrxsm = arq.ReceiveArqStateMachine(rx_transmitroutine, rx_receiveroutine)
+
     # Set state machine to START
     testrxsm.updatestate(arq.STATE_START)
 
