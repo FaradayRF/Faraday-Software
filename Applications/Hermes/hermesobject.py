@@ -1,7 +1,10 @@
 import hermesmessage
 import threading
 import Queue
+import time
 
+HERMES_UART_PORT = 3
+HERMES_GETWAIT_TIMEOUT_SEC = 2
 
 class TransmitObject(object):
     """
@@ -19,8 +22,8 @@ class TransmitObject(object):
                                                                 self.local_device_node_id)
         # Create receiver application object
         self.faraday_rx_msg_object = hermesmessage.MessageAppRx()
-        self.rx_uart_service_port_application_number = 3
-        self.GETWAIT_TIMEOUT = 2
+        self.rx_uart_service_port_application_number = HERMES_UART_PORT
+        self.GETWAIT_TIMEOUT = HERMES_GETWAIT_TIMEOUT_SEC
 
     def send(self, dest_callsign, dest_id, payload):
         """
@@ -68,6 +71,7 @@ class ReceiveObject(threading.Thread):
             """
         # Loop continuously through the faraday experimental RF command message application RX routine
         while 1:
+            time.sleep(0.005)
             rx_message_dict = self.faraday_rx_msg_object.rxmsgloop(self.local_device_callsign,
                                                                    self.local_device_node_id,
                                                                    self.rx_uart_service_port_application_number,
