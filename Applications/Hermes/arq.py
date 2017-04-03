@@ -245,7 +245,7 @@ class ReceiveArqStateMachine(object):
         :return:
         """
 
-        print "START"
+        #print "START"
         self.getreceiveitem()
 
 
@@ -285,4 +285,8 @@ class ReceiveArqStateMachine(object):
         :return:
         """
         rxitem = self.functionpointer_rx()
-        print rxitem
+        if rxitem == None:
+            print "None Item"
+        else:
+            self.putrxqueue(rxitem)
+            print "Placed:", rxitem
