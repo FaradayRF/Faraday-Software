@@ -4,10 +4,13 @@ import time
 import timer
 import Queue
 
+#Transmit data list
+tx_listdata = ['this ', 'is', ' a', ' test', '.']
 
-#Test IO Routines
+#Test IO Routines and Queues
 
 # Transmitter
+tx_rxtestproxyqueue = Queue.Queue()
 
 def tx_transmitroutine(data):
     print "TX: Transmitting: ", data
@@ -24,6 +27,9 @@ def tx_receiveroutine():
 
 
 # Receiver
+rx_testproxyqueue = Queue.Queue()
+
+
 def rx_transmitroutine(data):
     print "RX: Transmitting: ", data
     #Place data into TX receive
@@ -39,19 +45,10 @@ def rx_receiveroutine():
 ## Receive
 ##################################
 
-rx_testproxyqueue = Queue.Queue()
-
-
-tx_listdata = ['this ', 'is', ' a', ' test', '.']
-
-
-
 # Create object
-testrxsm = arq.ReceiveArqStateMachine(tx_listdata, rx_transmitroutine, rx_receiveroutine)
-
+testrxsm = arq.ReceiveArqStateMachine(rx_transmitroutine, rx_receiveroutine)
 
 # Set state machine to START
-print "Updating RX to START State"
 testrxsm.updatestate(arq.STATE_START)
 
 
@@ -59,19 +56,8 @@ testrxsm.updatestate(arq.STATE_START)
 ## Transmit
 ##################################
 
-tx_listdata = ['this ', 'is', ' a', ' test', '.']
-
-tx_rxtestproxyqueue = Queue.Queue()
-
-
 # Create object
 testtxsm = arq.TransmitArqStateMachine(tx_listdata, tx_transmitroutine, tx_receiveroutine)
 
 # Insert new data
 testtxsm.newdataqueue(tx_listdata)
-
-#
-# time.sleep(6)
-# testtxsm.ackreceived()
-# time.sleep(2)
-# testtxsm.ackreceived()

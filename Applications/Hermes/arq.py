@@ -200,7 +200,7 @@ class TransmitArqStateMachine(object):
 
 class ReceiveArqStateMachine(object):
 
-    def __init__(self, datalist, funcptr_tx, funcptr_rx):
+    def __init__(self, funcptr_tx, funcptr_rx):
         """
         This class provides the state machine functionality for the receiver portion of a basic stop-and-wait ARQ
         protocol.
