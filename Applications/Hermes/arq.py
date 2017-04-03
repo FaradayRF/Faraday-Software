@@ -20,7 +20,7 @@ ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
 
 class TransmitArqStateMachine(object):
 
-    def __init__(self, datalist, funcptr_tx, funcptr_rx):
+    def __init__(self, funcptr_tx, funcptr_rx):
         """
         This class provides the state machine functionality for the transmitter portion of a basic stop-and-wait ARQ
         protocol.
@@ -43,7 +43,7 @@ class TransmitArqStateMachine(object):
         }
 
         # Initialize data into queue
-        self.newdataqueue(datalist)
+        #self.newdataqueue(datalist)
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
         self.arqtimer = timer.TimerClass(self.runstate, 0.01)

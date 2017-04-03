@@ -57,7 +57,7 @@ testrxsm.updatestate(arq.STATE_START)
 print "Sleeping prior to transmit"
 time.sleep(4)
 # Create object
-testtxsm = arq.TransmitArqStateMachine(tx_listdata, tx_transmitroutine, tx_receiveroutine)
+testtxsm = arq.TransmitArqStateMachine(tx_transmitroutine, tx_receiveroutine)
 
 # Insert new data
 testtxsm.newdataqueue(tx_listdata)
