@@ -6,6 +6,9 @@ import Queue
 import requests
 import os
 import ConfigParser
+import cPickle
+import base64
+
 
 ##################Test IO Routines and Queues ###########################
 
@@ -19,11 +22,14 @@ def tx_transmitroutine(data):
     requests.post('http://127.0.0.1:8005/', params=payload)
 
 def tx_receiveroutine():
-    if tx_rxtestproxyqueue.empty():
-        return None
-    else:
-        data = tx_rxtestproxyqueue.get_nowait()
-        return data
+    if getrxqueuesize(localcallsign, localnodeid) > 0:
+        payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
+        rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
+        rx_b64_pickle = cPickle.loads(base64.b64decode(rxdata.json()))
+        print "\nFROM:", rx_b64_pickle['source_callsign']
+        print "Message:", rx_b64_pickle['message']
+        return rx_b64_pickle['message']
+
 ###################################
 
 config = ConfigParser.RawConfigParser()
@@ -38,6 +44,18 @@ destinationnodeid = int(config.get('UNIT1', 'NODEID'))
 # Create ARQ Transmit object
 testtxsm = arq.TransmitArqStateMachine(tx_transmitroutine, tx_receiveroutine)
 
+
+def getrxqueuesize(callsign, nodeid):
+    """
+    :param callsign: Callsign of the local device being queried
+    :param nodeid: Node ID of the local device being queried
+    :return: The RX queue size
+    """
+
+    payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
+    queuelen = requests.get('http://127.0.0.1:8005/queue', params=payload)
+    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
+    return queue_b64_pickle['queuesize']
 
 def main():
     """

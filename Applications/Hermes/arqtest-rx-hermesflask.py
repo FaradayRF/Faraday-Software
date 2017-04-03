@@ -26,7 +26,7 @@ destinationnodeid = int(config.get('UNIT0', 'NODEID'))
 
 
 def rx_transmitroutine(data):
-    print "RX: Transmitting: ", data
+    print "RX: Transmitting: ", data, destinationcallsign, destinationnodeid
     #Place data into TX receive
     #tx_rxtestproxyqueue.put(data)
     payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid,
