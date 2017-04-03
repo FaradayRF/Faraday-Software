@@ -45,7 +45,6 @@ def main():
         while getrxqueuesize(localcallsign, localnodeid) > 0:
             payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
             rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
-            print rxdata.json()
             rx_dataitem = json.loads(base64.b64decode(rxdata.json()))
             print "\nFROM:", rx_dataitem['source_callsign']
             print "Message:", rx_dataitem['message']

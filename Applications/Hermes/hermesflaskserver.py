@@ -151,8 +151,6 @@ def getqueue():
 
 def main():
     """Main function which starts the Flask server."""
-    # Global variables
-    global dictmsgobj
 
     # Get INI file configuration for Flask server
     config_host = config.get("FLASK", "HOST")
