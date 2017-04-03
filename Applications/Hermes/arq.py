@@ -20,12 +20,13 @@ ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
 
 class TransmitArqStateMachine(object):
 
-    def __init__(self, datalist, funcptr_tx):
+    def __init__(self, datalist, funcptr_tx, funcptr_rx):
         """
         This class provides the state machine functionality for the transmitter portion of a basic stop-and-wait ARQ
         protocol.
         """
         self.functionpointer_tx = funcptr_tx
+        self.functionpointer_rx = funcptr_rx
         self.state = STATE_IDLE
         self.retries = 0
         self.dataqueue = Queue.Queue()
@@ -96,7 +97,7 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "START"
+        print "TX: START"
 
         self.acksuccess = False
 
@@ -129,7 +130,7 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "TX"
+        print "TX: "
         self.functionpointer_tx(self.currentdata)
 
         # Reset the ARQ base time
@@ -148,7 +149,15 @@ class TransmitArqStateMachine(object):
         # Compute ARQ timeout time
         timeouttime = time.time() - self.arqstarttime
 
-        print "GET ACK", timeouttime
+        #print "GET ACK", timeouttime
+
+        # Get any received packets
+        rxdata = self.functionpointer_rx()
+
+        if rxdata is not None:
+            if rxdata == ACK_MSG:
+                print "TX: GOT ACK"
+                self.ackreceived()
 
         if timeouttime > ACKINTERVAL:
             # Retry
@@ -173,19 +182,19 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "Retry", self.retries
+        print "TX: Retry", self.retries
         # Check retry count
         if self.retries > MAXRETRIES:
             # Timeout
             self.arqtimer.stop()
-            print "TIMED OUT!"
+            print "TX: TIMED OUT!"
         else:
             # Update retry count and retry transmission
             self.retries += 1
             self.updatestate(STATE_TX)
 
     def ackreceived(self):
-        print "ACK RECEIVED!"
+        print "TX: ACK RECEIVED!"
         self.acksuccess = True
 
 
@@ -237,7 +246,7 @@ class ReceiveArqStateMachine(object):
         IDLE simple waits for a commanded START state.
         :return:
         """
-        print "IDLE"
+        print "RX: IDLE"
 
     def statestart(self):
         """
@@ -292,10 +301,10 @@ class ReceiveArqStateMachine(object):
         """
         rxitem = self.functionpointer_rx()
         if rxitem == None:
-            print "None Item"
+            pass #print "RX: None Item"
         else:
             self.putrxqueue(rxitem)
-            print "Placed:", rxitem
+            print "RX: Placed:", rxitem
 
             # Send ACK
             self.updatestate(STATE_SENDACK)
