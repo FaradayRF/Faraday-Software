@@ -110,3 +110,4 @@ class MessageObject(object):
         self.transmit = TransmitObject(local_device_callsign, local_device_node_id)
         self.receive = ReceiveObject(local_device_callsign, local_device_node_id)
         self.receive.start()
+
