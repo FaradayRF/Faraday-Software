@@ -22,7 +22,6 @@ def tx_receiveroutine():
         return None
     else:
         data = tx_rxtestproxyqueue.get_nowait()
-        print "TX: Got Data - ", data
         return data
 
 

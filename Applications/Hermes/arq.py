@@ -97,8 +97,6 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "TX: START"
-
         self.acksuccess = False
 
         # Updated state
@@ -110,7 +108,6 @@ class TransmitArqStateMachine(object):
         This function retrieves the next data packet to transmit.
         :return:
         """
-        print "NEXT DATA"
 
         if self.dataqueue.empty():
             # No more data
@@ -130,7 +127,6 @@ class TransmitArqStateMachine(object):
         :return:
         """
 
-        print "TX: "
         self.functionpointer_tx(self.currentdata)
 
         # Reset the ARQ base time
@@ -148,8 +144,6 @@ class TransmitArqStateMachine(object):
 
         # Compute ARQ timeout time
         timeouttime = time.time() - self.arqstarttime
-
-        #print "GET ACK", timeouttime
 
         # Get any received packets
         rxdata = self.functionpointer_rx()
@@ -246,7 +240,6 @@ class ReceiveArqStateMachine(object):
         IDLE simple waits for a commanded START state.
         :return:
         """
-        print "RX: IDLE"
 
     def statestart(self):
         """
@@ -304,7 +297,7 @@ class ReceiveArqStateMachine(object):
             pass #print "RX: None Item"
         else:
             self.putrxqueue(rxitem)
-            print "RX: Placed:", rxitem
+            print "RX: Received data - ", rxitem
 
             # Send ACK
             self.updatestate(STATE_SENDACK)
