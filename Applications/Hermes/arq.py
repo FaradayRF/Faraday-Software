@@ -12,6 +12,8 @@ STATE_GETACK = 4 # Wait for acknowledgement from receiver
 STATE_RETRY = 5 # Retry current transmission data, update/check counters in case of timeout
 STATE_SENDACK = 6 # Send acknowledgement to transmitter
 
+ACK_MSG = "ACK" # Acknowledgement message
+
 MAXRETRIES = 3 # Maximum number of retries to attempt before timing out
 ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
 
@@ -255,6 +257,10 @@ class ReceiveArqStateMachine(object):
         Send ACK to transmitter
         :return:
         """
+        self.functionpointer_tx(ACK_MSG)
+
+        # Update state to START
+        self.updatestate(STATE_START)
 
     def putrxqueue(self, rxdata):
         """
@@ -290,3 +296,6 @@ class ReceiveArqStateMachine(object):
         else:
             self.putrxqueue(rxitem)
             print "Placed:", rxitem
+
+            # Send ACK
+            self.updatestate(STATE_SENDACK)

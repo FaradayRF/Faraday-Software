@@ -21,16 +21,18 @@ def receiveroutine():
 # Create object
 testrxsm = arq.ReceiveArqStateMachine(listdata, transmitroutine, receiveroutine)
 
-# Add data to Fake RX Proxy queue
-#testrxsm.putrxqueue("This")
-#testrxsm.putrxqueue("Is A")
-#testrxsm.putrxqueue("Test.")
-testrxproxyqueue.put_nowait("This")
-testrxproxyqueue.put_nowait("is")
-testrxproxyqueue.put_nowait("a")
-testrxproxyqueue.put_nowait("test")
-testrxproxyqueue.put_nowait(".")
 
 # Set state machine to START
 print "Updating to START State"
 testrxsm.updatestate(arq.STATE_START)
+
+# Add data to Fake RX Proxy queue
+testrxproxyqueue.put_nowait("This")
+time.sleep(2)
+testrxproxyqueue.put_nowait("is")
+time.sleep(1)
+testrxproxyqueue.put_nowait("a")
+time.sleep(3)
+testrxproxyqueue.put_nowait("test")
+time.sleep(1)
+testrxproxyqueue.put_nowait(".")
