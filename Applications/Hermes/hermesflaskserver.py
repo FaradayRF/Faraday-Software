@@ -121,7 +121,7 @@ def message():
             {'Content-Type': 'application/json'}
 
 
-@app.route('/queue', methods=['GET'])
+@app.route('/queuelen', methods=['GET'])
 def getqueue():
     """
     Flask function that returns the size of the receiver queue of the specified local unit.
@@ -153,13 +153,10 @@ def main():
     """Main function which starts the Flask server."""
 
     # Get INI file configuration for Flask server
-    config_host = config.get("FLASK", "HOST")
-    config_port = config.get("FLASK", "PORT")
+    hermeshost = config.get("FLASK", "HOST")
+    hermesport = config.get("FLASK", "PORT")
 
-    # Start the flask server on localhost:8001
-    hermeshost = config_host
-    hermesport = config_port
-
+    # Get INI config units
     units = configparse()
 
     # Parse and save unit callsign-nodeid into global dictionary as keys to hermes objects
@@ -169,6 +166,7 @@ def main():
         unitname = createnodename(unitcallsign, str(unitnodeid))
         dictmsgobj[unitname] = hermesobject.MessageObject(unitcallsign, unitnodeid)
 
+    # Start the flask server
     app.run(host=hermeshost, port=hermesport, threaded=True)
 
 

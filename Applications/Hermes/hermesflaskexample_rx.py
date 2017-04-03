@@ -22,7 +22,7 @@ def getrxqueuesize(callsign, nodeid):
     """
 
     payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
-    queuelen = requests.get('http://127.0.0.1:8005/queue', params=payload)
+    queuelen = requests.get('http://127.0.0.1:8005/queuelen', params=payload)
     queuesize = json.loads(base64.b64decode(queuelen.json()))
 
     return queuesize['queuesize']
