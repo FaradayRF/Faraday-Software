@@ -3,7 +3,6 @@ import hermesobject as hermesobject
 import ConfigParser
 import json
 import base64
-import cPickle
 import sys
 
 from flask import Flask
@@ -116,14 +115,9 @@ def message():
 
         # Get next message from RX queue
         received_item = unitmsgobj.receive.getqueueitem()
+        received_item_json_64 = base64.b64encode(json.dumps(received_item))
 
-        # Pickle dictionary data
-        received_data_pickle = cPickle.dumps(received_item)
-
-        # Encode to BASE64
-        received_item_64 = base64.b64encode(received_data_pickle)
-
-        return json.dumps(received_item_64, indent=1), 200, \
+        return json.dumps(received_item_json_64, indent=1), 200, \
             {'Content-Type': 'application/json'}
 
 
@@ -139,7 +133,6 @@ def getqueue():
 
     :return:
     """
-
     # Parse Flask arguments
     localcallsign = request.args.get("localcallsign").upper()
     localnodeid = request.args.get("localnodeid")
@@ -149,11 +142,8 @@ def getqueue():
     # Check Queue size of Unit #2 and receive packet (if received due to non-ARQ protocol)
     data = {"queuesize": unitmsgobj.receive.getqueuesize()}
 
-    # Pickle dictionary data
-    data_pickle = cPickle.dumps(data)
-
-    # Encode to BASE64
-    data_64 = base64.b64encode(data_pickle)
+    # Encode dictionary with JSON and then encode JSON object to BASE64
+    data_64 = base64.b64encode(json.dumps(data))
 
     return json.dumps(data_64, indent=1), 200, \
            {'Content-Type': 'application/json'}
