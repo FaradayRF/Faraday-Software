@@ -4,6 +4,7 @@ import ConfigParser
 import json
 import base64
 import cPickle
+import sys
 
 from flask import Flask
 from flask import request
@@ -40,6 +41,16 @@ def configparse():
 # Initialize Flask micro-framework
 app = Flask(__name__)
 
+def createnodename(callsign, nodeid):
+    """
+    Returns a node name of "callsign-nodeid"
+    :param callsign: String containing a callsign
+    :param nodeid: int containing a Node ID
+    :return: String with "callsign-nodeid"
+    """
+    nodeid = int(nodeid)
+    return "{0}-{1}".format(callsign, nodeid)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def message():
@@ -70,23 +81,29 @@ def message():
 
     # If POST
     if request.method == 'POST':
-        # Parse Flask arguments
-        localcallsign = request.args.get("localcallsign").upper()
-        localnodeid = request.args.get("localnodeid")
-        destinationcallsign = request.args.get("destinationcallsign").upper()
-        destinationnodeid = request.args.get("destinationnodeid")
-        data = request.args.get("data")
+        try:
+            # Parse Flask arguments
+            localcallsign = request.args.get("localcallsign").upper()
+            localnodeid = request.args.get("localnodeid")
+            destinationcallsign = request.args.get("destinationcallsign").upper()
+            destinationnodeid = request.args.get("destinationnodeid")
+            data = request.args.get("data")
 
-        # Get hermes TX/RX object from global dictionary
-        unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
+            # Get hermes TX/RX object from global dictionary
+            unitmsgobj = dictmsgobj[createnodename(localcallsign, str(localnodeid))]
 
-        # Transmit data to remote device
-        unitmsgobj.transmit.send(destinationcallsign, int(destinationnodeid), str(data))
+            # Transmit data to remote device
+            unitmsgobj.transmit.send(destinationcallsign, int(destinationnodeid), str(data))
 
-        # Return status
-        return json.dumps(
-            {"status": "Posted Packet(s)"
-             }), 200
+            # Return status
+            return json.dumps(
+                {"status": "Posted Packet(s)"}), 200
+
+        except KeyError as e:
+            print "KeyError:", e
+
+        except:
+            print "Unexpected Error:", sys.exc_info()[0]
 
     # If GET
     else:
@@ -95,7 +112,7 @@ def message():
         localnodeid = request.args.get("localnodeid")
 
         # Get hermes TX/RX object from global dictionary
-        unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
+        unitmsgobj = dictmsgobj[createnodename(localcallsign, str(localnodeid))]
 
         # Get next message from RX queue
         received_item = unitmsgobj.receive.getqueueitem()
@@ -126,7 +143,7 @@ def getqueue():
     # Parse Flask arguments
     localcallsign = request.args.get("localcallsign").upper()
     localnodeid = request.args.get("localnodeid")
-    unitmsgobj = dictmsgobj[localcallsign + '-' + localnodeid]
+    unitmsgobj = dictmsgobj[createnodename(localcallsign, str(localnodeid))]
 
     """This function returns the number of packets in the receiver queue."""
     # Check Queue size of Unit #2 and receive packet (if received due to non-ARQ protocol)
@@ -161,7 +178,7 @@ def main():
     for key in units:
         unitcallsign = units[key]['callsign']
         unitnodeid = units[key]['nodeid']
-        unitname = unitcallsign + '-' + str(unitnodeid)
+        unitname = createnodename(unitcallsign, str(unitnodeid))
         dictmsgobj[unitname] = hermesobject.MessageObject(unitcallsign, unitnodeid)
 
     app.run(host=hermeshost, port=hermesport, threaded=True)
