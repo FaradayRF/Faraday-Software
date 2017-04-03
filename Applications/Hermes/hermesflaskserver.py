@@ -20,14 +20,13 @@ dictmsgobj = {}
 def configparse():
     """ Parses configuration file for callsigns and node ID and returns them in JSON format"""
     local = {}
-    num = int(config.get('PROXY', 'UNITS'))
-    units = range(0, num)
+    units = range(0, config.getint('PROXY', 'UNITS'))
 
     for unit in units:
         # TODO We don't really check for valid input here yet
         item = "UNIT" + str(unit)
         callsign = config.get(item, "callsign").upper()
-        nodeid = config.get(item, "nodeid")
+        nodeid = config.getint(item, "nodeid")
 
         local[str(item)] = \
             {
@@ -35,8 +34,7 @@ def configparse():
                 "nodeid": nodeid,
             }
 
-    local = json.dumps(local)
-    return json.loads(local)
+    return local
 
 
 # Initialize Flask micro-framework
@@ -67,10 +65,8 @@ def message():
     :param localcallsign: Flask parameter - Local unit callsign to transmit from
     :param localnodeid: Flask parameter - Local unit node ID to transmit from
 
-    :return: Returns JSON element containing the next received data from the receiver queue
+    :return: Returns HTTP status along with JSON element containing the next received data from the receiver queue
     """
-    # Global variables
-    global dictmsgobj
 
     # If POST
     if request.method == 'POST':
@@ -126,8 +122,6 @@ def getqueue():
 
     :return:
     """
-    # Global variables
-    global dictmsgobj
 
     # Parse Flask arguments
     localcallsign = request.args.get("localcallsign").upper()
@@ -167,7 +161,7 @@ def main():
     for key in units:
         unitcallsign = units[key]['callsign']
         unitnodeid = units[key]['nodeid']
-        unitname = unitcallsign + '-' + unitnodeid
+        unitname = unitcallsign + '-' + str(unitnodeid)
         dictmsgobj[unitname] = hermesobject.MessageObject(unitcallsign, unitnodeid)
 
     app.run(host=hermeshost, port=hermesport, threaded=True)
