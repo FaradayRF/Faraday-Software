@@ -6,37 +6,54 @@ import Queue
 import requests
 import os
 import ConfigParser
+import cPickle
+import base64
 
 ##################Test IO Routines and Queues ###########################
 
 # Transmitter
-tx_rxtestproxyqueue = Queue.Queue()
+# Receiver
+rx_testproxyqueue = Queue.Queue()
 
-def tx_transmitroutine(data):
-    print "TX: Transmitting: ", data
-    payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid,
-               'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid, 'data': data}
-    requests.post('http://127.0.0.1:8005/', params=payload)
 
-def tx_receiveroutine():
-    if tx_rxtestproxyqueue.empty():
-        return None
-    else:
-        data = tx_rxtestproxyqueue.get_nowait()
-        return data
+def rx_transmitroutine(data):
+    print "RX: Transmitting: ", data
+    #Place data into TX receive
+    #tx_rxtestproxyqueue.put(data)
+
+def rx_receiveroutine():
+    if getrxqueuesize(localcallsign, localnodeid) > 0:
+        payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
+        rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
+        rx_b64_pickle = cPickle.loads(base64.b64decode(rxdata.json()))
+        print "\nFROM:", rx_b64_pickle['source_callsign']
+        print "Message:", rx_b64_pickle['message']
 ###################################
 
 config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("hermes.ini")
 config.read(filename)
 
-localcallsign = config.get('UNIT0', 'CALLSIGN')
-localnodeid = int(config.get('UNIT0', 'NODEID'))
-destinationcallsign = config.get('UNIT1', 'CALLSIGN')
-destinationnodeid = int(config.get('UNIT1', 'NODEID'))
+localcallsign = config.get('UNIT1', 'CALLSIGN')
+localnodeid = int(config.get('UNIT1', 'NODEID'))
+#destinationcallsign = config.get('UNIT1', 'CALLSIGN')
+#destinationnodeid = int(config.get('UNIT1', 'NODEID'))
 
-# Create ARQ Transmit object
-testtxsm = arq.TransmitArqStateMachine(tx_transmitroutine, tx_receiveroutine)
+# Create ARQ Receive object
+testrxsm = arq.ReceiveArqStateMachine(rx_transmitroutine, rx_receiveroutine)
+
+
+def getrxqueuesize(callsign, nodeid):
+    """
+    :param callsign: Callsign of the local device being queried
+    :param nodeid: Node ID of the local device being queried
+    :return: The RX queue size
+    """
+
+    payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
+    queuelen = requests.get('http://127.0.0.1:8005/queue', params=payload)
+    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
+    return queue_b64_pickle['queuesize']
 
 
 def main():
@@ -44,14 +61,10 @@ def main():
     Main function of the transmit example of Hermes messaging application using Flask. This function loops continuously
     getting user input text to transmit to the Flask server for wireless transmission to the intended remote device.
     """
-    while 1:
-        message = raw_input("Enter Message: ")
+    # Set state machine to START
+    testrxsm.updatestate(arq.STATE_START)
 
-        # Transmit data list
-        tx_listdata = ['this ', 'is', ' a', ' test', '.']
 
-        # Insert new data for transmit
-        testtxsm.newdataqueue(tx_listdata)
 
 
 
