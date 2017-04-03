@@ -46,7 +46,7 @@ class TransmitArqStateMachine(object):
         self.newdataqueue(datalist)
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
-        self.arqtimer = timer.TimerClass(self.runstate, 0.5)
+        self.arqtimer = timer.TimerClass(self.runstate, 0.01)
         self.arqtimer.start()
         self.arqstarttime = time.time()
 
@@ -212,7 +212,7 @@ class ReceiveArqStateMachine(object):
         }
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
-        self.arqtimer = timer.TimerClass(self.runstate, 0.5)
+        self.arqtimer = timer.TimerClass(self.runstate, 0.01)
         self.arqtimer.start()
         self.arqstarttime = time.time()
 
