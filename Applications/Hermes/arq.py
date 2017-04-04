@@ -1,25 +1,23 @@
 import time
-import threading
 import Queue
 import timer
 
 # Definitions
-STATE_IDLE = 0 # IDLE state to wait for commanded start state
-STATE_START = 1 # Reset counters/variables/etc... to default
-STATE_GETNEXTDATA = 2 # Get the next data item to be transmitted
-STATE_TX = 3 # Transmit data
-STATE_GETACK = 4 # Wait for acknowledgement from receiver
-STATE_RETRY = 5 # Retry current transmission data, update/check counters in case of timeout
-STATE_SENDACK = 6 # Send acknowledgement to transmitter
+STATE_IDLE = 0  # IDLE state to wait for commanded start state
+STATE_START = 1  # Reset counters/variables/etc... to default
+STATE_GETNEXTDATA = 2  # Get the next data item to be transmitted
+STATE_TX = 3  # Transmit data
+STATE_GETACK = 4  # Wait for acknowledgement from receiver
+STATE_RETRY = 5  # Retry current transmission data, update/check counters in case of timeout
+STATE_SENDACK = 6  # Send acknowledgement to transmitter
 
-ACK_MSG = "ACK" # Acknowledgement message
+ACK_MSG = "ACK"  # Acknowledgement message
 
-MAXRETRIES = 3 # Maximum number of retries to attempt before timing out
-ACKINTERVAL = 3 # Time to wait for the receiver to send ACK
+MAXRETRIES = 3  # Maximum number of retries to attempt before timing out
+ACKINTERVAL = 3  # Time to wait for the receiver to send ACK
 
 
 class TransmitArqStateMachine(object):
-
     def __init__(self, funcptr_tx, funcptr_rx):
         """
         This class provides the state machine functionality for the transmitter portion of a basic stop-and-wait ARQ
@@ -43,7 +41,7 @@ class TransmitArqStateMachine(object):
         }
 
         # Initialize data into queue
-        #self.newdataqueue(datalist)
+        # self.newdataqueue(datalist)
 
         # Create ARQ timer object to run the ARQ objects "runstate()" function periodically
         self.arqtimer = timer.TimerClass(self.runstate, 0.01)
@@ -61,7 +59,7 @@ class TransmitArqStateMachine(object):
         for item in datalist:
             self.dataqueue.put(item)
 
-        # Updated state to START
+            # Updated state to START
             self.updatestate(STATE_START)
 
     def runstate(self):
@@ -87,7 +85,6 @@ class TransmitArqStateMachine(object):
         IDLE simple waits for a commanded START state.
         :return:
         """
-        #print "IDLE"
 
     def statestart(self):
         """
@@ -101,7 +98,6 @@ class TransmitArqStateMachine(object):
 
         # Updated state
         self.updatestate(STATE_GETNEXTDATA)
-
 
     def stategetnextdata(self):
         """
@@ -117,8 +113,6 @@ class TransmitArqStateMachine(object):
             self.currentdata = self.dataqueue.get_nowait()
             # Updated state
             self.updatestate(STATE_TX)
-
-
 
     def statetx(self):
         """
@@ -166,8 +160,6 @@ class TransmitArqStateMachine(object):
                 # ACK not received
                 pass
 
-
-
     def stateretry(self):
         """
         Prior transmission failed to receive an ACK from receiver. Update counters and retry transmission unless max
@@ -193,7 +185,6 @@ class TransmitArqStateMachine(object):
 
 
 class ReceiveArqStateMachine(object):
-
     def __init__(self, funcptr_tx, funcptr_rx):
         """
         This class provides the state machine functionality for the receiver portion of a basic stop-and-wait ARQ
@@ -215,7 +206,6 @@ class ReceiveArqStateMachine(object):
         self.arqtimer = timer.TimerClass(self.runstate, 0.01)
         self.arqtimer.start()
         self.arqstarttime = time.time()
-
 
     def runstate(self):
         """
@@ -249,10 +239,8 @@ class ReceiveArqStateMachine(object):
         :return:
         """
 
-        #print "START"
+        # print "START"
         self.getreceiveitem()
-
-
 
     def statesendack(self):
         """
@@ -293,8 +281,10 @@ class ReceiveArqStateMachine(object):
         :return:
         """
         rxitem = self.functionpointer_rx()
-        if rxitem == None:
-            pass #print "RX: None Item"
+
+        if rxitem is None:
+            pass
+
         else:
             self.putrxqueue(rxitem)
             print "RX: Received data - ", rxitem
