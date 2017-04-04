@@ -104,7 +104,7 @@ def telemetry_worker(config):
 
     #  Check for data on telemetry port with infinite loop.
     while True:
-         for radio in range(count):
+        for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
@@ -141,7 +141,7 @@ def telemetry_worker(config):
                     else:
                         sqlInsert(parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
-         time.sleep(1) #  Slow down main while loop
+        time.sleep(1) #  Slow down main while loop
 
 
 # Initialize Flask microframework
@@ -254,7 +254,7 @@ def rawTelemetry():
                         "Faraday Node ID's valid integer between 0-255")
         else:
             # Don't change anything since callsign is None
-           pass
+            pass
 
         if limit is None:
             #  Optional, set limit to largest value of any radio queue size
