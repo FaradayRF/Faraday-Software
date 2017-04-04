@@ -1,7 +1,4 @@
 import arq
-import threading
-import time
-import timer
 import Queue
 import requests
 import os
@@ -23,15 +20,14 @@ destinationcallsign = config.get('UNIT0', 'CALLSIGN')
 destinationnodeid = int(config.get('UNIT0', 'NODEID'))
 
 
-
-
 def rx_transmitroutine(data):
     print "RX: Transmitting: ", data, destinationcallsign, destinationnodeid
-    #Place data into TX receive
-    #tx_rxtestproxyqueue.put(data)
+    # Place data into TX receive
+    # tx_rxtestproxyqueue.put(data)
     payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid,
                'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid, 'data': data}
     requests.post('http://127.0.0.1:8005/', params=payload)
+
 
 def rx_receiveroutine():
     if getrxqueuesize(localcallsign, localnodeid) > 0:
@@ -41,6 +37,8 @@ def rx_receiveroutine():
         print "\nFROM:", rx_b64_pickle['source_callsign']
         print "Message:", rx_b64_pickle['message']
         return rx_b64_pickle['message']
+
+
 ###################################
 
 
@@ -72,18 +70,5 @@ def main():
     testrxsm.updatestate(arq.STATE_START)
 
 
-
-
-
-
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
