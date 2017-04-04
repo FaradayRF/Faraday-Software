@@ -1,6 +1,7 @@
 from FaradayIO import commandmodule
 from FaradayIO import gpioallocations
 
+
 class faraday_commands(object):
     """
     An object containing command packet creation tools and predefined command generation functions.
@@ -123,7 +124,6 @@ class faraday_commands(object):
         packet = commandmodule.create_command_datagram(self.CMD_UPDATERAMPARAMETER, commandmodule.create_update_telemetry_interval_rf_packet(interval))
         return packet
 
-
     def CommandLocalGPIOLED1On(self):
         """
         A predefined command to return a complete datagram and command packet to turn ON the LOCAL Faraday's LED #1 using the standard Faraday GPIO commanding packet.
@@ -237,7 +237,6 @@ class faraday_commands(object):
                                                        commandmodule.create_empty_command_packet())
         return packet
 
-
     def CommandLocalHABActivateCutdownEvent(self):
         """
         A predefined command to return a complete command datagram and  command packet that commands a LOCAL Faraday device to perform activate it's High Altitutde Balloon application
@@ -348,7 +347,6 @@ class faraday_commands(object):
         packet = commandmodule.create_command_datagram(self.CMD_READMEMORY, commandmodule.create_read_memory_packet(self.FLASHD_MEMORY_LOC, self.FLASHD_LENGTH))
         return packet
 
-
     ###############################
     ## Predefined RF Commands
     ###############################
@@ -377,7 +375,6 @@ class faraday_commands(object):
         """
         packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_RFTELEMETRYNOW, commandmodule.create_rf_telem_update_packet())
         return packet
-
 
     def CommandRemoteGPIOLED1On(self, remote_callsign, remote_node_id):
         """
@@ -430,7 +427,6 @@ class faraday_commands(object):
         """
         packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
         return packet
-
 
     def CommandRemoteHABActivateCutdownEvent(self, remote_callsign, remote_node_id):
         """
@@ -492,7 +488,6 @@ class faraday_commands(object):
         #Don't care what the payload is as long as it is at least 1 byte long
         packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_APP_HAB_RESETCUTDOWNSTATEMACHINE, commandmodule.create_send_telemetry_device_debug_flash())
         return packet
-
 
     def CommandRemoteGPIO(self, remote_callsign, remote_node_id, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
         """

@@ -18,7 +18,7 @@ from FaradayIO import telemetryparser
 
 #Variables
 local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 0  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 
 #Start the proxy server after configuring the configuration file correctly
@@ -85,6 +85,3 @@ print "Unit Callsign-ID:\n", str(unit_configuration_dict['local_callsign'])[0:un
 print "RAW Unit JSON Data:", unit_configuration_dict
 
 print "************************************"
-
-
-

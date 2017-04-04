@@ -1,14 +1,17 @@
 #Imports - General
 
-import os, sys, time
+import os
+import sys
+import time
 sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import telemetryparser
-from FaradayIO import cc430radioconfig
 from FaradayIO import gpioallocations
+
+DEBUG = False
 
 #Variables
 local_device_callsign = 'nocall' # Should match the connected Faraday unit as assigned in Proxy configuration
@@ -38,7 +41,6 @@ faraday_parser = telemetryparser.TelemetryParse()
 ## ECHO MESSAGE
 
 print "/n** Beginning ECHO command test** /n"
-
 
 
 def TestEchoUart():
@@ -84,7 +86,6 @@ def TestEchoUart():
             'Fails': status_fails}
 
 
-
 def GetDebugFlash():
     # Flush old data from UART service port
     faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.TELEMETRY_PORT)
@@ -120,7 +121,8 @@ def ResetDebugFlash():
     print "*** Pre-Debug RESET ***"
     rx_debug_data_parsed_initial = GetDebugFlash()
 
-    #print repr(rx_debug_data_parsed_initial)
+    if DEBUG:
+        print repr(rx_debug_data_parsed_initial)
 
     # Reset the device debug flash counters and data
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, faraday_cmd.CommandLocalResetDeviceDebugFlash())
@@ -131,22 +133,25 @@ def ResetDebugFlash():
     print "*** Post-Debug RESET ***"
     rx_debug_data_parsed_reset = GetDebugFlash()
 
-    #print repr(rx_debug_data_parsed_reset)
+    if DEBUG:
+        print repr(rx_debug_data_parsed_reset)
 
     debug_test_pass = True
 
     for key in rx_debug_data_parsed_reset:
-        if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass != False:
-            pass
-            #print key, rx_debug_data_parsed_reset[key]
+        if rx_debug_data_parsed_reset[key] == 0 and debug_test_pass:
+            if DEBUG:
+                print key, rx_debug_data_parsed_reset[key]
         else:
-            #print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
+            if DEBUG:
+                print key, rx_debug_data_parsed_reset[key], "-- FAIL --"
             debug_test_pass = False
 
-    if debug_test_pass == True:
+    if debug_test_pass:
         print "DEBUG Flash RESET = PASS"
     else:
         print "DEBUG Flash RESET = FAIL"
+
 
 def TestGPIOLEDs():
     # WARNING: Make sure RED and GREEN LED's are allowed to be commanded in firmware!
@@ -190,6 +195,7 @@ def GetTelem3():
 
     return rx_telemetry_packet_parsed
 
+
 def ReadTelemTemp(telemetry_parsed):
     #Get and print current CC430 ("board") temp
     int_boardtemp = telemetry_parsed['BOARDTEMP']
@@ -203,6 +209,7 @@ def ReadTelemTemp(telemetry_parsed):
         print "Temperature Test: FAIL"
         return False
 
+
 def ReadADCTelem(telemetry_parsed):
     # Get and print current CC430 ("board") temp
     int_adc0 = telemetry_parsed['ADC0']
@@ -213,6 +220,7 @@ def ReadADCTelem(telemetry_parsed):
     int_adc5 = telemetry_parsed['ADC5']
     int_adc8 = telemetry_parsed['ADC8']
     return [int_adc0, int_adc1, int_adc2, int_adc3, int_adc4, int_adc5, int_adc5, int_adc8]
+
 
 def ReadVCCTelem(telemetry_parsed):
     # Get and print current CC430 ("board") temp
@@ -232,15 +240,13 @@ def ReadVCCTelem(telemetry_parsed):
 
     return input_vcc
 
+
 def ReadGPSTelem(telem):
     boolFix = telem['GPSFIX']
     strLat = telem['GPSLATITUDE']
     strLon = telem['GPSLONGITUDE']
     strLatDir = telem['GPSLATITUDEDIR']
     strLonDir = telem['GPSLONGITUDEDIR']
-    strAlt = telem['GPSALTITUDE']
-    strAltUnit = telem['GPSALTITUDEUNITS']
-    floatSpeed = telem['GPSSPEED']
     strHDOP = telem['GPSHDOP']
     if boolFix and float(strHDOP) > 0:
         print "VALID GPS Signal Lock!"
@@ -290,6 +296,7 @@ def ReadGPSTelem(telem):
 # ############
 #
 
+
 def VerifyIdealDiodeBlock(telemetry_parsed):
     # Make sure no VCC is applied!
     vcc = ReadVCCTelem(telemetry_parsed)
@@ -300,10 +307,8 @@ def VerifyIdealDiodeBlock(telemetry_parsed):
         return True
 
 
-
 def ResetCONFIGFlash():
     print "*** Pre-Debug RESET ***"
-
 
     # Reset the device CONFIG flash counters and data
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT,
@@ -312,7 +317,6 @@ def ResetCONFIGFlash():
     # Sleep to allow unit to perform reset and be ready for next command
     time.sleep(3)
     print "RESET"
-
 
 
 def EnableGPIO():
@@ -338,7 +342,3 @@ def DisableGPIO():
 def ActiveMOSFETCutdown():
     command = faraday_cmd.CommandLocalHABActivateCutdownEvent()
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)
-
-
-
-

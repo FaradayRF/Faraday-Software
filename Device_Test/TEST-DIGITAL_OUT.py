@@ -18,4 +18,3 @@ while user_input != 'q':
         devicetest.DisableGPIO()
     else:
         print "Unknown command..."
-

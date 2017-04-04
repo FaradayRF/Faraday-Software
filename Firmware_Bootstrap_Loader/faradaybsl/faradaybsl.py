@@ -1,12 +1,10 @@
 import createtiscripter
 import sys
 import subprocess
-import os
 import faradayftdi
 
 filename = sys.argv[1]
 comport = sys.argv[2]
-
 
 print "FILE:", filename
 print "COMM:", comport
@@ -22,4 +20,3 @@ device_bsl = faradayftdi.FtdiD2xxCbusControlObject()
 device_bsl.EnableBslMode()
 subprocess.call(['faradaybsl/bsl-scripter-windows.exe', 'faradaybsl/FaradayFirmwareUpgradeScript.txt'])
 device_bsl.DisableBslMode()
-

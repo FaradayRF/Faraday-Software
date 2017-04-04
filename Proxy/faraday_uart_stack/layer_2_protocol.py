@@ -24,9 +24,11 @@ import struct
 #    global serial_physical_obj
 #    serial_physical_obj = test_physical_layer_class(port, baud, timeout)
 
+
 class layer_2_object(object):
     def __init__(self, port, baud, timeout):
         self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
+
 
 class layer_2_protocol(threading.Thread):
     def __init__(self, com, baud,timeout_time):
@@ -38,7 +40,6 @@ class layer_2_protocol(threading.Thread):
         #Start
         threading.Thread.__init__(self)
         self.start() #Starts the run() function and thread
-
 
     def abort(self):
         self.enabled = False
@@ -56,7 +57,6 @@ class layer_2_protocol(threading.Thread):
         else:
             return False
 
-
     def send_byte(self, databyte):
         self.serial_tx_queue.put(databyte)
 
@@ -64,7 +64,7 @@ class layer_2_protocol(threading.Thread):
         return self.ser.inWaiting()
 
     def run(self):
-        while(self.enabled == True):
+        while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
             time.sleep(0.001) #Shouldn't need this! BSALMI 6/13/16
             if(self.enabled):
@@ -178,7 +178,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         Main class run function to perform a while(1) loop to retrieve waiting data to transmit and transmit it.
         """
-        while(self.enable_flag==True):
+        while self.enable_flag:
             #Delay to allow threaded CPU utilization relaxing
             time.sleep(0.001)
 
@@ -192,7 +192,6 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
                 for i in range(0, len(packet), 1):
                     self.output_channel.put(packet[i])
                     self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
-
 
 
 ################################################################################
@@ -223,7 +222,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         self.framing_escapebyte = chr(0x7d)
         self.datalink_packet_format = 'c' + str(self.max_payload_size) + 'c' + 'c'
 
-
         #Start
         threading.Thread.__init__(self)
         self.start() #Starts the run() function and thread
@@ -235,14 +233,11 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         self.enable_flag = False
         print "Aborting Layer 2 Transmit Protocol!"
 
-
-
-
     def run(self):
         """
         Main while(1) loop for the class object to check for new data to transmit.
         """
-        while(self.enable_flag==True):
+        while self.enable_flag:
             #Check if new data is avaliable in the Queue
             if(not self.tx_data_queue.empty()):
 
@@ -276,7 +271,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         datalink_pkt =  header + payload + footer
         #Return datalink packet
         return datalink_pkt
-
 
     def Fragment_Data(self, fragmentsize, data): #INVALID?
         """
@@ -346,7 +340,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
             #Final Packet
             self.fragment_data_list[len(self.fragment_data_list)-1] = chr(len(self.fragment_data_list[len(self.fragment_data_list)-1])) + self.fragment_data_list[len(self.fragment_data_list)-1] + chr(8)
 
-
         #Iterate through the fragmented data list and insert escape bytes for framing protocol
         for i in range(0, len(self.fragment_data_list), 1):
             #If escapebyte is located in the payload insert the escape byte prior (Escape must be first or it'll add more than needed)
@@ -381,7 +374,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         packet = packet + stopbyte
         return packet
 
-
     def Encapsulate_Data_CMD(self, startbyte, stopbyte, escapebyte, command): #INVALID?
 
         #Fragmentation Control - Identify start packet, data packets, and last packet
@@ -401,7 +393,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         else:
             return "ERROR - Command Attempt Length"
 
-
         #Iterate through the fragmented data list and insert escape bytes for framing protocol
         for i in range(0, len(self.fragment_data_list), 1):
             #If escapebyte is located in the payload insert the escape byte prior (Escape must be first or it'll add more than needed)
@@ -415,12 +406,6 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
             #Insert stop byte to the end of the payload
             self.fragment_data_list[i] = self.fragment_data_list[i] + stopbyte
             self.tx_packet_queue.put(self.fragment_data_list[i])
-
-
-
-
-
-
 
 
 ################################################################################
@@ -496,9 +481,8 @@ class Receiver_Datalink_Device_Class(threading.Thread):
         else:
             return False
 
-
     def run(self):
-        while(self.enable_flag==True):
+        while self.enable_flag:
             time.sleep(0.001)
             if( not self.receiver_class.rx_packet_queue.empty()):
                 data = self.receiver_class.rx_packet_queue.get()
@@ -556,7 +540,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
         print "Aborting Layer 2 Protocol!"
 
     def run(self):
-        while(self.enable_flag==True):
+        while self.enable_flag:
             time.sleep(0.001)
             if( not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty()):
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
@@ -565,7 +549,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                     rx_byte = rx_byte_raw[i]
                     #PARSE BYTES
                     #Check PACKET STARTED Flag = FALSE (Packet NOT already started)
-                    if(self.logic_startbyte_received == False):
+                    if not self.logic_startbyte_received:
                         #Received byte is start byte - New Packet!
                         if (rx_byte == self.encapsulate_startbyte):
                             self.logic_startbyte_received = True
@@ -574,9 +558,9 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                         else:
                             pass
                     #Check PACKET STARTED Flag = True (Packet already started and being recieved)
-                    elif(self.logic_startbyte_received == True):
+                    elif self.logic_startbyte_received:
                         #Check if current BYTE is being escaped (framing) - FALSE
-                        if((self.logic_escapebyte_received == False)):
+                        if not self.logic_escapebyte_received:
                             #Non-Escaped DATA BYTE received
                             if ((rx_byte != self.encapsulate_escapebyte) and (rx_byte != self.encapsulate_startbyte) and (rx_byte != self.encapsulate_stopbyte)):
                                 self.partial_packet += rx_byte
@@ -595,7 +579,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                             else:
                                 print"ERROR:", self.partial_packet
                         #Check if current BYTE is being escaped (framing) - TRUE
-                        elif((self.logic_escapebyte_received == True)):
+                        elif self.logic_escapebyte_received:
                             #Escaped Packet data received
                             if ((rx_byte == self.encapsulate_escapebyte) or (rx_byte == self.encapsulate_startbyte) or (rx_byte == self.encapsulate_stopbyte)):
                                 self.logic_escapebyte_received = False

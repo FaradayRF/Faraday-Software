@@ -12,8 +12,6 @@
 import layer_2_protocol
 import threading
 import time
-import os
-import random
 import Queue
 
 #test_tx = layer_2_protocol.Faraday_Datalink_Device()
@@ -24,19 +22,6 @@ import Queue
 #device = ''
 #DATALINK_PAYLOAD_LENGTH = 125
 
-
-
-def initialize_services(port, baud, timeout):
-    #global layer_initialized, device
-    layer_2_protocol.init_layer(port, baud,timeout)
-    device = device_1()
-    layer_initialized = True
-
-class Layer2Object(object):
-    def __init__(self, port, baud, timeout):
-        self.protocol_object = layer_2_protocol.layer_2_object(port, baud, timeout)
-        self.service_object = device_1(self.protocol_object)
-        self.layer_initialized = True
 
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):
@@ -78,14 +63,9 @@ class Layer2ServiceObject(threading.Thread):
         self.rx.Abort() #Receiver_Datalink_Device_Class
         self.rx.receiver_class.abort() #Receiver_Datalink_Device_State_Parser_Class
 
-
-
-
     def run(self):
         while(self.enabled):
             time.sleep(0.001)
-
-
 
 ##def uart_datalink_receive_datagram():
 ##    global layer_initialized, device
@@ -108,4 +88,3 @@ class Layer2ServiceObject(threading.Thread):
 ##            print "Payload Too Long!", len(payload)
 ##    else:
 ##            print "Layer not initialized!"
-

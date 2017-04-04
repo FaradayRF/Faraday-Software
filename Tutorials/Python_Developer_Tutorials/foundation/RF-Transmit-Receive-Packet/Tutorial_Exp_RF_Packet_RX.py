@@ -8,11 +8,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Pro
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 
-
-
 #Local device information
 local_device_callsign = 'REPLACEME'  # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = REPLACEME  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 0  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -39,7 +37,7 @@ while(1):
     data = faraday_1.GETWait(local_device_callsign, local_device_node_id, PROXY_MESSAGE_EXPERIMENTAL_PORT, 2)
 
     #Check if data is False (False means that the Get() function timed out), if not then display new data
-    if (data != None) and (not 'error' in data):
+    if (data is not None) and ('error' not in data):
         #print "Received Message RAW", repr(data[0]['data'])
         print "Received Message Decoded:", faraday_1.DecodeRawPacket(data[0]['data'])
 

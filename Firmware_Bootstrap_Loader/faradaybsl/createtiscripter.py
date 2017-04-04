@@ -9,7 +9,6 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import array
-import sys
 
 #filename = sys.argv[1]
 # filename = 'RF_Test_Firmware_1-17-17.txt'
@@ -20,8 +19,6 @@ import sys
 # mem_addr_index = []
 # section_data_index = []
 # file_program_hex = f.read()
-
-
 
 #print "Arguement 0:", argument1
 
@@ -44,7 +41,6 @@ class CreateTiBslScript(object):
     # ParseTiTxtHexFile(file_program_hex)
     # CreateOutputFile()
     # CreateBslScript()
-
 
     def ParseTiTxtHexFile(self, input_file):
         datasections = input_file.split('@')
@@ -90,7 +86,6 @@ class CreateTiBslScript(object):
             textfile.writelines(('\n', script_index_crc))
             textfile.writelines('\n\n')
 
-
     def CreateBslScript(self):
         #global device_com_port
         #com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
@@ -105,11 +100,6 @@ class CreateTiBslScript(object):
         for i in range(0, len(self.crc_script_index)):
             textfile.writelines((str(self.crc_script_index[i]), '\n'))
 
-
-
-
-
 #ParseTiTxtHexFile(file_program_hex)
 #CreateOutputFile()
 #CreateBslScript()
-

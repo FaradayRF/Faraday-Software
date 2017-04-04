@@ -29,5 +29,3 @@ faraday_tx_msg_sm.createmsgpackets(local_device_callsign, local_device_node_id, 
 for i in range(0, len(faraday_tx_msg_sm.list_packets), 1):
     print "TX:", repr(faraday_tx_msg_sm.list_packets[i])
     faraday_tx_msg_object.transmitframe(faraday_tx_msg_sm.list_packets[i])
-
-

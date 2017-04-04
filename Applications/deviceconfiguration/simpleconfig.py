@@ -53,7 +53,7 @@ if r.status_code != 204:
     print r.text
 else:
     # Programming apparently successful. Let unit reboot and then query for flash data
-    
+
     timer = 5 #  Wait five seconds
     print "Programmed Faraday, waiting {0} seconds for reboot".format(str(timer))
     while(timer > 0):
@@ -72,10 +72,10 @@ else:
     # Decode and depickle (serialize) device configuration parsed dictionary data
     b64_unit_json = base64.b64decode(raw_unit_json['data'])
     unit_configuration_dict = cPickle.loads(b64_unit_json)
-    
+
     #Print configuration values
     print "\n************************************"
-    
+
     print "POST CONFIGURATION UPDATE"
     print "\nBASIC"
     print "Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']]
@@ -108,7 +108,3 @@ else:
         #Loop until user presses ctrl+c so they can read response
         time.sleep(1)
         pass
-    
-
-
-

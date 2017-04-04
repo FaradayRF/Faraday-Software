@@ -1,5 +1,3 @@
-#from construct import *
-
 def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
     """
     Calculates the FREQ0, FREQ1, and FREQ2 24 bit word for main carrier frequency of the CC430.
@@ -69,7 +67,6 @@ def freq0_reverse_carrier_calculation( freq0, freq1, freq2, fxosc = 26.0, debug 
     freq0_shifted = freq0<<16
     freq1_shifted = freq1<<8
     freq2_shifted = freq2
-
 
     actual_freq_mhz = (int(hex(freq0_shifted + freq1_shifted + freq2_shifted),16)*vco_step_float)/float(10**6)
     if (debug == 1):
