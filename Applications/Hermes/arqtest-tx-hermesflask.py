@@ -1,10 +1,10 @@
 import ConfigParser
 import Queue
 import base64
-import cPickle
 import os
 import requests
 import arq
+import json
 
 ##################Test IO Routines and Queues ###########################
 
@@ -23,10 +23,10 @@ def tx_receiveroutine():
     if getrxqueuesize(localcallsign, localnodeid) > 0:
         payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
         rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
-        rx_b64_pickle = cPickle.loads(base64.b64decode(rxdata.json()))
-        print "\nFROM:", rx_b64_pickle['source_callsign']
-        print "Message:", rx_b64_pickle['message']
-        return rx_b64_pickle['message']
+        rx_item = json.loads(base64.b64decode(rxdata.json()))
+        print "\nFROM:", rx_item['source_callsign']
+        print "Message:", rx_item['message']
+        return rx_item['message']
 
 
 ###################################
@@ -52,9 +52,9 @@ def getrxqueuesize(callsign, nodeid):
     """
 
     payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
-    queuelen = requests.get('http://127.0.0.1:8005/queue', params=payload)
-    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
-    return queue_b64_pickle['queuesize']
+    queuelen = requests.get('http://127.0.0.1:8005/queuelen', params=payload)
+    queuesize = json.loads(base64.b64decode(queuelen.json()))
+    return queuesize['queuesize']
 
 
 def main():

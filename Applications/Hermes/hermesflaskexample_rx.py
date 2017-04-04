@@ -1,6 +1,6 @@
 import requests
 import base64
-import cPickle
+import json
 import time
 import ConfigParser
 import os
@@ -22,9 +22,10 @@ def getrxqueuesize(callsign, nodeid):
     """
 
     payload = {'localcallsign': callsign, 'localnodeid': int(nodeid)}
-    queuelen = requests.get('http://127.0.0.1:8005/queue', params=payload)
-    queue_b64_pickle = cPickle.loads(base64.b64decode(queuelen.json()))
-    return queue_b64_pickle['queuesize']
+    queuelen = requests.get('http://127.0.0.1:8005/queuelen', params=payload)
+    queuesize = json.loads(base64.b64decode(queuelen.json()))
+
+    return queuesize['queuesize']
 
 
 def main():
@@ -44,9 +45,9 @@ def main():
         while getrxqueuesize(localcallsign, localnodeid) > 0:
             payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
             rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
-            rx_b64_pickle = cPickle.loads(base64.b64decode(rxdata.json()))
-            print "\nFROM:", rx_b64_pickle['source_callsign']
-            print "Message:", rx_b64_pickle['message']
+            rx_dataitem = json.loads(base64.b64decode(rxdata.json()))
+            print "\nFROM:", rx_dataitem['source_callsign']
+            print "Message:", rx_dataitem['message']
 
 
 if __name__ == '__main__':
