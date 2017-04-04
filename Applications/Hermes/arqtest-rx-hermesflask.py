@@ -42,8 +42,6 @@ def rx_receiveroutine():
 ###################################
 
 
-
-
 def getrxqueuesize(callsign, nodeid):
     """
     :param callsign: Callsign of the local device being queried
