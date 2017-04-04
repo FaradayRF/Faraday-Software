@@ -63,7 +63,7 @@ def freq0_reverse_carrier_calculation( freq0, freq1, freq2, fxosc = 26.0, debug 
     #Calculate the smallest bit resolution in VC0 based on crystal
     vco_step_float = float(fxosc*10**6)/2**16
 
-        #print steps for rebuild
+    #print steps for rebuild
     freq0_shifted = freq0<<16
     freq1_shifted = freq1<<8
     freq2_shifted = freq2
