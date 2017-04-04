@@ -1,7 +1,6 @@
-import Queue
-import threading
-
 import hermesmessage
+import threading
+import Queue
 
 
 class TransmitObject(object):

@@ -1,27 +1,35 @@
-import ConfigParser
-import Queue
-import base64
-import cPickle
-import os
-
-import requests
-
 import arq
-
-##################Test IO Routines and Queues ###########################
+import Queue
+import requests
+import os
+import ConfigParser
+import cPickle
+import base64
 
 # Transmitter
-tx_rxtestproxyqueue = Queue.Queue()
+# Receiver
+rx_testproxyqueue = Queue.Queue()
+
+config = ConfigParser.RawConfigParser()
+filename = os.path.abspath("hermes.ini")
+config.read(filename)
+
+localcallsign = config.get('UNIT1', 'CALLSIGN')
+localnodeid = int(config.get('UNIT1', 'NODEID'))
+destinationcallsign = config.get('UNIT0', 'CALLSIGN')
+destinationnodeid = int(config.get('UNIT0', 'NODEID'))
 
 
-def tx_transmitroutine(data):
-    print "TX: Transmitting: ", data
+def rx_transmitroutine(data):
+    print "RX: Transmitting: ", data, destinationcallsign, destinationnodeid
+    # Place data into TX receive
+    # tx_rxtestproxyqueue.put(data)
     payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid,
                'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid, 'data': data}
     requests.post('http://127.0.0.1:8005/', params=payload)
 
 
-def tx_receiveroutine():
+def rx_receiveroutine():
     if getrxqueuesize(localcallsign, localnodeid) > 0:
         payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
         rxdata = requests.get('http://127.0.0.1:8005/', params=payload)
@@ -32,18 +40,6 @@ def tx_receiveroutine():
 
 
 ###################################
-
-config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("hermes.ini")
-config.read(filename)
-
-localcallsign = config.get('UNIT0', 'CALLSIGN')
-localnodeid = int(config.get('UNIT0', 'NODEID'))
-destinationcallsign = config.get('UNIT1', 'CALLSIGN')
-destinationnodeid = int(config.get('UNIT1', 'NODEID'))
-
-# Create ARQ Transmit object
-testtxsm = arq.TransmitArqStateMachine(tx_transmitroutine, tx_receiveroutine)
 
 
 def getrxqueuesize(callsign, nodeid):
@@ -64,14 +60,12 @@ def main():
     Main function of the transmit example of Hermes messaging application using Flask. This function loops continuously
     getting user input text to transmit to the Flask server for wireless transmission to the intended remote device.
     """
-    while 1:
-        raw_input("Enter Message: ")
 
-        # Transmit data list
-        tx_listdata = ['this ', 'is', ' a', ' test', '.']
+    # Create ARQ Receive object
+    testrxsm = arq.ReceiveArqStateMachine(rx_transmitroutine, rx_receiveroutine)
 
-        # Insert new data for transmit
-        testtxsm.newdataqueue(tx_listdata)
+    # Set state machine to START
+    testrxsm.updatestate(arq.STATE_START)
 
 
 if __name__ == '__main__':

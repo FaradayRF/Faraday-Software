@@ -1,13 +1,12 @@
+import os
+import hermesobject as hermesobject
 import ConfigParser
+import json
 import base64
 import cPickle
-import json
-import os
 
 from flask import Flask
 from flask import request
-
-import hermesobject as hermesobject
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
