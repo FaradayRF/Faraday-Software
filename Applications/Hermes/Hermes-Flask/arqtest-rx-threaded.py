@@ -1,6 +1,7 @@
-import arq
-import time
 import Queue
+import time
+
+import arq
 
 testrxproxyqueue = Queue.Queue()
 

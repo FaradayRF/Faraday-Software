@@ -1,5 +1,6 @@
 import Queue
 import time
+
 import arq
 
 # Transmit data list

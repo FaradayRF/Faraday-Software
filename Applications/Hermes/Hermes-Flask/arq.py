@@ -1,5 +1,6 @@
-import time
 import Queue
+import time
+
 import timer
 
 # Definitions

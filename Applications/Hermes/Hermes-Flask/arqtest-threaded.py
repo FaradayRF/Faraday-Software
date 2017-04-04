@@ -1,4 +1,5 @@
 import time
+
 import arq
 
 listdata = ['this ', 'is', ' a', ' test', '.']
