@@ -2,8 +2,10 @@ import arq
 
 listdata = ['this ', 'is', ' a', ' test', '.']
 
-def transmitroutine( data):
+
+def transmitroutine(data):
     print "Transmitting: ", data
+
 
 # Create object
 testtxsm = arq.TransmitArqStateMachine(listdata, transmitroutine)
@@ -32,7 +34,7 @@ print '4'
 # Receive ACK
 testtxsm.ackreceived()
 print '5'
-testtxsm.runstate() # ACK RX'd now moving to next data
+testtxsm.runstate()  # ACK RX'd now moving to next data
 
 print '6'
 
