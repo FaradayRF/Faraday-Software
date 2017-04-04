@@ -111,7 +111,7 @@ def message():
         received_item_64 = base64.b64encode(received_data_pickle)
 
         return json.dumps(received_item_64, indent=1), 200, \
-            {'Content-Type': 'application/json'}
+               {'Content-Type': 'application/json'}
 
 
 @app.route('/queue', methods=['GET'])
