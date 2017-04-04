@@ -1,20 +1,15 @@
 import arq
-import threading
 import time
-import timer
 import Queue
-
-
-
-
 
 testrxproxyqueue = Queue.Queue()
 
-
 listdata = ['this ', 'is', ' a', ' test', '.']
 
-def transmitroutine( data):
+
+def transmitroutine(data):
     print "Transmitting: ", data
+
 
 def receiveroutine():
     if testrxproxyqueue.empty():
@@ -22,9 +17,9 @@ def receiveroutine():
     else:
         return testrxproxyqueue.get_nowait()
 
-# Create object
-testrxsm = arq.ReceiveArqStateMachine(listdata, transmitroutine, receiveroutine)
 
+# Create object
+testrxsm = arq.ReceiveArqStateMachine(transmitroutine, receiveroutine)
 
 # Set state machine to START
 print "Updating to START State"
@@ -40,6 +35,3 @@ time.sleep(3)
 testrxproxyqueue.put_nowait("test")
 time.sleep(1)
 testrxproxyqueue.put_nowait(".")
-
-
-
