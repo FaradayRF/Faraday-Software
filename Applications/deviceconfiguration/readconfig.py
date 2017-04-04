@@ -13,6 +13,7 @@ import base64
 import cPickle
 import time
 import ConfigParser
+import json
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                              "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
@@ -58,7 +59,7 @@ raw_unit_json = r.json()
 
 # Decode and depickle (serialize) device configuration parsed dictionary data
 b64_unit_json = base64.b64decode(raw_unit_json['data'])
-unit_configuration_dict = cPickle.loads(b64_unit_json)
+unit_configuration_dict = json.loads(b64_unit_json)
 
 # Print configuration values
 print "\n************************************"
