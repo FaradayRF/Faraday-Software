@@ -5,7 +5,6 @@ import sys
 import json
 import ConfigParser
 import base64
-import cPickle
 
 from flask import Flask
 from flask import request
@@ -171,7 +170,7 @@ def unitconfig():
                 parsed_config_dict = device_config_object.parse_config_packet(data)
 
                 # Encoded dictionary data for save network transit
-                pickled_parsed_config_dict = cPickle.dumps(parsed_config_dict)
+                pickled_parsed_config_dict = json.dumps(parsed_config_dict)
                 pickled_parsed_config_dict_b64 = base64.b64encode(pickled_parsed_config_dict)
 
             except ValueError as e:
