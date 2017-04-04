@@ -19,6 +19,9 @@ Applications/APRS/aprs.ini
 Applications/deviceconfiguration/deviceconfiguration.ini
 Applications/deviceconfiguration/faraday_config.ini
 
+# Hermes Application
+Applications/Hermes/hermes.ini
+
 #IDE (Pycharm)
 .idea*
 .idea/*
