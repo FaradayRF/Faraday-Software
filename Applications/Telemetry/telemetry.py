@@ -207,7 +207,7 @@ def dbTelemetry():
         return '', 204  # HTTP 204 response cannot have message data
 
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.route('/raw', methods=['GET'])
@@ -358,7 +358,7 @@ def rawTelemetry():
 
     # Completed our query for "/raw", return json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.route('/stations', methods=['GET'])
@@ -414,7 +414,7 @@ def stations():
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.errorhandler(404)
