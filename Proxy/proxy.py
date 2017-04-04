@@ -256,8 +256,8 @@ def proxy():
                 getDicts[station][port]
             except KeyError as e:
                 message = "KeyError: " +\
-                     "Callsign '{0}' or Port '{1}' does not exist"\
-                     .format(station, port)
+                    "Callsign '{0}' or Port '{1}' does not exist"\
+                    .format(station, port)
                 logger.error(message)
                 return json.dumps({"error": message}), 400
 
