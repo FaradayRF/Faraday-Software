@@ -5,7 +5,6 @@ import sys
 import json
 import ConfigParser
 import base64
-import cPickle
 
 from flask import Flask
 from flask import request

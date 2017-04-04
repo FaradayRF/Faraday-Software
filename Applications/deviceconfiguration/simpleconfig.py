@@ -6,7 +6,6 @@ import os
 import sys
 import requests
 import base64
-import cPickle
 import time
 import ConfigParser
 import json
