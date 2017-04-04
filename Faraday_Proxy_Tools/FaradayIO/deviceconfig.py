@@ -174,7 +174,6 @@ class DeviceConfigClass:
         :return: Nothing
         """
 
-
         # Check radio for allowable amateur frequency range
         if float(boot_frequency_mhz) > self.MIN_FREQUENCY_MHZ and float(boot_frequency_mhz) < self.MAX_FREQUENCY_MHZ:
             freq_list = cc430radioconfig.freq0_carrier_calculation(
@@ -185,8 +184,6 @@ class DeviceConfigClass:
         else:
             print "ERROR: Frequency out of range!"
             return False
-
-
 
     def update_gps(self, gps_boot_bitmask, latitude_str, latitude_dir_str, longitude_str, longitude_dir_str,
                    altitude_str, altitude_units_str):
@@ -270,7 +267,6 @@ class DeviceConfigClass:
         # Format altitude with prepended bytes if needed
         altitude_str = commandmodule.create_fixed_length_packet_leading_padding(str(float(altitude_str)),
                                                                                 self.MAX_ALTITUDE_LEN, 0x30)
-
 
         if lat_check and lat_dir_check and lon_check and lon_dir_check and alt_check and alt_units_check:
             self.gps_latitude = latitude_str
@@ -370,7 +366,6 @@ class DeviceConfigClass:
         pkt_struct_gps = struct.Struct('<9s1s10s1s8s1sB21x')
         gps = pkt_struct_gps.pack(self.gps_latitude, self.gps_latitude_dir, self.gps_longitude, self.gps_longitude_dir,
                                   self.gps_altitude, self.gps_altitude_units, self.gps_boot_bitmask)
-
 
         pkt_struct_telemetry = struct.Struct('<BHH10x')
         telem = pkt_struct_telemetry.pack(self.telemetry_boot_bitmask, self.telemetry_uart_beacon_interval,

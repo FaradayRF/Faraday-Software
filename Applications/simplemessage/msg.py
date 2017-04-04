@@ -1,5 +1,4 @@
 #imports
-import time
 import struct
 import textwrap
 import sys
@@ -9,8 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to 
 
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-
 
 
 class Msg_State_Machine_Tx(object):
@@ -31,7 +28,7 @@ class Msg_State_Machine_Tx(object):
         self.MSG_DATA = 254
         self.MSG_END = 253
         #Variables
-        self.list_packets = [];
+        self.list_packets = []
         #Frame Definitions
         self.pkt_datagram_frame = struct.Struct('1B 19s')
         self.pkt_start = struct.Struct('9s 3B')
@@ -65,8 +62,6 @@ class Msg_State_Machine_Tx(object):
             self.list_packets.append(list_data_packets[i])
         self.list_packets.append(msg_end)
 
-
-
     def CreateStartFrame(self, src_call, src_id, msg_len):
         #Calculate the number of fragmented packets
         frag_cnt = self.FragmentCount(msg_len)
@@ -84,6 +79,7 @@ class Msg_State_Machine_Tx(object):
         frag_cnt = self.FragmentCount(msg_len)
         packet = self.pkt_end.pack(frag_cnt)
         return packet
+
 
 class message_app(object):
     def __init__(self, local_callsign, local_callsign_id, destination_callsign, destination_id):

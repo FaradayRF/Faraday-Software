@@ -9,4 +9,3 @@ devicetest.local_device_node_id = proxy_settings.local_device_node_id
 user_input = ''
 
 devicetest.ResetCONFIGFlash()
-

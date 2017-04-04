@@ -17,6 +17,9 @@ import Queue
 import struct
 
 
+DEBUG = False
+
+
 #####################################################
 ##
 ## uart_interface_class()
@@ -129,7 +132,8 @@ class faraday_uart_object(threading.Thread):
 
     def process_received_datagram(self, datagram):
         parsed_datagram_dict = layer_4_protocol.parse_packet(datagram)
-        #print "RX'd:", parsed_datagram_dict
+        if DEBUG:
+            print "RX'd:", parsed_datagram_dict
 
     def RxPortHasItem(self,service_number):
         try:
@@ -173,9 +177,10 @@ class faraday_uart_object(threading.Thread):
             #Nothing in queue
             print "Nothing in queue"
             return False
+
     def uart_layer_receive_link(self):
         rx_item = self.layer_2_object.GET()
-        if(rx_item != False):
+        if rx_item:
             try:
                 unpacked_transport = self.transport_packet_struct.unpack(rx_item)
                 rx_service_number = int(unpacked_transport[0])
@@ -190,7 +195,6 @@ class faraday_uart_object(threading.Thread):
         else:
             pass
 
-
     def Abort(self):
         self.layer_2_object.Abort()#Abort lower layers
         self.enabled = False
@@ -204,17 +208,14 @@ class faraday_uart_object(threading.Thread):
                 tx_datagram = self.transmit_datagram_queue_get()
                 self.layer_2_object.POST(tx_datagram)
             #check for receive items
-            if(self.receive_datagram_queue_hasitem() != False):
+            if self.receive_datagram_queue_hasitem():
                 rx_datagram = self.receive_datagram_queue_get()
                 try:
                     parsed_l4_packet = layer_4_protocol.parse_packet(rx_datagram)
                     self.receive_service_queue_put(parsed_l4_packet[2], parsed_l4_packet[0])
 
                 except:
-                    print "FAILED PARSING", a
+                    print "FAILED PARSING", rx_datagram
                     pass
             #Check uart datalink receive for new datagrams to parse
             self.uart_layer_receive_link()
-
-
-

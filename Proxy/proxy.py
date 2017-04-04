@@ -104,6 +104,7 @@ def uart_worker(modem, getDicts, units):
             # Slow down while loop to something reasonable
             time.sleep(0.001)
 
+
 # Initialize Flask microframework
 app = Flask(__name__)
 
@@ -262,7 +263,7 @@ def proxy():
 
             if limit is None:
                 # Optional
-                limit = len(queDict[port])
+                limit = len(getDicts[station][port])
             else:
                 limit = int(limit)
                 # Check for less than or equal to zero case
@@ -286,7 +287,6 @@ def proxy():
         # If data is in port queu, turn it into JSON and return
         try:
             if (len(getDicts[callsign + "-" + str(nodeid)][port]) > 0):
-                queryTime = time.asctime(time.localtime(time.time()))
                 data = []
                 while getDicts[callsign + "-" + str(nodeid)][port]:
                     packet = \
@@ -362,9 +362,6 @@ def main():
     # Initialize local variables
     threads = []
 
-    # Obtain number of Faraday units connected to Proxy
-    numUnits = int(proxyConfig.get('PROXY', 'units'))
-
     while(1):
         # Initialize a Faraday Radio device
         try:
@@ -399,6 +396,7 @@ def main():
     proxyPort = proxyConfig.getint("FLASK", "port")
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
+
 
 if __name__ == '__main__':
     main()

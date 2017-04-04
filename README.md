@@ -2,6 +2,8 @@
 
 by [FaradayRF](https://www.faradayrf.com)
 
+[![Build status](https://travis-ci.org/FaradayRF/Faraday-Software.svg?branch=master)](https://travis-ci.org/FaradayRF/Faraday-Software?branch=master)
+
 Faraday is a 33cm (902-928MHz) amateur band digital radio. It is more than just another Industrial, Scientific, and Medical band transceiver (ISM). Faraday takes advantage of the ISM hardware in order to let us focus on the real tasks we want to accomplish, pushing ham radio forward. The FaradayRF [Master Plan](https://faradayrf.com/faradayrf-master-plan/) details these tasks. Providing a well documented and educational digital wireless ham radio platform enabling an infrastructure to be built from is among the first of our goals. This repository is our software to enable this goal.
 
 Our mission is simple

@@ -39,4 +39,3 @@ while 1:
                 print "Received (Message):", received_item['message']
             except:
                 print "No messages received."
-

@@ -8,8 +8,8 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import cc430radioconfig
-import struct
 import gpioallocations
+import struct
 import Checksum as checksum
 
 COMMAND_DATAGRAM_LEN = 123
@@ -29,6 +29,7 @@ TELEMETRY_BITMASK_RF_BIT = 0b00000010
 UPDATE_TELEMETRY_INTERVAL_UART_COMMAND = 0
 UPDATE_TELEMETRY_INTERVAL_RF_COMMAND = 1
 RF_CMD_NUMBER = 9
+
 
 def create_command_datagram(command, payload):
     """
@@ -67,6 +68,7 @@ def create_command_datagram(command, payload):
         return False
         print "ERROR - Create Command: Payload Too Long!", len(payload)
 
+
 def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
     """
     This function creates a command packet datagram for commanding REMOTE (RF) Faraday devices. This datagram encapsulates the actual command packets to the passed to the remote device as a payload.
@@ -85,7 +87,6 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
     """
     #Cheack if callsign is too long
     if(len(dest_callsign)<DEST_CALLSIGN_MAX_LEN):
-        payload_len = len(payload)
         #Define packet structures
         pkt_cmd_datagram_struct = struct.Struct('2B25s') #Command packect to be run on remote unit as local command
         pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H') #Command packect to be run on remote unit as local command Error Detection
@@ -107,6 +108,7 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
         return packet
     else:
         print "Error: Callsign too long!"
+
 
 def create_fixed_length_packet(data, fixed_legth):
         """
@@ -155,6 +157,7 @@ def create_fixed_length_packet_padding(data, fixed_legth, padding_byte):
     padded_data = data + pad
     return padded_data
 
+
 def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
     """
     A simple function that accepts a string of databytes and prepends padding bytes up to a fixed length. This version
@@ -180,10 +183,6 @@ def create_fixed_length_packet_leading_padding(data, fixed_legth, padding_byte):
     return padded_data
 
 
-
-
-
-
 ######################################################
 ## Misc. Faraday Functions
 ######################################################
@@ -205,6 +204,7 @@ def create_freq_list(freq):
     frequency_list = cc430radioconfig.freq0_carrier_calculation(26,freq,0)
     return frequency_list
 
+
 def calc_radio_freq(freq0, freq1, freq2):
     """
     This function is a reverse frequency calcuation routine that accepts the CC430 RF frequency register bytes and computes the effective frequency.
@@ -221,6 +221,7 @@ def calc_radio_freq(freq0, freq1, freq2):
     """
     frequency = cc430radioconfig.freq0_reverse_carrier_calculation(26, freq0, freq1, freq2, False)
     return frequency
+
 
 ######################################################
 ## GPIO Command
@@ -246,6 +247,7 @@ def create_gpio_cmd_bitmask(bit_number):
     #This function is a sub-routine to simply create a single byte and bit bitmask.
     #A full bitmask can be made by OR'ing multiple bits to a single byte
     return (1<<bit_number)
+
 
 def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitmask, port3_off_bitmask, port4_off_bitmask, port5_off_bitmask):
     """
@@ -283,6 +285,7 @@ def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitm
         gpio_cmd_pkt = gpio_cmd_pkt_struct.pack(port3_on_bitmask, port4_on_bitmask, port5_on_bitmask, port3_off_bitmask, port4_off_bitmask, port5_off_bitmask)
         return gpio_cmd_pkt #create_command_packet(GPIO_COMMAND_NUMBER, gpio_command_packet)
 
+
 def packet_gpio_gps_standby_enable():
     """
     A predefined funtion that returns the GPIO bitmask to ENABLE the GPS standby GPIO pin.
@@ -291,7 +294,8 @@ def packet_gpio_gps_standby_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 0)
+    return create_gpio_command_packet(3, gpioallocations.GPS_STANDBY, 0)
+
 
 def packet_gpio_gps_standby_disable():
     """
@@ -301,7 +305,8 @@ def packet_gpio_gps_standby_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_STANDBY, 1)
+    return create_gpio_command_packet(3, gpioallocations.GPS_STANDBY, 1)
+
 
 def packet_gpio_gps_reset_enable():
     """
@@ -311,7 +316,8 @@ def packet_gpio_gps_reset_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 0)
+    return create_gpio_command_packet(3, gpioallocations.GPS_RESET, 0)
+
 
 def packet_gpio_gps_reset_disable():
     """
@@ -321,7 +327,8 @@ def packet_gpio_gps_reset_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.GPS_RESET, 1)
+    return create_gpio_command_packet(3, gpioallocations.GPS_RESET, 1)
+
 
 def packet_gpio_mosfet_enable():
     """
@@ -331,7 +338,8 @@ def packet_gpio_mosfet_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 1)
+    return create_gpio_command_packet(5, gpioallocations.MOSFET_CNTL, 1)
+
 
 def packet_gpio_mosfet_disable():
     """
@@ -341,7 +349,8 @@ def packet_gpio_mosfet_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(5, gpio_allocation.MOSFET_CNTL, 0)
+    return create_gpio_command_packet(5, gpioallocations.MOSFET_CNTL, 0)
+
 
 def packet_gpio_led_1_enable():
     """
@@ -351,7 +360,8 @@ def packet_gpio_led_1_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_1, 1)
+    return create_gpio_command_packet(3, gpioallocations.LED_1, 1)
+
 
 def packet_gpio_led_1_disable():
     """
@@ -361,7 +371,8 @@ def packet_gpio_led_1_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_1, 0)
+    return create_gpio_command_packet(3, gpioallocations.LED_1, 0)
+
 
 def packet_gpio_led_2_enable():
     """
@@ -371,7 +382,8 @@ def packet_gpio_led_2_enable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_2, 1)
+    return create_gpio_command_packet(3, gpioallocations.LED_2, 1)
+
 
 def packet_gpio_led_2_disable():
     """
@@ -381,12 +393,12 @@ def packet_gpio_led_2_disable():
 
     .. todo:: This function needs updating to the new create_gpio_command_packet()
     """
-    return create_gpio_command_packet(3, gpio_allocation.LED_2, 0)
+    return create_gpio_command_packet(3, gpioallocations.LED_2, 0)
+
 
 ##############
 ## Command = READ MEMORY
 ##############
-
 def create_read_memory_packet(dec_address, length):
     """
     This function returns the command packet that commands the Faraday device to return the memory contents of the specified memory location (CC430) and of specific length
@@ -477,10 +489,10 @@ def create_local_telem_update_packet():
     packet = packet_struct.pack(255)
     return packet
 
+
 ##############
 ## Command = Send RF Data Now
 ##############
-
 def create_rf_telem_update_packet():
     """
     A predefined command packet generator that provides a payload for the RF telemetry update command.
@@ -493,10 +505,10 @@ def create_rf_telem_update_packet():
     packet = packet_struct.pack(255)
     return packet
 
+
 ##############
 ## Command = Update RF frequency
 ##############
-
 def create_update_rf_frequency_packet(frequency_mhz):
     """
     This function generates the command packet that updates the Faraday CC430 radio frequency.
@@ -516,8 +528,6 @@ def create_update_rf_frequency_packet(frequency_mhz):
 ## Command = Change CC430 PATable Settings
 ## ucharPATable_Setting = Byte that is places into the PA Table
 ##############
-
-
 def create_update_rf_patable_packet(ucharPATable_Setting):
     """
     This function generates the command packet that updates the Faraday CC430 RF power setting.
@@ -532,6 +542,7 @@ def create_update_rf_patable_packet(ucharPATable_Setting):
     packet_struct = struct.Struct('1B')
     packet = packet_struct.pack(ucharPATable_Setting)
     return packet
+
 
 ##############
 ## Command = RESET device debug Flash
@@ -561,6 +572,7 @@ def create_send_telemetry_device_debug_flash():
     packet_struct = struct.Struct('1B')
     packet = packet_struct.pack(0)
     return packet
+
 
 def create_empty_command_packet():
     """
@@ -600,4 +612,3 @@ def CreatePacketMsgExperimental(msg_cmd, dest_callsign, dest_device_id, data_len
     packet_struct = struct.Struct('1B9s2B42s')
     packet = packet_struct.pack(msg_cmd, str(dest_callsign).upper(), dest_device_id, data_len, data)
     return packet
-

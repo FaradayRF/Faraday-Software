@@ -1,4 +1,5 @@
-import ctypes, ctypes.wintypes
+import ctypes
+import ctypes.wintypes
 import time
 
 
@@ -19,9 +20,6 @@ class FtdiD2xxCbusControlObject(object):
         self.ftd2xxDll.FT_SetBitMode(self.handle, self.BITMASK_IO_OUTPUTS_RESET | self.BITMASK_RST, 0x20)
         ##Wait x
         time.sleep(10)
-
-
-
 
     def BslModeToggle(self):
         #Toggle CBUS to enter BSL mode
@@ -125,14 +123,9 @@ class FtdiD2xxCbusControlObject(object):
         self.Disconnect()
         return True
 
-	def SetResetHigh(self):
-		##RESET HIGH TEST LOW
-		self.ftd2xxDll.FT_SetBitMode(self.handle, self.BITMASK_IO_OUTPUTS | self.BITMASK_RST, 0x20)
-
-
-
-
-
+        def SetResetHigh(self):
+                ##RESET HIGH TEST LOW
+                self.ftd2xxDll.FT_SetBitMode(self.handle, self.BITMASK_IO_OUTPUTS | self.BITMASK_RST, 0x20)
 
 #Action
 #BslMode()
@@ -144,7 +137,3 @@ class FtdiD2xxCbusControlObject(object):
 #bytesWritten = ctypes.wintypes.DWORD()
 #assert self.ftd2xxDll.FT_Write(self.handle, writeBuffer, len(writeBuffer)-1, ctypes.byref(bytesWritten)) == 0
 #print bytesWritten.value
-
-
-
-
