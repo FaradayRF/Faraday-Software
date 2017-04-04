@@ -1,5 +1,4 @@
 import threading
-import time
 
 DEFAULT_INTERVAL = 0.01
 
