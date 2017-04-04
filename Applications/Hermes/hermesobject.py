@@ -6,6 +6,7 @@ import time
 HERMES_UART_PORT = 3
 HERMES_GETWAIT_TIMEOUT_SEC = 2
 
+
 class TransmitObject(object):
     """
     This is the receiver object that provided receive function interface and buffering.
@@ -110,4 +111,3 @@ class MessageObject(object):
         self.transmit = TransmitObject(local_device_callsign, local_device_node_id)
         self.receive = ReceiveObject(local_device_callsign, local_device_node_id)
         self.receive.start()
-

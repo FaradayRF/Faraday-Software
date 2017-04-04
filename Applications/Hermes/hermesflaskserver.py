@@ -40,6 +40,7 @@ def configparse():
 # Initialize Flask micro-framework
 app = Flask(__name__)
 
+
 def createnodename(callsign, nodeid):
     """
     Returns a node name of "callsign-nodeid"
@@ -172,4 +173,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
