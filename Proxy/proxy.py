@@ -338,14 +338,13 @@ def callsign2COM():
         com = proxyConfig.get(item, "com")
         baudrate = proxyConfig.getint(item, "baudrate")
         timeout = proxyConfig.getint(item, "timeout")
-        local[str(item)] =\
-            {
+        local[str(item)] = {
             "callsign": callsign,
             "nodeid": nodeid,
             "com": com,
             "baudrate": baudrate,
             "timeout": timeout
-            }
+        }
 
     local = json.dumps(local)
     return json.loads(local)
