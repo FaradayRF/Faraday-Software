@@ -229,8 +229,9 @@ class DeviceConfigClass:
         else:
             #Correct latitude formatting
             latitude_str_format = latitude_str.split('.')
-            latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(str(latitude_str_format[0]),
-                                                                     self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
+            latitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(
+                str(latitude_str_format[0]),
+                self.MAX_GPS_LATITUDE_LEADING_LEN, 0x30)
             latitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(
                 str(latitude_str_format[1]),
                 self.MAX_GPS_LATITUDE_TRAILING_LEN,
@@ -254,9 +255,9 @@ class DeviceConfigClass:
             longitude_str_format[0] = commandmodule.create_fixed_length_packet_leading_padding(
                 str(longitude_str_format[0]),
                 self.MAX_GPS_LONGITUDE_LEADING_LEN, 0x30)
-            longitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(str(longitude_str_format[1]),
-                                                                                      self.MAX_GPS_LONGITUDE_TRAILING_LEN,
-                                                                                      0x30)
+            longitude_str_format[1] = commandmodule.create_fixed_length_packet_padding(
+                str(longitude_str_format[1]),
+                self.MAX_GPS_LONGITUDE_TRAILING_LEN, 0x30)
             longitude_str = longitude_str_format[0] + '.' + longitude_str_format[1]
 
         # Check Altitude formatting and bounds
