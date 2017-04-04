@@ -373,12 +373,11 @@ class MessageAppRx(object):
         of the source callsign/ID and data.
 
         """
-        data = None
         data = self.faraday_Rx.GETWait(str(local_callsign).upper(),
                                        int(local_callsign_id),
                                        uart_service_port_application_number,
                                        getwaittimeout)
-        if (data is not None) and ('error' not in data):
+        if (data is not False) and ('error' not in data):
             for item in data:
                 datagram = self.faraday_Rx.DecodeRawPacket(item['data'])
                 # All frames are 42 bytes long and need to be extracted from the much larger UART frame from Faraday
