@@ -80,7 +80,7 @@ class proxyio(object):
         else:
             #Convert supplied data into BASE64 encoding for safe network transmission
             b64_data = base64.b64encode(data) #Converts to Base64
-            payload = {'data' : [b64_data]}
+            payload = {'data': [b64_data]}
 
             #POST data to UART service port
             status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
