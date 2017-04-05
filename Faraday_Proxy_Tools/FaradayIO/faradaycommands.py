@@ -131,7 +131,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0))
         return packet
 
     def CommandLocalGPIOLED1Off(self):
@@ -141,7 +141,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
+        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0))
         return packet
 
     def CommandLocalGPIOLED2On(self):
@@ -151,7 +151,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0))
         return packet
 
     def CommandLocalGPIOLED2Off(self):
@@ -161,7 +161,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
+        packet = commandmodule.create_command_datagram(self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0))
         return packet
 
     def CommandLocalUpdatePATable(self, ucharPATable_Byte):
@@ -386,7 +386,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_1), 0, 0, 0, 0, 0))
         return packet
 
     def CommandRemoteGPIOLED1Off(self, remote_callsign, remote_node_id):
@@ -399,7 +399,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_1), 0, 0))
         return packet
 
     def CommandRemoteGPIOLED2On(self, remote_callsign, remote_node_id):
@@ -412,7 +412,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(int(gpioallocations.LED_2), 0, 0, 0, 0, 0))
         return packet
 
     def CommandRemoteGPIOLED2Off(self, remote_callsign, remote_node_id):
@@ -425,7 +425,7 @@ class faraday_commands(object):
         :Return: Returns the complete generated packet as a string of bytes.
 
         """
-        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0 ))
+        packet = commandmodule.create_rf_command_datagram(remote_callsign, remote_node_id, self.CMD_GPIO, commandmodule.create_gpio_command_packet(0, 0, 0, int(gpioallocations.LED_2), 0, 0))
         return packet
 
     def CommandRemoteHABActivateCutdownEvent(self, remote_callsign, remote_node_id):
