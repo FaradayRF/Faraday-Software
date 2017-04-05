@@ -96,7 +96,7 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
         #Create local command for remote unit
         pkt_cmd_datagram = pkt_cmd_datagram_struct.pack(command, len(payload), payload)
         pkt_cmd_datagram_error_detection = pkt_cmd_datagram_error_detection_struct.pack(checksum.compute_checksum_16(pkt_cmd_datagram, len(pkt_cmd_datagram)))
-        pkt_cmd_datagram_final  = pkt_cmd_datagram + pkt_cmd_datagram_error_detection
+        pkt_cmd_datagram_final = pkt_cmd_datagram + pkt_cmd_datagram_error_detection
         print repr(pkt_cmd_datagram_final)
 
         #Create RF Command for local device without Error Detection appended. NOTE Callsign must be in uppercase!
