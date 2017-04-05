@@ -8,7 +8,7 @@ class TelemetryParse(object):
     structure. Please see the documentation for further detail an definitions.
     """
     def __init__(self):
-        self.datagram_struct = struct.Struct('>3B 118s 1H') #Struct format definition for the generice telemetry packet format datagram
+        self.datagram_struct = struct.Struct('>3B 118s 1H')  #Struct format definition for the generice telemetry packet format datagram
         self.flash_config_info_d_struct = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
         self.flash_config_info_d_struct_len = 116
         self.packet_1_struct = struct.Struct('4B')

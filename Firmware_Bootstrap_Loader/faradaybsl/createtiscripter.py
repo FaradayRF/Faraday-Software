@@ -44,7 +44,7 @@ class CreateTiBslScript(object):
 
     def ParseTiTxtHexFile(self, input_file):
         datasections = input_file.split('@')
-        datasections.pop(0) #remove empty first index
+        datasections.pop(0)  #remove empty first index
 
         #remove memory addresses and separate data in each section
         for i in range(0, len(datasections)):
@@ -52,7 +52,7 @@ class CreateTiBslScript(object):
             a = datasections[i].replace('\n', '')
             a = a.replace(' ', '')
             mem_addr = str(a[0:4]).decode('hex')
-            section_data = str(a[4:]).replace('q', '')#remove end of file
+            section_data = str(a[4:]).replace('q', '')  #remove end of file
             #Ouput
             self.mem_addr_index.append(mem_addr)
             self.section_data_index.append(section_data.decode('hex'))
@@ -94,7 +94,7 @@ class CreateTiBslScript(object):
         textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))
-        textfile.writelines(("RX_PASSWORD pass32_wrong.txt", '\n')) #//gives the wrong password to mass erase the memory
+        textfile.writelines(("RX_PASSWORD pass32_wrong.txt", '\n'))  #gives the wrong password to mass erase the memory
         textfile.writelines(("RX_PASSWORD pass32_default.txt", '\n'))
         print "Script file:", self.filename
         textfile.writelines(("RX_DATA_BLOCK ", "../", self.filename, '\n'))

@@ -9,7 +9,7 @@ import base64
 import cPickle
 import time
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -58,14 +58,14 @@ print "************************************"
 ###Update configuration using INI file as defined by Faraday device object and functions
 #########################################################################################
 
-time.sleep(3) # Sleep to allow unit to process, polling and slow
+time.sleep(3)  # Sleep to allow unit to process, polling and slow
 
 try:
     r = requests.post('http://127.0.0.1:8002', params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 except requests.exceptions.RequestException as e:  # This is the correct syntax
     print e
 
-time.sleep(6) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
+time.sleep(6)  # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
 
 try:
     r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})

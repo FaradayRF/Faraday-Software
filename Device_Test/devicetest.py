@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -14,8 +14,8 @@ from FaradayIO import gpioallocations
 DEBUG = False
 
 #Variables
-local_device_callsign = 'nocall' # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1 # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'nocall'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -62,7 +62,7 @@ def TestEchoUart():
             b64_data = rx_echo_raw[0]['data']
             echo_decoded = faraday_1.DecodeRawPacket(b64_data)
             print "\n\nSent:", repr(originalmsg)
-            print "\nReceived:", repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+            print "\nReceived:", repr(echo_decoded[0:len(originalmsg)])  #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
             echo_len = len(originalmsg)
             if(originalmsg == echo_decoded[0:echo_len]):
                 #print "TEST: ECHO - Success"

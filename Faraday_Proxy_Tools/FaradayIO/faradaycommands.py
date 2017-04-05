@@ -11,7 +11,7 @@ class faraday_commands(object):
         self.CMD_READMEMORY = 2
         self.CMD_UPDATERAMPARAMETER = 4
         self.CMD_GPIO = 5
-        self.CMD_UPDATEFREQUENCY = 6 #Can this be combined with UPDATERAMPARAMETER?
+        self.CMD_UPDATEFREQUENCY = 6  #Can this be combined with UPDATERAMPARAMETER?
         self.CMD_LOCALTELEMNOW = 7
         self.CMD_RFTELEMETRYNOW = 8
         self.CMD_SENDRFCOMMAND = 9

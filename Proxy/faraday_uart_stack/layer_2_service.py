@@ -25,8 +25,8 @@ import Queue
 
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):
-        test_ser_queue_1 = Queue.Queue() # Infinite
-        test_ser_queue_2 = Queue.Queue() # Infinite
+        test_ser_queue_1 = Queue.Queue()  # Infinite
+        test_ser_queue_2 = Queue.Queue()  # Infinite
         self.protocol_object = layer_2_protocol.layer_2_object(port, baud, timeout)
         self.layer_initialized = True
         #Initialize class variables
@@ -35,7 +35,7 @@ class Layer2ServiceObject(threading.Thread):
         self.enabled = True
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def POST(self, payload_data):
         self.tx.insert_data(payload_data)
@@ -57,11 +57,11 @@ class Layer2ServiceObject(threading.Thread):
         self.enabled = False
 
         #Lower Functions
-        self.protocol_object.serial_physical_obj.abort() #layer_2_protocol
-        self.tx.abort() #Faraday_Datalink_Device_Transmit_Class
-        self.tx.insert_data_class.abort() #Transmit_Insert_Data_Queue_Class
-        self.rx.Abort() #Receiver_Datalink_Device_Class
-        self.rx.receiver_class.abort() #Receiver_Datalink_Device_State_Parser_Class
+        self.protocol_object.serial_physical_obj.abort()  #layer_2_protocol
+        self.tx.abort()  #Faraday_Datalink_Device_Transmit_Class
+        self.tx.insert_data_class.abort()  #Transmit_Insert_Data_Queue_Class
+        self.rx.Abort()  #Receiver_Datalink_Device_Class
+        self.rx.receiver_class.abort()  #Receiver_Datalink_Device_State_Parser_Class
 
     def run(self):
         while(self.enabled):

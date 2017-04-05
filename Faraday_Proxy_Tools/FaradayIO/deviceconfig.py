@@ -222,7 +222,7 @@ class DeviceConfigClass:
         # Check for non numeric inputs
         for item in latitude_str_format:
             if not item.isdigit():
-                lat_check = False # non-numeric input - Fail
+                lat_check = False  # non-numeric input - Fail
 
         if len(latitude_str_format) != 2 or len(latitude_str_format[0]) > self.MAX_GPS_LATITUDE_LEADING_LEN or len(latitude_str_format[1]) > self.MAX_GPS_LATITUDE_TRAILING_LEN:
             lat_check = False

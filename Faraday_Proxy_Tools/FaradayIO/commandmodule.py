@@ -18,8 +18,8 @@ FIXED_PAYLOAD_LEN_MAX = 119
 DEST_CALLSIGN_MAX_LEN = 9
 FIXED_RF_PAYLOAD_LEN = 42
 MAX_MEMORY_READ_LEN = 121
-MAX_CALLSIGN_LEN = 9 #NOTE THAT THE DEVICE CONFIG CLASS HAS IT'S OWN DEFINITION FOR CALLSIGN LENGTH MAX!
-MAX_UPDATE_PAYLOAD_LEN = 64 #121
+MAX_CALLSIGN_LEN = 9  #NOTE THAT THE DEVICE CONFIG CLASS HAS IT'S OWN DEFINITION FOR CALLSIGN LENGTH MAX!
+MAX_UPDATE_PAYLOAD_LEN = 64  #121
 GPIO_COMMAND_NUMBER = 5
 COMMAND_UPDATE_RAM = 4
 COMMAND_PARAMETER_UPDATE_RAM_PARAMETER_TELEMETRY_BITMASK = 1
@@ -88,10 +88,10 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
     #Cheack if callsign is too long
     if len(dest_callsign) < DEST_CALLSIGN_MAX_LEN:
         #Define packet structures
-        pkt_cmd_datagram_struct = struct.Struct('2B25s') #Command packect to be run on remote unit as local command
-        pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H') #Command packect to be run on remote unit as local command Error Detection
-        pkt_rf_cmd_struct = struct.Struct('9s2B29s') #RF Command packet that encapsulates local command to be run on remote unit
-        pkt_rf_error_detection_struct = struct.Struct('>1H') #16bit Error Detection (Checksum)
+        pkt_cmd_datagram_struct = struct.Struct('2B25s')  #Command packect to be run on remote unit as local command
+        pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H')  #Command packect to be run on remote unit as local command Error Detection
+        pkt_rf_cmd_struct = struct.Struct('9s2B29s')  #RF Command packet that encapsulates local command to be run on remote unit
+        pkt_rf_error_detection_struct = struct.Struct('>1H')  #16bit Error Detection (Checksum)
 
         #Create local command for remote unit
         pkt_cmd_datagram = pkt_cmd_datagram_struct.pack(command, len(payload), payload)
@@ -283,7 +283,7 @@ def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitm
         return False
     else:
         gpio_cmd_pkt = gpio_cmd_pkt_struct.pack(port3_on_bitmask, port4_on_bitmask, port5_on_bitmask, port3_off_bitmask, port4_off_bitmask, port5_off_bitmask)
-        return gpio_cmd_pkt #create_command_packet(GPIO_COMMAND_NUMBER, gpio_command_packet)
+        return gpio_cmd_pkt  #create_command_packet(GPIO_COMMAND_NUMBER, gpio_command_packet)
 
 
 def packet_gpio_gps_standby_enable():
