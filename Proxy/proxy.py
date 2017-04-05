@@ -18,6 +18,7 @@ import threading
 import ConfigParser
 import os
 from collections import deque
+import sqlite3
 
 from flask import Flask
 from flask import request
@@ -352,12 +353,50 @@ def callsign2COM():
     local = json.dumps(local)
     return json.loads(local)
 
+def initDB():
+    """
+    Initialize database, creates it if not present
+
+    :return: True or False if successful
+    """
+
+    # Obtain configuration file names
+    try:
+        dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # Check if database exists
+    if os.path.isfile(dbFilename):
+        pass
+    else:
+        # Open database schema SQL file and execute the SQL functions inside
+        # after connecting. Close the database when complete.
+        try:
+            with open(dbSchema, 'rt') as f:
+                conn = sqlite3.connect(dbFilename)
+                cur = conn.cursor()
+                schema = f.read()
+                cur.executescript(schema)
+            conn.close()
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+    return True
+
 
 def main():
     log = True # Temporary
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
+
+    initDB()  # Initialize database for logging
 
     # Associate serial ports with callsigns
     # global units
