@@ -75,7 +75,7 @@ class proxyio(object):
 
         """
         #Check if payload too large
-        if(len(data)>self.MAXPOSTPAYLOADLEN):
+        if len(data) > self.MAXPOSTPAYLOADLEN:
             return False #Too large!
         else:
             #Convert supplied data into BASE64 encoding for safe network transmission
@@ -168,7 +168,7 @@ class proxyio(object):
         timedelta = 0
         rx_data = None
 
-        while((rx_data is None) and (timedelta<sec_timeout)):
+        while rx_data is None and timedelta < sec_timeout:
             #Update new timedelta
             timedelta = time.time()-starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?

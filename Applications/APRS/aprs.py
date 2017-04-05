@@ -50,7 +50,7 @@ def aprs_worker(config, sock):
         stationData = getStationData(stations)
 
         # Indicate number of stations tracking
-        str="Tracking {0} Faraday stations..."
+        str = "Tracking {0} Faraday stations..."
         logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data

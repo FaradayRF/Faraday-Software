@@ -199,7 +199,7 @@ def GetTelem3():
 def ReadTelemTemp(telemetry_parsed):
     #Get and print current CC430 ("board") temp
     int_boardtemp = telemetry_parsed['BOARDTEMP']
-    print "\nCurrent CC430 Temperature: %dC" %int_boardtemp
+    print "\nCurrent CC430 Temperature: %dC" % int_boardtemp
 
     #Check if temp is inside of bounds (set wide for check if generall OK
     if int_boardtemp > 15 and int_boardtemp < 35:

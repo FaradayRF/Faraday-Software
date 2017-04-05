@@ -60,7 +60,7 @@ def create_command_datagram(command, payload):
     packet_packed = pkt_a + pkt_b + pkt_c
 
     #Only return packet if all variables are correctly sized
-    if(len(payload)<=FIXED_PAYLOAD_LEN_MAX):
+    if len(payload) <= FIXED_PAYLOAD_LEN_MAX:
         #print "Lengths", len(packet_packed)
         packet_final = packet_packed
         return packet_final
@@ -86,7 +86,7 @@ def create_rf_command_datagram(dest_callsign, dest_device_id, command, payload):
 
     """
     #Cheack if callsign is too long
-    if(len(dest_callsign)<DEST_CALLSIGN_MAX_LEN):
+    if len(dest_callsign) < DEST_CALLSIGN_MAX_LEN:
         #Define packet structures
         pkt_cmd_datagram_struct = struct.Struct('2B25s') #Command packect to be run on remote unit as local command
         pkt_cmd_datagram_error_detection_struct = struct.Struct('>1H') #Command packect to be run on remote unit as local command Error Detection
@@ -416,7 +416,7 @@ def create_read_memory_packet(dec_address, length):
         '\x18\x00\n'
 
     """
-    if(length<=MAX_MEMORY_READ_LEN):
+    if length <= MAX_MEMORY_READ_LEN:
         packet_struct = struct.Struct('>HB')
         packet = packet_struct.pack(dec_address, length)
         return packet

@@ -73,7 +73,7 @@ class layer_2_protocol(threading.Thread):
                     while(not self.serial_tx_queue.empty()):
                         self.ser.write(self.serial_tx_queue.get())
                 #Check for bytes to receive from serial
-                if((self.ser.inWaiting()>0)):
+                if self.ser.inWaiting() > 0:
                     rx_buffer_inwaiting = self.ser.inWaiting()
                     self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
 

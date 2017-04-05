@@ -636,7 +636,7 @@ def queryDb(parameters):
         sqlWhereID = "AND DESTINATIONID LIKE ? "
 
     sqlBeg = "SELECT * FROM TELEMETRY "
-    sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
+    sqlEpoch = "AND EPOCH BETWEEN ? AND ? "
     sqlEnd = "ORDER BY KEYID DESC"
     if limit is not None:
         sqlEnd = sqlEnd + " LIMIT ?"
