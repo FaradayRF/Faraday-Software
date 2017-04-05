@@ -27,7 +27,7 @@ def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
 
     #Convert 24 bit word into hex string and parse into FREQ2, FREQ1, and FREQ0
     desired_freq_word_int_hex = hex(desired_freq_word_int)
-    FREQx_list = [desired_freq_word_int_hex[i:i+2] for i in range (0, len(desired_freq_word_int_hex), 2)]
+    FREQx_list = [desired_freq_word_int_hex[i:i+2] for i in range(0, len(desired_freq_word_int_hex), 2)]
 
     #Create list of INT's of the 3 bytes for FREQx's
     FREQx_list[0] = int(FREQx_list[1],16) #FREQ2
