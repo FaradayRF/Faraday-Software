@@ -41,7 +41,7 @@ getDicts = {}
 unitDict = {}
 
 
-def uart_worker(modem, getDicts, units):
+def uart_worker(modem, getDicts, units, log):
     """
     Interface Faraday ports over USB UART
 
@@ -71,9 +71,11 @@ def uart_worker(modem, getDicts, units):
                         # Use new buffers
                         try:
                             getDicts[unit][port].append(item)
+                            if log: print repr(item['data'])
                         except:
                             getDicts[unit][port] = deque([], maxlen=100)
                             getDicts[unit][port].append(item)
+                            if log: print repr(item['data'])
 
             except StandardError as e:
                 logger.error("StandardError: " + str(e))
@@ -352,6 +354,8 @@ def callsign2COM():
 
 
 def main():
+    log = True # Temporary
+
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
 
@@ -387,7 +391,7 @@ def main():
             logger.error("KeyError: " + str(e))
             time.sleep(1)
 
-    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units))
+    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units, log))
     threads.append(t)
     t.start()
 
