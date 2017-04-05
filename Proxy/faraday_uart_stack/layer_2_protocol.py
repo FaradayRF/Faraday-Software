@@ -268,7 +268,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         #Create footer
         footer = ''
         #Create datalink packet
-        datalink_pkt =  header + payload + footer
+        datalink_pkt = header + payload + footer
         #Return datalink packet
         return datalink_pkt
 
