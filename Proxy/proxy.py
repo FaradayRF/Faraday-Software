@@ -80,7 +80,7 @@ def uart_worker(modem, getDicts, units, log):
                         except:
                             getDicts[unit][port] = deque([], maxlen=100)
                             getDicts[unit][port].append(item)
-                            
+
                             # Check for Proxy logging and save to SQL if true
                             if log:
                                 item["port"] = port
@@ -361,6 +361,7 @@ def callsign2COM():
     local = json.dumps(local)
     return json.loads(local)
 
+
 def initDB():
     """
     Initialize database, creates it if not present
@@ -396,6 +397,7 @@ def initDB():
             return False
 
     return True
+
 
 def sqlInsert(data):
     """
