@@ -127,8 +127,8 @@ def create_fixed_length_packet(data, fixed_legth):
 
         .. note:: This should be updated so that the padding byte can be specified as well.
         """
-        pad_len = fixed_legth-len(data)
-        pad = chr(0x00)*pad_len
+        pad_len = fixed_legth - len(data)
+        pad = chr(0x00) * pad_len
         padded_data = data + pad
         return padded_data
 

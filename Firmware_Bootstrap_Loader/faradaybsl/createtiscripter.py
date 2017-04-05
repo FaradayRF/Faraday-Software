@@ -78,7 +78,8 @@ class CreateTiBslScript(object):
             final_crc = hex(self.CalcTiTxtCrc16(self.section_data_index[i]))
 
             #Script Format
-            script_index_crc = "CRC_CHECK "+"0x"+str(final_addr)+' '+str(final_len)+' '+str(final_crc)
+            script_index_crc = "CRC_CHECK 0x{} {} {}".format(
+                str(final_addr), str(final_len), str(final_crc))
             self.crc_script_index.append(str(script_index_crc))
             textfile.writelines(("Memory Address: 0x", final_addr,"\n"))
             textfile.writelines(("Data Length: ", final_len,"\n"))

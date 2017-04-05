@@ -81,7 +81,7 @@ class faraday_uart_object(threading.Thread):
             #Create transport packet raw
             transport_packet = layer_4_protocol.create_packet(service_number, payload_length, payload)
             #Pad fixed length packet to correct fixed size
-            transport_packet_padded = transport_packet + chr(0xff)*(self.TRANPORT_PAYLOAD_LENGTH - len(payload))
+            transport_packet_padded = transport_packet + chr(0xff) * (self.TRANPORT_PAYLOAD_LENGTH - len(payload))
             self.transmit_datagram_queue_put(transport_packet_padded)
         else:
             print "ERROR: Transport protocol violation"

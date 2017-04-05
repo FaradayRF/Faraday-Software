@@ -170,7 +170,7 @@ class proxyio(object):
 
         while rx_data is None and timedelta < sec_timeout:
             #Update new timedelta
-            timedelta = time.time()-starttime
+            timedelta = time.time() - starttime
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
 
             #Attempt to get data

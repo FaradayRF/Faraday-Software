@@ -171,7 +171,7 @@ def dbTelemetry():
         direction = request.args.get("direction", 0)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
-        timespan = request.args.get("timespan", 5*60)
+        timespan = request.args.get("timespan", 5 * 60)
         limit = request.args.get("limit")
 
     except IOError as e:
@@ -377,7 +377,7 @@ def stations():
 
     try:
         # Obtain URL parameters
-        timespan = request.args.get("timespan", 5*60)
+        timespan = request.args.get("timespan", 5 * 60)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
         callsign = request.args.get("callsign", "%").upper()

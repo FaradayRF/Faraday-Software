@@ -281,7 +281,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         self.fragment_data_list = []
         #Break the data payload supplied into smaller "fragments"
         for i in range(0, len(data), fragmentsize):
-            self.fragment_data_list.append(data[i:i+fragmentsize])
+            self.fragment_data_list.append(data[i:i + fragmentsize])
 
     def Add_Header_Footer(self, data_fragment_list): # INVALID
         """
@@ -297,9 +297,9 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         #Any packet can drop, data will resyn on new 7 (Start)
         # [START DATA, DATA..., DATA..., END DATA]
         data_fragment_list[0] = data_fragment_list[0] + chr(7)
-        for i in range(1, len(data_fragment_list)-2, 1):
+        for i in range(1, len(data_fragment_list) - 2, 1):
             data_fragment_list[i] = data_fragment_list[i] + chr(i%6)
-        data_fragment_list[len(data_fragment_list)-1] = data_fragment_list[len(data_fragment_list)-1] + chr(8)
+        data_fragment_list[len(data_fragment_list) - 1] = data_fragment_list[len(data_fragment_list) - 1] + chr(8)
 
     def Encapsulate_Data(self, startbyte, stopbyte, escapebyte): #INVALID
         """
@@ -329,16 +329,16 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
             #First packet
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Final Packet
-            self.fragment_data_list[1] = chr(len(self.fragment_data_list[len(self.fragment_data_list)-1])) + self.fragment_data_list[len(self.fragment_data_list)-1] + chr(8)
+            self.fragment_data_list[1] = chr(len(self.fragment_data_list[len(self.fragment_data_list) - 1])) + self.fragment_data_list[len(self.fragment_data_list) - 1] + chr(8)
 
         elif(len(self.fragment_data_list) > 2):
             #First packet
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Content Packets
-            for i in range(1, len(self.fragment_data_list)-1, 1):
+            for i in range(1, len(self.fragment_data_list) - 1, 1):
                 self.fragment_data_list[i] = chr(len(self.fragment_data_list[i])) + self.fragment_data_list[i] + chr(i%6)
             #Final Packet
-            self.fragment_data_list[len(self.fragment_data_list)-1] = chr(len(self.fragment_data_list[len(self.fragment_data_list)-1])) + self.fragment_data_list[len(self.fragment_data_list)-1] + chr(8)
+            self.fragment_data_list[len(self.fragment_data_list) - 1] = chr(len(self.fragment_data_list[len(self.fragment_data_list) - 1])) + self.fragment_data_list[len(self.fragment_data_list) - 1] + chr(8)
 
         #Iterate through the fragmented data list and insert escape bytes for framing protocol
         for i in range(0, len(self.fragment_data_list), 1):

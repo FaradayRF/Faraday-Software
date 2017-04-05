@@ -319,11 +319,11 @@ def sendtelemetry(stations, telemSequence, socket):
                 qConstruct,
                 destNode,
                 str(telemSequence).zfill(3),
-                str(station["ADC0"]/16).zfill(3),
-                str(station["ADC1"]/16).zfill(3),
-                str(station["ADC3"]/16).zfill(3),
-                str(station["ADC6"]/16).zfill(3),
-                str(station["BOARDTEMP"]/16).zfill(3),
+                str(station["ADC0"] / 16).zfill(3),
+                str(station["ADC1"] / 16).zfill(3),
+                str(station["ADC3"] / 16).zfill(3),
+                str(station["ADC6"] / 16).zfill(3),
+                str(station["BOARDTEMP"] / 16).zfill(3),
                 ioList)
 
             logger.debug(telemetry)
@@ -341,11 +341,11 @@ def sendtelemetry(stations, telemSequence, socket):
                 node,
                 destAddress,
                 str(telemSequence).zfill(3),
-                str(station["ADC0"]/16).zfill(3),
-                str(station["ADC1"]/16).zfill(3),
-                str(station["ADC3"]/16).zfill(3),
-                str(station["ADC6"]/16).zfill(3),
-                str(station["BOARDTEMP"]/16).zfill(3),
+                str(station["ADC0"] / 16).zfill(3),
+                str(station["ADC1"] / 16).zfill(3),
+                str(station["ADC3"] / 16).zfill(3),
+                str(station["ADC6"] / 16).zfill(3),
+                str(station["BOARDTEMP"] / 16).zfill(3),
                 ioList)
 
             logger.debug(telemetry)
@@ -659,7 +659,7 @@ def generatePasscode(callsign):
         while (i < length):
             try:
                 callhash ^= ord(callList[i])<<8
-                callhash ^= ord(callList[i+1])
+                callhash ^= ord(callList[i + 1])
                 i += 2
 
             except StandardError as e:
