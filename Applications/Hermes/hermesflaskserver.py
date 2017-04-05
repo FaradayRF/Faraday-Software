@@ -28,11 +28,10 @@ def configparse():
         callsign = config.get(item, "callsign").upper()
         nodeid = config.getint(item, "nodeid")
 
-        local[str(item)] = \
-            {
-                "callsign": callsign,
-                "nodeid": nodeid,
-            }
+        local[str(item)] = {
+            "callsign": callsign,
+            "nodeid": nodeid,
+        }
 
     return local
 
@@ -147,7 +146,7 @@ def getqueue():
     data_64 = base64.b64encode(json.dumps(data))
 
     return json.dumps(data_64, indent=1), 200, \
-           {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 def main():
