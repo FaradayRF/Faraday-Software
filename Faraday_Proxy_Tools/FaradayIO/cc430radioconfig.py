@@ -1,4 +1,4 @@
-def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
+def freq0_carrier_calculation(freq_desired, fxosc=26.0, debug=False):
     """
     Calculates the FREQ0, FREQ1, and FREQ2 24 bit word for main carrier frequency of the CC430.
 
@@ -46,7 +46,7 @@ def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
     return FREQx_list
 
 
-def freq0_reverse_carrier_calculation(freq0, freq1, freq2, fxosc = 26.0, debug = False):
+def freq0_reverse_carrier_calculation(freq0, freq1, freq2, fxosc=26.0, debug=False):
     """
     This function reverse calculates the CC430 frequency in MHz from the known freq[] bytes in the CC430 radio registers.
 

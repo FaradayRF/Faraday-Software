@@ -32,7 +32,7 @@ class layer_2_object(object):
 
 class layer_2_protocol(threading.Thread):
     def __init__(self, com, baud, timeout_time):
-        self.ser = serial.Serial(com, baud, timeout = timeout_time)
+        self.ser = serial.Serial(com, baud, timeout=timeout_time)
         self.serial_rx_queue = Queue.Queue() # Infinite
         self.serial_tx_queue = Queue.Queue() # Infinite
         self.enabled = True

@@ -29,7 +29,7 @@ class proxyio(object):
 
     """
 
-    def __init__(self, port = 8000, logger = None):
+    def __init__(self, port=8000, logger=None):
         #Definitions
         self.FLASK_PORT = port #TCP port
         self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
@@ -83,7 +83,7 @@ class proxyio(object):
             payload = {'data': [b64_data]}
 
             #POST data to UART service port
-            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
+            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json=payload) #Sends Base64 config flash update packet to Faraday
 
             #Return
             return status
@@ -139,7 +139,7 @@ class proxyio(object):
         except KeyError as e:
             self._logger.error("KeyError: " + str(e))
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout = 1, debug = False, limit=None):
+    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout=1, debug=False, limit=None):
         """
         This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
@@ -174,7 +174,7 @@ class proxyio(object):
             time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
 
             #Attempt to get data
-            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit = limit)
+            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit=limit)
         #Determine if timeout or got data
         if rx_data:
             if(debug):

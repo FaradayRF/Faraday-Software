@@ -48,7 +48,7 @@ def get_telemetry():
     rx_telemetry_datagram_extracted = faraday_parser.ExtractPaddedPacket(rx_telemetry_packet, faraday_parser.packet_3_len)
 
     #Parse the Telemetry #3 packet
-    rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_datagram_extracted, debug = True) #Debug ON
+    rx_telemetry_packet_parsed = faraday_parser.UnpackPacket_3(rx_telemetry_datagram_extracted, debug=True) #Debug ON
 
     print "Parsed packet dictionary:", rx_telemetry_packet_parsed
 

@@ -116,7 +116,7 @@ def getStationData(stations):
 
         # Request data, append to stationData list
         try:
-            r = requests.get(url, params = payload)
+            r = requests.get(url, params=payload)
             data = r.json()
 
         except requests.exceptions.RequestException as e:

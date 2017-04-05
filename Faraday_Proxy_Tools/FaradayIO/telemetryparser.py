@@ -18,7 +18,7 @@ class TelemetryParse(object):
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
 
-    def UnpackDatagram(self, packet, debug = False):
+    def UnpackDatagram(self, packet, debug=False):
         """
         This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry packets are encapsulated by this telemetry datagram.
 
@@ -75,7 +75,7 @@ class TelemetryParse(object):
         """
         return packet[0:packet_len]
 
-    def UnpackPacket_3(self, packet, debug = False):
+    def UnpackPacket_3(self, packet, debug=False):
         """
         This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
 
@@ -238,7 +238,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackPacket_2(self, packet, debug = False):
+    def UnpackPacket_2(self, packet, debug=False):
         print packet, len(packet)
         """
         This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
@@ -308,7 +308,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackPacket_1(self, packet, debug = False):
+    def UnpackPacket_1(self, packet, debug=False):
         """
         This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
 
@@ -347,7 +347,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackConfigFlashD(self, packet, debug = False):
+    def UnpackConfigFlashD(self, packet, debug=False):
         """
         This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
 
