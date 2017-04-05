@@ -46,7 +46,7 @@ def uart_worker(modem, getDicts, units, log):
     """
     Interface Faraday ports over USB UART
 
-    This function interfaces the USB UART serial data with an infinit loop
+    This function interfaces the USB UART serial data with an infinite loop
     that checks all Faraday "ports" for data and appends/pops data from
     queues for send and receive directions.
     """
@@ -401,13 +401,13 @@ def initDB():
 
 def sqlInsert(data):
     """
-    Takes in a data tuple and inserts int into the proxy SQLite table
+    Takes in a data tuple and inserts int into the Proxy SQLite table
 
     :param data: Proxy dictionary
     :return: Status True or False on SQL insertion success
     """
 
-    # Read in name of telemetry database
+    # Read in name of database
     try:
         db = proxyConfig.get("DATABASE", "FILENAME")
 
@@ -416,7 +416,6 @@ def sqlInsert(data):
         return False
 
     # # Change dictionary into list with proper order
-    # telem = createTelemetryList(data)
     sqlparameters = [None, data["port"],data["data"],time.time()]
 
     if len(sqlparameters) > 0:
