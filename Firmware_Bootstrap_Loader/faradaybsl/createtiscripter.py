@@ -62,8 +62,8 @@ class CreateTiBslScript(object):
         chk = 0xffff
         for item in data_array:
             calc = 0
-            calc = ((chk>>8)^item) & 0xff
-            calc ^= calc>>4
+            calc = ((chk >> 8) ^ item) & 0xff
+            calc ^= calc >> 4
             chk = (chk << 8) ^ (calc << 12) ^ (calc << 5) ^ calc
             chk = chk % 2**16
         return chk

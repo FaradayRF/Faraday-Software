@@ -658,7 +658,7 @@ def generatePasscode(callsign):
 
         while (i < length):
             try:
-                callhash ^= ord(callList[i])<<8
+                callhash ^= ord(callList[i]) << 8
                 callhash ^= ord(callList[i + 1])
                 i += 2
 

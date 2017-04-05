@@ -246,7 +246,7 @@ def create_gpio_cmd_bitmask(bit_number):
     """
     #This function is a sub-routine to simply create a single byte and bit bitmask.
     #A full bitmask can be made by OR'ing multiple bits to a single byte
-    return (1<<bit_number)
+    return 1 << bit_number
 
 
 def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitmask, port3_off_bitmask, port4_off_bitmask, port5_off_bitmask):
@@ -272,13 +272,13 @@ def create_gpio_command_packet(port3_on_bitmask, port4_on_bitmask, port5_on_bitm
     gpio_cmd_pkt_struct = struct.Struct('6B')
 
     #Create ON/OFF integers to bitwise & to check for duplicate bits for bot ON and OFF
-    check_on_int = port3_on_bitmask<<16
-    check_on_int |= port4_on_bitmask<<8
+    check_on_int = port3_on_bitmask << 16
+    check_on_int |= port4_on_bitmask << 8
     check_on_int |= port5_on_bitmask
-    check_off_int = port3_off_bitmask<<16
-    check_off_int |= port4_off_bitmask<<8
+    check_off_int = port3_off_bitmask << 16
+    check_off_int |= port4_off_bitmask << 8
     check_off_int |= port5_off_bitmask
-    if((check_on_int&check_off_int) != 0):
+    if (check_on_int & check_off_int) != 0:
         print "GPIO ON/OFF Bitmask check FAIL"
         return False
     else:
