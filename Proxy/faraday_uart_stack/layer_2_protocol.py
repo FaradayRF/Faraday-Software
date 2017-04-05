@@ -183,7 +183,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
             time.sleep(0.001)
 
             #Check for new data to transmit
-            if( not self.insert_data_class.tx_packet_queue.empty()):
+            if not self.insert_data_class.tx_packet_queue.empty():
 
                 #New data available, retrieve single data "packet"
                 packet = self.insert_data_class.tx_packet_queue.get()
@@ -476,7 +476,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
         """
         Returns the next item in the recevier FIFO. Items returned will be parse layer 2 datagram packets. Returns False if no items in the FIFO to return
         """
-        if ( not self.rx_data_payload_queue.empty()):
+        if not self.rx_data_payload_queue.empty():
             return self.rx_data_payload_queue.get()
         else:
             return False
@@ -484,7 +484,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
     def run(self):
         while self.enable_flag:
             time.sleep(0.001)
-            if( not self.receiver_class.rx_packet_queue.empty()):
+            if not self.receiver_class.rx_packet_queue.empty():
                 data = self.receiver_class.rx_packet_queue.get()
                 try:
                     unpacked_datalink = self.datalink_packet_struct.unpack(data)
@@ -542,7 +542,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     def run(self):
         while self.enable_flag:
             time.sleep(0.001)
-            if( not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty()):
+            if not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty():
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
                 #Get next byte
                 for i in range(0, len(rx_byte_raw), 1):
