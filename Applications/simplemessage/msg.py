@@ -38,7 +38,7 @@ class Msg_State_Machine_Tx(object):
     def FragmentCount(self, msg_len):
         #Determine fragment count
         frag_cnt = msg_len / self.MAX_MSG_DATA_LENGTH
-        if(msg_len%self.MAX_MSG_DATA_LENGTH > 0):
+        if msg_len % self.MAX_MSG_DATA_LENGTH > 0:
             frag_cnt += 1
         return frag_cnt
 

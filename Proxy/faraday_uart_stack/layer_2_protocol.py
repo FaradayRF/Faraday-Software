@@ -298,7 +298,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         # [START DATA, DATA..., DATA..., END DATA]
         data_fragment_list[0] = data_fragment_list[0] + chr(7)
         for i in range(1, len(data_fragment_list) - 2, 1):
-            data_fragment_list[i] = data_fragment_list[i] + chr(i%6)
+            data_fragment_list[i] = data_fragment_list[i] + chr(i % 6)
         data_fragment_list[len(data_fragment_list) - 1] = data_fragment_list[len(data_fragment_list) - 1] + chr(8)
 
     def Encapsulate_Data(self, startbyte, stopbyte, escapebyte): #INVALID
@@ -336,7 +336,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Content Packets
             for i in range(1, len(self.fragment_data_list) - 1, 1):
-                self.fragment_data_list[i] = chr(len(self.fragment_data_list[i])) + self.fragment_data_list[i] + chr(i%6)
+                self.fragment_data_list[i] = chr(len(self.fragment_data_list[i])) + self.fragment_data_list[i] + chr(i % 6)
             #Final Packet
             self.fragment_data_list[len(self.fragment_data_list) - 1] = chr(len(self.fragment_data_list[len(self.fragment_data_list) - 1])) + self.fragment_data_list[len(self.fragment_data_list) - 1] + chr(8)
 
