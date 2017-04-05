@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Exit on first error.
-set -e
-
-# Run flake8 to check coding style and consistency.
-flake8 --ignore=E201,E202,E203,E211,E221,E222,E225,E226,E227,E228,E231,E251,E261,E262,E265,E266,E402,E501
