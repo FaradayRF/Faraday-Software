@@ -135,7 +135,7 @@ class faraday_uart_object(threading.Thread):
         if DEBUG:
             print "RX'd:", parsed_datagram_dict
 
-    def RxPortHasItem(self,service_number):
+    def RxPortHasItem(self, service_number):
         try:
             return not self.receive_parsed_queue_dict[service_number].empty()
         except:

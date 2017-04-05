@@ -31,7 +31,7 @@ class layer_2_object(object):
 
 
 class layer_2_protocol(threading.Thread):
-    def __init__(self, com, baud,timeout_time):
+    def __init__(self, com, baud, timeout_time):
         self.ser = serial.Serial(com, baud, timeout = timeout_time)
         self.serial_rx_queue = Queue.Queue() # Infinite
         self.serial_tx_queue = Queue.Queue() # Infinite
@@ -172,7 +172,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         Invalid? Not actually implemented?
         """
-        self.insert_data_class.Encapsulate_Data_CMD(self.encapsulate_startbyte,self.encapsulate_stopbyte, self.encapsulate_escapebyte,command)
+        self.insert_data_class.Encapsulate_Data_CMD(self.encapsulate_startbyte, self.encapsulate_stopbyte, self.encapsulate_escapebyte, command)
 
     def run(self):
         """

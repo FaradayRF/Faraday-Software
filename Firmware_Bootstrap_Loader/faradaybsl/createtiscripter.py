@@ -81,8 +81,8 @@ class CreateTiBslScript(object):
             script_index_crc = "CRC_CHECK 0x{} {} {}".format(
                 str(final_addr), str(final_len), str(final_crc))
             self.crc_script_index.append(str(script_index_crc))
-            textfile.writelines(("Memory Address: 0x", final_addr,"\n"))
-            textfile.writelines(("Data Length: ", final_len,"\n"))
+            textfile.writelines(("Memory Address: 0x", final_addr, "\n"))
+            textfile.writelines(("Data Length: ", final_len, "\n"))
             textfile.writelines(("CRC: ", final_crc))
             textfile.writelines(('\n', script_index_crc))
             textfile.writelines('\n\n')

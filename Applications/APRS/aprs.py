@@ -129,7 +129,7 @@ def getStationData(stations):
     return stationData
 
 
-def nmeaToDegDecMin(latitude,longitude):
+def nmeaToDegDecMin(latitude, longitude):
     """
     Converts NMEA string latitude and longitude data into degree decimal minutes data compatible with
     APRS-IS server requirements per APRS Protocol Version 1.0
@@ -153,7 +153,7 @@ def nmeaToDegDecMin(latitude,longitude):
     latString = latDeg + str(latDec)
     lonString = lonDeg + str(lonDec)
 
-    return [latString,lonString]
+    return [latString, lonString]
 
 
 def sendPositions(stations, socket):
@@ -199,7 +199,7 @@ def sendPositions(stations, socket):
         destNode = destinationCallsign + "-" + str(destinationID)
 
         # Convert position to APRS-IS compliant string
-        latString,lonString = nmeaToDegDecMin(latitude,longitude)
+        latString, lonString = nmeaToDegDecMin(latitude, longitude)
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -675,7 +675,7 @@ def generatePasscode(callsign):
         logger.error("Callsign '{0}' invalid!".format(callsign))
 
     # Return hash as passcode or None if the operation was erroneous
-    logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign,callhash))
+    logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign, callhash))
     return callhash
 
 

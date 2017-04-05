@@ -201,7 +201,7 @@ def create_freq_list(freq):
 
 
     """
-    frequency_list = cc430radioconfig.freq0_carrier_calculation(26,freq,0)
+    frequency_list = cc430radioconfig.freq0_carrier_calculation(26, freq, 0)
     return frequency_list
 
 

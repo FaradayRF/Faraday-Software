@@ -29,7 +29,7 @@ data = None
 #While loop to wait for reception of data packet from experimental message application
 while(1):
     #Wait until there is new data on the message application port OR timout
-    for i in range(0,255,1):
+    for i in range(0, 255, 1):
         try:
             data = faraday_1.GET(local_device_callsign, local_device_node_id, i)
             if (data is not None) and ('error' not in data):

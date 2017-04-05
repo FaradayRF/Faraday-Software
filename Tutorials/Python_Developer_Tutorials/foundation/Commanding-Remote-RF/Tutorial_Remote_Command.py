@@ -24,11 +24,11 @@ config.read(filename)
 #Definitions
 
 #Variables
-local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = config.getint("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = config.get("DEVICES", "UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.getint("DEVICES", "UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_callsign = str(local_device_callsign).upper()
-remote_device_callsign = config.get("DEVICES","UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-remote_device_node_id = config.getint("DEVICES","UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_callsign = config.get("DEVICES", "UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_node_id = config.getint("DEVICES", "UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
 remote_device_callsign = str(remote_device_callsign).upper()
 
 ################################

@@ -47,7 +47,7 @@ def TestEchoUart():
     #Display information
     status_passes = 0
     status_fails = 0
-    for i in range(0,5):
+    for i in range(0, 5):
         originalmsg = os.urandom(40)  # Cannot be longer than max UART payload size!
         # Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
         faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT)

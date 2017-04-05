@@ -125,9 +125,9 @@ def telemetry_worker(config):
                         # Decode BASE64 JSON data packet into
                         unPackedItem = proxy.DecodeRawPacket(item["data"])
                         # Unpack packet into datagram elements
-                        datagram = faradayParser.UnpackDatagram(unPackedItem,False)
+                        datagram = faradayParser.UnpackDatagram(unPackedItem, False)
                         # Extract the payload length from payload since padding could be used
-                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"],faradayParser.packet_3_len)
+                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"], faradayParser.packet_3_len)
                         # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
                         parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
 
@@ -569,7 +569,7 @@ def sqlInsert(data):
             conn = sqlite3.connect(db)
             # Use connection as context manager to rollback automatically if error
             with conn:
-                conn.execute(sql,telem)
+                conn.execute(sql, telem)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
@@ -669,7 +669,7 @@ def queryDb(parameters):
     cur = conn.cursor()
 
     try:
-        cur.execute(sql,paramTuple)
+        cur.execute(sql, paramTuple)
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
@@ -773,7 +773,7 @@ def queryStationsDb(parameters):
     cur = conn.cursor()
 
     try:
-        cur.execute(sql,paramTuple)
+        cur.execute(sql, paramTuple)
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
@@ -815,13 +815,13 @@ def generateStartStopTimes(parameters):
         # Start end end times provided, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = str(parameters["ENDTIME"])
-        timeTuple = iso8601ToEpoch(startTime,endTime)
+        timeTuple = iso8601ToEpoch(startTime, endTime)
 
     elif parameters["STARTTIME"] is not None:
         # Start time provided, use current time as end, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = time.strftime("%Y-%m-%dT%H:%M:%S")
-        timeTuple = iso8601ToEpoch(startTime,endTime)
+        timeTuple = iso8601ToEpoch(startTime, endTime)
 
     else:
         # We should use the timespan provided to generate start and stop times
@@ -846,8 +846,8 @@ def iso8601ToEpoch(startTime, endTime):
 
     try:
         # Generate start and stop time tuples
-        start = time.strptime(startTime,fmt)
-        end = time.strptime(endTime,fmt)
+        start = time.strptime(startTime, fmt)
+        end = time.strptime(endTime, fmt)
 
         # Convert time tuples to epoch times
         startEpoch = time.mktime(start)

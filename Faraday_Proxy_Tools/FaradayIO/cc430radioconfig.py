@@ -30,9 +30,9 @@ def freq0_carrier_calculation(freq_desired, fxosc = 26.0, debug = False):
     FREQx_list = [desired_freq_word_int_hex[i:i + 2] for i in range(0, len(desired_freq_word_int_hex), 2)]
 
     #Create list of INT's of the 3 bytes for FREQx's
-    FREQx_list[0] = int(FREQx_list[1],16) #FREQ2
-    FREQx_list[1] = int(FREQx_list[2],16) #FREQ1
-    FREQx_list[2] = int(FREQx_list[3],16) #FREQ0
+    FREQx_list[0] = int(FREQx_list[1], 16) #FREQ2
+    FREQx_list[1] = int(FREQx_list[2], 16) #FREQ1
+    FREQx_list[2] = int(FREQx_list[3], 16) #FREQ0
     FREQx_list[3] = actual_freq_step_count_float #append actual frequency for reference
 
     if debug:
@@ -68,7 +68,7 @@ def freq0_reverse_carrier_calculation(freq0, freq1, freq2, fxosc = 26.0, debug =
     freq1_shifted = freq1 << 8
     freq2_shifted = freq2
 
-    actual_freq_mhz = (int(hex(freq0_shifted + freq1_shifted + freq2_shifted),16) * vco_step_float) / float(10**6)
+    actual_freq_mhz = (int(hex(freq0_shifted + freq1_shifted + freq2_shifted), 16) * vco_step_float) / float(10**6)
     if (debug == 1):
         print freq0_shifted, freq1_shifted, freq2_shifted
         print actual_freq_mhz

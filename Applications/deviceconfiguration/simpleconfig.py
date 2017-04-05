@@ -23,12 +23,12 @@ filename = os.path.abspath("deviceconfiguration.ini")
 config.read(filename)
 
 #Variables
-local_device_callsign = config.get("DEVICES","UNIT0CALL")
-local_device_node_id = config.get("DEVICES","UNIT0ID")
+local_device_callsign = config.get("DEVICES", "UNIT0CALL")
+local_device_node_id = config.get("DEVICES", "UNIT0ID")
 local_device_callsign = str(local_device_callsign).upper()
 
-hostname = config.get("FLASK","HOST")
-port = config.get("FLASK","PORT")
+hostname = config.get("FLASK", "HOST")
+port = config.get("FLASK", "PORT")
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -42,7 +42,7 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 # Send POST data to Proxy to configure unit
 try:
-    r = requests.post('http://{0}:{1}'.format(hostname,port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+    r = requests.post('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 
 except requests.exceptions.RequestException as e:
     # Some error occurred
