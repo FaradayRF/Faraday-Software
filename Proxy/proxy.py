@@ -72,11 +72,12 @@ def uart_worker(modem, getDicts, units, log):
                         # Use new buffers
                         try:
                             getDicts[unit][port].append(item)
-                            if log: print repr(item['data'])
+                            if log:
+                                item["port"] = port
+                                sqlInsert(item)
                         except:
-                            getDicts[unit][port] = deque([], maxlen=100)
-                            getDicts[unit][port].append(item)
-                            if log: print repr(item['data'])
+                            item["port"] = port
+                            sqlInsert(item)
 
             except StandardError as e:
                 logger.error("StandardError: " + str(e))
@@ -388,6 +389,61 @@ def initDB():
             return False
 
     return True
+
+def sqlInsert(data):
+    """
+    Takes in a data tuple and inserts int into the proxy SQLite table
+
+    :param data: Proxy dictionary
+    :return: Status True or False on SQL insertion success
+    """
+
+    # Read in name of telemetry database
+    try:
+        db = proxyConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # # Change dictionary into list with proper order
+    # telem = createTelemetryList(data)
+    sqlparameters = [None, data["port"],data["data"],time.time()]
+
+    if len(sqlparameters) > 0:
+        # Create parameter substitute "?" string for SQL query then create SQL
+        numKeys = len(sqlparameters)
+        paramSubs = "?" * (numKeys)
+        paramSubs = ",".join(paramSubs)
+        sql = "INSERT INTO PROXY VALUES(" + paramSubs + ")"
+
+        # Connect to database, create SQL query, execute query, and close database
+        try:
+            conn = sqlite3.connect(db)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+        # Connect to database, create SQL query, execute query, and close database
+        try:
+            conn = sqlite3.connect(db)
+            # Use connection as context manager to rollback automatically if error
+            with conn:
+                conn.execute(sql,sqlparameters)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            conn.rollback()
+            conn.close()
+            return False
+
+        # Completed, close database and return True
+        conn.close()
+        return True
+
+    else:
+        return False
 
 
 def main():
