@@ -397,7 +397,7 @@ def initDB():
 
 def sqlInsert(data):
     """
-    Takes in a data tuple and inserts int into the Proxy SQLite table
+    Takes in a data tuple and inserts it into the Proxy SQLite table
 
     :param data: Proxy dictionary
     :return: Status True or False on SQL insertion success
