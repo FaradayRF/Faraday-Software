@@ -175,8 +175,8 @@ class MessageAppTx(object):
         # Identification Variables
         self.local_device_callsign = str(local_callsign).upper()
         self.local_device_node_id = int(local_callsign_id)
-        self.remote_callsign = ''#str(destination_callsign).upper()
-        self.remote_id = 0 #int(destination_id)
+        self.remote_callsign = ''  #str(destination_callsign).upper()
+        self.remote_id = 0  #int(destination_id)
 
         # Initialize objects
         self.faraday_1 = faradaybasicproxyio.proxyio()

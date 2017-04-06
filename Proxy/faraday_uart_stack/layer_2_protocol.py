@@ -31,15 +31,15 @@ class layer_2_object(object):
 
 
 class layer_2_protocol(threading.Thread):
-    def __init__(self, com, baud,timeout_time):
-        self.ser = serial.Serial(com, baud, timeout = timeout_time)
-        self.serial_rx_queue = Queue.Queue() # Infinite
-        self.serial_tx_queue = Queue.Queue() # Infinite
+    def __init__(self, com, baud, timeout_time):
+        self.ser = serial.Serial(com, baud, timeout=timeout_time)
+        self.serial_rx_queue = Queue.Queue()  # Infinite
+        self.serial_tx_queue = Queue.Queue()  # Infinite
         self.enabled = True
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def abort(self):
         self.enabled = False
@@ -66,14 +66,14 @@ class layer_2_protocol(threading.Thread):
     def run(self):
         while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.001) #Shouldn't need this! BSALMI 6/13/16
+            time.sleep(0.001)  #Shouldn't need this! BSALMI 6/13/16
             if(self.enabled):
                 #Check for bytes to transmit over serial
                 if(not self.serial_tx_queue.empty()):
                     while(not self.serial_tx_queue.empty()):
                         self.ser.write(self.serial_tx_queue.get())
                 #Check for bytes to receive from serial
-                if((self.ser.inWaiting()>0)):
+                if self.ser.inWaiting() > 0:
                     rx_buffer_inwaiting = self.ser.inWaiting()
                     self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
 
@@ -142,10 +142,10 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
 
         #Initialize class variables
-        self.enable_flag = True #Class flag to keep loop running when True, aborts when False
-        self.encapsulate_startbyte = chr(0x7b) #Ensure these are the same as the self.insert_data_class escapes!
-        self.encapsulate_stopbyte = chr(0x7c) #Ensure these are the same as the self.insert_data_class escapes!
-        self.encapsulate_escapebyte = chr(0x7d) #Ensure these are the same as the self.insert_data_class escapes!
+        self.enable_flag = True  #Class flag to keep loop running when True, aborts when False
+        self.encapsulate_startbyte = chr(0x7b)  #Ensure these are the same as the self.insert_data_class escapes!
+        self.encapsulate_stopbyte = chr(0x7c)  #Ensure these are the same as the self.insert_data_class escapes!
+        self.encapsulate_escapebyte = chr(0x7d)  #Ensure these are the same as the self.insert_data_class escapes!
         self.insert_data_class = Transmit_Insert_Data_Queue_Class()
         self.output_channel = output_channel
         self.serial_physical_obj = serial_physical_obj
@@ -153,7 +153,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def abort(self):
         """
@@ -168,11 +168,11 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         self.insert_data_class.tx_data_queue.put(payload)
 
-    def Send_Flow_Control_Stop_CMD(self, command): #INVALID
+    def Send_Flow_Control_Stop_CMD(self, command):  #INVALID
         """
         Invalid? Not actually implemented?
         """
-        self.insert_data_class.Encapsulate_Data_CMD(self.encapsulate_startbyte,self.encapsulate_stopbyte, self.encapsulate_escapebyte,command)
+        self.insert_data_class.Encapsulate_Data_CMD(self.encapsulate_startbyte, self.encapsulate_stopbyte, self.encapsulate_escapebyte, command)
 
     def run(self):
         """
@@ -183,7 +183,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
             time.sleep(0.001)
 
             #Check for new data to transmit
-            if( not self.insert_data_class.tx_packet_queue.empty()):
+            if not self.insert_data_class.tx_packet_queue.empty():
 
                 #New data available, retrieve single data "packet"
                 packet = self.insert_data_class.tx_packet_queue.get()
@@ -211,9 +211,9 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         This function initializes the class and it's variables.
         """
         #Initialize class variables
-        self.tx_data_queue = Queue.Queue() #Queue FIFO with MAXSIZE=infinite - Queue to hold payload data raw
-        self.tx_packet_queue = Queue.Queue() #Queue FIFO with MAXSIZE=infinite - Queue to hold fragmented and encapsulated data
-        self.enable_flag = True #Class flag to keep loop running when True, aborts when False
+        self.tx_data_queue = Queue.Queue()  #Queue FIFO with MAXSIZE=infinite - Queue to hold payload data raw
+        self.tx_packet_queue = Queue.Queue()  #Queue FIFO with MAXSIZE=infinite - Queue to hold fragmented and encapsulated data
+        self.enable_flag = True  #Class flag to keep loop running when True, aborts when False
         self.max_payload_size = 5
         self.tx_queue_item = ''
         self.fragment_data_list = []
@@ -224,7 +224,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def abort(self):
         """
@@ -268,11 +268,11 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         #Create footer
         footer = ''
         #Create datalink packet
-        datalink_pkt =  header + payload + footer
+        datalink_pkt = header + payload + footer
         #Return datalink packet
         return datalink_pkt
 
-    def Fragment_Data(self, fragmentsize, data): #INVALID?
+    def Fragment_Data(self, fragmentsize, data):  #INVALID?
         """
         This function breaks a provided "packet" into defined "chunks" of data of defined size.
 
@@ -281,9 +281,9 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         self.fragment_data_list = []
         #Break the data payload supplied into smaller "fragments"
         for i in range(0, len(data), fragmentsize):
-            self.fragment_data_list.append(data[i:i+fragmentsize])
+            self.fragment_data_list.append(data[i:i + fragmentsize])
 
-    def Add_Header_Footer(self, data_fragment_list): # INVALID
+    def Add_Header_Footer(self, data_fragment_list):  # INVALID
         """
         This function adds header/footer info for fragmentation assembly.
         """
@@ -297,11 +297,11 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         #Any packet can drop, data will resyn on new 7 (Start)
         # [START DATA, DATA..., DATA..., END DATA]
         data_fragment_list[0] = data_fragment_list[0] + chr(7)
-        for i in range(1, len(data_fragment_list)-2, 1):
-            data_fragment_list[i] = data_fragment_list[i] + chr(i%6)
-        data_fragment_list[len(data_fragment_list)-1] = data_fragment_list[len(data_fragment_list)-1] + chr(8)
+        for i in range(1, len(data_fragment_list) - 2, 1):
+            data_fragment_list[i] = data_fragment_list[i] + chr(i % 6)
+        data_fragment_list[len(data_fragment_list) - 1] = data_fragment_list[len(data_fragment_list) - 1] + chr(8)
 
-    def Encapsulate_Data(self, startbyte, stopbyte, escapebyte): #INVALID
+    def Encapsulate_Data(self, startbyte, stopbyte, escapebyte):  #INVALID
         """
         Byte framing routing for fragmented data packets. This is NO LONGER IMPLEMENTED.
 
@@ -323,22 +323,22 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
             #First packet
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Final Packet
-            self.fragment_data_list.append(chr(0) + chr(8)) #SEND EMPTY PAYLOAD WITH END BYTE CMD
+            self.fragment_data_list.append(chr(0) + chr(8))  #SEND EMPTY PAYLOAD WITH END BYTE CMD
 
         elif(len(self.fragment_data_list) == 2):
             #First packet
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Final Packet
-            self.fragment_data_list[1] = chr(len(self.fragment_data_list[len(self.fragment_data_list)-1])) + self.fragment_data_list[len(self.fragment_data_list)-1] + chr(8)
+            self.fragment_data_list[1] = chr(len(self.fragment_data_list[len(self.fragment_data_list) - 1])) + self.fragment_data_list[len(self.fragment_data_list) - 1] + chr(8)
 
         elif(len(self.fragment_data_list) > 2):
             #First packet
             self.fragment_data_list[0] = chr(len(self.fragment_data_list[0])) + self.fragment_data_list[0] + chr(7)
             #Content Packets
-            for i in range(1, len(self.fragment_data_list)-1, 1):
-                self.fragment_data_list[i] = chr(len(self.fragment_data_list[i])) + self.fragment_data_list[i] + chr(i%6)
+            for i in range(1, len(self.fragment_data_list) - 1, 1):
+                self.fragment_data_list[i] = chr(len(self.fragment_data_list[i])) + self.fragment_data_list[i] + chr(i % 6)
             #Final Packet
-            self.fragment_data_list[len(self.fragment_data_list)-1] = chr(len(self.fragment_data_list[len(self.fragment_data_list)-1])) + self.fragment_data_list[len(self.fragment_data_list)-1] + chr(8)
+            self.fragment_data_list[len(self.fragment_data_list) - 1] = chr(len(self.fragment_data_list[len(self.fragment_data_list) - 1])) + self.fragment_data_list[len(self.fragment_data_list) - 1] + chr(8)
 
         #Iterate through the fragmented data list and insert escape bytes for framing protocol
         for i in range(0, len(self.fragment_data_list), 1):
@@ -374,7 +374,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         packet = packet + stopbyte
         return packet
 
-    def Encapsulate_Data_CMD(self, startbyte, stopbyte, escapebyte, command): #INVALID?
+    def Encapsulate_Data_CMD(self, startbyte, stopbyte, escapebyte, command):  #INVALID?
 
         #Fragmentation Control - Identify start packet, data packets, and last packet
         #Start of data = 7
@@ -385,10 +385,10 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         # CMD =  [START DATA, DATA..., DATA..., END DATA]
         #Clear self.fragment_data_list
         self.fragment_data_list = []
-        self.fragment_data_list.append(chr(0)) #Dummy list write
+        self.fragment_data_list.append(chr(0))  #Dummy list write
 
         if(len(chr(command)) == 1):
-            self.fragment_data_list.append(chr(0) + chr(command)) #SEND EMPTY PAYLOAD WITH END BYTE CMD
+            self.fragment_data_list.append(chr(0) + chr(command))  #SEND EMPTY PAYLOAD WITH END BYTE CMD
 
         else:
             return "ERROR - Command Attempt Length"
@@ -442,7 +442,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def timer_trip(self):
         #At periodic intervals transmit a "ready for data" packet to ensure the TX
@@ -476,7 +476,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
         """
         Returns the next item in the recevier FIFO. Items returned will be parse layer 2 datagram packets. Returns False if no items in the FIFO to return
         """
-        if ( not self.rx_data_payload_queue.empty()):
+        if not self.rx_data_payload_queue.empty():
             return self.rx_data_payload_queue.get()
         else:
             return False
@@ -484,7 +484,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
     def run(self):
         while self.enable_flag:
             time.sleep(0.001)
-            if( not self.receiver_class.rx_packet_queue.empty()):
+            if not self.receiver_class.rx_packet_queue.empty():
                 data = self.receiver_class.rx_packet_queue.get()
                 try:
                     unpacked_datalink = self.datalink_packet_struct.unpack(data)
@@ -492,7 +492,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
                     self.rx_data_payload_queue.put(unpacked_datalink[3])
                 except:
                     print "FAIL"
-                    pass #print "Failed parsing" !!!!!FIX!!!!!
+                    pass  #print "Failed parsing" !!!!!FIX!!!!!
 
 
 ################################################################################
@@ -514,10 +514,10 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     def __init__(self, input_channel, serial_physical_obj):
         #Initialize class variables
         self.rx_packet_queue = Queue.Queue()
-        self.enable_flag = True #Class flag to keep loop running when True, aborts when False
-        self.encapsulate_startbyte = chr(0x7b) #Ensure these are the same as the self.insert_data_class escapes!
-        self.encapsulate_stopbyte = chr(0x7c) #Ensure these are the same as the self.insert_data_class escapes!
-        self.encapsulate_escapebyte = chr(0x7d) #Ensure these are the same as the self.insert_data_class escapes!
+        self.enable_flag = True  #Class flag to keep loop running when True, aborts when False
+        self.encapsulate_startbyte = chr(0x7b)  #Ensure these are the same as the self.insert_data_class escapes!
+        self.encapsulate_stopbyte = chr(0x7c)  #Ensure these are the same as the self.insert_data_class escapes!
+        self.encapsulate_escapebyte = chr(0x7d)  #Ensure these are the same as the self.insert_data_class escapes!
         self.partial_packet = ''
         self.logic_startbyte_received = False
         self.logic_escapebyte_received = False
@@ -528,7 +528,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     ################################################################################
     # abort()
@@ -542,7 +542,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     def run(self):
         while self.enable_flag:
             time.sleep(0.001)
-            if( not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty()):
+            if not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty():
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
                 #Get next byte
                 for i in range(0, len(rx_byte_raw), 1):
@@ -553,7 +553,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                         #Received byte is start byte - New Packet!
                         if (rx_byte == self.encapsulate_startbyte):
                             self.logic_startbyte_received = True
-                            self.partial_packet = '' #Clear partial packet contents for new packet
+                            self.partial_packet = ''  #Clear partial packet contents for new packet
                         #Noise or curruption data, skip.
                         else:
                             pass
@@ -574,7 +574,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                             #Received byte is start byte - Current packet is currupted and found next packet header (potentially)!
                             elif (rx_byte == self.encapsulate_startbyte):
                                 self.logic_startbyte_received = True
-                                self.partial_packet = '' #Clear partial packet contents for new packet
+                                self.partial_packet = ''  #Clear partial packet contents for new packet
                             #Unknown State - Error
                             else:
                                 print"ERROR:", self.partial_packet
@@ -592,4 +592,4 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                         print"ERROR:", self.partial_packet
             #No new databyte to parse
             else:
-                    pass #No new data
+                    pass  #No new data

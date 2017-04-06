@@ -9,7 +9,7 @@ comport = sys.argv[2]
 print "FILE:", filename
 print "COMM:", comport
 
-test = createtiscripter.CreateTiBslScript(filename,comport)
+test = createtiscripter.CreateTiBslScript(filename, comport)
 
 test.createscript()
 

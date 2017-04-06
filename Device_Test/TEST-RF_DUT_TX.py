@@ -6,7 +6,7 @@
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -24,7 +24,7 @@ remote_device_node_id = 0
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
+faraday_1 = faradaybasicproxyio.proxyio()  #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
 
 # #Update RF power
@@ -46,7 +46,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 #faraday_1.POST(remote_device_callsign, remote_device_node_id, faraday_1.CMD_UART_PORT, command)
 
 # Command remote RF telemetry
-for i in range(0,5):
+for i in range(0, 5):
     command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteRFUpdateNow(remote_device_callsign, remote_device_node_id))
     #print repr(command)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)

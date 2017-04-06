@@ -10,7 +10,7 @@ import time
 import ConfigParser
 import json
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -23,12 +23,12 @@ filename = os.path.abspath("deviceconfiguration.ini")
 config.read(filename)
 
 #Variables
-local_device_callsign = config.get("DEVICES","UNIT0CALL")
-local_device_node_id = config.get("DEVICES","UNIT0ID")
+local_device_callsign = config.get("DEVICES", "UNIT0CALL")
+local_device_node_id = config.get("DEVICES", "UNIT0ID")
 local_device_callsign = str(local_device_callsign).upper()
 
-hostname = config.get("FLASK","HOST")
-port = config.get("FLASK","PORT")
+hostname = config.get("FLASK", "HOST")
+port = config.get("FLASK", "PORT")
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -42,7 +42,7 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 # Send POST data to Proxy to configure unit
 try:
-    r = requests.post('http://{0}:{1}'.format(hostname,port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+    r = requests.post('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
 
 except requests.exceptions.RequestException as e:
     # Some error occurred
@@ -54,10 +54,10 @@ if r.status_code != 204:
 else:
     # Programming apparently successful. Let unit reboot and then query for flash data
 
-    timer = 5 #  Wait five seconds
+    timer = 5  # Wait five seconds
     print "Programmed Faraday, waiting {0} seconds for reboot".format(str(timer))
     while(timer > 0):
-        time.sleep(1) # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
+        time.sleep(1)  # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
         timer += -1
 
     try:

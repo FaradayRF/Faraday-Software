@@ -263,8 +263,8 @@ def proxy():
                 getDicts[station][port]
             except KeyError as e:
                 message = "KeyError: " +\
-                     "Callsign '{0}' or Port '{1}' does not exist"\
-                     .format(station, port)
+                    "Callsign '{0}' or Port '{1}' does not exist"\
+                    .format(station, port)
                 logger.error(message)
                 return json.dumps({"error": message}), 400
 
@@ -345,14 +345,13 @@ def callsign2COM():
         com = proxyConfig.get(item, "com")
         baudrate = proxyConfig.getint(item, "baudrate")
         timeout = proxyConfig.getint(item, "timeout")
-        local[str(item)] =\
-            {
+        local[str(item)] = {
             "callsign": callsign,
             "nodeid": nodeid,
             "com": com,
             "baudrate": baudrate,
             "timeout": timeout
-            }
+        }
 
     local = json.dumps(local)
     return json.loads(local)

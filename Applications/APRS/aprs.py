@@ -50,7 +50,7 @@ def aprs_worker(config, sock):
         stationData = getStationData(stations)
 
         # Indicate number of stations tracking
-        str="Tracking {0} Faraday stations..."
+        str = "Tracking {0} Faraday stations..."
         logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data
@@ -116,7 +116,7 @@ def getStationData(stations):
 
         # Request data, append to stationData list
         try:
-            r = requests.get(url, params = payload)
+            r = requests.get(url, params=payload)
             data = r.json()
 
         except requests.exceptions.RequestException as e:
@@ -129,7 +129,7 @@ def getStationData(stations):
     return stationData
 
 
-def nmeaToDegDecMin(latitude,longitude):
+def nmeaToDegDecMin(latitude, longitude):
     """
     Converts NMEA string latitude and longitude data into degree decimal minutes data compatible with
     APRS-IS server requirements per APRS Protocol Version 1.0
@@ -153,7 +153,7 @@ def nmeaToDegDecMin(latitude,longitude):
     latString = latDeg + str(latDec)
     lonString = lonDeg + str(lonDec)
 
-    return [latString,lonString]
+    return [latString, lonString]
 
 
 def sendPositions(stations, socket):
@@ -199,7 +199,7 @@ def sendPositions(stations, socket):
         destNode = destinationCallsign + "-" + str(destinationID)
 
         # Convert position to APRS-IS compliant string
-        latString,lonString = nmeaToDegDecMin(latitude,longitude)
+        latString, lonString = nmeaToDegDecMin(latitude, longitude)
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -221,29 +221,24 @@ def sendPositions(stations, socket):
 
             if node != destNode:
                 # APRS string is for remote RF node
-                aprsPosition = dataTypeIdent +\
-                               latString +\
-                               latitudeDirection +\
-                               symbolTable +\
-                               lonString +\
-                               longitudeDir +\
-                               symbol
+                aprsPosition = ''.join([
+                    dataTypeIdent,
+                    latString,
+                    latitudeDirection,
+                    symbolTable,
+                    lonString,
+                    longitudeDir,
+                    symbol])
 
-                positionString = node +\
-                                 '>' +\
-                                 destAddress +\
-                                 ',' +\
-                                 qConstruct +\
-                                 ',' +\
-                                 destNode +\
-                                 ':' +\
-                                 aprsPosition +\
-                                 '.../' +\
-                                 speed +\
-                                 '/A=' +\
-                                 altitude +\
-                                 comment +\
-                                 '\r'
+                positionString = '{}>{},{},{}:{}.../{}/A={}{}\r'.format(
+                    node,
+                    destAddress,
+                    qConstruct,
+                    destNode,
+                    aprsPosition,
+                    speed,
+                    altitude,
+                    comment)
 
                 logger.debug(positionString)
 
@@ -255,24 +250,21 @@ def sendPositions(stations, socket):
 
             elif node == destNode:
                 # APRS string is for local node
-                aprsPosition = dataTypeIdent +\
-                               latString +\
-                               latitudeDirection +\
-                               altSymbolTable +\
-                               lonString +\
-                               longitudeDir +\
-                               altSymbol
-                positionString = node +\
-                                 ">" +\
-                                 destAddress +\
-                                 ':' +\
-                                 aprsPosition +\
-                                 '.../' +\
-                                 speed +\
-                                 '/A=' +\
-                                 altitude +\
-                                 altComment +\
-                                 '\r'
+                aprsPosition = ''.join([
+                    dataTypeIdent,
+                    latString,
+                    latitudeDirection,
+                    altSymbolTable,
+                    lonString,
+                    longitudeDir,
+                    altSymbol])
+                positionString = '{}>{}:{}.../{}/A={}{}\r'.format(
+                    node,
+                    destAddress,
+                    aprsPosition,
+                    speed,
+                    altitude,
+                    altComment)
                 logger.debug(positionString)
 
                 try:
@@ -321,28 +313,18 @@ def sendtelemetry(stations, telemSequence, socket):
 
         if node != destNode:
             # APRS string is for remote RF node
-            telemetry = node +\
-                        '>' +\
-                        destAddress +\
-                        ',' +\
-                        qConstruct +\
-                        ',' +\
-                        destNode +\
-                        ':T#' +\
-                        str(telemSequence).zfill(3) +\
-                        ',' +\
-                        str(station["ADC0"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC1"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC3"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC6"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["BOARDTEMP"]/16).zfill(3) +\
-                        ',' +\
-                        ioList +\
-                        '\r'
+            telemetry = '{}>{},{},{}:T#{},{},{},{},{},{},{}\r'.format(
+                node,
+                destAddress,
+                qConstruct,
+                destNode,
+                str(telemSequence).zfill(3),
+                str(station["ADC0"] / 16).zfill(3),
+                str(station["ADC1"] / 16).zfill(3),
+                str(station["ADC3"] / 16).zfill(3),
+                str(station["ADC6"] / 16).zfill(3),
+                str(station["BOARDTEMP"] / 16).zfill(3),
+                ioList)
 
             logger.debug(telemetry)
 
@@ -355,24 +337,16 @@ def sendtelemetry(stations, telemSequence, socket):
 
         elif node == destNode:
             # APRS string is for local node
-            telemetry = node +\
-                        '>' +\
-                        destAddress +\
-                        ':T#' +\
-                        str(telemSequence).zfill(3) +\
-                        ',' +\
-                        str(station["ADC0"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC1"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC3"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["ADC6"]/16).zfill(3) +\
-                        ',' +\
-                        str(station["BOARDTEMP"]/16).zfill(3) +\
-                        ',' +\
-                        ioList +\
-                        '\r'
+            telemetry = '{}>{}:T#{},{},{},{},{},{},{}\r'.format(
+                node,
+                destAddress,
+                str(telemSequence).zfill(3),
+                str(station["ADC0"] / 16).zfill(3),
+                str(station["ADC1"] / 16).zfill(3),
+                str(station["ADC3"] / 16).zfill(3),
+                str(station["ADC6"] / 16).zfill(3),
+                str(station["BOARDTEMP"] / 16).zfill(3),
+                ioList)
 
             logger.debug(telemetry)
 
@@ -429,49 +403,19 @@ def sendTelemLabels(stations, socket):
         bLabel6 = aprsConfig.get('APRS', 'BLABEL6')
         bLabel7 = aprsConfig.get('APRS', 'BLABEL7')
 
+        unitsAndLabels = ','.join([
+            unit0[:6], unit1[:6], unit2[:5], unit3[:5], unit4[:4],
+            bLabel0[:5], bLabel1[:4], bLabel2[:3], bLabel3[:3],
+            bLabel4[:3], bLabel5[:2], bLabel6[:2], bLabel7[:2]])
+
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
         if node != destNode:
             # APRS string is for remote node
-            labels = node +\
-                     '>' +\
-                     destAddress +\
-                     ',' +\
-                     qConstruct +\
-                     ',' +\
-                     destNode +\
-                     '::' +\
-                     node +\
-                     ' :' +\
-                     "UNIT." +\
-                     str(unit0[:6]) +\
-                     ',' +\
-                     str(unit1[:6]) +\
-                     ',' +\
-                     str(unit2[:5]) +\
-                     ',' +\
-                     str(unit3[:5]) +\
-                     ',' +\
-                     str(unit4[:4]) +\
-                     ',' +\
-                     str(bLabel0[:5]) +\
-                     ',' +\
-                     str(bLabel1[:4]) +\
-                     ',' +\
-                     str(bLabel2[:3]) +\
-                     ',' +\
-                     str(bLabel3[:3]) +\
-                     ',' +\
-                     str(bLabel4[:3]) +\
-                     ',' +\
-                     str(bLabel5[:2]) +\
-                     ',' +\
-                     str(bLabel6[:2]) +\
-                     ',' +\
-                     str(bLabel7[:2]) +\
-                     '\r'
+            labels = '{}>{},{},{}::{} :UNIT.{}\r'.format(
+                node, destAddress, qConstruct, destNode, node, unitsAndLabels)
             logger.debug(labels)
 
             try:
@@ -483,39 +427,8 @@ def sendTelemLabels(stations, socket):
 
         elif node == destNode:
             # APRS string is for local node
-            labels = node +\
-                     '>' +\
-                     destAddress +\
-                     '::' +\
-                     node +\
-                     ' :' +\
-                     "UNIT." +\
-                     str(unit0[:6]) +\
-                     ',' +\
-                     str(unit1[:6]) +\
-                     ',' +\
-                     str(unit2[:5]) +\
-                     ',' +\
-                     str(unit3[:5]) +\
-                     ',' +\
-                     str(unit4[:4]) +\
-                     ',' +\
-                     str(bLabel0[:5]) +\
-                     ',' +\
-                     str(bLabel1[:4]) +\
-                     ',' +\
-                     str(bLabel2[:3]) +\
-                     ',' +\
-                     str(bLabel3[:3]) +\
-                     ',' +\
-                     str(bLabel4[:3]) +\
-                     ',' +\
-                     str(bLabel5[:2]) +\
-                     ',' +\
-                     str(bLabel6[:2]) +\
-                     ',' +\
-                     str(bLabel7[:2]) +\
-                     '\r'
+            labels = '{}>{}::{} :UNIT.{}\r'.format(
+                node, destAddress, node, unitsAndLabels)
 
             logger.debug(labels)
             try:
@@ -562,49 +475,19 @@ def sendParameters(stations, socket):
         io6 = aprsConfig.get('APRS', 'IO6PARAM')
         io7 = aprsConfig.get('APRS', 'IO7PARAM')
 
+        adcAndIoParams = ','.join([
+            adc0[:6], adc1[:6], adc2[:5], adc3[:5], adc4[:4],
+            io0[:5], io1[:4], io2[:3], io3[:3],
+            io4[:3], io5[:2], io6[:2], io7[:2]])
+
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
         if node != destNode:
             # APRS string is for remote node
-            parameters = node +\
-                         '>' +\
-                         destAddress +\
-                         ',' +\
-                         qConstruct +\
-                         ',' +\
-                         destNode +\
-                         '::' +\
-                         node +\
-                         ' :' +\
-                         "PARM." +\
-                         str(adc0[:6]) +\
-                         ',' +\
-                         str(adc1[:6]) +\
-                         ',' +\
-                         str(adc2[:5]) +\
-                         ',' +\
-                         str(adc3[:5]) +\
-                         ',' +\
-                         str(adc4[:4]) +\
-                         ',' +\
-                         str(io0[:5]) +\
-                         ',' +\
-                         str(io1[:4]) +\
-                         ',' +\
-                         str(io2[:3]) +\
-                         ',' +\
-                         str(io3[:3]) +\
-                         ',' +\
-                         str(io4[:3]) +\
-                         ',' +\
-                         str(io5[:2]) +\
-                         ',' +\
-                         str(io6[:2]) +\
-                         ',' +\
-                         str(io7[:2]) +\
-                         '\r'
+            parameters = '{}>{},{},{}::{} :PARM.{}\r'.format(
+                node, destAddress, qConstruct, destNode, node, adcAndIoParams)
 
             logger.debug(parameters)
             try:
@@ -616,39 +499,8 @@ def sendParameters(stations, socket):
 
         elif node == destNode:
             # APRS string is for local node
-            parameters = node +\
-                         '>' +\
-                         destAddress +\
-                         '::' +\
-                         node +\
-                         ' :' +\
-                         "PARM." +\
-                         str(adc0[:6]) +\
-                         ',' +\
-                         str(adc1[:6]) +\
-                         ',' +\
-                         str(adc2[:5]) +\
-                         ',' +\
-                         str(adc3[:5]) +\
-                         ',' +\
-                         str(adc4[:4]) +\
-                         ',' +\
-                         str(io0[:5]) +\
-                         ',' +\
-                         str(io1[:4]) +\
-                         ',' +\
-                         str(io2[:3]) +\
-                         ',' +\
-                         str(io3[:3]) +\
-                         ',' +\
-                         str(io4[:3]) +\
-                         ',' +\
-                         str(io5[:2]) +\
-                         ',' +\
-                         str(io6[:2]) +\
-                         ',' +\
-                         str(io7[:2]) +\
-                         '\r'
+            parameters = '{}>{}::{} :PARM.{}\r'.format(
+                node, destAddress, node, adcAndIoParams)
 
             logger.debug(parameters)
             try:
@@ -682,21 +534,23 @@ def sendEquations(stations, socket):
         destAddress = aprsConfig.get('APRS', 'DESTADDRESS')
 
         # Get equations from configuration file
-        eq0a = aprsConfig.get('APRS', 'EQ0A')
-        eq0b = aprsConfig.get('APRS', 'EQ0B')
-        eq0c = aprsConfig.get('APRS', 'EQ0C')
-        eq1a = aprsConfig.get('APRS', 'EQ1A')
-        eq1b = aprsConfig.get('APRS', 'EQ1B')
-        eq1c = aprsConfig.get('APRS', 'EQ1C')
-        eq2a = aprsConfig.get('APRS', 'EQ2A')
-        eq2b = aprsConfig.get('APRS', 'EQ2B')
-        eq2c = aprsConfig.get('APRS', 'EQ2C')
-        eq3a = aprsConfig.get('APRS', 'EQ3A')
-        eq3b = aprsConfig.get('APRS', 'EQ3B')
-        eq3c = aprsConfig.get('APRS', 'EQ3C')
-        eq4a = aprsConfig.get('APRS', 'EQ4A')
-        eq4b = aprsConfig.get('APRS', 'EQ4B')
-        eq4c = aprsConfig.get('APRS', 'EQ4C')
+        equationConfig = ','.join([
+            str(aprsConfig.get('APRS', 'EQ0A')),
+            str(aprsConfig.get('APRS', 'EQ0B')),
+            str(aprsConfig.get('APRS', 'EQ0C')),
+            str(aprsConfig.get('APRS', 'EQ1A')),
+            str(aprsConfig.get('APRS', 'EQ1B')),
+            str(aprsConfig.get('APRS', 'EQ1C')),
+            str(aprsConfig.get('APRS', 'EQ2A')),
+            str(aprsConfig.get('APRS', 'EQ2B')),
+            str(aprsConfig.get('APRS', 'EQ2C')),
+            str(aprsConfig.get('APRS', 'EQ3A')),
+            str(aprsConfig.get('APRS', 'EQ3B')),
+            str(aprsConfig.get('APRS', 'EQ3C')),
+            str(aprsConfig.get('APRS', 'EQ4A')),
+            str(aprsConfig.get('APRS', 'EQ4B')),
+            str(aprsConfig.get('APRS', 'EQ4C'))
+        ])
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
@@ -704,47 +558,8 @@ def sendEquations(stations, socket):
 
         if node != destNode:
             # APRS string is for remote node
-            equations = node +\
-                        '>' +\
-                        destAddress +\
-                        ',' +\
-                        qConstruct +\
-                        ',' +\
-                        destNode +\
-                        '::' +\
-                        node +\
-                        ' :' +\
-                        "EQNS." +\
-                        str(eq0a) +\
-                        ',' +\
-                        str(eq0b) +\
-                        ',' +\
-                        str(eq0c) +\
-                        ',' +\
-                        str(eq1a) +\
-                        ',' +\
-                        str(eq1b) +\
-                        ',' +\
-                        str(eq1c) +\
-                        ',' +\
-                        str(eq2a) +\
-                        ',' +\
-                        str(eq2b) +\
-                        ',' +\
-                        str(eq2c) +\
-                        ',' +\
-                        str(eq3a) +\
-                        ',' +\
-                        str(eq3b) +\
-                        ',' +\
-                        str(eq3c) +\
-                        ',' +\
-                        str(eq4a) +\
-                        ',' +\
-                        str(eq4b) +\
-                        ',' +\
-                        str(eq4c) +\
-                        '\r'
+            equations = '{}>{},{},{}::{} :EQNS.{}\r'.format(
+                node, destAddress, qConstruct, destNode, node, equationConfig)
 
             logger.debug(equations)
             try:
@@ -756,43 +571,8 @@ def sendEquations(stations, socket):
 
         elif node == destNode:
             # APRS string is for local node
-            equations = node +\
-                         '>' +\
-                         destAddress +\
-                         '::' +\
-                         node +\
-                         ' :' +\
-                         "EQNS." +\
-                         str(eq0a) +\
-                         ',' +\
-                         str(eq0b) +\
-                         ',' +\
-                         str(eq0c) +\
-                         ',' +\
-                         str(eq1a) +\
-                         ',' +\
-                         str(eq1b) +\
-                         ',' +\
-                         str(eq1c) +\
-                         ',' +\
-                         str(eq2a) +\
-                         ',' +\
-                         str(eq2b) +\
-                         ',' +\
-                         str(eq2c) +\
-                         ',' +\
-                         str(eq3a) +\
-                         ',' +\
-                         str(eq3b) +\
-                         ',' +\
-                         str(eq3c) +\
-                         ',' +\
-                         str(eq4a) +\
-                         ',' +\
-                         str(eq4b) +\
-                         ',' +\
-                         str(eq4c) +\
-                         '\r'
+            equations = '{}>{}::{} :EQNS.{}\r'.format(
+                node, destAddress, node, equationConfig)
 
             logger.debug(equations)
             try:
@@ -878,8 +658,8 @@ def generatePasscode(callsign):
 
         while (i < length):
             try:
-                callhash ^= ord(callList[i])<<8
-                callhash ^= ord(callList[i+1])
+                callhash ^= ord(callList[i]) << 8
+                callhash ^= ord(callList[i + 1])
                 i += 2
 
             except StandardError as e:
@@ -895,7 +675,7 @@ def generatePasscode(callsign):
         logger.error("Callsign '{0}' invalid!".format(callsign))
 
     # Return hash as passcode or None if the operation was erroneous
-    logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign,callhash))
+    logger.debug("'{0}' APRS-IS Passcode: {1}".format(callsign, callhash))
     return callhash
 
 

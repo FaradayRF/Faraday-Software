@@ -24,7 +24,7 @@ from flask import Flask
 from flask import request
 
 # Can we clean this up?
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/"))  #Append path to common tutorial FaradayIO module
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import telemetryparser
 
@@ -104,7 +104,7 @@ def telemetry_worker(config):
 
     #  Check for data on telemetry port with infinite loop.
     while True:
-         for radio in range(count):
+        for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
             data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
@@ -125,9 +125,9 @@ def telemetry_worker(config):
                         # Decode BASE64 JSON data packet into
                         unPackedItem = proxy.DecodeRawPacket(item["data"])
                         # Unpack packet into datagram elements
-                        datagram = faradayParser.UnpackDatagram(unPackedItem,False)
+                        datagram = faradayParser.UnpackDatagram(unPackedItem, False)
                         # Extract the payload length from payload since padding could be used
-                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"],faradayParser.packet_3_len)
+                        telemetryData = faradayParser.ExtractPaddedPacket(datagram["PayloadData"], faradayParser.packet_3_len)
                         # Unpack payload and return a dictionary of telemetry, return tuple and dictionary
                         parsedTelemetry = faradayParser.UnpackPacket_3(telemetryData, False)
 
@@ -141,7 +141,7 @@ def telemetry_worker(config):
                     else:
                         sqlInsert(parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
-         time.sleep(1) #  Slow down main while loop
+        time.sleep(1)  # Slow down main while loop
 
 
 # Initialize Flask microframework
@@ -171,7 +171,7 @@ def dbTelemetry():
         direction = request.args.get("direction", 0)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
-        timespan = request.args.get("timespan", 5*60)
+        timespan = request.args.get("timespan", 5 * 60)
         limit = request.args.get("limit")
 
     except IOError as e:
@@ -207,7 +207,7 @@ def dbTelemetry():
         return '', 204  # HTTP 204 response cannot have message data
 
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.route('/raw', methods=['GET'])
@@ -254,7 +254,7 @@ def rawTelemetry():
                         "Faraday Node ID's valid integer between 0-255")
         else:
             # Don't change anything since callsign is None
-           pass
+            pass
 
         if limit is None:
             #  Optional, set limit to largest value of any radio queue size
@@ -358,7 +358,7 @@ def rawTelemetry():
 
     # Completed our query for "/raw", return json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.route('/stations', methods=['GET'])
@@ -377,7 +377,7 @@ def stations():
 
     try:
         # Obtain URL parameters
-        timespan = request.args.get("timespan", 5*60)
+        timespan = request.args.get("timespan", 5 * 60)
         startTime = request.args.get("starttime", None)
         endTime = request.args.get("endtime", None)
         callsign = request.args.get("callsign", "%").upper()
@@ -414,7 +414,7 @@ def stations():
 
     # Completed the /stations request, return data json.dumps() and HTTP 200
     return json.dumps(data, indent=1), 200,\
-            {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 @app.errorhandler(404)
@@ -569,7 +569,7 @@ def sqlInsert(data):
             conn = sqlite3.connect(db)
             # Use connection as context manager to rollback automatically if error
             with conn:
-                conn.execute(sql,telem)
+                conn.execute(sql, telem)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
@@ -636,7 +636,7 @@ def queryDb(parameters):
         sqlWhereID = "AND DESTINATIONID LIKE ? "
 
     sqlBeg = "SELECT * FROM TELEMETRY "
-    sqlEpoch ="AND EPOCH BETWEEN ? AND ? "
+    sqlEpoch = "AND EPOCH BETWEEN ? AND ? "
     sqlEnd = "ORDER BY KEYID DESC"
     if limit is not None:
         sqlEnd = sqlEnd + " LIMIT ?"
@@ -669,7 +669,7 @@ def queryDb(parameters):
     cur = conn.cursor()
 
     try:
-        cur.execute(sql,paramTuple)
+        cur.execute(sql, paramTuple)
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
@@ -773,7 +773,7 @@ def queryStationsDb(parameters):
     cur = conn.cursor()
 
     try:
-        cur.execute(sql,paramTuple)
+        cur.execute(sql, paramTuple)
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
@@ -815,13 +815,13 @@ def generateStartStopTimes(parameters):
         # Start end end times provided, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = str(parameters["ENDTIME"])
-        timeTuple = iso8601ToEpoch(startTime,endTime)
+        timeTuple = iso8601ToEpoch(startTime, endTime)
 
     elif parameters["STARTTIME"] is not None:
         # Start time provided, use current time as end, ignore timespan
         startTime = str(parameters["STARTTIME"])
         endTime = time.strftime("%Y-%m-%dT%H:%M:%S")
-        timeTuple = iso8601ToEpoch(startTime,endTime)
+        timeTuple = iso8601ToEpoch(startTime, endTime)
 
     else:
         # We should use the timespan provided to generate start and stop times
@@ -846,8 +846,8 @@ def iso8601ToEpoch(startTime, endTime):
 
     try:
         # Generate start and stop time tuples
-        start = time.strptime(startTime,fmt)
-        end = time.strptime(endTime,fmt)
+        start = time.strptime(startTime, fmt)
+        end = time.strptime(endTime, fmt)
 
         # Convert time tuples to epoch times
         startEpoch = time.mktime(start)

@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
 
 #Imports - Faraday Specific
 from FaradayIO import faradaybasicproxyio
@@ -14,8 +14,8 @@ from FaradayIO import gpioallocations
 DEBUG = False
 
 #Variables
-local_device_callsign = 'nocall' # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = 1 # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = 'nocall'  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = 1  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
@@ -47,7 +47,7 @@ def TestEchoUart():
     #Display information
     status_passes = 0
     status_fails = 0
-    for i in range(0,5):
+    for i in range(0, 5):
         originalmsg = os.urandom(40)  # Cannot be longer than max UART payload size!
         # Use the general command library to send a text message to the Faraday UART "ECHO" command. Will only ECHO a SINGLE packet. This will send the payload of the message back (up to 62 bytes, this can be updated in firmware to 124!)
         faraday_1.FlushRxPort(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT)
@@ -62,7 +62,7 @@ def TestEchoUart():
             b64_data = rx_echo_raw[0]['data']
             echo_decoded = faraday_1.DecodeRawPacket(b64_data)
             print "\n\nSent:", repr(originalmsg)
-            print "\nReceived:", repr(echo_decoded[0:len(originalmsg)]) #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
+            print "\nReceived:", repr(echo_decoded[0:len(originalmsg)])  #Note that ECHO sends back a fixed packed regardless. Should update to send back exact length.
             echo_len = len(originalmsg)
             if(originalmsg == echo_decoded[0:echo_len]):
                 #print "TEST: ECHO - Success"
@@ -199,7 +199,7 @@ def GetTelem3():
 def ReadTelemTemp(telemetry_parsed):
     #Get and print current CC430 ("board") temp
     int_boardtemp = telemetry_parsed['BOARDTEMP']
-    print "\nCurrent CC430 Temperature: %dC" %int_boardtemp
+    print "\nCurrent CC430 Temperature: %dC" % int_boardtemp
 
     #Check if temp is inside of bounds (set wide for check if generall OK
     if int_boardtemp > 15 and int_boardtemp < 35:
@@ -333,7 +333,8 @@ def DisableGPIO():
     # P4 - 0, 1, 2, 3, 4
     # P5 - 4
     print "Turning OFF all GPIO outputs"
-    command = faraday_cmd.CommandLocalGPIO(0, 0, 0, (gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2),
+    command = faraday_cmd.CommandLocalGPIO(
+        0, 0, 0, (gpioallocations.DIGITAL_IO_0 | gpioallocations.DIGITAL_IO_1 | gpioallocations.DIGITAL_IO_2),
         gpioallocations.DIGITAL_IO_3 | gpioallocations.DIGITAL_IO_4 | gpioallocations.DIGITAL_IO_5 | gpioallocations.DIGITAL_IO_6 | gpioallocations.DIGITAL_IO_7,
         gpioallocations.DIGITAL_IO_8)
     faraday_1.POST(local_device_callsign, local_device_node_id, faraday_1.CMD_UART_PORT, command)

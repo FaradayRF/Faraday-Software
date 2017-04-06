@@ -55,7 +55,7 @@ class faraday_uart_object(threading.Thread):
         self.uart_layer_output_status = True
         self.transmit_datagram_queue = Queue.Queue(0)
         self.receive_datagram_queue = Queue.Queue(0)
-        self.receive_parsed_queue_dict = {} #Dictionary to manage multiple queues spurred
+        self.receive_parsed_queue_dict = {}  #Dictionary to manage multiple queues spurred
         self.layer_2_object = layer_2_service.Layer2ServiceObject(port, baud, timeout)
         self.transport_packet_struct = struct.Struct('BB123s')
         self.TRANPORT_PACKET_LENGTH = 125
@@ -64,7 +64,7 @@ class faraday_uart_object(threading.Thread):
 
         #Start
         threading.Thread.__init__(self)
-        self.start() #Starts the run() function and thread
+        self.start()  #Starts the run() function and thread
 
     def POST(self, service_number, payload_length, payload):
         """
@@ -81,7 +81,7 @@ class faraday_uart_object(threading.Thread):
             #Create transport packet raw
             transport_packet = layer_4_protocol.create_packet(service_number, payload_length, payload)
             #Pad fixed length packet to correct fixed size
-            transport_packet_padded = transport_packet + chr(0xff)*(self.TRANPORT_PAYLOAD_LENGTH - len(payload))
+            transport_packet_padded = transport_packet + chr(0xff) * (self.TRANPORT_PAYLOAD_LENGTH - len(payload))
             self.transmit_datagram_queue_put(transport_packet_padded)
         else:
             print "ERROR: Transport protocol violation"
@@ -135,7 +135,7 @@ class faraday_uart_object(threading.Thread):
         if DEBUG:
             print "RX'd:", parsed_datagram_dict
 
-    def RxPortHasItem(self,service_number):
+    def RxPortHasItem(self, service_number):
         try:
             return not self.receive_parsed_queue_dict[service_number].empty()
         except:
@@ -186,7 +186,7 @@ class faraday_uart_object(threading.Thread):
                 rx_service_number = int(unpacked_transport[0])
                 length = unpacked_transport[1]
                 try:
-                    transport_payload = unpacked_transport[2][:length]#.encode('hex')
+                    transport_payload = unpacked_transport[2][:length]  #.encode('hex')
                     self.receive_service_queue_put(transport_payload, rx_service_number)
                 except:
                     print "data fail"
@@ -196,7 +196,7 @@ class faraday_uart_object(threading.Thread):
             pass
 
     def Abort(self):
-        self.layer_2_object.Abort()#Abort lower layers
+        self.layer_2_object.Abort()  #Abort lower layers
         self.enabled = False
 
     def run(self):

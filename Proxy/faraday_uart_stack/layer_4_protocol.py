@@ -28,7 +28,7 @@ def create_packet(service_number, payload_length, payload):
 
 def parse_packet(datagram):
     #Parse Layer 4 datagram
-    parsedpacket = struct.unpack('BB123s',datagram)
+    parsedpacket = struct.unpack('BB123s', datagram)
 
     #Return parsed datagram
     return parsedpacket
