@@ -411,7 +411,7 @@ def sqlInsert(data):
         return False
 
     # # Change dictionary into list with proper order
-    sqlparameters = [None, data["port"],data["data"],time.time()]
+    sqlparameters = [None, data["port"], data["data"], time.time()]
 
     if len(sqlparameters) > 0:
         # Create parameter substitute "?" string for SQL query then create SQL
@@ -431,7 +431,7 @@ def sqlInsert(data):
         try:
             # Use connection as context manager to rollback automatically if error
             with conn:
-                conn.execute(sql,sqlparameters)
+                conn.execute(sql, sqlparameters)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
