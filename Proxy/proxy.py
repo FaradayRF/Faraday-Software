@@ -18,6 +18,7 @@ import threading
 import ConfigParser
 import os
 from collections import deque
+import sqlite3
 
 from flask import Flask
 from flask import request
@@ -41,11 +42,11 @@ getDicts = {}
 unitDict = {}
 
 
-def uart_worker(modem, getDicts, units):
+def uart_worker(modem, getDicts, units, log):
     """
     Interface Faraday ports over USB UART
 
-    This function interfaces the USB UART serial data with an infinit loop
+    This function interfaces the USB UART serial data with an infinite loop
     that checks all Faraday "ports" for data and appends/pops data from
     queues for send and receive directions.
     """
@@ -68,12 +69,18 @@ def uart_worker(modem, getDicts, units):
                         # convert to BASE64 and place in queue
                         item = {}
                         item["data"] = base64.b64encode(com.GET(port))
-                        # Use new buffers
+
                         try:
                             getDicts[unit][port].append(item)
+
                         except:
                             getDicts[unit][port] = deque([], maxlen=100)
                             getDicts[unit][port].append(item)
+
+                        # Check for Proxy logging and save to SQL if true
+                        if log:
+                            item["port"] = port
+                            sqlInsert(item)
 
             except StandardError as e:
                 logger.error("StandardError: " + str(e))
@@ -351,9 +358,102 @@ def callsign2COM():
     return json.loads(local)
 
 
+def initDB():
+    """
+    Initialize database, creates it if not present
+
+    :return: True or False if successful
+    """
+
+    # Obtain configuration file names
+    try:
+        dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # Check if database exists
+    if os.path.isfile(dbFilename):
+        pass
+    else:
+        # Open database schema SQL file and execute the SQL functions inside
+        # after connecting. Close the database when complete.
+        try:
+            with open(dbSchema, 'rt') as f:
+                conn = sqlite3.connect(dbFilename)
+                cur = conn.cursor()
+                schema = f.read()
+                cur.executescript(schema)
+            conn.close()
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+    return True
+
+
+def sqlInsert(data):
+    """
+    Takes in a data tuple and inserts it into the Proxy SQLite table
+
+    :param data: Proxy dictionary
+    :return: Status True or False on SQL insertion success
+    """
+
+    # Read in name of database
+    try:
+        db = proxyConfig.get("DATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # # Change dictionary into list with proper order
+    sqlparameters = [None, data["port"],data["data"],time.time()]
+
+    if len(sqlparameters) > 0:
+        # Create parameter substitute "?" string for SQL query then create SQL
+        numKeys = len(sqlparameters)
+        paramSubs = "?" * (numKeys)
+        paramSubs = ",".join(paramSubs)
+        sql = "INSERT INTO PROXY VALUES(" + paramSubs + ")"
+
+        # Connect to database, create SQL query, execute query, and close database
+        try:
+            conn = sqlite3.connect(db)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            return False
+
+        try:
+            # Use connection as context manager to rollback automatically if error
+            with conn:
+                conn.execute(sql,sqlparameters)
+
+        except sqlite3.Error as e:
+            logger.error("Sqlite3.Error: " + str(e))
+            conn.close()
+            return False
+
+        # Completed, close database and return True
+        conn.close()
+        return True
+
+    else:
+        return False
+
+
 def main():
+    log = proxyConfig.getboolean('PROXY', 'LOG')
+
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
+
+    initDB()  # Initialize database for logging
 
     # Associate serial ports with callsigns
     # global units
@@ -387,7 +487,7 @@ def main():
             logger.error("KeyError: " + str(e))
             time.sleep(1)
 
-    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units))
+    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units, log))
     threads.append(t)
     t.start()
 

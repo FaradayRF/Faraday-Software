@@ -24,7 +24,11 @@ Proxy.ini is a plaintext ASCII file which contains the necessary configuration v
  * `[FLASK]`: Flask server configuration values
   * `HOST`: IP Address or hostname of flask server
   * `PORT`: Network port to serve data
+ * `[DATABASE]`: SQLite3 database settings for logging
+  * `FILENAME`: Filename of SQLite3 database to create/open
+  * `SCHEMANAME`: Filename of SQLite3 schema file for database creation
  * `[PROXY]`: Proxy server high level configuration
+  * `LOG`: Boolean indicating if Proxy data should be logged to SQLite3 database
   * `UNITS`: Quantity of Faraday radios connected to computer
  * `[UNIT0]`: Unit 0 Proxy configuration values section
   * `CALLSIGN`: Callsign to associate with radio on this USB port
