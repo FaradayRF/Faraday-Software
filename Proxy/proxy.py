@@ -69,7 +69,7 @@ def uart_worker(modem, getDicts, units, log):
                         # convert to BASE64 and place in queue
                         item = {}
                         item["data"] = base64.b64encode(com.GET(port))
-                        # Use new buffers
+
                         try:
                             getDicts[unit][port].append(item)
 
