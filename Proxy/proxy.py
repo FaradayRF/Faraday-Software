@@ -73,18 +73,14 @@ def uart_worker(modem, getDicts, units, log):
                         try:
                             getDicts[unit][port].append(item)
 
-                            # Check for Proxy logging and save to SQL if true
-                            if log:
-                                item["port"] = port
-                                sqlInsert(item)
                         except:
                             getDicts[unit][port] = deque([], maxlen=100)
                             getDicts[unit][port].append(item)
 
-                            # Check for Proxy logging and save to SQL if true
-                            if log:
-                                item["port"] = port
-                                sqlInsert(item)
+                        # Check for Proxy logging and save to SQL if true
+                        if log:
+                            item["port"] = port
+                            sqlInsert(item)
 
             except StandardError as e:
                 logger.error("StandardError: " + str(e))
