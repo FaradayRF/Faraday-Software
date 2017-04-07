@@ -4,6 +4,12 @@ import json
 import time
 import ConfigParser
 import os
+import logging.config
+
+
+# Start logging after importing modules
+logging.config.fileConfig('loggingConfig.ini')
+logger = logging.getLogger('SimpleUI')
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
@@ -17,14 +23,22 @@ localcallsign = config.get('UNITS', 'UNIT0CALL')
 localnodeid = int(config.get('UNITS', 'UNIT0ID'))
 
 
-def getstations():
+
+def getStations():
     """
-    Get stations heard.
+    Queries telemetry server for active stations
+
+    :return: JSON results from request
     """
 
-    queuelen = requests.get('http://' + str(telemhost) + ':' + str(telemport) + '/stations')
-    queuesize = queuelen.json()
+    # Construct station URL and query for active stations
+    url = "http://" + str(telemhost) + ":" + str(telemport) + "/stations"
+    logger.debug(url)
 
-    return queuesize
+    r = requests.get(url)
+    results = r.json()
 
-print getstations()
+    # Return extracted JSON data
+    return results
+
+print getStations()
