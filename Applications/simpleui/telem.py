@@ -1,0 +1,1 @@
+# Simple telemetry view
