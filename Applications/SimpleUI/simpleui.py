@@ -36,7 +36,7 @@ def simpleui():
     """
     if request.method == "GET":
         # This is the GET routine to return data to the user
-        return render_template('layout.html')
+        return render_template('index.html')
 
 
 @app.errorhandler(404)
