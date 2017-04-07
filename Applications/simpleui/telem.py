@@ -41,4 +41,44 @@ def getStations():
     # Return extracted JSON data
     return results
 
-print getStations()
+def getStationData(stations, age):
+    """
+    Queries telemetry server for detailed telemetry from active stations
+
+    :param stations: List of callsign + nodeids to get telemetry data from
+    :return: list containing latest station telemetry
+    """
+
+    # Initialize lists
+    stationData = []
+
+    #age = aprsConfig.getint('APRSIS', 'STATIONSAGE')
+
+    # Construct base URL to get station data from telemetry server
+    url = "http://" + str(telemhost) + ":" + str(telemport) + "/"
+
+    # Iterate through each station and request latest telemetry data entry
+    for station in stations:
+        # Extract station identification data from active stations
+        callsign = station["SOURCECALLSIGN"]
+        nodeid = station["SOURCEID"]
+
+        # Construct request dictionary payload
+        payload = {"callsign": callsign, "nodeid": nodeid, "timespan": age, "limit": 1}
+
+        # Request data, append to stationData list
+        try:
+            r = requests.get(url, params=payload)
+            data = r.json()
+
+        except requests.exceptions.RequestException as e:
+            logger.error(e)
+
+        else:
+            stationData.append(data)
+
+    # Return all detailed stationData
+    return stationData
+
+units = getStations()
+print getStationData(units, 60)
