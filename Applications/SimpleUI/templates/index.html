@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
 <script type=text/javascript>
-    //setInterval(function(){ alert("Hello"); }, 5000);
-    try{
-        $.getJSON("https://jsonplaceholder.typicode.com/posts/1",function(data){
-            console.log(data);
-        }).fail(function(){
-            console.log("Error")
-            });
+    function getTelemetry(){
+        try{
+            $.getJSON("https://jsonplaceholder.typicode.com/posts/1",function(data){
+                console.log(data);
+            }).fail(function(){
+                console.log("Error")
+                });
+        }
+        catch(err){
+            console.log(err);
+        };
     }
-    catch(err){
-        console.log(err);
-    };
+    setInterval(function(){ getTelemetry(); }, 1000);
 </script>
 {% endblock %}
