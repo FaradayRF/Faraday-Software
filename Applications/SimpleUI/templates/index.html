@@ -1,18 +1,58 @@
 {% extends "layout.html" %}
 {% block content %}
 <script type=text/javascript>
+    
     function getTelemetry(){
         try{
+        var data = [];
             $.getJSON("http://localhost:8001/?limit=1",function(data){
-                console.log(data);
+                $(".EPOCH").text(data[0]["EPOCH"]);
+                $(".CALLSIGN").text(data[0]["SOURCECALLSIGN"]);
+                $(".NODEID").text(data[0]["SOURCEID"]);
+                $(".GPSLATITUDE").text(data[0]["GPSLATITUDE"]);
+                $(".GPSLATITUDEDIR").text(data[0]["GPSLATITUDEDIR"]);
+                $(".GPSLONGITUDE").text(data[0]["GPSLONGITUDE"]);
+                $(".GPSLONGITUDEDIR").text(data[0]["GPSLONGITUDEDIR"]);
+                $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
+                $(".SPEED").text(data[0]["GPSSPEED"]);
+                $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
+                $(".ADC0").text(data[0]["ADC0"]);
+                $(".ADC1").text(data[0]["ADC1"]);
+                $(".ADC2").text(data[0]["ADC2"]);
+                $(".ADC3").text(data[0]["ADC3"]);
+                $(".ADC4").text(data[0]["ADC4"]);
+                $(".ADC5").text(data[0]["ADC5"]);
+                $(".HABTIMERSTATE").text(data[0]["HABTIMERSTATE"]);
+                $(".HABTRIGGERTIME").text(data[0]["HABTRIGGERTIME"]);
+                $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
             }).fail(function(){
-                console.log("Error")
+                console.log("Error");  
                 });
         }
         catch(err){
             console.log(err);
         };
     }
-    setInterval(function(){ getTelemetry(); }, 2000);
+    setInterval(function(){ getTelemetry(); }, 500);
 </script>
+<b>Station</b>: <span class="CALLSIGN"></span>-<span class="NODEID"></span><br/>
+<b>Epoch</b>: <span class="EPOCH"></span><br/>
+<br />
+<b>Latitude</b>: <span class="GPSLATITUDE"></span> <span class="GPSLONGITUDEDIR"></span><br/>
+<b>Longitude</b>: <span class="GPSLONGITUDE"></span> <span class="GPSLATITUDEDIR"></span><br/>
+<b>Altitude</b>: <span class="ALTITUDE"></span> m<br/>
+<b>Speed</b>: <span class="SPEED"></span> knots<br/>
+<br />
+<b>Board Temp</b>: <span class="BOARDTEMP"></span> C<br/>
+<b>ADC0</b>: <span class="ADC0"></span><br/>
+<b>ADC1</b>: <span class="ADC1"></span><br/>
+<b>ADC2</b>: <span class="ADC2"></span><br/>
+<b>ADC3</b>: <span class="ADC3"></span><br/>
+<b>ADC4</b>: <span class="ADC4"></span><br/>
+<b>ADC5</b>: <span class="ADC5"></span><br/>
+<br />
+<b>HABTIMERSTATE</b>: <span class="HABTIMERSTATE"></span><br/>
+<b>HABTRIGGERTIME</b>: <span class="HABTRIGGERTIME"></span><br/>
+<b>HABCUTDOWNSTATE</b>: <span class="HABCUTDOWNSTATE"></span><br/>
+
 {% endblock %}
