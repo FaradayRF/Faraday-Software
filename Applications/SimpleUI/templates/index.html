@@ -3,7 +3,7 @@
 <script type=text/javascript>
     function getTelemetry(){
         try{
-            $.getJSON("https://jsonplaceholder.typicode.com/posts/1",function(data){
+            $.getJSON("http://localhost:8001/?limit=1",function(data){
                 console.log(data);
             }).fail(function(){
                 console.log("Error")
@@ -13,6 +13,6 @@
             console.log(err);
         };
     }
-    setInterval(function(){ getTelemetry(); }, 1000);
+    setInterval(function(){ getTelemetry(); }, 2000);
 </script>
 {% endblock %}
