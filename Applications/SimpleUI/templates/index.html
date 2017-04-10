@@ -16,12 +16,12 @@
                 $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
                 $(".SPEED").text(data[0]["GPSSPEED"]);
                 $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
-                $(".ADC0").text(data[0]["ADC0"]);
-                $(".ADC1").text(data[0]["ADC1"]);
-                $(".ADC2").text(data[0]["ADC2"]);
-                $(".ADC3").text(data[0]["ADC3"]);
-                $(".ADC4").text(data[0]["ADC4"]);
-                $(".ADC5").text(data[0]["ADC5"]);
+                $(".ADC0").text(Math.round(data[0]["ADC0"]*1000*(2.41/4096))/1000);
+                $(".ADC1").text(Math.round(data[0]["ADC1"]*1000*(2.41/4096))/1000);
+                $(".ADC2").text(Math.round(data[0]["ADC2"]*1000*(2.41/4096))/1000);
+                $(".ADC3").text(Math.round(data[0]["ADC3"]*1000*(2.41/4096))/1000);
+                $(".ADC4").text(Math.round(data[0]["ADC4"]*1000*(2.41/4096))/1000);
+                $(".ADC5").text(Math.round(data[0]["ADC5"]*1000*(2.41/4096))/1000);
                 $(".HABTIMERSTATE").text(data[0]["HABTIMERSTATE"]);
                 $(".HABTRIGGERTIME").text(data[0]["HABTRIGGERTIME"]);
                 $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
