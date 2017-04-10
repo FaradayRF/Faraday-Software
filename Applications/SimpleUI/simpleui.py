@@ -48,6 +48,7 @@ def simpleui():
         else:
             return "Please provide a callsign and nodeid in URL i.e. <br />localhost/?callsign=nocall&nodeid=1"
 
+
 @app.errorhandler(404)
 def pageNotFound(error):
     """HTTP 404 response for incorrect URL"""
