@@ -23,7 +23,9 @@
                 $(".GPSLONGITUDE").text(data[0]["GPSLONGITUDE"]);
                 $(".GPSLONGITUDEDIR").text(data[0]["GPSLONGITUDEDIR"]);
                 $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
-                $(".SPEED").text(data[0]["GPSSPEED"]);
+
+                $(".SPEED").text(data[0]["GPSSPEED"]*0.514444);
+
                 $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
                 $(".ADC0").text(Math.round(data[0]["ADC0"]*1000*(2.41/4096))/1000);
                 $(".ADC1").text(Math.round(data[0]["ADC1"]*1000*(2.41/4096))/1000);
@@ -61,7 +63,7 @@
                 <b>Latitude</b>: <span class="GPSLATITUDE"></span> <span class="GPSLONGITUDEDIR"></span><br/>
                 <b>Longitude</b>: <span class="GPSLONGITUDE"></span> <span class="GPSLATITUDEDIR"></span><br/>
                 <b>Altitude</b>: <span class="ALTITUDE"></span> m<br/>
-                <b>Speed</b>: <span class="SPEED"></span> knots<br/>
+                <b>Speed</b>: <span class="SPEED"></span> m/s<br/>
             </div>
         </div>
     </div>
