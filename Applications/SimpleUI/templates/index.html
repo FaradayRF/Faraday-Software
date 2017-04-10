@@ -39,7 +39,7 @@
                     $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
                     }
                     catch(err){
-                        $(".warning").text(callsign + nodeid + " not found!");
+                        $(".warning").text(callsign + "-" + nodeid + " not found!");
                     }
             }).fail(function(){
                 console.log("Error");
