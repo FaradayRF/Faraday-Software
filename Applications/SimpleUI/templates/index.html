@@ -11,33 +11,38 @@
         // Build URL for Telemetry db query, then retrieve data
         var url = "http://localhost:8001/?limit=1&callsign=" + callsign + "&nodeid=" + nodeid;
             $.getJSON(url,function(data){
-                var epoch = data[0]["EPOCH"];
-                var d = new Date(0);
-                d.setUTCSeconds(epoch);
-                $(".EPOCH").text(d);
+                try{
+                    var epoch = data[0]["EPOCH"];
+                    var d = new Date(0);
+                    d.setUTCSeconds(epoch);
+                    $(".EPOCH").text(d);
 
-                $(".CALLSIGN").text(data[0]["SOURCECALLSIGN"]);
-                $(".NODEID").text(data[0]["SOURCEID"]);
-                $(".GPSLATITUDE").text(data[0]["GPSLATITUDE"]);
-                $(".GPSLATITUDEDIR").text(data[0]["GPSLATITUDEDIR"]);
-                $(".GPSLONGITUDE").text(data[0]["GPSLONGITUDE"]);
-                $(".GPSLONGITUDEDIR").text(data[0]["GPSLONGITUDEDIR"]);
-                $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
+                    $(".CALLSIGN").text(data[0]["SOURCECALLSIGN"]);
+                    $(".NODEID").text(data[0]["SOURCEID"]);
+                    $(".GPSLATITUDE").text(data[0]["GPSLATITUDE"]);
+                    $(".GPSLATITUDEDIR").text(data[0]["GPSLATITUDEDIR"]);
+                    $(".GPSLONGITUDE").text(data[0]["GPSLONGITUDE"]);
+                    $(".GPSLONGITUDEDIR").text(data[0]["GPSLONGITUDEDIR"]);
+                    $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
 
-                $(".SPEED").text(data[0]["GPSSPEED"]*0.514444);
+                    $(".SPEED").text(data[0]["GPSSPEED"]*0.514444);
 
-                $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
-                $(".ADC0").text(Math.round(data[0]["ADC0"]*1000*(2.41/4096))/1000);
-                $(".ADC1").text(Math.round(data[0]["ADC1"]*1000*(2.41/4096))/1000);
-                $(".ADC2").text(Math.round(data[0]["ADC2"]*1000*(2.41/4096))/1000);
-                $(".ADC3").text(Math.round(data[0]["ADC3"]*1000*(2.41/4096))/1000);
-                $(".ADC4").text(Math.round(data[0]["ADC4"]*1000*(2.41/4096))/1000);
-                $(".ADC5").text(Math.round(data[0]["ADC5"]*1000*(2.41/4096))/1000);
-                $(".HABTIMERSTATE").text(data[0]["HABTIMERSTATE"]);
-                $(".HABTRIGGERTIME").text(data[0]["HABTRIGGERTIME"]);
-                $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
+                    $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
+                    $(".ADC0").text(Math.round(data[0]["ADC0"]*1000*(2.41/4096))/1000);
+                    $(".ADC1").text(Math.round(data[0]["ADC1"]*1000*(2.41/4096))/1000);
+                    $(".ADC2").text(Math.round(data[0]["ADC2"]*1000*(2.41/4096))/1000);
+                    $(".ADC3").text(Math.round(data[0]["ADC3"]*1000*(2.41/4096))/1000);
+                    $(".ADC4").text(Math.round(data[0]["ADC4"]*1000*(2.41/4096))/1000);
+                    $(".ADC5").text(Math.round(data[0]["ADC5"]*1000*(2.41/4096))/1000);
+                    $(".HABTIMERSTATE").text(data[0]["HABTIMERSTATE"]);
+                    $(".HABTRIGGERTIME").text(data[0]["HABTRIGGERTIME"]);
+                    $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
+                    }
+                    catch(err){
+                        $(".warning").text(callsign + nodeid + " not found!");
+                    }
             }).fail(function(){
-                console.log("Error");  
+                console.log("Error");
                 });
         }
         catch(err){
@@ -48,6 +53,7 @@
 </script>
 
 <div class="well">
+    <span class="warning bg-danger text-center"></span>
     <div class="row">
         <div class="col-md-6 text-left"><b><span class="CALLSIGN"></span>-<span class="NODEID"></span></b></div>
         <div class="col-md-6 text-right"><span class="EPOCH"></span></div>
