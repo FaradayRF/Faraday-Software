@@ -5,13 +5,17 @@
     function getTelemetry(){
         try{
         var data = [];
-            $.getJSON("http://localhost:8001/?limit=1",function(data){
+        var callsign = "{{callsign}}";
+        var nodeid = "{{nodeid}}";
+
+        // Build URL for Telemetry db query, then retrieve data
+        var url = "http://localhost:8001/?limit=1&callsign=" + callsign + "&nodeid=" + nodeid;
+            $.getJSON(url,function(data){
                 var epoch = data[0]["EPOCH"];
                 var d = new Date(0);
                 d.setUTCSeconds(epoch);
-
-
                 $(".EPOCH").text(d);
+
                 $(".CALLSIGN").text(data[0]["SOURCECALLSIGN"]);
                 $(".NODEID").text(data[0]["SOURCEID"]);
                 $(".GPSLATITUDE").text(data[0]["GPSLATITUDE"]);
@@ -39,8 +43,8 @@
         };
     }
     setInterval(function(){ getTelemetry(); }, 500);
-
 </script>
+
 <div class="well">
     <div class="row">
         <div class="col-md-6 text-left"><b>Station</b>: <span class="CALLSIGN"></span>-<span class="NODEID"></span></div>

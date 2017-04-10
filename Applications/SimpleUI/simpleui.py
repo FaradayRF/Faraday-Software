@@ -37,8 +37,12 @@ def simpleui():
     Provides a simple user interface
     """
     if request.method == "GET":
+        callsign = request.args.get('callsign', '').upper()
+        nodeid = request.args.get('nodeid', '')
         # This is the GET routine to return data to the user
-        return render_template('index.html')
+        return render_template('index.html',
+                               callsign=callsign,
+                               nodeid=nodeid)
 
 
 @app.errorhandler(404)
