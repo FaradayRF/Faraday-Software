@@ -6,7 +6,12 @@
         try{
         var data = [];
             $.getJSON("http://localhost:8001/?limit=1",function(data){
-                $(".EPOCH").text(data[0]["EPOCH"]);
+                var epoch = data[0]["EPOCH"];
+                var d = new Date(0);
+                d.setUTCSeconds(epoch);
+
+
+                $(".EPOCH").text(d);
                 $(".CALLSIGN").text(data[0]["SOURCECALLSIGN"]);
                 $(".NODEID").text(data[0]["SOURCEID"]);
                 $(".GPSLATITUDE").text(data[0]["GPSLATITUDE"]);
@@ -39,7 +44,7 @@
 <div class="well">
     <div class="row">
         <div class="col-md-6 text-left"><b>Station</b>: <span class="CALLSIGN"></span>-<span class="NODEID"></span></div>
-        <div class="col-md-6 text-right"><b>Epoch</b>: <span class="EPOCH"></span></div>
+        <div class="col-md-6 text-right"><span class="EPOCH"></span></div>
     </div>
 </div>
 <div class="row">
