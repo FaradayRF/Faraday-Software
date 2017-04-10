@@ -39,11 +39,14 @@ def simpleui():
     if request.method == "GET":
         callsign = request.args.get('callsign', '').upper()
         nodeid = request.args.get('nodeid', '')
-        # This is the GET routine to return data to the user
-        return render_template('index.html',
-                               callsign=callsign,
-                               nodeid=nodeid)
 
+        if callsign and nodeid:
+            # This is the GET routine to return data to the user
+            return render_template('index.html',
+                                   callsign=callsign,
+                                   nodeid=nodeid)
+        else:
+            return "Please provide a callsign and nodeid in URL i.e. <br />localhost/?callsign=nocall&nodeid=1"
 
 @app.errorhandler(404)
 def pageNotFound(error):
