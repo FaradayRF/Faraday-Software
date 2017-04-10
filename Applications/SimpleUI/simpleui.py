@@ -14,6 +14,7 @@ import os
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask_bootstrap import Bootstrap
 
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")
@@ -27,6 +28,7 @@ simpleuiconfig.read(filename)
 
 # Initialize Flask microframework
 app = Flask(__name__)
+Bootstrap(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
