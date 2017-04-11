@@ -22,7 +22,7 @@ import json
 
 from flask import Flask
 from flask import request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 # Can we clean this up?
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/"))  #Append path to common tutorial FaradayIO module
