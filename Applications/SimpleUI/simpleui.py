@@ -14,7 +14,9 @@ import os
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask import redirect
 from flask_bootstrap import Bootstrap
+
 
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")
@@ -47,7 +49,11 @@ def simpleui():
                                    nodeid=nodeid)
         else:
             return "Please provide a callsign and nodeid in URL i.e. <br />localhost/?callsign=nocall&nodeid=1"
-
+    if request.method == "POST":
+        logger.info(request.form)
+        callsign = request.form["CALLSIGN"]
+        nodeid = request.form["NODEID"]
+        return redirect("http://localhost/?callsign={0}&nodeid={1}".format(callsign,nodeid), code=302)
 
 @app.errorhandler(404)
 def pageNotFound(error):
