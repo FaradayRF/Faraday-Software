@@ -22,6 +22,7 @@ import json
 
 from flask import Flask
 from flask import request
+from flask_cors import CORS, cross_origin
 
 # Can we clean this up?
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/"))  #Append path to common tutorial FaradayIO module
@@ -146,6 +147,8 @@ def telemetry_worker(config):
 
 # Initialize Flask microframework
 app = Flask(__name__)
+# Enable CORS support
+CORS(app)
 
 
 @app.route('/', methods=['GET'])
