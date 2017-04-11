@@ -4,6 +4,7 @@ configparser==3.5.0
 enum34==1.1.6
 flake8==3.3.0
 Flask==0.12
+Flask-Cors==3.0.2
 itsdangerous==0.24
 Jinja2==2.9.4
 MarkupSafe==0.23
