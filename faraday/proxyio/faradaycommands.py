@@ -1,5 +1,5 @@
-from FaradayIO import commandmodule
-from FaradayIO import gpioallocations
+from faraday.proxyio import commandmodule
+from faraday.proxyio import gpioallocations
 
 
 class faraday_commands(object):

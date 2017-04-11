@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# Name:        /Faraday_Proxy_Tools/FaradayIO.py
-# Purpose:      Abstracted interface to Faraday Proxy
+# Name:        faraday.proxyio.faradaybasicproxyio
+# Purpose:     Abstracted interface to Faraday Proxy
 #
 # Author:      Brent Salmi
 #
