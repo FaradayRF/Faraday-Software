@@ -61,55 +61,56 @@ def uart_worker(modem, getDicts, units, log):
     # Loop through each unit checking for data, if True place into deque
     while(1):
         # Place data into the FIFO coming from UART
-        for unit, com in modem.iteritems():
-            try:
-                for port in range(0, 255):
-                    if(com.RxPortHasItem(port)):
-                        # Data is available
-                        # convert to BASE64 and place in queue
-                        item = {}
-                        item["data"] = base64.b64encode(com.GET(port))
-
-                        try:
-                            getDicts[unit][port].append(item)
-
-                        except:
-                            getDicts[unit][port] = deque([], maxlen=100)
-                            getDicts[unit][port].append(item)
-
-                        # Check for Proxy logging and save to SQL if true
-                        if log:
-                            item["port"] = port
-                            sqlInsert(item)
-
-            except StandardError as e:
-                logger.error("StandardError: " + str(e))
-            except ValueError as e:
-                logger.error("ValueError: " + str(e))
-            except IndexError as e:
-                logger.error("IndexError: " + str(e))
-            except KeyError as e:
-                logger.error("KeyError: " + str(e))
-
-            time.sleep(0.001)
-            # Check for data in the POST FIFO queue. This needs to check for
-            # COM ports and create the necessary buffers on the fly
+        #for unit, com in modem.iteritems():
+        try:
             for port in range(0, 255):
-                try:
-                    count = len(postDicts[unit][port])
-                except:
-                    # Port simply doesn't exist so don't bother
-                    pass
-                else:
-                    for num in range(count):
-                        # Data is available, pop off [unit][port] queue
-                        # and convert to BASE64 before sending to UART
-                        message = postDicts[unit][port].popleft()
-                        message = base64.b64decode(message)
-                        com.POST(port, len(message), message)
+                if(modem['com'].RxPortHasItem(port)):
+                    print "GOT DATA:", modem
+                    # Data is available
+                    # convert to BASE64 and place in queue
+                    item = {}
+                    item["data"] = base64.b64encode(modem['com'].GET(port))
 
-            # Slow down while loop to something reasonable
-            time.sleep(0.001)
+                    try:
+                        getDicts[modem['unit']][port].append(item)
+
+                    except:
+                        getDicts[modem['unit']][port] = deque([], maxlen=100)
+                        getDicts[modem['unit']][port].append(item)
+
+                    # Check for Proxy logging and save to SQL if true
+                    if log:
+                        item["port"] = port
+                        sqlInsert(item)
+
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
+
+        time.sleep(0.001)
+        # Check for data in the POST FIFO queue. This needs to check for
+        # COM ports and create the necessary buffers on the fly
+        for port in range(0, 255):
+            try:
+                count = len(postDicts[unit][port])
+            except:
+                # Port simply doesn't exist so don't bother
+                pass
+            else:
+                for num in range(count):
+                    # Data is available, pop off [unit][port] queue
+                    # and convert to BASE64 before sending to UART
+                    message = postDicts[unit][port].popleft()
+                    message = base64.b64decode(message)
+                    com.POST(port, len(message), message)
+
+        # Slow down while loop to something reasonable
+        time.sleep(0.001)
 
 
 # Initialize Flask microframework
@@ -457,38 +458,48 @@ def main():
     # Associate serial ports with callsigns
     # global units
     units = callsign2COM()
+    unitcnt = len(units)
 
     # Initialize local variables
     threads = []
 
-    while(1):
-        # Initialize a Faraday Radio device
-        try:
-            for key, values in units.iteritems():
-                unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
-                    layer_4_service.faraday_uart_object(
-                        str(values["com"]),
-                        int(values["baudrate"]),
-                        int(values["timeout"]))
-            logger.info("Connected to Faraday")
-            break
+    for key, values in units.iteritems():
+        unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]),int(values["baudrate"]),int(values["timeout"]))
 
-        except StandardError as e:
-            logger.error("StandardError: " + str(e))
-            time.sleep(1)
-        except ValueError as e:
-            logger.error("ValueError: " + str(e))
-            time.sleep(1)
-        except IndexError as e:
-            logger.error("IndexError: " + str(e))
-            time.sleep(1)
-        except KeyError as e:
-            logger.error("KeyError: " + str(e))
-            time.sleep(1)
+    for key in unitDict:
+        print "Starting Thread For Unit:", key
+        tempdict = {"unit": key, 'com': unitDict[key]}
+        #logger.info("Connected to Faraday")
+        t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
+        #threads.append(t)
+        t.start()
 
-    t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units, log))
-    threads.append(t)
-    t.start()
+    # while(1):
+    #     # Initialize a Faraday Radio device
+    #     try:
+    #         for key, values in units.iteritems():
+    #             unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
+    #                 layer_4_service.faraday_uart_object(
+    #                     str(values["com"]),
+    #                     int(values["baudrate"]),
+    #                     int(values["timeout"]))
+    #         logger.info("Connected to Faraday")
+    #         break
+    #
+    #     except StandardError as e:
+    #         logger.error("StandardError: " + str(e))
+    #         time.sleep(1)
+    #     except ValueError as e:
+    #         logger.error("ValueError: " + str(e))
+    #         time.sleep(1)
+    #     except IndexError as e:
+    #         logger.error("IndexError: " + str(e))
+    #         time.sleep(1)
+    #     except KeyError as e:
+    #         logger.error("KeyError: " + str(e))
+    #         time.sleep(1)
+
+
 
     # Start the flask server on localhost:8000
     proxyHost = proxyConfig.get("FLASK", "host")
