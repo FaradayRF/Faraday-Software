@@ -65,7 +65,6 @@ def uart_worker(modem, getDicts, units, log):
         try:
             for port in range(0, 255):
                 if(modem['com'].RxPortHasItem(port)):
-                    print "GOT DATA:", modem
                     # Data is available
                     # convert to BASE64 and place in queue
                     item = {}
