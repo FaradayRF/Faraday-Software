@@ -52,11 +52,13 @@ def uart_worker(modem, getDicts, units, log):
     """
     logger.info('Starting uart_worker thread')
 
+    unitcallid = str(units[units.keys()[0]]['callsign']) + '-' + str(units[units.keys()[0]]['nodeid'])
+
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
-    for key, values in units.iteritems():
-        postDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
-        getDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
+    #for key, values in units.iteritems():
+    postDicts[unitcallid] = {}
+    getDicts[unitcallid] = {}
 
     # Loop through each unit checking for data, if True place into deque
     while(1):
@@ -94,9 +96,9 @@ def uart_worker(modem, getDicts, units, log):
         time.sleep(0.001)
         # Check for data in the POST FIFO queue. This needs to check for
         # COM ports and create the necessary buffers on the fly
-        for port in range(0, 255):
+        for port in postDicts[unitcallid].keys():
             try:
-                count = len(postDicts[unit][port])
+                count = len(postDicts[unitcallid][port])
             except:
                 # Port simply doesn't exist so don't bother
                 pass
@@ -104,9 +106,9 @@ def uart_worker(modem, getDicts, units, log):
                 for num in range(count):
                     # Data is available, pop off [unit][port] queue
                     # and convert to BASE64 before sending to UART
-                    message = postDicts[unit][port].popleft()
+                    message = postDicts[unitcallid][port].popleft()
                     message = base64.b64decode(message)
-                    com.POST(port, len(message), message)
+                    modem['com'].POST(port, len(message), message)
 
         # Slow down while loop to something reasonable
         time.sleep(0.001)
