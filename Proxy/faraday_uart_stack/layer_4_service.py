@@ -140,7 +140,6 @@ class faraday_uart_object(threading.Thread):
             return not self.receive_parsed_queue_dict[service_number].empty()
         except:
             return None
-            pass
 
     def receive_service_queue_open(self, service_number, queue_size):
         self.receive_parsed_queue_dict[service_number] = Queue.Queue(queue_size)
