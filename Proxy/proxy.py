@@ -63,7 +63,7 @@ def uart_worker(modem, getDicts, units, log):
         # Place data into the FIFO coming from UART
         #for unit, com in modem.iteritems():
         try:
-            for port in range(0, 255):
+            for port in modem['com'].RxPortListOpen(): #range(0, 255):
                 if(modem['com'].RxPortHasItem(port)):
                     # Data is available
                     # convert to BASE64 and place in queue

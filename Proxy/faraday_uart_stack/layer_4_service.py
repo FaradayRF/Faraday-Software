@@ -141,6 +141,9 @@ class faraday_uart_object(threading.Thread):
         except:
             return None
 
+    def RxPortListOpen(self):
+        return self.receive_parsed_queue_dict.keys()
+
     def receive_service_queue_open(self, service_number, queue_size):
         self.receive_parsed_queue_dict[service_number] = Queue.Queue(queue_size)
 
