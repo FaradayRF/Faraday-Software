@@ -179,84 +179,75 @@
                 <h4>Faraday IO Control</h4>
             </div>
             <div class="panel-body">
-                <table>
-                    <tr>
-                        <strong>Local</strong>
-                    </tr>
-                    <tr>
-                        <form action="/" method="post">
-                            <input type="hidden" name="CALLSIGN" value="KB1LQC">
-                            <input type="hidden" name="NODEID" value="2">
-                            <select name="IO">
-                                <option value="LED1 ON">LED1 On</option>
-                                <option value="LED1 OFF">LED1 Off</option>
-                                <option value="LED2 ON">LED2 On</option>
-                                <option value="LED2 OFF">LED2 Off</option>
-                                <option value="GPIO0 ON">GPIO0 On</option>
-                                <option value="GPIO0 OFF">GPIO0 Off</option>
-                                <option value="GPIO1 ON">GPIO1 On</option>
-                                <option value="GPIO1 OFF">GPIO1 Off</option>
-                                <option value="GPIO2 ON">GPIO2 On</option>
-                                <option value="GPIO2 OFF">GPIO2 Off</option>
-                                <option value="GPIO3 ON">GPIO3 On</option>
-                                <option value="GPIO3 OFF">GPIO3 Off</option>
-                                <option value="GPIO4 ON">GPIO4 On</option>
-                                <option value="GPIO4 OFF">GPIO4 Off</option>
-                                <option value="GPIO5 ON">GPIO5 On</option>
-                                <option value="GPIO5 OFF">GPIO5 Off</option>
-                                <option value="GPIO6 ON">GPIO6 On</option>
-                                <option value="GPIO6 OFF">GPIO6 Off</option>
-                                <option value="GPIO7 ON">GPIO7 On</option>
-                                <option value="GPIO7 OFF">GPIO7 Off</option>
-                                <option value="GPIO8 ON">GPIO8 On</option>
-                                <option value="GPIO8 OFF">GPIO8 Off</option>
-                                <option value="MOSFET">MOSFET Fire</option>
-                                <option value="HABTIMERRESET">HAB Timer Reset</option>
-                                <option value="HABDISABLETIMER">HAB Disable Cut-down Timer</option>
-                                <option value="HABTIMERIDLE">HAB Idle Timer</option>
-                            </select>
-                            <button id="submit">submit</button>
-                        </form>
-                    </tr>
-                    <tr>
-                        <strong>Remote</strong>
-                    </tr>
-                    <tr>
-                        <form action="/" method="post">
-                            <input type="hidden" name="CALLSIGN" value="KB1LQC">
-                            <input type="hidden" name="NODEID" value="2">
-                            <select name="IO">
-                                <option value="LED1R ON">LED1 On</option>
-                                <option value="LED1R OFF">LED1 Off</option>
-                                <option value="LED2R ON">LED2 On</option>
-                                <option value="LED2R OFF">LED2 Off</option>
-                                <option value="GPIO0R ON">GPIO0 On</option>
-                                <option value="GPIO0R OFF">GPIO0 Off</option>
-                                <option value="GPIO1R ON">GPIO1 On</option>
-                                <option value="GPIO1R OFF">GPIO1 Off</option>
-                                <option value="GPIO2R ON">GPIO2 On</option>
-                                <option value="GPIO2R OFF">GPIO2 Off</option>
-                                <option value="GPIO3R ON">GPIO3 On</option>
-                                <option value="GPIO3R OFF">GPIO3 Off</option>
-                                <option value="GPIO4R ON">GPIO4 On</option>
-                                <option value="GPIO4R OFF">GPIO4 Off</option>
-                                <option value="GPIO5R ON">GPIO5 On</option>
-                                <option value="GPIO5R OFF">GPIO5 Off</option>
-                                <option value="GPIO6R ON">GPIO6 On</option>
-                                <option value="GPIO6R OFF">GPIO6 Off</option>
-                                <option value="GPIO7R ON">GPIO7 On</option>
-                                <option value="GPIO7R OFF">GPIO7 Off</option>
-                                <option value="GPIO8R ON">GPIO8 On</option>
-                                <option value="GPIO8R OFF">GPIO8 Off</option>
-                                <option value="MOSFETR">MOSFET Fire</option>
-                                <option value="HABTIMERRESETR">HAB Timer Reset</option>
-                                <option value="HABDISABLETIMERR">HAB Disable Cut-down Timer</option>
-                                <option value="HABTIMERIDLER">HAB Idle Timer</option>
-                            </select>
-                            <button id="submit">submit</button>
-                        </form>
-                    </tr>
-                </table>
+            <strong>Local</strong>
+            <form action="/" method="post">
+                <input type="hidden" name="CALLSIGN" value="KB1LQC">
+                <input type="hidden" name="NODEID" value="2">
+                <select name="IO">
+                    <option value="LED1 ON">LED1 On</option>
+                    <option value="LED1 OFF">LED1 Off</option>
+                    <option value="LED2 ON">LED2 On</option>
+                    <option value="LED2 OFF">LED2 Off</option>
+                    <option value="GPIO0 ON">GPIO0 On</option>
+                    <option value="GPIO0 OFF">GPIO0 Off</option>
+                    <option value="GPIO1 ON">GPIO1 On</option>
+                    <option value="GPIO1 OFF">GPIO1 Off</option>
+                    <option value="GPIO2 ON">GPIO2 On</option>
+                    <option value="GPIO2 OFF">GPIO2 Off</option>
+                    <option value="GPIO3 ON">GPIO3 On</option>
+                    <option value="GPIO3 OFF">GPIO3 Off</option>
+                    <option value="GPIO4 ON">GPIO4 On</option>
+                    <option value="GPIO4 OFF">GPIO4 Off</option>
+                    <option value="GPIO5 ON">GPIO5 On</option>
+                    <option value="GPIO5 OFF">GPIO5 Off</option>
+                    <option value="GPIO6 ON">GPIO6 On</option>
+                    <option value="GPIO6 OFF">GPIO6 Off</option>
+                    <option value="GPIO7 ON">GPIO7 On</option>
+                    <option value="GPIO7 OFF">GPIO7 Off</option>
+                    <option value="GPIO8 ON">GPIO8 On</option>
+                    <option value="GPIO8 OFF">GPIO8 Off</option>
+                    <option value="MOSFET">MOSFET Fire</option>
+                    <option value="HABTIMERRESET">HAB Timer Reset</option>
+                    <option value="HABDISABLETIMER">HAB Disable Cut-down Timer</option>
+                    <option value="HABTIMERIDLE">HAB Idle Timer</option>
+                </select>
+                <button id="submit">submit</button>
+            </form>
+
+            <strong>Remote</strong>
+            <form action="/" method="post">
+                <input type="hidden" name="CALLSIGN" value="KB1LQC">
+                <input type="hidden" name="NODEID" value="2">
+                <select name="IO">
+                    <option value="LED1R ON">LED1 On</option>
+                    <option value="LED1R OFF">LED1 Off</option>
+                    <option value="LED2R ON">LED2 On</option>
+                    <option value="LED2R OFF">LED2 Off</option>
+                    <option value="GPIO0R ON">GPIO0 On</option>
+                    <option value="GPIO0R OFF">GPIO0 Off</option>
+                    <option value="GPIO1R ON">GPIO1 On</option>
+                    <option value="GPIO1R OFF">GPIO1 Off</option>
+                    <option value="GPIO2R ON">GPIO2 On</option>
+                    <option value="GPIO2R OFF">GPIO2 Off</option>
+                    <option value="GPIO3R ON">GPIO3 On</option>
+                    <option value="GPIO3R OFF">GPIO3 Off</option>
+                    <option value="GPIO4R ON">GPIO4 On</option>
+                    <option value="GPIO4R OFF">GPIO4 Off</option>
+                    <option value="GPIO5R ON">GPIO5 On</option>
+                    <option value="GPIO5R OFF">GPIO5 Off</option>
+                    <option value="GPIO6R ON">GPIO6 On</option>
+                    <option value="GPIO6R OFF">GPIO6 Off</option>
+                    <option value="GPIO7R ON">GPIO7 On</option>
+                    <option value="GPIO7R OFF">GPIO7 Off</option>
+                    <option value="GPIO8R ON">GPIO8 On</option>
+                    <option value="GPIO8R OFF">GPIO8 Off</option>
+                    <option value="MOSFETR">MOSFET Fire</option>
+                    <option value="HABTIMERRESETR">HAB Timer Reset</option>
+                    <option value="HABDISABLETIMERR">HAB Disable Cut-down Timer</option>
+                    <option value="HABTIMERIDLER">HAB Idle Timer</option>
+                </select>
+                <button id="submit">submit</button>
+            </form>
             </div>
         </div>
     </div>
