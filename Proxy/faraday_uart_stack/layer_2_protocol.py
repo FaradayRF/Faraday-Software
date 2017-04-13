@@ -484,7 +484,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
 
     def run(self):
         while self.enable_flag:
-            time.sleep(0.001)
+            time.sleep(0.01)
             if not self.receiver_class.rx_packet_queue.empty():
                 #  Loop through all known queue data and receive
                 for i in range(0, self.receiver_class.rx_packet_queue.qsize()):
@@ -544,7 +544,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
 
     def run(self):
         while self.enable_flag:
-            time.sleep(0.001)
+            time.sleep(0.01)
             if not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty():
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
                 #Get next byte
