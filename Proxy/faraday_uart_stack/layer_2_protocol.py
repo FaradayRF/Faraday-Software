@@ -66,7 +66,7 @@ class layer_2_protocol(threading.Thread):
     def run(self):
         while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.001)  #Shouldn't need this! BSALMI 6/13/16
+            time.sleep(0.01)  #Shouldn't need this! BSALMI 6/13/16
             if(self.enabled):
                 #Check for bytes to transmit over serial
                 if(not self.serial_tx_queue.empty()):
