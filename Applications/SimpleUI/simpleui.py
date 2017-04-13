@@ -284,6 +284,17 @@ def simpleui():
             print "MOSFET ON"
             command = faraday_cmd.CommandRemoteHABActivateCutdownEvent(remotecallsign, remotenodeid)
 
+        if request.form["IO"] == "HABTIMERRESETR":
+            print "HABTIMERRESETR"
+            command = faraday_cmd.CommandRemoteHABResetAutoCutdownTimer(remotecallsign, remotenodeid)
+
+        if request.form["IO"] == "HABDISABLETIMERR":
+            print "HABDISABLETIMERR"
+            command = faraday_cmd.CommandRemoteHABDisableAutoCutdownTimer(remotecallsign, remotenodeid)
+
+        if request.form["IO"] == "HABTIMERIDLER":
+            print "HABTIMERIDLER"
+            command = faraday_cmd.CommandRemoteHABResetCutdownIdle(remotecallsign, remotenodeid)
 
 
         faraday_1.POST(callsign, int(nodeid), faraday_1.CMD_UART_PORT, command)
