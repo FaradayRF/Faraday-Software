@@ -67,22 +67,23 @@ def uart_worker(modem, getDicts, units, log):
         try:
             for port in modem['com'].RxPortListOpen():
                 if(modem['com'].RxPortHasItem(port)):
-                    # Data is available
-                    # convert to BASE64 and place in queue
-                    item = {}
-                    item["data"] = base64.b64encode(modem['com'].GET(port))
+                    for i in range(0,modem['com'].RxPortItemCount(port)):
+                        # Data is available
+                        # convert to BASE64 and place in queue
+                        item = {}
+                        item["data"] = base64.b64encode(modem['com'].GET(port))
 
-                    try:
-                        getDicts[modem['unit']][port].append(item)
+                        try:
+                            getDicts[modem['unit']][port].append(item)
 
-                    except:
-                        getDicts[modem['unit']][port] = deque([], maxlen=100)
-                        getDicts[modem['unit']][port].append(item)
+                        except:
+                            getDicts[modem['unit']][port] = deque([], maxlen=100)
+                            getDicts[modem['unit']][port].append(item)
 
-                    # Check for Proxy logging and save to SQL if true
-                    if log:
-                        item["port"] = port
-                        sqlInsert(item)
+                        # Check for Proxy logging and save to SQL if true
+                        if log:
+                            item["port"] = port
+                            sqlInsert(item)
 
         except StandardError as e:
             logger.error("StandardError: " + str(e))
