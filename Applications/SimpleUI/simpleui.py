@@ -65,6 +65,9 @@ def simpleui():
         faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
         faraday_cmd = faradaycommands.faraday_commands()
 
+        callsign = request.form["CALLSIGN"]
+        nodeid = request.form["NODEID"]
+
         # CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
 
         if request.form["IO"] == "LED1 ON":
@@ -142,80 +145,138 @@ def simpleui():
 
         #Trying to get to work
         if request.form["IO"] == "LED1R ON":
-            print "LED1R ON"
-            command = faraday_cmd.CommandRemoteGPIO(remotecallsign, remotenodeid, gpioallocations.LED_1, 0, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1On(remotecallsign, remotenodeid))
+
         if request.form["IO"] == "LED1R OFF":
             print "LED1R OFF"
-            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign, remotenodeid, 0, 0, 0, gpioallocations.LED_1, 0, 0))
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED1Off(remotecallsign, remotenodeid))
 
         # Below here does not work
         if request.form["IO"] == "LED2R ON":
             print "LED2 ON"
-            command = faraday_cmd.CommandLocalGPIOLED2On()
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED2On(remotecallsign, remotenodeid))
+
         if request.form["IO"] == "LED2R OFF":
             print "LED2 OFF"
-            command = faraday_cmd.CommandLocalGPIOLED2Off()
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED2Off(remotecallsign,remotenodeid))
+
         if request.form["IO"] == "GPIO0R ON":
             print "GPIO0 ON"
-            command = faraday_cmd.CommandLocalGPIO(gpioallocations.DIGITAL_IO_0, 0, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                gpioallocations.DIGITAL_IO_0,
+                                                                                0, 0, 0, 0, 0))
         if request.form["IO"] == "GPIO0R OFF":
             print "GPIO0 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.DIGITAL_IO_0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, gpioallocations.DIGITAL_IO_0,
+                                                                                0, 0))
         if request.form["IO"] == "GPIO1R ON":
             print "GPIO1 ON"
-            command = faraday_cmd.CommandLocalGPIO(gpioallocations.DIGITAL_IO_1, 0, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                gpioallocations.DIGITAL_IO_1,
+                                                                                0, 0, 0, 0, 0))
         if request.form["IO"] == "GPIO1R OFF":
             print "GPIO1 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.DIGITAL_IO_1, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, gpioallocations.DIGITAL_IO_1,
+                                                                                0, 0))
         if request.form["IO"] == "GPIO2R ON":
             print "GPIO2 ON"
-            command = faraday_cmd.CommandLocalGPIO(gpioallocations.DIGITAL_IO_2, 0, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                gpioallocations.DIGITAL_IO_2,
+                                                                                0, 0, 0, 0, 0))
+
         if request.form["IO"] == "GPIO2R OFF":
             print "GPIO2 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, gpioallocations.DIGITAL_IO_2, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, gpioallocations.DIGITAL_IO_2,
+                                                                                0, 0))
         if request.form["IO"] == "GPIO3R ON":
             print "GPIO3 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, gpioallocations.DIGITAL_IO_3, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0,
+                                                                                gpioallocations.DIGITAL_IO_3,
+                                                                                0, 0, 0, 0))
         if request.form["IO"] == "GPIO3R OFF":
             print "GPIO3 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, gpioallocations.DIGITAL_IO_3, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_3, 0))
+
         if request.form["IO"] == "GPIO4R ON":
             print "GPIO4 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, gpioallocations.DIGITAL_IO_4, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_4, 0))
         if request.form["IO"] == "GPIO4R OFF":
             print "GPIO4 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, gpioallocations.DIGITAL_IO_4, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_4, 0))
         if request.form["IO"] == "GPIO5R ON":
             print "GPIO5 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, gpioallocations.DIGITAL_IO_5, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_5, 0))
         if request.form["IO"] == "GPIO5R OFF":
             print "GPIO5 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, gpioallocations.DIGITAL_IO_5, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_5, 0))
         if request.form["IO"] == "GPIO6R ON":
             print "GPIO6 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, gpioallocations.DIGITAL_IO_6, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_6, 0))
         if request.form["IO"] == "GPIO6R OFF":
             print "GPIO6 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, gpioallocations.DIGITAL_IO_6, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_6, 0))
         if request.form["IO"] == "GPIO7R ON":
             print "GPIO7 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, gpioallocations.DIGITAL_IO_7, 0, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_7, 0))
         if request.form["IO"] == "GPIO7R OFF":
             print "GPIO7 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, gpioallocations.DIGITAL_IO_7, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                gpioallocations.DIGITAL_IO_7, 0))
         if request.form["IO"] == "GPIO8R ON":
             print "GPIO8 ON"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, gpioallocations.DIGITAL_IO_8, 0, 0, 0)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                0, gpioallocations.DIGITAL_IO_8))
         if request.form["IO"] == "GPIO8R OFF":
             print "GPIO8 OFF"
-            command = faraday_cmd.CommandLocalGPIO(0, 0, 0, 0, 0, gpioallocations.DIGITAL_IO_8)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
+                                                                                remotenodeid,
+                                                                                0, 0, 0, 0,
+                                                                                0, gpioallocations.DIGITAL_IO_8))
         if request.form["IO"] == "MOSFETR":
             print "MOSFET ON"
-            command = faraday_cmd.CommandLocalHABActivateCutdownEvent()
+            command = faraday_cmd.CommandRemoteHABActivateCutdownEvent(remotecallsign, remotenodeid)
 
 
-        callsign = request.form["CALLSIGN"]
-        nodeid = request.form["NODEID"]
+
         faraday_1.POST(callsign, int(nodeid), faraday_1.CMD_UART_PORT, command)
 
         logger.info(request.form)
