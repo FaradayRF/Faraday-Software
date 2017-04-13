@@ -139,6 +139,15 @@ def simpleui():
         if request.form["IO"] == "MOSFET":
             print "MOSFET ON"
             command = faraday_cmd.CommandLocalHABActivateCutdownEvent()
+        if request.form["IO"] == "HABTIMERRESET":
+            print "HAB TIMER RESET"
+            command = faraday_cmd.CommandLocalHABResetAutoCutdownTimer()
+        if request.form["IO"] == "HABDISABLETIMER":
+            print "HAB DISABABLE TIMER"
+            command = faraday_cmd.CommandLocalHABDisableAutoCutdownTimer()
+        if request.form["IO"] == "HABTIMERIDLE":
+            print "HAB IDLE TIMER"
+            command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
         remotecallsign = "KB1LQC"
         remotenodeid = 1
