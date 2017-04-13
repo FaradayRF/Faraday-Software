@@ -34,6 +34,7 @@
                     $(".ADC3").text(Math.round(data[0]["ADC3"]*1000*(2.41/4096))/1000);
                     $(".ADC4").text(Math.round(data[0]["ADC4"]*1000*(2.41/4096))/1000);
                     $(".ADC5").text(Math.round(data[0]["ADC5"]*1000*(2.41/4096))/1000);
+                    $(".HABTIMER").text(data[0]["HABTIMER"]);
                     $(".HABTIMERSTATE").text(data[0]["HABTIMERSTATE"]);
                     $(".HABTRIGGERTIME").text(data[0]["HABTRIGGERTIME"]);
                     $(".HABCUTDOWNSTATE").text(data[0]["HABCUTDOWNSTATE"]);
@@ -162,9 +163,10 @@
                 <h4>High Altitude Balloon Timer</h4>
             </div>
             <div class="panel-body">
-                <b>HABTIMERSTATE</b>: <span class="HABTIMERSTATE"></span><br/>
-                <b>HABTRIGGERTIME</b>: <span class="HABTRIGGERTIME"></span><br/>
-                <b>HABCUTDOWNSTATE</b>: <span class="HABCUTDOWNSTATE"></span><br/>
+                <b>HAB Timer</b>: <span class="HABTIMER"></span><br/>
+                <b>HAB Timer State</b>: <span class="HABTIMERSTATE"></span><br/>
+                <b>HAB Trigger Time</b>: <span class="HABTRIGGERTIME"></span><br/>
+                <b>HAB Cut-Down State</b>: <span class="HABCUTDOWNSTATE"></span><br/>
             </div>
         </div>
     </div>
