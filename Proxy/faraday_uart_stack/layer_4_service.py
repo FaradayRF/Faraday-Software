@@ -144,6 +144,9 @@ class faraday_uart_object(threading.Thread):
     def RxPortListOpen(self):
         return self.receive_parsed_queue_dict.keys()
 
+    def RxPortItemCount(self, service_number):
+        return self.receive_parsed_queue_dict[service_number].qsize() #  Note: .qsize() not reliable per documentation
+
     def receive_service_queue_open(self, service_number, queue_size):
         self.receive_parsed_queue_dict[service_number] = Queue.Queue(queue_size)
 
