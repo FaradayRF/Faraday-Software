@@ -180,7 +180,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         while self.enable_flag:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.001)
+            time.sleep(0.01)
 
             #Check for new data to transmit
             if not self.insert_data_class.tx_packet_queue.empty():
