@@ -25,7 +25,7 @@
                     $(".GPSLONGITUDEDIR").text(data[0]["GPSLONGITUDEDIR"]);
                     $(".ALTITUDE").text(data[0]["GPSALTITUDE"]);
 
-                    $(".SPEED").text(data[0]["GPSSPEED"]*0.514444);
+                    $(".SPEED").text(Math.round(data[0]["GPSSPEED"]*0.514444*100)/100);
 
                     $(".BOARDTEMP").text(data[0]["BOARDTEMP"]);
                     $(".ADC0").text(Math.round(data[0]["ADC0"]*1000*(2.41/4096))/1000);
