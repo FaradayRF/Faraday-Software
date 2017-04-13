@@ -94,7 +94,6 @@ def uart_worker(modem, getDicts, units, log):
         except KeyError as e:
             logger.error("KeyError: " + str(e))
 
-        time.sleep(0.001)
         # Check for data in the POST FIFO queue. This needs to check for
         # COM ports and create the necessary buffers on the fly
         for port in postDicts[unitcallid].keys():
@@ -112,7 +111,7 @@ def uart_worker(modem, getDicts, units, log):
                     modem['com'].POST(port, len(message), message)
 
         # Slow down while loop to something reasonable
-        time.sleep(0.001)
+        time.sleep(0.01)
 
 
 # Initialize Flask microframework
