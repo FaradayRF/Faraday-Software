@@ -485,14 +485,15 @@ class Receiver_Datalink_Device_Class(threading.Thread):
         while self.enable_flag:
             time.sleep(0.001)
             if not self.receiver_class.rx_packet_queue.empty():
-                data = self.receiver_class.rx_packet_queue.get()
-                try:
-                    unpacked_datalink = self.datalink_packet_struct.unpack(data)
-                    #Place datalink payload into payload queue
-                    self.rx_data_payload_queue.put(unpacked_datalink[3])
-                except:
-                    print "FAIL"
-                    pass  #print "Failed parsing" !!!!!FIX!!!!!
+                for i in range(0, self.receiver_class.rx_packet_queue.qsize()):
+                    data = self.receiver_class.rx_packet_queue.get()
+                    try:
+                        unpacked_datalink = self.datalink_packet_struct.unpack(data)
+                        #Place datalink payload into payload queue
+                        self.rx_data_payload_queue.put(unpacked_datalink[3])
+                    except:
+                        print "FAIL"
+                        pass  #print "Failed parsing" !!!!!FIX!!!!!
 
 
 ################################################################################
