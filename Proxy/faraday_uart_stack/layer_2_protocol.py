@@ -241,22 +241,22 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         while self.enable_flag:
             #Check if new data is avaliable in the Queue
             if(not self.tx_data_queue.empty()):
+                for i in range(0, self.tx_data_queue.qsize()):
+                    #Get next queue item to transmit
+                    self.datalink_payload = self.tx_data_queue.get()
+                    #print "transmit L2", self.tx_queue_item
 
-                #Get next queue item to transmit
-                self.datalink_payload = self.tx_data_queue.get()
-                #print "transmit L2", self.tx_queue_item
+                    #Create datalink packet
+                    datalink_packet = self.create_datalink_packet(0xff, 0xff, self.datalink_payload)
 
-                #Create datalink packet
-                datalink_packet = self.create_datalink_packet(0xff, 0xff, self.datalink_payload)
+                    #Frame datalink packet with byte escaping characters
+                    framed_datalink_packet = self.Byte_Escape_Data_Fixed_Length(self.framing_startbyte, self.framing_stopbyte, self.framing_escapebyte, datalink_packet)
 
-                #Frame datalink packet with byte escaping characters
-                framed_datalink_packet = self.Byte_Escape_Data_Fixed_Length(self.framing_startbyte, self.framing_stopbyte, self.framing_escapebyte, datalink_packet)
-
-                #Place datalink packet into transmit queue
-                self.tx_packet_queue.put(framed_datalink_packet)
+                    #Place datalink packet into transmit queue
+                    self.tx_packet_queue.put(framed_datalink_packet)
 
             #Small sleep to unload python process resources from CPU
-            time.sleep(0.001)
+            time.sleep(0.01)
 
     def create_datalink_packet(self, packet_type, packet_config, payload):
         """
