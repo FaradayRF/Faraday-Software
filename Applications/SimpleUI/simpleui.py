@@ -149,8 +149,9 @@ def simpleui():
             print "HAB IDLE TIMER"
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
-        remotecallsign = "KB1LQC"
-        remotenodeid = 1
+        # if request.form["callsignr"] != '':
+        #     remotecallsign = request.form["callsignr"]
+        #     remotenodeid = int(request.form["nodeidr"])
 
         #Trying to get to work
         if request.form["IO"] == "LED1R ON":
