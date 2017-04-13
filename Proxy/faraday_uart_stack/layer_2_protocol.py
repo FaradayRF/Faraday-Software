@@ -184,14 +184,15 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
 
             #Check for new data to transmit
             if not self.insert_data_class.tx_packet_queue.empty():
+                #  Loop through all known queue data and transmit
+                for i in range(0, self.insert_data_class.tx_packet_queue.qsize()):
+                    #New data available, retrieve single data "packet"
+                    packet = self.insert_data_class.tx_packet_queue.get()
 
-                #New data available, retrieve single data "packet"
-                packet = self.insert_data_class.tx_packet_queue.get()
-
-                #Transmit
-                for i in range(0, len(packet), 1):
-                    self.output_channel.put(packet[i])
-                    self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
+                    #Transmit
+                    for i in range(0, len(packet), 1):
+                        self.output_channel.put(packet[i])
+                        self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
 
 
 ################################################################################
@@ -485,6 +486,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
         while self.enable_flag:
             time.sleep(0.001)
             if not self.receiver_class.rx_packet_queue.empty():
+                #  Loop through all known queue data and receive
                 for i in range(0, self.receiver_class.rx_packet_queue.qsize()):
                     data = self.receiver_class.rx_packet_queue.get()
                     try:
