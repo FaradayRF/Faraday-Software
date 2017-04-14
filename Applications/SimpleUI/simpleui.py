@@ -49,8 +49,8 @@ def simpleui():
     Provides a simple user interface
     """
     if request.method == "GET":
-        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
-        nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
+        callsign = simpleuiconfig.get("SIMPLEUI", "CALLSIGN").upper()
+        nodeid = simpleuiconfig.getint("SIMPLEUI", "NODEID")
         return render_template('index.html',
                                callsign=callsign,
                                nodeid=nodeid)
