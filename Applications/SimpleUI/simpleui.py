@@ -335,7 +335,7 @@ def simpleui():
         faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
         # Return to simple user interface page after commanding
-        return redirect("http://localhost/?callsign={0}&nodeid={1}".format(callsign, nodeid), code=302)
+        return redirect("http://localhost/", code=302)
 
 
 @app.errorhandler(404)
