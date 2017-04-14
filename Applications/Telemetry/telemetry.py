@@ -508,6 +508,7 @@ def createTelemetryList(data):
                 data["GPSFIX"],
                 data["GPSHDOP"],
                 data["GPIOSTATE"],
+                data["IOSTATE"],
                 data["RFSTATE"],
                 data["ADC0"],
                 data["ADC1"],
