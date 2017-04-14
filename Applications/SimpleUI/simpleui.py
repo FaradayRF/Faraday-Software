@@ -49,23 +49,19 @@ def simpleui():
     Provides a simple user interface
     """
     if request.method == "GET":
-        callsign = request.args.get('callsign', '').upper()
-        nodeid = request.args.get('nodeid', '')
+        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
+        nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
+        return render_template('index.html',
+                               callsign=callsign,
+                               nodeid=nodeid)
 
-        if callsign and nodeid:
-            # This is the GET routine to return data to the user
-            return render_template('index.html',
-                                   callsign=callsign,
-                                   nodeid=nodeid)
-        else:
-            return "Please provide a callsign and nodeid in URL i.e. <br />localhost/?callsign=nocall&nodeid=1"
     if request.method == "POST":
         # Start the proxy server after configuring the configuration file correctly
         # Setup a Faraday IO object
         faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
         faraday_cmd = faradaycommands.faraday_commands()
 
-        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN")
+        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
         nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
 
         # CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
@@ -150,7 +146,7 @@ def simpleui():
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
         # if request.form["callsignr"] != '':
-        remotecallsign = simpleuiconfig.get("SIMPLEUI", "REMOTECALLSIGN")
+        remotecallsign = simpleuiconfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
         remotenodeid = simpleuiconfig.getint("SIMPLEUI", "REMOTENODEID")
 
         #Trying to get to work
