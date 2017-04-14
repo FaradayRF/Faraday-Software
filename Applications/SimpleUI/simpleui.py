@@ -26,8 +26,6 @@ from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
 from FaradayIO import gpioallocations
 
-
-
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")
 logging.config.fileConfig(filename)
@@ -63,8 +61,6 @@ def simpleui():
 
         callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
         nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
-
-        # CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
 
         if request.form["IO"] == "LED1 ON":
             print "LED1 ON"
@@ -164,7 +160,7 @@ def simpleui():
 
         if request.form["IO"] == "LED2R OFF":
             print "LED2 OFF"
-            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED2Off(remotecallsign,remotenodeid))
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIOLED2Off(remotecallsign, remotenodeid))
 
         if request.form["IO"] == "GPIO0R ON":
             print "GPIO0 ON"
@@ -293,14 +289,10 @@ def simpleui():
             print "HABTIMERIDLER"
             command = faraday_cmd.CommandRemoteHABResetCutdownIdle(remotecallsign, remotenodeid)
 
-
         faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
-        logger.info(request.form)
+        return redirect("http://localhost/?callsign={0}&nodeid={1}".format(callsign, nodeid), code=302)
 
-
-
-        return redirect("http://localhost/?callsign={0}&nodeid={1}".format(callsign,nodeid), code=302)
 
 @app.errorhandler(404)
 def pageNotFound(error):
