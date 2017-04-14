@@ -65,8 +65,8 @@ def simpleui():
         faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
         faraday_cmd = faradaycommands.faraday_commands()
 
-        callsign = request.form["CALLSIGN"]
-        nodeid = request.form["NODEID"]
+        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN")
+        nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
 
         # CommandLocalGPIO(self, p3_bitmask_on, p4_bitmask_on, p5_bitmask_on, p3_bitmask_off, p4_bitmask_off, p5_bitmask_off):
 
@@ -150,8 +150,8 @@ def simpleui():
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
         # if request.form["callsignr"] != '':
-        #     remotecallsign = request.form["callsignr"]
-        #     remotenodeid = int(request.form["nodeidr"])
+        remotecallsign = simpleuiconfig.get("SIMPLEUI", "REMOTECALLSIGN")
+        remotenodeid = simpleuiconfig.getint("SIMPLEUI", "REMOTENODEID")
 
         #Trying to get to work
         if request.form["IO"] == "LED1R ON":
@@ -298,7 +298,7 @@ def simpleui():
             command = faraday_cmd.CommandRemoteHABResetCutdownIdle(remotecallsign, remotenodeid)
 
 
-        faraday_1.POST(callsign, int(nodeid), faraday_1.CMD_UART_PORT, command)
+        faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
         logger.info(request.form)
 
