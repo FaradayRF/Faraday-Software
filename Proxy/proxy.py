@@ -111,6 +111,7 @@ def uart_worker(modem, getDicts, units, log):
             # Slow down while loop to something reasonable
             time.sleep(0.001)
 
+
 def testdb_read_worker():
     """
     Read from DB and insert traffic in deque
@@ -457,6 +458,7 @@ def initDB():
 
     return True
 
+
 def openTestDB():
     """
     Opens a test database, returns a connection object or None
@@ -476,7 +478,7 @@ def openTestDB():
         logger.error('Test database: {} not found. '.format(testDbFilename))
         return None
 
-    con = None
+    conn = None
     try:
         conn = sqlite3.connect(testDbFilename)
 
@@ -486,9 +488,10 @@ def openTestDB():
 
     return conn
 
+
 def sqlBeginRead(conn):
     """
-    Starts a read by executing SQL and returning a cursor 
+    Starts a read by executing SQL and returning a cursor
 
     :param conn: Database connection
     :return: cursor or None if we encountered a problem
