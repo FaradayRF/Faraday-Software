@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # This example will show how to command Faraday using the basic command application.
 # LED's being commanded may be recieving other commands and not work as intended (i.e. RED due to RF TX indication)
 
@@ -6,11 +8,13 @@
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
+
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 #Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
 
 #Definitions
 
