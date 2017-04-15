@@ -67,7 +67,7 @@ def uart_worker(modem, getDicts, units, log):
         try:
             for port in modem['com'].RxPortListOpen():
                 if(modem['com'].RxPortHasItem(port)):
-                    for i in range(0,modem['com'].RxPortItemCount(port)):
+                    for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
                         # convert to BASE64 and place in queue
                         item = {}
@@ -459,13 +459,12 @@ def main():
     # Associate serial ports with callsigns
     # global units
     units = callsign2COM()
-    unitcnt = len(units)
 
     # Initialize local variables
-    threads = []
+    #threads = []
 
     for key, values in units.iteritems():
-        unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]),int(values["baudrate"]),int(values["timeout"]))
+        unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
     for key in unitDict:
         print "Starting Thread For Unit:", key
@@ -474,33 +473,6 @@ def main():
         t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
         #threads.append(t)
         t.start()
-
-    # while(1):
-    #     # Initialize a Faraday Radio device
-    #     try:
-    #         for key, values in units.iteritems():
-    #             unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
-    #                 layer_4_service.faraday_uart_object(
-    #                     str(values["com"]),
-    #                     int(values["baudrate"]),
-    #                     int(values["timeout"]))
-    #         logger.info("Connected to Faraday")
-    #         break
-    #
-    #     except StandardError as e:
-    #         logger.error("StandardError: " + str(e))
-    #         time.sleep(1)
-    #     except ValueError as e:
-    #         logger.error("ValueError: " + str(e))
-    #         time.sleep(1)
-    #     except IndexError as e:
-    #         logger.error("IndexError: " + str(e))
-    #         time.sleep(1)
-    #     except KeyError as e:
-    #         logger.error("KeyError: " + str(e))
-    #         time.sleep(1)
-
-
 
     # Start the flask server on localhost:8000
     proxyHost = proxyConfig.get("FLASK", "host")
