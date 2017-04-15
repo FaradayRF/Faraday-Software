@@ -23,6 +23,7 @@ import json
 
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
@@ -148,6 +149,8 @@ def telemetry_worker(config):
 
 # Initialize Flask microframework
 app = Flask(__name__)
+# Enable CORS support
+CORS(app)
 
 
 @app.route('/', methods=['GET'])
