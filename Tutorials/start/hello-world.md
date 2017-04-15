@@ -21,13 +21,18 @@ This subpackage abstracts commands one might wish to send to Faraday. IT contain
 ##LED Code
 The following code example will enter an infinite loop to turn LED1 ON (green) and OFF in a total of one second. `hello-world.py` should be modified with your callsign and node ID where `REPLACEME` has been added. Below is `hello-world.py` modified for use by KB1LQD-1.
 ```
+#!/usr/bin/env python
+
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
 
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+# Imports - Faraday Specific
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
 
 #Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio() #default proxy port

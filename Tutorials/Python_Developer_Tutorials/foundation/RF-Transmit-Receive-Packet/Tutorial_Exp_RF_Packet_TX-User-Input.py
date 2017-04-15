@@ -1,13 +1,16 @@
+#!/usr/bin/env python
+
 #Imports - General
 
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-#Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
+# Imports - Faraday Specific
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
 
 
 #Variables

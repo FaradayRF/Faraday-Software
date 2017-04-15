@@ -4,7 +4,7 @@ import textwrap
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../")) #Append path to common tutorial FaradayIO module
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))  #Append path to common tutorial FaradayIO module
 
 from FaradayIO import faradaybasicproxyio
 from FaradayIO import faradaycommands
@@ -16,8 +16,8 @@ class Msg_State_Machine_Tx(object):
         A state machine that handles the functionality needed to create and transmit a message
         """
         #Constants
-        self.MAX_PAYLOAD_LENGTH = 20 #TBD
-        self.MAX_MSG_DATA_LENGTH = 18 #TDB
+        self.MAX_PAYLOAD_LENGTH = 20  #TBD
+        self.MAX_MSG_DATA_LENGTH = 18  #TDB
         #States
         self.STATE_IDLE = 0
         self.STATE_INIT = 1
@@ -37,8 +37,8 @@ class Msg_State_Machine_Tx(object):
 
     def FragmentCount(self, msg_len):
         #Determine fragment count
-        frag_cnt = msg_len/self.MAX_MSG_DATA_LENGTH
-        if(msg_len%self.MAX_MSG_DATA_LENGTH > 0):
+        frag_cnt = msg_len / self.MAX_MSG_DATA_LENGTH
+        if msg_len % self.MAX_MSG_DATA_LENGTH > 0:
             frag_cnt += 1
         return frag_cnt
 

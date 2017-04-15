@@ -1,15 +1,18 @@
-#Imports - General
+#!/usr/bin/env python
 
+#Imports - General
 import os
 import sys
+import time
 import ConfigParser
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools")) #Append path to common tutorial FaradayIO module
+
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
 #Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
-import time
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import gpioallocations
 
 
 #Setup a Faraday IO object
@@ -24,11 +27,11 @@ config.read(filename)
 #Definitions
 
 #Variables
-local_device_callsign = config.get("DEVICES","UNIT0CALL") # Should match the connected Faraday unit as assigned in Proxy configuration
-local_device_node_id = config.getint("DEVICES","UNIT0ID") # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_callsign = config.get("DEVICES", "UNIT0CALL")  # Should match the connected Faraday unit as assigned in Proxy configuration
+local_device_node_id = config.getint("DEVICES", "UNIT0ID")  # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_callsign = str(local_device_callsign).upper()
-remote_device_callsign = config.get("DEVICES","UNIT1CALL") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
-remote_device_node_id = config.getint("DEVICES","UNIT1ID") # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_callsign = config.get("DEVICES", "UNIT1CALL")  # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
+remote_device_node_id = config.getint("DEVICES", "UNIT1ID")  # Should match the programmed callsign of the remote Faraday device to be commanded (receive)
 remote_device_callsign = str(remote_device_callsign).upper()
 
 ################################

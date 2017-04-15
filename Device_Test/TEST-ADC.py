@@ -19,7 +19,7 @@ while user_input != 'q':
             telem = devicetest.GetTelem3()
             temp = devicetest.ReadADCTelem(telem)
             for i in range(0, len(temp)):
-                vadc = temp[i]*bitv
+                vadc = temp[i] * bitv
                 print "ADC", str(i) + ":", str(vadc)[0:4], "V"
         except:
             print "Failed to get telemetry packet!"

@@ -24,4 +24,4 @@ while 1:
         print '\n***************************************'
         rx_message_dict = None
     else:
-        pass # No messages received
+        pass  # No messages received

@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# Name:        /Faraday_Proxy_Tools/FaradayIO.py
-# Purpose:      Abstracted interface to Faraday Proxy
+# Name:        faraday.proxyio.faradaybasicproxyio
+# Purpose:     Abstracted interface to Faraday Proxy
 #
 # Author:      Brent Salmi
 #
@@ -29,12 +29,12 @@ class proxyio(object):
 
     """
 
-    def __init__(self, port = 8000, logger = None):
+    def __init__(self, port=8000, logger=None):
         #Definitions
-        self.FLASK_PORT = port #TCP port
-        self.TELEMETRY_PORT = 5 #Faraday Transport "Service Number"
-        self.CMD_UART_PORT = 2 #Faraday COMMAND "Service Number"
-        self.MAXPOSTPAYLOADLEN = 124 #123
+        self.FLASK_PORT = port  #TCP port
+        self.TELEMETRY_PORT = 5  #Faraday Transport "Service Number"
+        self.CMD_UART_PORT = 2  #Faraday COMMAND "Service Number"
+        self.MAXPOSTPAYLOADLEN = 124  #123
 
         if logger is not None:
             self._logger = logger
@@ -75,15 +75,15 @@ class proxyio(object):
 
         """
         #Check if payload too large
-        if(len(data)>self.MAXPOSTPAYLOADLEN):
-            return False #Too large!
+        if len(data) > self.MAXPOSTPAYLOADLEN:
+            return False  #Too large!
         else:
             #Convert supplied data into BASE64 encoding for safe network transmission
-            b64_data = base64.b64encode(data) #Converts to Base64
-            payload = {'data' : [b64_data]}
+            b64_data = base64.b64encode(data)  #Converts to Base64
+            payload = {'data': [b64_data]}
 
             #POST data to UART service port
-            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json = payload) #Sends Base64 config flash update packet to Faraday
+            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json=payload)  #Sends Base64 config flash update packet to Faraday
 
             #Return
             return status
@@ -122,7 +122,7 @@ class proxyio(object):
                 url = url + "&limit=" + str(limit)
 
         try:
-            response = requests.get(url) #calling IP address directly is much faster than localhost lookup
+            response = requests.get(url)  #calling IP address directly is much faster than localhost lookup
             if response.status_code == 204:
                 # No data received
                 return None
@@ -139,7 +139,7 @@ class proxyio(object):
         except KeyError as e:
             self._logger.error("KeyError: " + str(e))
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout = 1, debug = False, limit=None):
+    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout=1, debug=False, limit=None):
         """
         This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
@@ -168,13 +168,13 @@ class proxyio(object):
         timedelta = 0
         rx_data = None
 
-        while((rx_data is None) and (timedelta<sec_timeout)):
+        while rx_data is None and timedelta < sec_timeout:
             #Update new timedelta
-            timedelta = time.time()-starttime
-            time.sleep(0.01) #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
+            timedelta = time.time() - starttime
+            time.sleep(0.01)  #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
 
             #Attempt to get data
-            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit = limit)
+            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit=limit)
         #Determine if timeout or got data
         if rx_data:
             if(debug):

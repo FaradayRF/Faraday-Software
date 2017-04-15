@@ -1,12 +1,16 @@
+#!/usr/bin/env python
+
 #Imports - General
 
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools/")) #Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 #Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
 
 #Variables
 local_device_callsign = 'kb1lqc'
@@ -20,7 +24,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 
 #Define constants
 PROXY_MESSAGE_EXPERIMENTAL_PORT = 3
-PROXY_GET_TIMEOUT = 10 #Second(s)
+PROXY_GET_TIMEOUT = 10  #Second(s)
 
 
 #Setup variables for receiving
@@ -29,7 +33,7 @@ data = None
 #While loop to wait for reception of data packet from experimental message application
 while(1):
     #Wait until there is new data on the message application port OR timout
-    for i in range(0,255,1):
+    for i in range(0, 255, 1):
         try:
             data = faraday_1.GET(local_device_callsign, local_device_node_id, i)
             if (data is not None) and ('error' not in data):

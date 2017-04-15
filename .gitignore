@@ -29,6 +29,7 @@ Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/Engineering_
 
 # Proxy
 proxy/proxy.ini
+proxy/*.db
 
 #Virtualenv
 faradayenv/

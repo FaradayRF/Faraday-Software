@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import time
 import logging.config
 import os
@@ -5,18 +7,16 @@ import sys
 import json
 import ConfigParser
 import base64
-import cPickle
 
 from flask import Flask
 from flask import request
 
-# Add Faraday proxy tools directory to path
-sys.path.append(os.path.join(os.path.dirname(__file__),
-                             "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import deviceconfig
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import deviceconfig
 
 # Global Constants
 UART_PORT_APP_COMMAND = 2
@@ -93,11 +93,13 @@ def unitconfig():
 
             # Update the device configuration object with the fields obtained from the INI configuration files loaded
             config_bitmask = device_config_object.create_bitmask_configuration(int(device_basic_dict['CONFIGBOOTBITMASK']))
-            status_basic = device_config_object.update_basic(config_bitmask, str(device_basic_dict['CALLSIGN']),
-                                              int(device_basic_dict['ID']), int(device_basic_dict['GPIO_P3']),
-                                              int(device_basic_dict['GPIO_P4']), int(device_basic_dict['GPIO_P5']))
-            status_rf = device_config_object.update_rf(float(device_rf_dict['BOOT_FREQUENCY_MHZ']),
-                                           int(device_rf_dict['BOOT_RF_POWER']))
+            status_basic = device_config_object.update_basic(
+                config_bitmask, str(device_basic_dict['CALLSIGN']),
+                int(device_basic_dict['ID']), int(device_basic_dict['GPIO_P3']),
+                int(device_basic_dict['GPIO_P4']), int(device_basic_dict['GPIO_P5']))
+            status_rf = device_config_object.update_rf(
+                float(device_rf_dict['BOOT_FREQUENCY_MHZ']),
+                int(device_rf_dict['BOOT_RF_POWER']))
             status_gps = device_config_object.update_gps(
                 device_config_object.update_bitmask_gps_boot(int(device_gps_dict['GPS_PRESENT_BIT']),
                                                              int(device_gps_dict['GPS_BOOT_BIT'])),
@@ -171,7 +173,7 @@ def unitconfig():
                 parsed_config_dict = device_config_object.parse_config_packet(data)
 
                 # Encoded dictionary data for save network transit
-                pickled_parsed_config_dict = cPickle.dumps(parsed_config_dict)
+                pickled_parsed_config_dict = json.dumps(parsed_config_dict)
                 pickled_parsed_config_dict_b64 = base64.b64encode(pickled_parsed_config_dict)
 
             except ValueError as e:
@@ -194,7 +196,7 @@ def unitconfig():
             return json.dumps({"error": str(e)}), 400
 
         return json.dumps({"data": pickled_parsed_config_dict_b64}, indent=1), 200, \
-               {'Content-Type': 'application/json'}
+            {'Content-Type': 'application/json'}
 
 
 def main():

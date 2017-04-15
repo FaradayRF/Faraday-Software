@@ -8,7 +8,7 @@ class TelemetryParse(object):
     structure. Please see the documentation for further detail an definitions.
     """
     def __init__(self):
-        self.datagram_struct = struct.Struct('>3B 118s 1H') #Struct format definition for the generice telemetry packet format datagram
+        self.datagram_struct = struct.Struct('>3B 118s 1H')  #Struct format definition for the generice telemetry packet format datagram
         self.flash_config_info_d_struct = struct.Struct('<1B 9s 5B 9x 4B 21x 9s 1s 10s 1s 8s 1s 1B 21x 1B 2H 10x')
         self.flash_config_info_d_struct_len = 116
         self.packet_1_struct = struct.Struct('4B')
@@ -18,7 +18,7 @@ class TelemetryParse(object):
         self.packet_3_struct = struct.Struct('>9s 2B 9s 8B 1H 9s 1s 10s 1s 8s 1s 5s 1c 4s 3B 9H 2B 2H')
         self.packet_3_len = 97
 
-    def UnpackDatagram(self, packet, debug = False):
+    def UnpackDatagram(self, packet, debug=False):
         """
         This function unpacks a telemetry datagram from the raw packet supplied in the function argument. All telemetry packets are encapsulated by this telemetry datagram.
 
@@ -75,7 +75,7 @@ class TelemetryParse(object):
         """
         return packet[0:packet_len]
 
-    def UnpackPacket_3(self, packet, debug = False):
+    def UnpackPacket_3(self, packet, debug=False):
         """
         This function unpacks a telemetry packet type #3 (standard telemetry) from the raw packet supplied in the function argument.
 
@@ -145,46 +145,47 @@ class TelemetryParse(object):
         telemetryList.append(time.time())
         telemetryList = tuple(telemetryList)
 
-        dictionaryData = {  'SOURCECALLSIGN': str(telemetryList[0]),
-                            'SOURCECALLSIGNLEN': str(telemetryList[1]),
-                            'SOURCEID': int(telemetryList[2]),
-                            'DESTINATIONCALLSIGN': telemetryList[3],
-                            'DESTINATIONCALLSIGNLEN': telemetryList[4],
-                            'DESTINATIONID': telemetryList[5],
-                            'RTCSEC': telemetryList[6],
-                            'RTCMIN': telemetryList[7],
-                            'RTCHOUR': telemetryList[8],
-                            'RTCDAY': telemetryList[9],
-                            'RTCDOW': telemetryList[10],
-                            'RTCMONTH': telemetryList[11],
-                            'RTCYEAR': telemetryList[12],
-                            'GPSLATITUDE': telemetryList[13],
-                            'GPSLATITUDEDIR': telemetryList[14],
-                            'GPSLONGITUDE': telemetryList[15],
-                            'GPSLONGITUDEDIR': telemetryList[16],
-                            'GPSALTITUDE': telemetryList[17],
-                            'GPSALTITUDEUNITS': telemetryList[18],
-                            'GPSSPEED': telemetryList[19],
-                            'GPSFIX': telemetryList[20],
-                            'GPSHDOP': telemetryList[21],
-                            'GPIOSTATE': telemetryList[22],
-                            'IOSTATE': telemetryList[23],
-                            'RFSTATE': telemetryList[24],
-                            'ADC0': telemetryList[25],
-                            'ADC1': telemetryList[26],
-                            'ADC2': telemetryList[27],
-                            'ADC3': telemetryList[28],
-                            'ADC4': telemetryList[29],
-                            'ADC5': telemetryList[30],
-                            'VCC': telemetryList[31],
-                            'BOARDTEMP': telemetryList[32],
-                            'ADC8': telemetryList[33],
-                            'HABTIMERSTATE': telemetryList[34],
-                            'HABCUTDOWNSTATE': telemetryList[35],
-                            'HABTRIGGERTIME': telemetryList[36],
-                            'HABTIMER': telemetryList[37],
-                            'EPOCH': telemetryList[38]
-                        }
+        dictionaryData = {
+            'SOURCECALLSIGN': str(telemetryList[0]),
+            'SOURCECALLSIGNLEN': str(telemetryList[1]),
+            'SOURCEID': int(telemetryList[2]),
+            'DESTINATIONCALLSIGN': telemetryList[3],
+            'DESTINATIONCALLSIGNLEN': telemetryList[4],
+            'DESTINATIONID': telemetryList[5],
+            'RTCSEC': telemetryList[6],
+            'RTCMIN': telemetryList[7],
+            'RTCHOUR': telemetryList[8],
+            'RTCDAY': telemetryList[9],
+            'RTCDOW': telemetryList[10],
+            'RTCMONTH': telemetryList[11],
+            'RTCYEAR': telemetryList[12],
+            'GPSLATITUDE': telemetryList[13],
+            'GPSLATITUDEDIR': telemetryList[14],
+            'GPSLONGITUDE': telemetryList[15],
+            'GPSLONGITUDEDIR': telemetryList[16],
+            'GPSALTITUDE': telemetryList[17],
+            'GPSALTITUDEUNITS': telemetryList[18],
+            'GPSSPEED': telemetryList[19],
+            'GPSFIX': telemetryList[20],
+            'GPSHDOP': telemetryList[21],
+            'GPIOSTATE': telemetryList[22],
+            'IOSTATE': telemetryList[23],
+            'RFSTATE': telemetryList[24],
+            'ADC0': telemetryList[25],
+            'ADC1': telemetryList[26],
+            'ADC2': telemetryList[27],
+            'ADC3': telemetryList[28],
+            'ADC4': telemetryList[29],
+            'ADC5': telemetryList[30],
+            'VCC': telemetryList[31],
+            'BOARDTEMP': telemetryList[32],
+            'ADC8': telemetryList[33],
+            'HABTIMERSTATE': telemetryList[34],
+            'HABCUTDOWNSTATE': telemetryList[35],
+            'HABTRIGGERTIME': telemetryList[36],
+            'HABTIMER': telemetryList[37],
+            'EPOCH': telemetryList[38]
+        }
 
         #print dictionaryData["ADC8"]
 
@@ -237,7 +238,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackPacket_2(self, packet, debug = False):
+    def UnpackPacket_2(self, packet, debug=False):
         print packet, len(packet)
         """
         This function unpacks a telemetry packet type #2 (Device Debug Flash Data) from the raw packet supplied in the function argument.
@@ -307,7 +308,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackPacket_1(self, packet, debug = False):
+    def UnpackPacket_1(self, packet, debug=False):
         """
         This function unpacks a telemetry packet type #1 (System Settings) from the raw packet supplied in the function argument.
 
@@ -346,7 +347,7 @@ class TelemetryParse(object):
         #Return parsed packet list
         return dictionaryData
 
-    def UnpackConfigFlashD(self, packet, debug = False):
+    def UnpackConfigFlashD(self, packet, debug=False):
         """
         This function unpacks a Flash memory info segment D "Packet" structure (Faraday Flash Memory non-volitile defaults) from the raw packet supplied in the function argument.
 

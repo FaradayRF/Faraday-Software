@@ -1,20 +1,21 @@
+#!/usr/bin/env python
+
 # This example will show how to command Faraday using the basic command application.
 # LED's being commanded may be receiving other commands and not work as intended (i.e. RED due to RF TX indication)
 
 # Imports - General
-
 import os
 import sys
 import time
 import ConfigParser
 
-sys.path.append(os.path.join(os.path.dirname(__file__),
-                             "../../../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
 # Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import gpioallocations
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
@@ -27,7 +28,7 @@ config.read(filename)
 local_device_callsign = config.get("DEVICES",
                                    "UNIT0CALL").upper()  # Should match the connected Faraday unit as assigned in Proxy configuration
 local_device_node_id = config.getint("DEVICES",
-                                  "UNIT0ID")  # Should match the connected Faraday unit as assigned in Proxy configuration
+                                     "UNIT0ID")  # Should match the connected Faraday unit as assigned in Proxy configuration
 
 # Start the proxy server after configuring the configuration file correctly
 # Setup a Faraday IO object

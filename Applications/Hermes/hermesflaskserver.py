@@ -1,5 +1,6 @@
+#!/usr/bin/env python
+
 import os
-import hermesobject as hermesobject
 import ConfigParser
 import json
 import base64
@@ -8,6 +9,11 @@ import sys
 
 from flask import Flask
 from flask import request
+
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+import hermesobject
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
@@ -32,11 +38,10 @@ def configparse():
         nodeid = config.get(item, "nodeid")
         nodeid = config.getint(item, "nodeid")
 
-        local[str(item)] = \
-            {
-                "callsign": callsign,
-                "nodeid": nodeid,
-            }
+        local[str(item)] = {
+            "callsign": callsign,
+            "nodeid": nodeid,
+        }
 
     local = json.dumps(local)
     return json.loads(local)
@@ -153,7 +158,7 @@ def getqueue():
     data_64 = base64.b64encode(json.dumps(data))
 
     return json.dumps(data_64, indent=1), 200, \
-           {'Content-Type': 'application/json'}
+        {'Content-Type': 'application/json'}
 
 
 def main():
