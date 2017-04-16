@@ -14,13 +14,15 @@ import threading
 import Queue
 import time
 import struct
-import os
-import logging.config
+#test_ser_queue_1 = Queue.Queue() # Infinite
+#test_ser_queue_2 = Queue.Queue() # Infinite
 
-# Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
-logging.config.fileConfig(filename)
-logger = logging.getLogger('UARTStack')
+#Globals
+#serial_physical_obj = ''
+
+#def init_layer(port, baud, timeout):
+#    global serial_physical_obj
+#    serial_physical_obj = test_physical_layer_class(port, baud, timeout)
 
 
 class layer_2_object(object):
@@ -41,12 +43,13 @@ class layer_2_protocol(threading.Thread):
 
     def abort(self):
         self.enabled = False
-        logger.info('Aborting Layer 2 Class Main')
+        print "Aborting Layer 2 Class Main"
         self.ser.close()
 
     def close_connection(self):
         self.ser.close()
 
+    ## EDIT BSALMI: 1-21-2016
     def get_byte(self):
         if(not self.serial_rx_queue.empty()):
             rx_byte = self.serial_rx_queue.get()
@@ -63,7 +66,7 @@ class layer_2_protocol(threading.Thread):
     def run(self):
         while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.01)
+            time.sleep(0.001)  #Shouldn't need this! BSALMI 6/13/16
             if(self.enabled):
                 #Check for bytes to transmit over serial
                 if(not self.serial_tx_queue.empty()):
@@ -73,6 +76,53 @@ class layer_2_protocol(threading.Thread):
                 if self.ser.inWaiting() > 0:
                     rx_buffer_inwaiting = self.ser.inWaiting()
                     self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
+
+
+##class test_physical_layer_class(threading.Thread):
+##    def __init__(self, com, baud,timeout_time):
+##        self.ser = serial.Serial(com, baud, timeout = timeout_time)
+##        self.serial_rx_queue = Queue.Queue() # Infinite
+##        self.serial_tx_queue = Queue.Queue() # Infinite
+##        self.enabled = True
+##
+##        #Start
+##        threading.Thread.__init__(self)
+##        self.start() #Starts the run() function and thread
+##
+##
+##    def abort(self):
+##        self.enabled = False
+##
+##    def close_connection(self):
+##        self.ser.close()
+##
+##    ## EDIT BSALMI: 1-21-2016
+##    def get_byte(self):
+##        if(not self.serial_rx_queue.empty()):
+##            rx_byte = self.serial_rx_queue.get()
+##            return rx_byte
+##        else:
+##            return False
+##
+##
+##    def send_byte(self, databyte):
+##        self.serial_tx_queue.put(databyte)
+##
+##    def rx_buffer_count(self):
+##        return self.ser.inWaiting()
+##
+##    def run(self):
+##        while(self.enabled):
+##            #Delay to allow threaded CPU utilization relaxing
+##            time.sleep(0.001) #Shouldn't need this! BSALMI 6/13/16
+##            #Check for bytes to transmit over serial
+##            if(not self.serial_tx_queue.empty()):
+##                while(not self.serial_tx_queue.empty()):
+##                    self.ser.write(self.serial_tx_queue.get())
+##            #Check for bytes to receive from serial
+##            if((self.ser.inWaiting()>0)):
+##                rx_buffer_inwaiting = self.ser.inWaiting()
+##                self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
 
 
 ################################################################################
@@ -99,6 +149,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         self.insert_data_class = Transmit_Insert_Data_Queue_Class()
         self.output_channel = output_channel
         self.serial_physical_obj = serial_physical_obj
+        #global serial_physical_obj
 
         #Start
         threading.Thread.__init__(self)
@@ -109,7 +160,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         Perform needed actions to stop the class object while(1) loop.
         """
         self.enable_flag = False
-        logger.info('Aborting Layer 2 Transmit Class!')
+        print "Aborting Layer 2 Transmit Class!"
 
     def insert_data(self, payload):
         """
@@ -129,19 +180,18 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         """
         while self.enable_flag:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.01)
+            time.sleep(0.001)
 
             #Check for new data to transmit
             if not self.insert_data_class.tx_packet_queue.empty():
-                #  Loop through all known queue data and transmit
-                for i in range(0, self.insert_data_class.tx_packet_queue.qsize()):
-                    #New data available, retrieve single data "packet"
-                    packet = self.insert_data_class.tx_packet_queue.get()
 
-                    #Transmit
-                    for i in range(len(packet)):
-                        self.output_channel.put(packet[i])
-                        self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
+                #New data available, retrieve single data "packet"
+                packet = self.insert_data_class.tx_packet_queue.get()
+
+                #Transmit
+                for i in range(0, len(packet), 1):
+                    self.output_channel.put(packet[i])
+                    self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
 
 
 ################################################################################
@@ -181,7 +231,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         Perform needed actions to stop the class object while(1) loop.
         """
         self.enable_flag = False
-        logger.info('Aborting Layer 2 Transmit Protocol!')
+        print "Aborting Layer 2 Transmit Protocol!"
 
     def run(self):
         """
@@ -190,22 +240,22 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         while self.enable_flag:
             #Check if new data is avaliable in the Queue
             if(not self.tx_data_queue.empty()):
-                for i in range(0, self.tx_data_queue.qsize()):
-                    #Get next queue item to transmit
-                    self.datalink_payload = self.tx_data_queue.get()
-                    #print "transmit L2", self.tx_queue_item
 
-                    #Create datalink packet
-                    datalink_packet = self.create_datalink_packet(0xff, 0xff, self.datalink_payload)
+                #Get next queue item to transmit
+                self.datalink_payload = self.tx_data_queue.get()
+                #print "transmit L2", self.tx_queue_item
 
-                    #Frame datalink packet with byte escaping characters
-                    framed_datalink_packet = self.Byte_Escape_Data_Fixed_Length(self.framing_startbyte, self.framing_stopbyte, self.framing_escapebyte, datalink_packet)
+                #Create datalink packet
+                datalink_packet = self.create_datalink_packet(0xff, 0xff, self.datalink_payload)
 
-                    #Place datalink packet into transmit queue
-                    self.tx_packet_queue.put(framed_datalink_packet)
+                #Frame datalink packet with byte escaping characters
+                framed_datalink_packet = self.Byte_Escape_Data_Fixed_Length(self.framing_startbyte, self.framing_stopbyte, self.framing_escapebyte, datalink_packet)
+
+                #Place datalink packet into transmit queue
+                self.tx_packet_queue.put(framed_datalink_packet)
 
             #Small sleep to unload python process resources from CPU
-            time.sleep(0.01)
+            time.sleep(0.001)
 
     def create_datalink_packet(self, packet_type, packet_config, payload):
         """
@@ -408,7 +458,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
     ################################################################################
     def Abort(self):
         self.enable_flag = False
-        logger.info('Aborting Layer 2 Protocol!')
+        print "Aborting Layer 2 Protocol!"
 
 ##    def Parse_Datalink_Packet_Variable_Len(self, packet):
 ##        header = struct.unpack('c', packet[0:1])
@@ -433,18 +483,16 @@ class Receiver_Datalink_Device_Class(threading.Thread):
 
     def run(self):
         while self.enable_flag:
-            time.sleep(0.01)
+            time.sleep(0.001)
             if not self.receiver_class.rx_packet_queue.empty():
-                #  Loop through all known queue data and receive
-                for i in range(self.receiver_class.rx_packet_queue.qsize()):
-                    data = self.receiver_class.rx_packet_queue.get()
-                    try:
-                        unpacked_datalink = self.datalink_packet_struct.unpack(data)
-                        #Place datalink payload into payload queue
-                        self.rx_data_payload_queue.put(unpacked_datalink[3])
-                    except:
-                        logger.info('FAIL Layer 2 UART Protocol Unpack')
-                        pass  #print "Failed parsing" !!!!!FIX!!!!!
+                data = self.receiver_class.rx_packet_queue.get()
+                try:
+                    unpacked_datalink = self.datalink_packet_struct.unpack(data)
+                    #Place datalink payload into payload queue
+                    self.rx_data_payload_queue.put(unpacked_datalink[3])
+                except:
+                    print "FAIL"
+                    pass  #print "Failed parsing" !!!!!FIX!!!!!
 
 
 ################################################################################
@@ -489,11 +537,11 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     ################################################################################
     def abort(self):
         self.enable_flag = False
-        logger.info('Aborting Layer 2 Protocol!')
+        print "Aborting Layer 2 Protocol!"
 
     def run(self):
         while self.enable_flag:
-            time.sleep(0.01)
+            time.sleep(0.001)
             if not self.serial_physical_obj.serial_physical_obj.serial_rx_queue.empty():
                 rx_byte_raw = self.serial_physical_obj.serial_physical_obj.get_byte()
                 #Get next byte
@@ -529,7 +577,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet = ''  #Clear partial packet contents for new packet
                             #Unknown State - Error
                             else:
-                                logger.info('ERROR: ' + str(self.partial_packet))
+                                print"ERROR:", self.partial_packet
                         #Check if current BYTE is being escaped (framing) - TRUE
                         elif self.logic_escapebyte_received:
                             #Escaped Packet data received
@@ -538,10 +586,10 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet += rx_byte
                             #Unknown State - Error
                             else:
-                                logger.info('ERROR: ' + str(self.partial_packet))
+                                print"ERROR:", self.partial_packet
                     #Unknown State - Error
                     else:
-                        logger.info('ERROR: ' + str(self.partial_packet))
+                        print"ERROR:", self.partial_packet
             #No new databyte to parse
             else:
                     pass  #No new data
