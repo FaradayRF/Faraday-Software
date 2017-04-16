@@ -23,7 +23,6 @@ logging.config.fileConfig(filename)
 logger = logging.getLogger('UARTStack')
 
 
-
 class layer_2_object(object):
     def __init__(self, port, baud, timeout):
         self.serial_physical_obj = layer_2_protocol(port, baud, timeout)

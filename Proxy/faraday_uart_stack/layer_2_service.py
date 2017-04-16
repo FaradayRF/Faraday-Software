@@ -21,6 +21,7 @@ filename = os.path.abspath("loggingConfig.ini")
 logging.config.fileConfig(filename)
 logger = logging.getLogger('UARTStack')
 
+
 class Layer2ServiceObject(threading.Thread):
     def __init__(self, port, baud, timeout):
         test_ser_queue_1 = Queue.Queue()  # Infinite
