@@ -15,13 +15,7 @@ import threading
 import time
 import Queue
 import struct
-import os
-import logging.config
 
-# Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
-logging.config.fileConfig(filename)
-logger = logging.getLogger('UARTStack')
 
 DEBUG = False
 
@@ -90,10 +84,10 @@ class faraday_uart_object(threading.Thread):
             transport_packet_padded = transport_packet + chr(0xff) * (self.TRANPORT_PAYLOAD_LENGTH - len(payload))
             self.transmit_datagram_queue_put(transport_packet_padded)
         else:
-            logger.info('ERROR: Transport protocol violation')
-            logger.info('Payload Length' + str(payload_check) + str(len(payload)))
-            logger.info('Payload Length Byte' + str(payload_len_check) + str(payload_length))
-            logger.info('Service Number Check' + str(service_number_check) + str(service_number))
+            print "ERROR: Transport protocol violation"
+            print "Payload Length", payload_check, len(payload)
+            print "Payload Length Byte", payload_len_check, payload_length
+            print "Service Number Check", service_number_check, service_number
 
     def GET(self, service_port):
         """
@@ -139,19 +133,14 @@ class faraday_uart_object(threading.Thread):
     def process_received_datagram(self, datagram):
         parsed_datagram_dict = layer_4_protocol.parse_packet(datagram)
         if DEBUG:
-            logger.info('RX Datagram:' + str(parsed_datagram_dict))
+            print "RX'd:", parsed_datagram_dict
 
     def RxPortHasItem(self, service_number):
         try:
             return not self.receive_parsed_queue_dict[service_number].empty()
         except:
-            return None
-
-    def RxPortListOpen(self):
-        return self.receive_parsed_queue_dict.keys()
-
-    def RxPortItemCount(self, service_number):
-        return self.receive_parsed_queue_dict[service_number].qsize()  # Note: .qsize() not reliable per documentation
+            self.receive_service_queue_open(service_number, self.QUEUE_SIZE_DEFAULT)
+            pass
 
     def receive_service_queue_open(self, service_number, queue_size):
         self.receive_parsed_queue_dict[service_number] = Queue.Queue(queue_size)
@@ -186,6 +175,7 @@ class faraday_uart_object(threading.Thread):
             return self.receive_parsed_queue_dict[service_number].get_nowait()
         except:
             #Nothing in queue
+            print "Nothing in queue"
             return False
 
     def uart_layer_receive_link(self):
@@ -199,9 +189,9 @@ class faraday_uart_object(threading.Thread):
                     transport_payload = unpacked_transport[2][:length]  #.encode('hex')
                     self.receive_service_queue_put(transport_payload, rx_service_number)
                 except:
-                    logger.info('data fail UART layer 4 receive link')
+                    print "data fail"
             except:
-                logger.info('Layer 4 transport fail')
+                print "transport fail"
         else:
             pass
 
@@ -225,7 +215,7 @@ class faraday_uart_object(threading.Thread):
                     self.receive_service_queue_put(parsed_l4_packet[2], parsed_l4_packet[0])
 
                 except:
-                    logger.info('FAILED PARSING' + str(rx_datagram))
+                    print "FAILED PARSING", rx_datagram
                     pass
             #Check uart datalink receive for new datagrams to parse
             self.uart_layer_receive_link()
