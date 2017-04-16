@@ -12,7 +12,6 @@ and port specified in the configuration file proxy.ini.
 import time
 import base64
 import json
-import logging
 import logging.config
 import threading
 import ConfigParser
@@ -55,14 +54,12 @@ def uart_worker(modem, getDicts, units, log):
 
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
-    #for key, values in units.iteritems():
     postDicts[modem['unit']] = {}
     getDicts[modem['unit']] = {}
 
     # Loop through each unit checking for data, if True place into deque
     while(1):
         # Place data into the FIFO coming from UART
-        #for unit, com in modem.iteritems():
         try:
             for port in modem['com'].RxPortListOpen():
                 if(modem['com'].RxPortHasItem(port)):
@@ -585,8 +582,6 @@ def main():
     # global units
     units = callsign2COM()
 
-    # Initialize local variables
-    #threads = []
     if testmode == 0:
         for key, values in units.iteritems():
             unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
@@ -594,13 +589,10 @@ def main():
         for key in unitDict:
             logger.info('Starting Thread For Unit: ' + str(key))
             tempdict = {"unit": key, 'com': unitDict[key]}
-            #logger.info("Connected to Faraday")
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
-            #threads.append(t)
             t.start()
     else:
         t = threading.Thread(target=testdb_read_worker)
-        #threads.append(t)
         t.start()
 
     try:

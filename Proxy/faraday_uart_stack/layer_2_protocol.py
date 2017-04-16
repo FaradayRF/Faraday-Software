@@ -47,7 +47,6 @@ class layer_2_protocol(threading.Thread):
     def close_connection(self):
         self.ser.close()
 
-    ## EDIT BSALMI: 1-21-2016
     def get_byte(self):
         if(not self.serial_rx_queue.empty()):
             rx_byte = self.serial_rx_queue.get()
@@ -64,7 +63,7 @@ class layer_2_protocol(threading.Thread):
     def run(self):
         while self.enabled:
             #Delay to allow threaded CPU utilization relaxing
-            time.sleep(0.01)  #Shouldn't need this! BSALMI 6/13/16
+            time.sleep(0.01)
             if(self.enabled):
                 #Check for bytes to transmit over serial
                 if(not self.serial_tx_queue.empty()):
@@ -100,7 +99,6 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         self.insert_data_class = Transmit_Insert_Data_Queue_Class()
         self.output_channel = output_channel
         self.serial_physical_obj = serial_physical_obj
-        #global serial_physical_obj
 
         #Start
         threading.Thread.__init__(self)
