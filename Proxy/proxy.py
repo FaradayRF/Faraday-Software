@@ -52,13 +52,11 @@ def uart_worker(modem, getDicts, units, log):
     """
     logger.info('Starting uart_worker thread')
 
-    unitcallid = str(units[units.keys()[0]]['callsign']) + '-' + str(units[units.keys()[0]]['nodeid'])
-
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
     #for key, values in units.iteritems():
-    postDicts[unitcallid] = {}
-    getDicts[unitcallid] = {}
+    postDicts[modem['unit']] = {}
+    getDicts[modem['unit']] = {}
 
     # Loop through each unit checking for data, if True place into deque
     while(1):
@@ -96,9 +94,9 @@ def uart_worker(modem, getDicts, units, log):
 
         # Check for data in the POST FIFO queue. This needs to check for
         # COM ports and create the necessary buffers on the fly
-        for port in postDicts[unitcallid].keys():
+        for port in postDicts[modem['unit']].keys():
             try:
-                count = len(postDicts[unitcallid][port])
+                count = len(postDicts[modem['unit']][port])
             except:
                 # Port simply doesn't exist so don't bother
                 pass
@@ -106,7 +104,7 @@ def uart_worker(modem, getDicts, units, log):
                 for num in range(count):
                     # Data is available, pop off [unit][port] queue
                     # and convert to BASE64 before sending to UART
-                    message = postDicts[unitcallid][port].popleft()
+                    message = postDicts[modem['unit']][port].popleft()
                     message = base64.b64decode(message)
                     modem['com'].POST(port, len(message), message)
 
@@ -467,7 +465,7 @@ def main():
         unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
     for key in unitDict:
-        print "Starting Thread For Unit:", key
+        logger.info('Starting Thread For Unit: ' + str(key))
         tempdict = {"unit": key, 'com': unitDict[key]}
         #logger.info("Connected to Faraday")
         t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
