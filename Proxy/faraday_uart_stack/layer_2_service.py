@@ -13,14 +13,13 @@ import layer_2_protocol
 import threading
 import time
 import Queue
+import os
+import logging.config
 
-#test_tx = layer_2_protocol.Faraday_Datalink_Device()
-#test_rx = layer_2_protocol.Faraday_Datalink_Device_Receive_2()
-
-#Globals
-#layer_initialized = False
-#device = ''
-#DATALINK_PAYLOAD_LENGTH = 125
+# Start logging after importing modules
+filename = os.path.abspath("loggingConfig.ini")
+logging.config.fileConfig(filename)
+logger = logging.getLogger('UARTStack')
 
 
 class Layer2ServiceObject(threading.Thread):
@@ -66,25 +65,3 @@ class Layer2ServiceObject(threading.Thread):
     def run(self):
         while(self.enabled):
             time.sleep(0.001)
-
-##def uart_datalink_receive_datagram():
-##    global layer_initialized, device
-##    if(layer_initialized):
-##        if(not device.rx.rx_data_payload_queue.empty()):
-##            return device.rx.rx_data_payload_queue.get()
-##        else:
-##            return False
-##    else:
-##        print "Layer not initialized!"
-##
-##def uart_datalink_transmit_datagram(payload):
-##    global layer_initialized, device
-##    if(layer_initialized):
-##        #time.sleep(0.25)
-##        if(len(payload)<=DATALINK_PAYLOAD_LENGTH):
-##            #print "TX Length:", len(payload)
-##            device.tx.insert_data(payload)
-##        else:
-##            print "Payload Too Long!", len(payload)
-##    else:
-##            print "Layer not initialized!"

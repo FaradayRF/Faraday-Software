@@ -12,7 +12,6 @@ and port specified in the configuration file proxy.ini.
 import time
 import base64
 import json
-import logging
 import logging.config
 import threading
 import ConfigParser
@@ -55,62 +54,60 @@ def uart_worker(modem, getDicts, units, log):
 
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
-    for key, values in units.iteritems():
-        postDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
-        getDicts[str(values["callsign"]) + "-" + str(values["nodeid"])] = {}
+    postDicts[modem['unit']] = {}
+    getDicts[modem['unit']] = {}
 
     # Loop through each unit checking for data, if True place into deque
     while(1):
         # Place data into the FIFO coming from UART
-        for unit, com in modem.iteritems():
-            try:
-                for port in range(0, 255):
-                    if(com.RxPortHasItem(port)):
+        try:
+            for port in modem['com'].RxPortListOpen():
+                if(modem['com'].RxPortHasItem(port)):
+                    for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
                         # convert to BASE64 and place in queue
                         item = {}
-                        item["data"] = base64.b64encode(com.GET(port))
+                        item["data"] = base64.b64encode(modem['com'].GET(port))
 
                         try:
-                            getDicts[unit][port].append(item)
+                            getDicts[modem['unit']][port].append(item)
 
                         except:
-                            getDicts[unit][port] = deque([], maxlen=100)
-                            getDicts[unit][port].append(item)
+                            getDicts[modem['unit']][port] = deque([], maxlen=100)
+                            getDicts[modem['unit']][port].append(item)
 
                         # Check for Proxy logging and save to SQL if true
                         if log:
                             item["port"] = port
                             sqlInsert(item)
 
-            except StandardError as e:
-                logger.error("StandardError: " + str(e))
-            except ValueError as e:
-                logger.error("ValueError: " + str(e))
-            except IndexError as e:
-                logger.error("IndexError: " + str(e))
-            except KeyError as e:
-                logger.error("KeyError: " + str(e))
+        except StandardError as e:
+            logger.error("StandardError: " + str(e))
+        except ValueError as e:
+            logger.error("ValueError: " + str(e))
+        except IndexError as e:
+            logger.error("IndexError: " + str(e))
+        except KeyError as e:
+            logger.error("KeyError: " + str(e))
 
-            time.sleep(0.001)
-            # Check for data in the POST FIFO queue. This needs to check for
-            # COM ports and create the necessary buffers on the fly
-            for port in range(0, 255):
-                try:
-                    count = len(postDicts[unit][port])
-                except:
-                    # Port simply doesn't exist so don't bother
-                    pass
-                else:
-                    for num in range(count):
-                        # Data is available, pop off [unit][port] queue
-                        # and convert to BASE64 before sending to UART
-                        message = postDicts[unit][port].popleft()
-                        message = base64.b64decode(message)
-                        com.POST(port, len(message), message)
+        # Check for data in the POST FIFO queue. This needs to check for
+        # COM ports and create the necessary buffers on the fly
+        for port in postDicts[modem['unit']].keys():
+            try:
+                count = len(postDicts[modem['unit']][port])
+            except:
+                # Port simply doesn't exist so don't bother
+                pass
+            else:
+                for num in range(count):
+                    # Data is available, pop off [unit][port] queue
+                    # and convert to BASE64 before sending to UART
+                    message = postDicts[modem['unit']][port].popleft()
+                    message = base64.b64decode(message)
+                    modem['com'].POST(port, len(message), message)
 
-            # Slow down while loop to something reasonable
-            time.sleep(0.001)
+        # Slow down while loop to something reasonable
+        time.sleep(0.01)
 
 
 def testdb_read_worker():
@@ -585,41 +582,17 @@ def main():
     # global units
     units = callsign2COM()
 
-    # Initialize local variables
-    threads = []
-
     if testmode == 0:
-        while(1):
-            # Initialize a Faraday Radio device
-            try:
-                for key, values in units.iteritems():
-                    unitDict[str(values["callsign"] + "-" + values["nodeid"])] =\
-                        layer_4_service.faraday_uart_object(
-                            str(values["com"]),
-                            int(values["baudrate"]),
-                            int(values["timeout"]))
-                logger.info("Connected to Faraday")
-                break
+        for key, values in units.iteritems():
+            unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
-            except StandardError as e:
-                logger.error("StandardError: " + str(e))
-                time.sleep(1)
-            except ValueError as e:
-                logger.error("ValueError: " + str(e))
-                time.sleep(1)
-            except IndexError as e:
-                logger.error("IndexError: " + str(e))
-                time.sleep(1)
-            except KeyError as e:
-                logger.error("KeyError: " + str(e))
-                time.sleep(1)
-
-        t = threading.Thread(target=uart_worker, args=(unitDict, getDicts, units, log))
-        threads.append(t)
-        t.start()
+        for key in unitDict:
+            logger.info('Starting Thread For Unit: ' + str(key))
+            tempdict = {"unit": key, 'com': unitDict[key]}
+            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
+            t.start()
     else:
         t = threading.Thread(target=testdb_read_worker)
-        threads.append(t)
         t.start()
 
     try:
