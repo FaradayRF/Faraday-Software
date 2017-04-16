@@ -19,6 +19,7 @@ import ConfigParser
 import os
 from collections import deque
 import sqlite3
+import sys
 
 from flask import Flask
 from flask import request
@@ -130,8 +131,8 @@ def testdb_read_worker():
     # Obtain configuration properties
     try:
         testCallsign = proxyConfig.get("PROXY", "TESTCALLSIGN")
-        testNodeId = proxyConfig.get("PROXY", "TESTNODEID")
-        testRate = proxyConfig.get("PROXY", "TESTRATE")
+        testNodeId = proxyConfig.getint("PROXY", "TESTNODEID")
+        testRate = proxyConfig.getint("PROXY", "TESTRATE")
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -143,8 +144,8 @@ def testdb_read_worker():
                     .format(int(testRate)))
         testRate = 1
 
-    sleepTime = 1.0 / int(testRate)
-    unit = testCallsign + "-" + testNodeId
+    sleepTime = 1.0 / testRate
+    unit = testCallsign + "-" + str(testNodeId)
     getDicts[unit] = {}
 
     conn = openTestDB()
@@ -161,7 +162,8 @@ def testdb_read_worker():
     while(row is not None):
 
         port = row[1]
-        item = row[2]
+        item = {}
+        item["data"] = row[2]
         try:
             getDicts[unit][port].append(item)
 
@@ -567,8 +569,12 @@ def sqlInsert(data):
 
 
 def main():
-    log = proxyConfig.getboolean('PROXY', 'LOG')
-    testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
+    try:
+        log = proxyConfig.getboolean('PROXY', 'LOG')
+        testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        sys.exit(0)
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -616,9 +622,13 @@ def main():
         threads.append(t)
         t.start()
 
-    # Start the flask server on localhost:8000
-    proxyHost = proxyConfig.get("FLASK", "host")
-    proxyPort = proxyConfig.getint("FLASK", "port")
+    try:
+        # Start the flask server on localhost:8000
+        proxyHost = proxyConfig.get("FLASK", "host")
+        proxyPort = proxyConfig.getint("FLASK", "port")
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        sys.exit(0)
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
 
