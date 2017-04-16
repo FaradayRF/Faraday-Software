@@ -14,15 +14,14 @@ import threading
 import Queue
 import time
 import struct
-#test_ser_queue_1 = Queue.Queue() # Infinite
-#test_ser_queue_2 = Queue.Queue() # Infinite
+import os
+import logging.config
 
-#Globals
-#serial_physical_obj = ''
+# Start logging after importing modules
+filename = os.path.abspath("loggingConfig.ini")
+logging.config.fileConfig(filename)
+logger = logging.getLogger('UARTStack')
 
-#def init_layer(port, baud, timeout):
-#    global serial_physical_obj
-#    serial_physical_obj = test_physical_layer_class(port, baud, timeout)
 
 
 class layer_2_object(object):
@@ -43,7 +42,7 @@ class layer_2_protocol(threading.Thread):
 
     def abort(self):
         self.enabled = False
-        print "Aborting Layer 2 Class Main"
+        logger.info('Aborting Layer 2 Class Main')
         self.ser.close()
 
     def close_connection(self):
@@ -76,53 +75,6 @@ class layer_2_protocol(threading.Thread):
                 if self.ser.inWaiting() > 0:
                     rx_buffer_inwaiting = self.ser.inWaiting()
                     self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
-
-
-##class test_physical_layer_class(threading.Thread):
-##    def __init__(self, com, baud,timeout_time):
-##        self.ser = serial.Serial(com, baud, timeout = timeout_time)
-##        self.serial_rx_queue = Queue.Queue() # Infinite
-##        self.serial_tx_queue = Queue.Queue() # Infinite
-##        self.enabled = True
-##
-##        #Start
-##        threading.Thread.__init__(self)
-##        self.start() #Starts the run() function and thread
-##
-##
-##    def abort(self):
-##        self.enabled = False
-##
-##    def close_connection(self):
-##        self.ser.close()
-##
-##    ## EDIT BSALMI: 1-21-2016
-##    def get_byte(self):
-##        if(not self.serial_rx_queue.empty()):
-##            rx_byte = self.serial_rx_queue.get()
-##            return rx_byte
-##        else:
-##            return False
-##
-##
-##    def send_byte(self, databyte):
-##        self.serial_tx_queue.put(databyte)
-##
-##    def rx_buffer_count(self):
-##        return self.ser.inWaiting()
-##
-##    def run(self):
-##        while(self.enabled):
-##            #Delay to allow threaded CPU utilization relaxing
-##            time.sleep(0.001) #Shouldn't need this! BSALMI 6/13/16
-##            #Check for bytes to transmit over serial
-##            if(not self.serial_tx_queue.empty()):
-##                while(not self.serial_tx_queue.empty()):
-##                    self.ser.write(self.serial_tx_queue.get())
-##            #Check for bytes to receive from serial
-##            if((self.ser.inWaiting()>0)):
-##                rx_buffer_inwaiting = self.ser.inWaiting()
-##                self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
 
 
 ################################################################################
@@ -160,7 +112,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
         Perform needed actions to stop the class object while(1) loop.
         """
         self.enable_flag = False
-        print "Aborting Layer 2 Transmit Class!"
+        logger.info('Aborting Layer 2 Transmit Class!')
 
     def insert_data(self, payload):
         """
@@ -232,7 +184,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
         Perform needed actions to stop the class object while(1) loop.
         """
         self.enable_flag = False
-        print "Aborting Layer 2 Transmit Protocol!"
+        logger.info('Aborting Layer 2 Transmit Protocol!')
 
     def run(self):
         """
@@ -459,7 +411,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
     ################################################################################
     def Abort(self):
         self.enable_flag = False
-        print "Aborting Layer 2 Protocol!"
+        logger.info('Aborting Layer 2 Protocol!')
 
 ##    def Parse_Datalink_Packet_Variable_Len(self, packet):
 ##        header = struct.unpack('c', packet[0:1])
@@ -494,7 +446,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
                         #Place datalink payload into payload queue
                         self.rx_data_payload_queue.put(unpacked_datalink[3])
                     except:
-                        print "FAIL"
+                        logger.info('FAIL Layer 2 UART Protocol Unpack')
                         pass  #print "Failed parsing" !!!!!FIX!!!!!
 
 
@@ -540,7 +492,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     ################################################################################
     def abort(self):
         self.enable_flag = False
-        print "Aborting Layer 2 Protocol!"
+        logger.info('Aborting Layer 2 Protocol!')
 
     def run(self):
         while self.enable_flag:
@@ -580,7 +532,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet = ''  #Clear partial packet contents for new packet
                             #Unknown State - Error
                             else:
-                                print"ERROR:", self.partial_packet
+                                logger.info('ERROR: ' + str(self.partial_packet))
                         #Check if current BYTE is being escaped (framing) - TRUE
                         elif self.logic_escapebyte_received:
                             #Escaped Packet data received
@@ -589,10 +541,10 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet += rx_byte
                             #Unknown State - Error
                             else:
-                                print"ERROR:", self.partial_packet
+                                logger.info('ERROR: ' + str(self.partial_packet))
                     #Unknown State - Error
                     else:
-                        print"ERROR:", self.partial_packet
+                        logger.info('ERROR: ' + str(self.partial_packet))
             #No new databyte to parse
             else:
                     pass  #No new data
