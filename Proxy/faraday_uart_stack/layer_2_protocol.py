@@ -190,7 +190,7 @@ class Faraday_Datalink_Device_Transmit_Class(threading.Thread):
                     packet = self.insert_data_class.tx_packet_queue.get()
 
                     #Transmit
-                    for i in range(0, len(packet), 1):
+                    for i in range(len(packet)):
                         self.output_channel.put(packet[i])
                         self.serial_physical_obj.serial_physical_obj.send_byte(packet[i])
 
@@ -487,7 +487,7 @@ class Receiver_Datalink_Device_Class(threading.Thread):
             time.sleep(0.01)
             if not self.receiver_class.rx_packet_queue.empty():
                 #  Loop through all known queue data and receive
-                for i in range(0, self.receiver_class.rx_packet_queue.qsize()):
+                for i in range(self.receiver_class.rx_packet_queue.qsize()):
                     data = self.receiver_class.rx_packet_queue.get()
                     try:
                         unpacked_datalink = self.datalink_packet_struct.unpack(data)
