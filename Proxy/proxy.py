@@ -19,6 +19,7 @@ import ConfigParser
 import os
 from collections import deque
 import sqlite3
+import sys
 
 from flask import Flask
 from flask import request
@@ -110,6 +111,72 @@ def uart_worker(modem, getDicts, units, log):
 
         # Slow down while loop to something reasonable
         time.sleep(0.01)
+
+
+def testdb_read_worker():
+    """
+    Read from DB and insert traffic in deque
+
+    This function periodically appends traffic obtained from a
+    pre-generated SQLite database to the deque as if there were
+    hardware attached.  This is to enable testing when hardware
+    is not present.  The callsign and nodeid are derived from
+    the config file.
+    """
+    logger.info('Starting testdb_read_worker thread')
+
+    # Obtain the test callsign and nodeid and create a
+    # deque
+
+    # Obtain configuration properties
+    try:
+        testCallsign = proxyConfig.get("PROXY", "TESTCALLSIGN")
+        testNodeId = proxyConfig.getint("PROXY", "TESTNODEID")
+        testRate = proxyConfig.getint("PROXY", "TESTRATE")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return None
+
+    if int(testRate) <= 0:
+        logger.warn('Test packet rate invalid, TESTRATE = [ {} ]'
+                    ' setting rate to [ 1 ] per second.'
+                    .format(int(testRate)))
+        testRate = 1
+
+    sleepTime = 1.0 / testRate
+    unit = testCallsign + "-" + str(testNodeId)
+    getDicts[unit] = {}
+
+    conn = openTestDB()
+    if conn is None:
+        return
+
+    cursor = sqlBeginRead(conn)
+    if cursor is None:
+        return
+
+    row = cursor.fetchone()
+
+    # Loop through each row placing each row into deque
+    while(row is not None):
+
+        port = row[1]
+        item = {}
+        item["data"] = row[2]
+        try:
+            getDicts[unit][port].append(item)
+
+        except:
+            getDicts[unit][port] = deque([], maxlen=100)
+            getDicts[unit][port].append(item)
+
+        logger.debug('Appended packet: id [ {} ] port [ {} ]'
+                     ' data [ {} ] ts [ {} ] '
+                     .format(row[0], port, item, row[3]))
+
+        time.sleep(sleepTime)
+        row = cursor.fetchone()
 
 
 # Initialize Flask microframework
@@ -394,6 +461,61 @@ def initDB():
     return True
 
 
+def openTestDB():
+    """
+    Opens a test database, returns a connection object or None
+
+    :return: connection object or None if unsuccessful
+    """
+
+    # Obtain configuration file names
+    try:
+        testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return None
+
+    if not os.path.isfile(testDbFilename):
+        logger.error('Test database: {} not found. '.format(testDbFilename))
+        return None
+
+    conn = None
+    try:
+        conn = sqlite3.connect(testDbFilename)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
+        return None
+
+    return conn
+
+
+def sqlBeginRead(conn):
+    """
+    Starts a read by executing SQL and returning a cursor
+
+    :param conn: Database connection
+    :return: cursor or None if we encountered a problem
+    """
+
+    sql = "SELECT KEYID, PORT, BASE64, EPOCH FROM PROXY"
+    cursor = None
+
+    try:
+        # Use connection as context manager to rollback automatically if error
+        with conn:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.Error: " + str(e))
+        conn.close()
+        return None
+
+    return cursor
+
+
 def sqlInsert(data):
     """
     Takes in a data tuple and inserts it into the Proxy SQLite table
@@ -447,7 +569,12 @@ def sqlInsert(data):
 
 
 def main():
-    log = proxyConfig.getboolean('PROXY', 'LOG')
+    try:
+        log = proxyConfig.getboolean('PROXY', 'LOG')
+        testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        sys.exit(0)
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -460,21 +587,29 @@ def main():
 
     # Initialize local variables
     #threads = []
+    if testmode == 0:
+        for key, values in units.iteritems():
+            unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
-    for key, values in units.iteritems():
-        unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
-
-    for key in unitDict:
-        logger.info('Starting Thread For Unit: ' + str(key))
-        tempdict = {"unit": key, 'com': unitDict[key]}
-        #logger.info("Connected to Faraday")
-        t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
+        for key in unitDict:
+            logger.info('Starting Thread For Unit: ' + str(key))
+            tempdict = {"unit": key, 'com': unitDict[key]}
+            #logger.info("Connected to Faraday")
+            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
+            #threads.append(t)
+            t.start()
+    else:
+        t = threading.Thread(target=testdb_read_worker)
         #threads.append(t)
         t.start()
 
-    # Start the flask server on localhost:8000
-    proxyHost = proxyConfig.get("FLASK", "host")
-    proxyPort = proxyConfig.getint("FLASK", "port")
+    try:
+        # Start the flask server on localhost:8000
+        proxyHost = proxyConfig.get("FLASK", "host")
+        proxyPort = proxyConfig.getint("FLASK", "port")
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        sys.exit(0)
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
 

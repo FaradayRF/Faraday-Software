@@ -3,13 +3,15 @@
 import os
 import sys
 import time
-sys.path.append(os.path.join(os.path.dirname(__file__), "../Faraday_Proxy_Tools"))  #Append path to common tutorial FaradayIO module
+
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 #Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import telemetryparser
-from FaradayIO import gpioallocations
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import telemetryparser
+from faraday.proxyio import gpioallocations
 
 DEBUG = False
 

@@ -3,12 +3,12 @@ import struct
 import sys
 import os
 
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../..'))
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
-# noinspection PyPep8
-from FaradayIO import faradaybasicproxyio
-# noinspection PyPep8
-from FaradayIO import faradaycommands
+# Imports - Faraday Specific
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
 
 
 class MsgStateMachineTx(object):
