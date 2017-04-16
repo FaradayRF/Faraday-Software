@@ -10,6 +10,13 @@
 #-------------------------------------------------------------------------------
 #import Layer_2_Service
 import struct
+import os
+import logging.config
+
+# Start logging after importing modules
+filename = os.path.abspath("loggingConfig.ini")
+logging.config.fileConfig(filename)
+logger = logging.getLogger('UARTStack')
 
 
 def create_packet(service_number, payload_length, payload):

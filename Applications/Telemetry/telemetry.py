@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #-------------------------------------------------------------------------------
 # Name:        /telemetry/telemetry.py
 # Purpose:      Query proxy for telemetry data and parse it to a local database
@@ -24,10 +25,11 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
-# Can we clean this up?
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../Faraday_Proxy_Tools/"))  #Append path to common tutorial FaradayIO module
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import telemetryparser
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import telemetryparser
 
 # Start logging after importing modules
 try:
