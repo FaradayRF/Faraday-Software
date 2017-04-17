@@ -10,7 +10,6 @@
 #-------------------------------------------------------------------------------
 #import Layer_2_Service
 import struct
-import os
 import logging
 
 # Get configured logger

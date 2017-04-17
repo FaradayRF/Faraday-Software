@@ -13,7 +13,6 @@ import layer_2_protocol
 import threading
 import time
 import Queue
-import os
 import logging
 
 # Get configured logger

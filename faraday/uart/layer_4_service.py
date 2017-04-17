@@ -15,7 +15,6 @@ import threading
 import time
 import Queue
 import struct
-import os
 import logging
 
 # Get configured logger
