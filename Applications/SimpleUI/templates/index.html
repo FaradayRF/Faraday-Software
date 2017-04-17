@@ -50,7 +50,7 @@
 
                     // Convert GPIO data into an array of GPIO values
                     var gpio = new Array();
-                    gpio = data[0]["GPIOSTATE"].toString(2).split("");
+                    gpio = ("000000000" + data[0]["GPIOSTATE"].toString(2)).substr(-8).split("");
                     gpio.reverse();
 
                     // Populate GPIO data in IO section
