@@ -18,13 +18,13 @@ from flask import render_template
 from flask import redirect
 from flask_bootstrap import Bootstrap
 
-sys.path.append(os.path.join(os.path.dirname(__file__),
-                             "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 # Imports - Faraday Specific
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import gpioallocations
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import gpioallocations
 
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")
