@@ -72,6 +72,13 @@
                     $(".GPIO5").text(gpio[5]);
                     $(".GPIO6").text(gpio[6]);
                     $(".GPIO7").text(gpio[7]);
+                    $(".GPIO9").text(iostate[6]);
+                    $(".GPIO8").text(iostate[7]);
+
+                    // Populate LED and button IO section
+                    $(".LED2").text(iostate[3]);
+                    $(".LED1").text(iostate[4]);
+                    $(".BUTTON").text(iostate[0]);
 
                     // Populate RF data from IO section
                     $(".PAENABLE").text(rfstate[7]);
@@ -79,14 +86,9 @@
                     $(".HGMSELECT").text(rfstate[3]);
 
                     // Populate IOSTATE data in IO section
-                    $(".BUTTON").text(iostate[0]);
                     $(".GPSSTANDBY").text(iostate[1]);
                     $(".GPSRESET").text(iostate[2]);
-                    $(".LED2").text(iostate[3]);
-                    $(".LED1").text(iostate[4]);
                     $(".MOSFET").text(iostate[5]);
-                    $(".GPIO9").text(iostate[6]);
-                    $(".GPIO8").text(iostate[7]);
 
                     }
                     catch(err){
@@ -161,15 +163,16 @@
                 <b>GPIO-8</b>: <span class="GPIO8"></span><br/>
                 <b>GPIO-9</b>: <span class="GPIO9"></span><br/>
                 <br />
+                <b>LED 1</b>: <span class="LED1"></span><br/>
+                <b>LED 2</b>: <span class="LED2"></span><br/>
+                <b>Button</b>: <span class="BUTTON"></span><br/>
+                <br />
                 <b>PA Enable</b>: <span class="PAENABLE"></span><br/>
                 <b>LNA Enable</b>: <span class="LNAENABLE"></span><br/>
                 <b>HGM Select</b>: <span class="HGMSELECT"></span><br/>
                 <br />
-                <b>Button</b>: <span class="BUTTON"></span><br/>
                 <b>GPS Standby</b>: <span class="GPSSTANDBY"></span><br/>
                 <b>GPS Reset</b>: <span class="GPSRESET"></span><br/>
-                <b>LED 1</b>: <span class="LED1"></span><br/>
-                <b>LED 2</b>: <span class="LED2"></span><br/>
                 <b>MOSFET</b>: <span class="MOSFET"></span><br/>
             </div>
         </div>
