@@ -10,6 +10,10 @@
 #-------------------------------------------------------------------------------
 #import Layer_2_Service
 import struct
+import logging
+
+# Get configured logger
+logger = logging.getLogger('UARTStack')
 
 
 def create_packet(service_number, payload_length, payload):

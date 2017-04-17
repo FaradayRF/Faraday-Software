@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import time
 import logging.config
 import os
@@ -9,13 +11,12 @@ import base64
 from flask import Flask
 from flask import request
 
-# Add Faraday proxy tools directory to path
-sys.path.append(os.path.join(os.path.dirname(__file__),
-                             "../../Faraday_Proxy_Tools"))  # Append path to common tutorial FaradayIO module
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from FaradayIO import faradaybasicproxyio
-from FaradayIO import faradaycommands
-from FaradayIO import deviceconfig
+from faraday.proxyio import faradaybasicproxyio
+from faraday.proxyio import faradaycommands
+from faraday.proxyio import deviceconfig
 
 # Global Constants
 UART_PORT_APP_COMMAND = 2
