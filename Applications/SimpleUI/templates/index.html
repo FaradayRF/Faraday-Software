@@ -75,19 +75,19 @@
                     $(".HGMSELECT").text(rfstate[3]);
 
                     // Convert IOSTATE data into array of binary values
-                    <!--var iostate = new Array();-->
-                    <!--iostate = data[0]["IOSTATE"].toString(2).split("");-->
-                    <!--iostate.reverse();-->
+                    var iostate = new Array();
+                    iostate = ("000000000" + data[0]["IOSTATE"].toString(2)).substr(-8).split("");
+                    iostate.reverse();
 
                     // Populate IOSTATE data in IO section
-                    <!--$(".BUTTON").text(iostate[0]);-->
-                    <!--$(".GPSSTANDBY").text(iostate[1]);-->
-                    <!--$(".GPSRESET").text(iostate[2]);-->
-                    <!--$(".LED2").text(iostate[3]);-->
-                    <!--$(".LED1").text(iostate[4]);-->
-                    <!--$(".MOSFET").text(iostate[5]);-->
-                    <!--$(".GPIO9").text(iostate[6]);-->
-                    <!--$(".GPIO8").text(iostate[7]);-->
+                    $(".BUTTON").text(iostate[0]);
+                    $(".GPSSTANDBY").text(iostate[1]);
+                    $(".GPSRESET").text(iostate[2]);
+                    $(".LED2").text(iostate[3]);
+                    $(".LED1").text(iostate[4]);
+                    $(".MOSFET").text(iostate[5]);
+                    $(".GPIO9").text(iostate[6]);
+                    $(".GPIO8").text(iostate[7]);
 
                     }
                     catch(err){
