@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # /proxy/proxy.py
 # License: GPLv3 with Network Interface Clause
 
@@ -9,21 +10,24 @@ queue with a GET request or adds to it with a POST request via an IP address
 and port specified in the configuration file proxy.ini.
 """
 
-import time
 import base64
+from collections import deque
+import ConfigParser
 import json
 import logging.config
-import threading
-import ConfigParser
 import os
-from collections import deque
 import sqlite3
 import sys
+import threading
+import time
 
 from flask import Flask
 from flask import request
 
-from faraday_uart_stack import layer_4_service
+# Add Faraday library to the Python path.
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from faraday.uart import layer_4_service
 
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")

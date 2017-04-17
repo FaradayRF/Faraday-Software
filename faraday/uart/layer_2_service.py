@@ -13,12 +13,9 @@ import layer_2_protocol
 import threading
 import time
 import Queue
-import os
-import logging.config
+import logging
 
-# Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
-logging.config.fileConfig(filename)
+# Get configured logger
 logger = logging.getLogger('UARTStack')
 
 
