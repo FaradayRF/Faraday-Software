@@ -65,8 +65,9 @@
 
                     // Convert RFSTATE data to an array of values
                     var rfstate = new Array();
-                    rfstate = data[0]["RFSTATE"].toString(2).split("");
+                    rfstate = ("000000000" + data[0]["RFSTATE"].toString(2)).substr(-8).split("");
                     rfstate.reverse();
+
 
                     // Populate RF data from IO section
                     $(".PAENABLE").text(rfstate[7]);
