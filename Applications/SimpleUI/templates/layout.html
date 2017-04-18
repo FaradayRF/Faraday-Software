@@ -13,8 +13,13 @@
     <script type=text/javascript
           src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js">
     </script>
-    <script type=text/javascript>
-          var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    <script type="text/javascript">
+        // Obtain callsign and node ID for Telemetry application from python
+        var callsign = "{{callsign}}";
+        var nodeid = "{{nodeid}}";
+    </script>
+    <script type=text/javascript
+          src="../static/simpleui.js">
     </script>
     </body>
 </html>
