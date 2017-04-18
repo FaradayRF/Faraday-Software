@@ -317,19 +317,23 @@ def simpleui():
 
         if request.form["IO"] == "MOSFETR":
             print "MOSFET ON"
-            command = faraday_cmd.CommandRemoteHABActivateCutdownEvent(remotecallsign, remotenodeid)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteHABActivateCutdownEvent(remotecallsign,
+                                                                                                    remotenodeid))
 
         if request.form["IO"] == "HABTIMERRESETR":
             print "HABTIMERRESETR"
-            command = faraday_cmd.CommandRemoteHABResetAutoCutdownTimer(remotecallsign, remotenodeid)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteHABResetAutoCutdownTimer(remotecallsign,
+                                                                                                   remotenodeid))
 
         if request.form["IO"] == "HABDISABLETIMERR":
             print "HABDISABLETIMERR"
-            command = faraday_cmd.CommandRemoteHABDisableAutoCutdownTimer(remotecallsign, remotenodeid)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteHABDisableAutoCutdownTimer(remotecallsign,
+                                                                                                    remotenodeid))
 
         if request.form["IO"] == "HABTIMERIDLER":
             print "HABTIMERIDLER"
-            command = faraday_cmd.CommandRemoteHABResetCutdownIdle(remotecallsign, remotenodeid)
+            command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteHABResetCutdownIdle(remotecallsign,
+                                                                                                remotenodeid))
 
         # Send POST command for remote station control
         faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
