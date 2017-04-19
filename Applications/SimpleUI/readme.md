@@ -49,4 +49,4 @@ This configuration file also contains the following:
 Open up your favorite web browser (Firefox and Chrome tested) to view the latest telemetry located at `http://localhost/`
 
 Once open, telemetry is updated at the 500ms intervals and therefore will be limited by the update rate of Faraday which tends to be 1 to 5 second intervals. Below, the local Faraday LEDs are commanded on and off. These are clearly visible and the telemetry indicates their state as well.
-[SimpleUI being used](images/simpleuibasic.gif)
+![SimpleUI being used](images/simpleuibasic.gif)
