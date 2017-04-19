@@ -69,7 +69,6 @@ function getTelemetry(){
                     $(".GPIO5").text(gpio[5]);
                     $(".GPIO6").text(gpio[6]);
                     $(".GPIO7").text(gpio[7]);
-                    $(".GPIO9").text(iostate[6]);
                     $(".GPIO8").text(iostate[7]);
 
                     // Populate LED and button IO section
