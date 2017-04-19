@@ -25,7 +25,7 @@ Configuring APRS consists of changing one parameters for basic use:`CALLSIGN`.
 2E0SQL over at [MagicBug](http://magicbug.co.uk/) provides an beautifully simple open source [APRS Passcode Generator](http://apps.magicbug.co.uk/passcode/). The APRS application implements a python version of the passcode generator with the [generatePasscode()](https://github.com/FaradayRF/Faraday-Software/blob/issue91/Applications/APRS/aprs.py#L855) function. There is no need to enter your passcode, your amateur radio callsign will be used to automatically generate it.
 
 # Running APRS
-As a prerequisit, you must have the following programs running in the background while Faraday is connected to the computer:
+As a prerequisite, you must have the following programs running in the background while Faraday is connected to the computer:
 
  * Proxy
  * Telemetry
