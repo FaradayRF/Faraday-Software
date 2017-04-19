@@ -48,7 +48,6 @@ function getTelemetry(){
                     // Convert GPIO data into an array of GPIO values
                     var gpio = [];
                     gpio = ("000000000" + data[0].GPIOSTATE.toString(2)).substr(-8).split("");
-                    //gpio.reverse();
 
                     // Convert IOSTATE data into array of binary values
                     var iostate = [];
