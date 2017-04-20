@@ -24,6 +24,7 @@ Applications/Hermes/hermes.ini
 
 # SimpleUI Application
 Applications/SimpleUI/simpleui.ini
+Applications/SimpleUI/node_modules/
 
 #IDE (Pycharm)
 .idea*
