@@ -12,7 +12,7 @@ from flask import request
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-import hermesobject
+from faraday.hermes import hermesobject
 
 # Open configuration INI
 config = ConfigParser.RawConfigParser()
