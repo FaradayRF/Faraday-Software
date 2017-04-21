@@ -12,7 +12,7 @@ A flask server runs in the main process which provides a RESTful interface for t
 
 Checks the proxy queue for the specified port. If packets are present in the qeue they are returned as a JSON dictionary as an HTTP response. Additionally, the POST method will add packets to the POST queue which are sent to Faraday on a periodica basis. Invalid parameters are responded with appropriate HTTP responses and relevant warning messages.
 
-## Configuration
+## Basic Configuration
  
 Before Proxy can connect to any radio hardware, it needs to be configured using the `proxy.ini` file with your callsign and the serial port.
  
@@ -26,6 +26,34 @@ Configuring Proxy consists of changing three parameters for basic use:`CALLSIGN`
   * `CALLSIGN`: Callsign to associate with radio on this USB port
   * `NODEID`: Node ID of radio connected on this USB port
   * `COM`: COM/serial Port associated with the radio connected
+
+## Logging Configuration
+Proxy is able to save all data in BASE64 format to a SQLite database for future playback. This is extremely helpful if raw UART data is desired as BASE64 can be converted into binary. Additionally, it enabled replays of events and use of software without the need for hardware in "Test Mode".
+
+Open `proxy.ini` and configure the following in addition to the Basic Configuration above:
+
+`[DATABASE]`
+* `FILENAME=log.db`: Filename of Proxy log to be created
+
+`[PROXY]`
+* `LOG=1`: Enable Proxy logging mode (boolean)
+* `UNITS=1`: Number of UART units to log
+
+Now, when you run `Proxy` it will log to the database in the background while you are free to use software normally. You can stop Proxy normally without issue.
+
+## Test Mode Configuration
+With a SQLite log file, one can play it back as if hardware is connected. To do so please disable logging mode and edit the following `proxy.ini` configuration items:
+
+`[TESTDATABASE]`
+* `FILENAME=examplelogs/4-20-2017_1.db`: Proxy log file to play in test mode. Example log provided in examplelogs/ folder.
+
+`[PROXY]`
+* `TESTMODE=1`: Enable payback test mode
+* `TESTRATE=1`: Set rate in Hz to read each row of database back
+* `TESTCALLSIGN=KB1LQC`: Set callsign to appear as Proxy connected Faraday radio
+* `TESTNODEID=2`: Set nodeid to appear as Proxy connected Faraday radio
+
+Once properly configured and logging mode is disabled in `proxy.ini` then running `Proxy` normally will result in the log file being read into `Proxy` at the indicated rate. It will not repeat once the end of the file is reached.
 
 ## Examples
 ### GET
