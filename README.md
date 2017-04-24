@@ -26,7 +26,7 @@ Just purchase or build a Faraday radio? Check out our [quick-start](Tutorials/st
 Once setup and familiar with the basics of Faraday we encourage you to explore our core applications. These applications also example how developers can leverage the Faraday hardware and API to develop solutions. Faraday is much more about developing useful applications and use-cases than just the cool hardware it is. Have fun! We certainly are.
 
 ### Proxy
-[Proxy](proxy/) is the core of our software. It represents physical hardware to the programmer. If you are sending or receiving data to/from Faraday then you are using Proxy. Abstracting the mundane housekeeping means we can focus on building solutions to new problems.
+[Proxy](Proxy/) is the core of our software. It represents physical hardware to the programmer. If you are sending or receiving data to/from Faraday then you are using Proxy. Abstracting the mundane housekeeping means we can focus on building solutions to new problems.
 
 ### Device Configuration
 [Device Configuration](Applications/deviceconfiguration) provides a convenient method of programming basic configuration values onto Faraday hardware over a local USB connection.
