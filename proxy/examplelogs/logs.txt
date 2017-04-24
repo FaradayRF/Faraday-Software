@@ -1,0 +1,6 @@
+This text document helps define each example log file. These files help users demo as well as test and develop with FaradayRF software without the need for hardware.
+---
+
+Log: 2017-04-20-01.db
+Creator: Bryce Salmi, KB1LQC
+Description: Contains 2005 rows of KB1LQC-2 (Local UART) and KB1LQC-1 (Remote RF) telemetry data. KB1LQC-2 transmitted once ever two seconds while KB1LQC-1 transmitted once per second. Neither unit had a GPS and were programmed to indicate static GPS data. UART connected KB1LQC-2 was located at 96 meters elevation in downtown Los Angeles, CA while RF linked KB1LQC-1 was programmed to indicated 105 meters elevation located at Grand Park in Los Angeles, CA. Neither units were commanded to have any GPIO, LEDs, or timers change state.
