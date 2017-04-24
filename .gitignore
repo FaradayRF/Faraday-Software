@@ -22,6 +22,10 @@ Applications/deviceconfiguration/faraday_config.ini
 # Hermes Application
 Applications/Hermes/hermes.ini
 
+# SimpleUI Application
+Applications/SimpleUI/simpleui.ini
+Applications/SimpleUI/node_modules/
+
 #IDE (Pycharm)
 .idea*
 .idea/*

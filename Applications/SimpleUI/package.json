@@ -1,0 +1,21 @@
+{
+  "name": "simpleui",
+  "version": "0.0.1",
+  "description": "A simple user interface based on Flask and Javascript which provides telemetry indication and basic control/command funcionality with Faraday radios using a web-browser.",
+  "main": "gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "simpleui",
+    "faraday",
+    "faradayrf"
+  ],
+  "author": "Bryce Salmi, KB1LQC",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-html": "^8.4.0"
+  }
+}

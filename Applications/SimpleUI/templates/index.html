@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<head>
+    <title>Faraday Simple UI</title>
+</head>
+{% extends "layout.html" %}
+{% block content %}
+<div class="well">
+    <span class="warning bg-danger text-center"></span>
+    <div class="row">
+        <div class="col-md-6 text-left"><b><span class="CALLSIGN"></span>-<span class="NODEID"></span></b></div>
+        <div class="col-md-6 text-right"><span class="EPOCH"></span></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel-primary">
+            <div class="panel-heading text-center">
+                <h4>GPS Data</h4>
+            </div>
+            <div class="panel-body">
+                <b>Latitude</b>: <span class="GPSLATITUDE"></span> <span class="GPSLONGITUDEDIR"></span><br/>
+                <b>Longitude</b>: <span class="GPSLONGITUDE"></span> <span class="GPSLATITUDEDIR"></span><br/>
+                <b>Altitude</b>: <span class="ALTITUDE"></span> m<br/>
+                <b>Speed</b>: <span class="SPEED"></span> m/s<br/>
+                <b>GPS Fix</b>: <span class="GPSFIX"></span><br/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel-primary">
+            <div class="panel-heading text-center">
+                <h4>ADC Data</h4>
+            </div>
+            <div class="panel-body">
+                <b>Board Temp</b>: <span class="BOARDTEMP"></span> C<br/>
+                <br />
+                <b>ADC0</b>: <span class="ADC0"></span><br/>
+                <b>ADC1</b>: <span class="ADC1"></span><br/>
+                <b>ADC2</b>: <span class="ADC2"></span><br/>
+                <b>ADC3</b>: <span class="ADC3"></span><br/>
+                <b>ADC4</b>: <span class="ADC4"></span><br/>
+                <b>ADC5</b>: <span class="ADC5"></span><br/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel-primary">
+            <div class="panel-heading text-center">
+                <h4>IO</h4>
+            </div>
+            <div class="panel-body">
+                <b>GPIO-0</b>: <span class="GPIO0"></span><br/>
+                <b>GPIO-1</b>: <span class="GPIO1"></span><br/>
+                <b>GPIO-2</b>: <span class="GPIO2"></span><br/>
+                <b>GPIO-3</b>: <span class="GPIO3"></span><br/>
+                <b>GPIO-4</b>: <span class="GPIO4"></span><br/>
+                <b>GPIO-5</b>: <span class="GPIO5"></span><br/>
+                <b>GPIO-6</b>: <span class="GPIO6"></span><br/>
+                <b>GPIO-7</b>: <span class="GPIO7"></span><br/>
+                <b>GPIO-8</b>: <span class="GPIO8"></span><br/>
+                <br />
+                <b>LED 1</b>: <span class="LED1"></span><br/>
+                <b>LED 2</b>: <span class="LED2"></span><br/>
+                <b>Button</b>: <span class="BUTTON"></span><br/>
+                <br />
+                <b>PA Enable</b>: <span class="PAENABLE"></span><br/>
+                <b>LNA Enable</b>: <span class="LNAENABLE"></span><br/>
+                <b>HGM Select</b>: <span class="HGMSELECT"></span><br/>
+                <br />
+                <b>GPS Standby</b>: <span class="GPSSTANDBY"></span><br/>
+                <b>GPS Reset</b>: <span class="GPSRESET"></span><br/>
+                <b>MOSFET</b>: <span class="MOSFET"></span><br/>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel-primary">
+            <div class="panel-heading text-center">
+                <h4>High Altitude Balloon Timer</h4>
+            </div>
+            <div class="panel-body">
+                <b>HAB Timer</b>: <span class="HABTIMER"></span><br/>
+                <b>HAB Timer State</b>: <span class="HABTIMERSTATE"></span><br/>
+                <b>HAB Trigger Time</b>: <span class="HABTRIGGERTIME"></span><br/>
+                <b>HAB Cut-Down State</b>: <span class="HABCUTDOWNSTATE"></span><br/>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel-primary">
+            <div class="panel-heading text-center">
+                <h4>Faraday IO Control</h4>
+            </div>
+            <div class="panel-body">
+            <strong>Local</strong>
+            <form action="/" method="post">
+                <select name="IO">
+                    <option value="LED1 ON">LED1 On</option>
+                    <option value="LED1 OFF">LED1 Off</option>
+                    <option value="LED2 ON">LED2 On</option>
+                    <option value="LED2 OFF">LED2 Off</option>
+                    <option value="GPIO0 ON">GPIO0 On</option>
+                    <option value="GPIO0 OFF">GPIO0 Off</option>
+                    <option value="GPIO1 ON">GPIO1 On</option>
+                    <option value="GPIO1 OFF">GPIO1 Off</option>
+                    <option value="GPIO2 ON">GPIO2 On</option>
+                    <option value="GPIO2 OFF">GPIO2 Off</option>
+                    <option value="GPIO3 ON">GPIO3 On</option>
+                    <option value="GPIO3 OFF">GPIO3 Off</option>
+                    <option value="GPIO4 ON">GPIO4 On</option>
+                    <option value="GPIO4 OFF">GPIO4 Off</option>
+                    <option value="GPIO5 ON">GPIO5 On</option>
+                    <option value="GPIO5 OFF">GPIO5 Off</option>
+                    <option value="GPIO6 ON">GPIO6 On</option>
+                    <option value="GPIO6 OFF">GPIO6 Off</option>
+                    <option value="GPIO7 ON">GPIO7 On</option>
+                    <option value="GPIO7 OFF">GPIO7 Off</option>
+                    <option value="GPIO8 ON">GPIO8 On</option>
+                    <option value="GPIO8 OFF">GPIO8 Off</option>
+                    <option value="MOSFET">MOSFET Fire</option>
+                    <option value="HABTIMERRESET">HAB Timer Reset</option>
+                    <option value="HABDISABLETIMER">HAB Disable Cut-down Timer</option>
+                    <option value="HABTIMERIDLE">HAB Idle Timer</option>
+                </select>
+                <button id="submitlocal">Local Command</button>
+            </form>
+
+            <strong>Remote Station</strong>
+            <form action="/" method="post">
+                <select name="IO">
+                    <option value="LED1R ON">LED1 On</option>
+                    <option value="LED1R OFF">LED1 Off</option>
+                    <option value="LED2R ON">LED2 On</option>
+                    <option value="LED2R OFF">LED2 Off</option>
+                    <option value="GPIO0R ON">GPIO0 On</option>
+                    <option value="GPIO0R OFF">GPIO0 Off</option>
+                    <option value="GPIO1R ON">GPIO1 On</option>
+                    <option value="GPIO1R OFF">GPIO1 Off</option>
+                    <option value="GPIO2R ON">GPIO2 On</option>
+                    <option value="GPIO2R OFF">GPIO2 Off</option>
+                    <option value="GPIO3R ON">GPIO3 On</option>
+                    <option value="GPIO3R OFF">GPIO3 Off</option>
+                    <option value="GPIO4R ON">GPIO4 On</option>
+                    <option value="GPIO4R OFF">GPIO4 Off</option>
+                    <option value="GPIO5R ON">GPIO5 On</option>
+                    <option value="GPIO5R OFF">GPIO5 Off</option>
+                    <option value="GPIO6R ON">GPIO6 On</option>
+                    <option value="GPIO6R OFF">GPIO6 Off</option>
+                    <option value="GPIO7R ON">GPIO7 On</option>
+                    <option value="GPIO7R OFF">GPIO7 Off</option>
+                    <option value="GPIO8R ON">GPIO8 On</option>
+                    <option value="GPIO8R OFF">GPIO8 Off</option>
+                    <option value="MOSFETR">MOSFET Fire</option>
+                    <option value="HABTIMERRESETR">HAB Timer Reset</option>
+                    <option value="HABDISABLETIMERR">HAB Disable Cut-down Timer</option>
+                    <option value="HABTIMERIDLER">HAB Idle Timer</option>
+                </select>
+                <button id="submitremote">Remote Command</button>
+            </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+{% endblock %}
