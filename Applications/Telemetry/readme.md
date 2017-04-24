@@ -1,5 +1,5 @@
 # Telemetry
-The Telemetry application is a core application provided by FaradayRF. Its basic function is to receive telemetry packets from [Proxy](../../proxy) and save them into a SQLite database. Doing so allows us to document the data as well as search it easily in the future with SQL queries. Telemetry is built with a Flask server providing a simple API for searching the telemetry database file. The `telemetry_worker` function operates on its own thread to independently query Proxy for new data which continually updates the database in the background.
+The Telemetry application is a core application provided by FaradayRF. Its basic function is to receive telemetry packets from [Proxy](../../Proxy) and save them into a SQLite database. Doing so allows us to document the data as well as search it easily in the future with SQL queries. Telemetry is built with a Flask server providing a simple API for searching the telemetry database file. The `telemetry_worker` function operates on its own thread to independently query Proxy for new data which continually updates the database in the background.
 
 Basing Telemetry on a [Flask](http://flask.pocoo.org/) server allows it to provide a RESTful interface to the network interface from which other applications such as a user interface or [APRS](../aprs) can query the saved data using simple HTTP GET commands.
 
@@ -32,7 +32,7 @@ This configuration file also contains the following:
 
 ## Running Telemetry
 
-> Telemetry expects [Proxy](../proxy) to be running on the same computer. Please ensure it is running in a window before attempting to start this application.
+> Telemetry expects [Proxy](../Proxy) to be running on the same computer. Please ensure it is running in a window before attempting to start this application.
 
 When this application starts-up it will create a database in the telemetry folder using the `FILENAME` if it doesn't already exist. If already present, the database will be opened and appended to. Once created, the program queries Proxy once per second for telemetry in its queues. Every Faraday physically connected to the computer will be queried. When data is retrieved from Proxy it is parsed and saved into a row of the `TELEMETRY` table. Any telemetry packet received by a Faraday radio over RF will also be saved.
 
