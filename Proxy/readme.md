@@ -10,7 +10,7 @@ Proxy works on the premise of spinning up a thread which has the sole purpose of
 
 A flask server runs in the main process which provides a RESTful interface for the Proxy. When the RESTful interface is queried with a GET request the thread-safe queue will pop off packets for the requested Faraday “port” from the left . This data is served to the user in a JSON dictionary. If the RESTful interface received a POST request to send data to Faraday then the flask server will place the packet onto the queue from the right. Every 10ms the UART Worker checks to see if there is any data for any port in the transmit queue. If present, this data is immediately sent to Faraday via USB UART.
 
-Checks the proxy queue for the specified port. If packets are present in the qeue they are returned as a JSON dictionary as an HTTP response. Additionally, the POST method will add packets to the POST queue which are sent to Faraday on a periodica basis. Invalid parameters are responded with appropriate HTTP responses and relevant warning messages.
+Checks the proxy queue for the specified port. If packets are present in the queue they are returned as a JSON dictionary as an HTTP response. Additionally, the POST method will add packets to the POST queue which are sent to Faraday on a periodic basis. Invalid parameters are responded with appropriate HTTP responses and relevant warning messages.
 
 ## Configuration
  
@@ -83,7 +83,7 @@ Port 8000 of localhost (127.0.0.1) hosts the flask server where Proxy is exposed
   * `Limit` = [Integer]
 
 ### Data Params
-When making a POST request Proxy expects to receive JSON data in the body with an object containing a string “data” and value being an array of BASE64 encoded strings each 164 characters long. The header of the POST request must specify the content type as application/json. Only a data array of 100 packets is accepted.
+When making a POST request Proxy expects to receive JSON data in the body with an object containing a string “data” and value being an array of BASE64 encoded strings each 164 characters long. The header of the POST request must specify the content type as `application/json`. Only a data array of 100 packets is accepted.
 
 ### Success Response
 
