@@ -45,7 +45,7 @@ Now, when you run `Proxy` it will log to the database in the background while yo
 With a SQLite log file, one can play it back as if hardware is connected. To do so please disable logging mode and edit the following `proxy.ini` configuration items:
 
 `[TESTDATABASE]`
-* `FILENAME=examplelogs/4-20-2017_1.db`: Proxy log file to play in test mode. Example log provided in examplelogs/ folder.
+* `FILENAME=examplelogs/2017-04-20-01.db`: Proxy log file to play in test mode. Example log provided in examplelogs/ folder.
 
 `[PROXY]`
 * `TESTMODE=1`: Enable payback test mode
