@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# /proxy/proxy.py
+# /Proxy/proxy.py
 # License: GPLv3 with Network Interface Clause
 
 """
