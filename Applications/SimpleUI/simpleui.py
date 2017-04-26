@@ -16,7 +16,6 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import redirect
-from flask_bootstrap import Bootstrap
 
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
@@ -38,7 +37,6 @@ simpleuiconfig.read(filename)
 
 # Initialize Flask microframework
 app = Flask(__name__)
-Bootstrap(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
