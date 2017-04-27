@@ -1,10 +1,10 @@
 # Simple UI
 This is a basic user interface to interact with the Faraday radios whether local or remote. It is based on Flask and Jquery/Bootstrap to provide a simplistic experience. Simple UI is usable for general commanding and monitoring of live data as well as basic High Altitude Balloon flights.
 
-A secondary goal of having a basic user interface that can be used to show how python/javascript are used to create a simple interfae was also achieved with this program.
+A secondary goal of having a basic user interface that can be used to show how python/javascript are used to create a simple interface was also achieved with this program.
 
 # Software Requirements
-In order for SimpleUI to operation one must have the following programs running in the background:
+In order for SimpleUI to operate, one must have the following programs running in the background:
 - Proxy
 - Telemetry
 
@@ -40,7 +40,7 @@ This configuration file also contains the following:
  * `PORT` Network port to serve
 
 # Running Simple UI
-## Windoews
+## Windows
 ### Command Line
 1. Navigate to SimpleUI folder i.e. `cd C:\git\faradayrf\software\SimpleUI`
 2. Open simpleui.py with python `python simpleui.py`
