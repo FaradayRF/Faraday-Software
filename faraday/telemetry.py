@@ -11,13 +11,11 @@
 #-------------------------------------------------------------------------------
 
 import time
-import logging
 import logging.config
 import threading
 import ConfigParser
 from collections import deque
 import os
-import sys
 import sqlite3
 import json
 
