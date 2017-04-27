@@ -24,10 +24,7 @@ import time
 from flask import Flask
 from flask import request
 
-# Add Faraday library to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-from uart import layer_4_service
+from faraday.uart import layer_4_service
 
 # Start logging after importing modules
 filename = os.path.abspath("loggingConfig.ini")
