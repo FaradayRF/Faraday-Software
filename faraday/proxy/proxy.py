@@ -36,7 +36,7 @@ logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("../../Proxy/proxy.ini")
+filename = os.path.abspath("proxy.ini")
 proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
@@ -434,8 +434,8 @@ def initDB():
 
     # Obtain configuration file names
     try:
-        dbFilename = "../../Proxy/" + proxyConfig.get("DATABASE", "FILENAME")
-        dbSchema = "../../Proxy/" + proxyConfig.get("DATABASE", "SCHEMANAME")
+        dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -471,7 +471,7 @@ def openTestDB():
 
     # Obtain configuration file names
     try:
-        testDbFilename = "../../Proxy" + proxyConfig.get("TESTDATABASE", "FILENAME")
+        testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -527,7 +527,7 @@ def sqlInsert(data):
 
     # Read in name of database
     try:
-        db = "../../Proxy/" + proxyConfig.get("DATABASE", "FILENAME")
+        db = proxyConfig.get("DATABASE", "FILENAME")
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
