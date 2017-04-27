@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Name:        /aprs/aprs.py
+# Name:        /faraday/aprs.py
 # Purpose:      Query telemetry server for station data to send to an APRS-IS
 #               socket connection. Currently provide only one way data flow
 #
