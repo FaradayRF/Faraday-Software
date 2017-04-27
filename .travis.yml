@@ -9,8 +9,8 @@ addons:
 
 install:
   - pip install -r requirements.txt
-  - (cd Applications/SimpleUI; npm install)
+  - (cd faraday; npm install)
 
 script:
   - py.test
-  - (cd Applications/SimpleUI; grunt)
+  - (cd faraday; grunt)
