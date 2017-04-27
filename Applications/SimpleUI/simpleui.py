@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+#-------------------------------------------------------------------------------
+# Name:        /Applications/SimpleUI/simpleui.py
+# Purpose:     Starts up the SimpleUI application by calling the main() function
+#              of faraday.simpleui module.
+#
+# Author:      Bryce Salmi
+#
+# Created:     4/27/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 import sys
 import os
