@@ -10,15 +10,11 @@ import json
 import logging.config
 import ConfigParser
 import os
-import sys
 
 from flask import Flask
 from flask import request
 from flask import render_template
 from flask import redirect
-
-# Add Faraday library to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 # Imports - Faraday Specific
 from faraday.proxyio import faradaybasicproxyio
