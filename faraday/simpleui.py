@@ -1,10 +1,16 @@
-# /SimpleUI/simpleui.py
-# License: GPLv3 with Network Interface Clause
-
-"""
-SimpleUI provides a no frills method of interfacing Faraday telemetry with a webpage in a formatted manner. This is
-different than the Telemetry application since it renders the data in an automatically updating manner using Javascript.
-"""
+#!/usr/bin/env python
+#-------------------------------------------------------------------------------
+# Name:        /faraday/simpleui.py
+# Purpose:     SimpleUI provides a no frills method of interfacing Faraday telemetry
+#              with a webpage in a formatted manner. This is different than the
+#              Telemetry application since it renders the data in an automatically
+#              updating manner using Javascript.
+#
+# Author:      Bryce Salmi
+#
+# Created:     4/27/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 import json
 import logging.config
