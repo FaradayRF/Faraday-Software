@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+#-------------------------------------------------------------------------------
+# Name:        /faraday/hermesflaskserver.py
+# Purpose:      Hermes messaging server which coordinates text communications
+#               between two faraday radios.
+#
+# Author:      Bryce Salmi
+#
+# Created:     04/27/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
+
 import os
 import ConfigParser
 import json
