@@ -38,7 +38,7 @@ filename = os.path.abspath("simpleui.ini")
 simpleuiconfig.read(filename)
 
 # Initialize Flask microframework
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../Applications/SimpleUI/static')
 
 
 @app.route('/', methods=['GET', 'POST'])
