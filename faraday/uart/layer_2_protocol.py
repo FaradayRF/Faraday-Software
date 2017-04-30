@@ -28,7 +28,7 @@ class layer_2_object(object):
         except serial.SerialException as e:
             logging.error("Check USB cable connection!")
             logging.error(e)
-            exit()
+            exit(1)  # Sys.exit(1) is an error
 
 
 class layer_2_protocol(threading.Thread):
@@ -80,7 +80,7 @@ class layer_2_protocol(threading.Thread):
                 except serial.SerialException as e:
                     logging.error("USB cable likely disconnected!")
                     logging.error(e)
-                    exit()
+                    exit(1)  # Sys.exit(1) is an error
 
 
 ################################################################################
