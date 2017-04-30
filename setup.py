@@ -10,24 +10,19 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import os
 from setuptools import setup
-
-# serve README.txt from folder if queried for description
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = "faraday",
-    version = "0.0.1",
+    version = "0.0.1a4",
     author = "FaradayRF",
     author_email = "Support@FaradayRF.com",
-    description = "FaradayRF open source software for the Faraday radio.",
+    description = "FaradayRF amateur radio open source software",
     license = "GPLv3",
     keywords = "faraday radio faradayrf ham amateur",
-    url = "https://www.FaradayRF.com",
+    url = "https://github.com/FaradayRF/Faraday-Software",
     packages=['faraday'],
-    long_description=read('README.md'),
+    long_description="FaradayRF software",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Framework :: Flask",
