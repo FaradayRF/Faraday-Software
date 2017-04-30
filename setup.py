@@ -26,8 +26,8 @@ setup(
     license = "GPLv3",
     keywords = "faraday radio faradayrf ham amateur",
     url = "https://www.FaradayRF.com",
-    packages=['faraday', 'tests'],
-    long_description=read('README'),
+    packages=['faraday'],
+    long_description=read('README.md'),
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Framework :: Flask",
