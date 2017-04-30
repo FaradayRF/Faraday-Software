@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #-------------------------------------------------------------------------------
 # Name:        /faraday/hermesflaskserver.py
 # Purpose:      Hermes messaging server which coordinates text communications

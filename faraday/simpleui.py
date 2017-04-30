@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #-------------------------------------------------------------------------------
 # Name:        /faraday/simpleui.py
 # Purpose:     SimpleUI provides a no frills method of interfacing Faraday telemetry
