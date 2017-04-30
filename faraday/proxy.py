@@ -580,7 +580,11 @@ def main():
 
     # Associate serial ports with callsigns
     # global units
-    units = callsign2COM()
+    try:
+        units = callsign2COM()
+    except ConfigParser.NoSectionError as e:
+        logging.error(e)
+        sys.exit(1)  # Status Code 1 = Config Error
 
     if testmode == 0:
         for key, values in units.iteritems():
