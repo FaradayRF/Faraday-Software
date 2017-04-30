@@ -23,7 +23,12 @@ logger = logging.getLogger('UARTStack')
 
 class layer_2_object(object):
     def __init__(self, port, baud, timeout):
-        self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
+        try:
+            self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
+        except serial.SerialException as e:
+            logging.error("Check USB cable connection!")
+            logging.error(e)
+            exit()
 
 
 class layer_2_protocol(threading.Thread):
