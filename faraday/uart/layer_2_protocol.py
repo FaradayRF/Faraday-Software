@@ -15,7 +15,7 @@ import Queue
 import time
 import struct
 import logging
-from sys import exit
+import sys
 
 # Get configured logger
 logger = logging.getLogger('UARTStack')
@@ -28,7 +28,7 @@ class layer_2_object(object):
         except serial.SerialException as e:
             logging.error("Check USB cable connection!")
             logging.error(e)
-            exit(1)  # Sys.exit(1) is an error
+            sys.exit(1)  # Sys.exit(1) is an error
 
 
 class layer_2_protocol(threading.Thread):
@@ -80,7 +80,7 @@ class layer_2_protocol(threading.Thread):
                 except serial.SerialException as e:
                     logging.error("USB cable likely disconnected!")
                     logging.error(e)
-                    exit(1)  # Sys.exit(1) is an error
+                    sys.exit(1)  # Sys.exit(1) is an error
 
 
 ################################################################################
