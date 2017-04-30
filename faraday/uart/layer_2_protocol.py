@@ -83,7 +83,6 @@ class layer_2_protocol(threading.Thread):
                     exit()
 
 
-
 ################################################################################
 # Faraday_Datalink_Device_Transmit_Class() CLASS
 # Description:
