@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #-------------------------------------------------------------------------------
 # Name:        /faraday/telemetry.py
 # Purpose:      Query proxy for telemetry data and parse it to a local database
