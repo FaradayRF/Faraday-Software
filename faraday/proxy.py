@@ -571,7 +571,7 @@ def main():
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        sys.exit(1) # Sys.exit(1) is an error
+        sys.exit(1)  # Sys.exit(1) is an error
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
