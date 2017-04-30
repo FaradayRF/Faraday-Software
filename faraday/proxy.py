@@ -571,7 +571,7 @@ def main():
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        sys.exit(0)
+        sys.exit(1) # Sys.exit(1) is an error
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -584,7 +584,7 @@ def main():
         units = callsign2COM()
     except ConfigParser.NoSectionError as e:
         logging.error(e)
-        sys.exit(1)  # Status Code 1 = Config Error
+        sys.exit(1)  # Sys.exit(1) is an error
 
     if testmode == 0:
         for key, values in units.iteritems():
@@ -605,7 +605,7 @@ def main():
         proxyPort = proxyConfig.getint("FLASK", "port")
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        sys.exit(0)
+        sys.exit(1)  # Sys.exit(1) is an error
 
     app.run(host=proxyHost, port=proxyPort, threaded=True)
 
