@@ -15,6 +15,7 @@ import Queue
 import time
 import struct
 import logging
+from sys import exit
 
 # Get configured logger
 logger = logging.getLogger('UARTStack')
@@ -67,9 +68,15 @@ class layer_2_protocol(threading.Thread):
                     while(not self.serial_tx_queue.empty()):
                         self.ser.write(self.serial_tx_queue.get())
                 #Check for bytes to receive from serial
-                if self.ser.inWaiting() > 0:
-                    rx_buffer_inwaiting = self.ser.inWaiting()
-                    self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
+                try:
+                    if self.ser.inWaiting() > 0:
+                        rx_buffer_inwaiting = self.ser.inWaiting()
+                        self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
+                except serial.SerialException as e:
+                    logging.error("USB cable likely disconnected!")
+                    logging.error(e)
+                    exit()
+
 
 
 ################################################################################
