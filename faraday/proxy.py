@@ -583,7 +583,6 @@ def main():
     # global units
     try:
         units = callsign2COM()
-
     except ConfigParser.NoSectionError as e:
         logging.error(e)
         sys.exit()
