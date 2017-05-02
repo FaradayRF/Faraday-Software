@@ -10,20 +10,21 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-from setuptools import setup
+import setuptools
 
-setup(
+
+setuptools.setup(
     name = "faraday",
-    version = "0.0.1a4",
+    version = "0.0.1a7",
     author = "FaradayRF",
     author_email = "Support@FaradayRF.com",
     description = "FaradayRF amateur radio open source software",
     license = "GPLv3",
     keywords = "faraday radio faradayrf ham amateur",
     url = "https://github.com/FaradayRF/Faraday-Software",
-    packages=['faraday'],
-    long_description="FaradayRF software",
-    classifiers=[
+    packages = ['faraday','proxy', 'Proxy'],
+    long_description = "FaradayRF software",
+    classifiers = [
         "Development Status :: 2 - Pre-Alpha",
         "Framework :: Flask",
         "Framework :: Pytest",
@@ -41,4 +42,26 @@ setup(
         "Topic :: Communications :: Ham Radio",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
+    install_requires = ['appdirs',
+                        'click',
+                        'configparser',
+                        'enum34',
+                        'flake8',
+                        'Flask',
+                        'Flask-Cors',
+                        'itsdangerous',
+                        'Jinja2',
+                        'MarkupSafe',
+                        'mccabe',
+                        'packaging',
+                        'py',
+                        'pycodestyle',
+                        'pyflakes',
+                        'pyparsing',
+                        'pyserial',
+                        'pytest',
+                        'pytest-flake8',
+                        'requests',
+                        'six',
+                        'Werkzeug'],
 )
