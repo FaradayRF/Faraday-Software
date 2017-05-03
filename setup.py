@@ -22,7 +22,7 @@ setuptools.setup(
     license = "GPLv3",
     keywords = "faraday radio faradayrf ham amateur",
     url = "https://github.com/FaradayRF/Faraday-Software",
-    packages = ['faraday','proxy', 'Proxy'],
+    packages = ['faraday','proxy'],
     long_description = "FaradayRF software",
     classifiers = [
         "Development Status :: 2 - Pre-Alpha",
