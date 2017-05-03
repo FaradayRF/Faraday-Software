@@ -26,7 +26,7 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
+filename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', 'loggingConfig.ini')
 logging.config.fileConfig(filename)
 logger = logging.getLogger('Proxy')
 
