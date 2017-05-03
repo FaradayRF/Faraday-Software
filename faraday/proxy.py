@@ -32,7 +32,7 @@ logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("proxy.ini")
+filename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', 'proxy.ini')
 proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
