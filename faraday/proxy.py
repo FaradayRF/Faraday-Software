@@ -431,7 +431,11 @@ def initDB():
     # Obtain configuration file names
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', dbFilename)
+
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join(os.path.dirname(__file__), '..', 'Proxy', dbSchema)
+
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
