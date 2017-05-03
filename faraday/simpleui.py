@@ -27,13 +27,14 @@ from faraday.proxyio import faradaycommands
 from faraday.proxyio import gpioallocations
 
 # Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
+filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'loggingConfig.ini')
+filename = os.path.abspath(filename)
 logging.config.fileConfig(filename)
 logger = logging.getLogger('SimpleUI')
 
 # Load configuration file
 simpleuiconfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("simpleui.ini")
+filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'simpleui.ini')
 simpleuiconfig.read(filename)
 
 # Initialize Flask microframework
