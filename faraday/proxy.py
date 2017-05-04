@@ -26,13 +26,14 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', 'loggingConfig.ini')
+filename = os.path.join(os.path.dirname(__file__), '../../../', 'Proxy', 'loggingConfig.ini')
+logging.error(filename)
 logging.config.fileConfig(filename)
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', 'proxy.ini')
+filename = os.path.join(os.path.dirname(__file__), '../../../', 'Proxy', 'proxy.ini')
 proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
@@ -431,10 +432,10 @@ def initDB():
     # Obtain configuration file names
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(os.path.dirname(__file__), '..', 'Proxy', dbFilename)
+        dbFilename = os.path.join(os.path.dirname(__file__), '../../../', 'Proxy', dbFilename)
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(os.path.dirname(__file__), '..', 'Proxy', dbSchema)
+        dbSchema = os.path.join(os.path.dirname(__file__), '../../../', 'Proxy', dbSchema)
 
 
     except ConfigParser.Error as e:
