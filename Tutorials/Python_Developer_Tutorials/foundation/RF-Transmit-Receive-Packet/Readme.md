@@ -99,7 +99,7 @@ print "Receiver operating TCP Localhost port:", faraday_1.FLASK_PORT
 data = None
 
 #While loop to wait for reception of data packet from experimental message application
-while(1):
+while True:
     #Wait until there is new data on the message application port OR timout
     data = faraday_1.GETWait(local_device_callsign, local_device_node_id, PROXY_MESSAGE_EXPERIMENTAL_PORT, 2)
 

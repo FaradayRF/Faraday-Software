@@ -38,7 +38,7 @@ from faraday.proxyio import faradaycommands
 faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
 
-while(1):
+while True:
     #Turn LED 1 ON (GREEN)
     print "Turning LED 1 ON"
     command = faraday_cmd.CommandLocalGPIOLED1On()

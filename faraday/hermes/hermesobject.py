@@ -71,7 +71,7 @@ class ReceiveObject(threading.Thread):
             the proxy interface. Received data packets are saved in to FIFO for later retrieval.
             """
         # Loop continuously through the faraday experimental RF command message application RX routine
-        while 1:
+        while True:
             time.sleep(0.005)
             rx_message_dict = self.faraday_rx_msg_object.rxmsgloop(self.local_device_callsign,
                                                                    self.local_device_node_id,

@@ -20,7 +20,7 @@ faraday_tx_msg_object.updatedestinationstation(remote_callsign, remote_id)
 message = ''
 
 # Loop while waiting for user input text to transmit
-while 1:
+while True:
     # Get user input text
     message = raw_input("Message: ")
 

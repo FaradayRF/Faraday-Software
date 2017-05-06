@@ -44,7 +44,7 @@ def aprs_worker(config, sock):
     telemSequence = 0
 
     # Start infinite loop to send station data to APRS-IS
-    while(True):
+    while True:
         # Query telemetry database for station data
         stations = getStations()
         stationData = getStationData(stations)
@@ -628,7 +628,7 @@ def connectAPRSIS():
             sleep(10)  # Try to reconnect every 10 seconds
         return aprssock
     else:
-        while(True):
+        while True:
             logger.error("APRS-IS LOGIN ERROR!")
             sleep(1)
 
