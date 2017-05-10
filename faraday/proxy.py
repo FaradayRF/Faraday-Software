@@ -26,13 +26,15 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
-logging.config.fileConfig(filename)
+dir = os.path.dirname(__file__)
+logConfig = os.path.join(dir, "..", "Proxy", "loggingConfig.ini")
+logging.config.fileConfig(logConfig)
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("proxy.ini")
+dir = os.path.dirname(__file__)
+filename = os.path.join(dir, "..", "Proxy", "proxy.ini")
 proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
@@ -430,8 +432,13 @@ def initDB():
 
     # Obtain configuration file names
     try:
+        dir = os.path.dirname(__file__)
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(dir, "..", "Proxy", dbFilename)
+
+        dir = os.path.dirname(__file__)
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join(dir, "..", "Proxy", dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -467,7 +474,9 @@ def openTestDB():
 
     # Obtain configuration file names
     try:
+        dir = os.path.dirname(__file__)
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
+        testDbFilename = os.path.join(dir, "..", "Proxy", testDbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -523,7 +532,9 @@ def sqlInsert(data):
 
     # Read in name of database
     try:
+        dir = os.path.dirname(__file__)
         db = proxyConfig.get("DATABASE", "FILENAME")
+        db = os.path.join(dir, "..", "Proxy", db)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
