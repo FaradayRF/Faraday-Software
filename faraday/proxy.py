@@ -26,13 +26,14 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
+filename = os.path.abspath("Proxy/loggingConfig.ini")
+print filename
 logging.config.fileConfig(filename)
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("proxy.ini")
+filename = os.path.abspath("Proxy/proxy.ini")
 proxyConfig.read(filename)
 
 # Create and initialize dictionary queues
@@ -431,7 +432,9 @@ def initDB():
     # Obtain configuration file names
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join('Proxy', dbFilename)
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join('Proxy', dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
