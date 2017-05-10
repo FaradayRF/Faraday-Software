@@ -27,7 +27,9 @@ from faraday.proxyio import telemetryparser
 
 # Start logging after importing modules
 try:
-    logging.config.fileConfig('loggingConfig.ini')
+    dir = os.path.dirname(__file__)
+    logConfig = os.path.join(dir,"..","Applications","Telemetry","loggingConfig.ini")
+    logging.config.fileConfig(logConfig)
     logger = logging.getLogger('telemetry')
 
 except ConfigParser.Error as e:
@@ -38,7 +40,9 @@ except ConfigParser.Error as e:
 
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
-telemetryFile = telemetryConfig.read('telemetry.ini')
+dir = os.path.dirname(__file__)
+telemConfig = os.path.join(dir,"..","Applications","Telemetry","telemetry.ini")
+telemetryFile = telemetryConfig.read(telemConfig)
 
 if len(telemetryFile) == 0:
     #  File missing, indicate error and infinite loop
@@ -440,8 +444,13 @@ def initDB():
 
     # Obtain configuration file names
     try:
+        dir = os.path.dirname(__file__)
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(dir, "..", "Applications", "Telemetry", dbFilename)
+
+        dir = os.path.dirname(__file__)
         dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join(dir, "..", "Applications", "Telemetry", dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -539,7 +548,9 @@ def sqlInsert(data):
 
     # Read in name of telemetry database
     try:
+        dir = os.path.dirname(__file__)
         db = telemetryConfig.get("DATABASE", "FILENAME")
+        db = os.path.join(dir, "..", "Applications", "Telemetry", db)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -650,7 +661,9 @@ def queryDb(parameters):
 
     # Open configuration file
     try:
+        dir = os.path.dirname(__file__)
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(dir, "..", "Applications", "Telemetry", dbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -754,7 +767,9 @@ def queryStationsDb(parameters):
 
     # Get telemetry database name from configuration file
     try:
+        dir = os.path.dirname(__file__)
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(dir, "..", "Applications", "Telemetry", dbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
