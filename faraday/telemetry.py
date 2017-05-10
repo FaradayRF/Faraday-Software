@@ -28,7 +28,7 @@ from faraday.proxyio import telemetryparser
 # Start logging after importing modules
 try:
     dir = os.path.dirname(__file__)
-    logConfig = os.path.join(dir,"..","Applications","Telemetry","loggingConfig.ini")
+    logConfig = os.path.join(dir, "..", "Applications", "Telemetry", "loggingConfig.ini")
     logging.config.fileConfig(logConfig)
     logger = logging.getLogger('telemetry')
 
@@ -41,7 +41,7 @@ except ConfigParser.Error as e:
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
 dir = os.path.dirname(__file__)
-telemConfig = os.path.join(dir,"..","Applications","Telemetry","telemetry.ini")
+telemConfig = os.path.join(dir, "..", "Applications", "Telemetry", "telemetry.ini")
 telemetryFile = telemetryConfig.read(telemConfig)
 
 if len(telemetryFile) == 0:

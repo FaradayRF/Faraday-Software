@@ -19,7 +19,7 @@ from time import sleep
 
 # Start logging after importing modules
 dir = os.path.dirname(__file__)
-logConfig = os.path.join(dir,"..","Applications","APRS","loggingConfig.ini")
+logConfig = os.path.join(dir, "..", "Applications", "APRS", "loggingConfig.ini")
 logging.config.fileConfig(logConfig)
 logger = logging.getLogger('APRS')
 
@@ -27,7 +27,7 @@ logger = logging.getLogger('APRS')
 # Should have common file for apps...
 aprsConfig = ConfigParser.RawConfigParser()
 dir = os.path.dirname(__file__)
-fileName = os.path.join(dir,"..","Applications","APRS","aprs.ini")
+fileName = os.path.join(dir, "..", "Applications", "APRS", "aprs.ini")
 aprsConfig.read(fileName)
 
 # Create and initialize dictionary queues

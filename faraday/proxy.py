@@ -478,7 +478,6 @@ def openTestDB():
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
         testDbFilename = os.path.join(dir, "..", "Proxy", testDbFilename)
 
-
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         return None
