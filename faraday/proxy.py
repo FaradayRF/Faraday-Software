@@ -449,7 +449,7 @@ def initDB():
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
+        dbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
         dbSchema = os.path.join(path, dbSchema)
@@ -546,8 +546,8 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        print os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
-        dbFilename = os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
+        print os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
