@@ -440,12 +440,16 @@ def initDB():
 
     :return: True or False if successful
     """
+    # make directory tree, necessary?
+    try:
+        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+    except:
+        pass
 
-    # Obtain configuration file names
+    # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(path, dbFilename)
-
+        dbFilename = os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
         dbSchema = os.path.join(path, dbSchema)
@@ -485,6 +489,7 @@ def openTestDB():
     # Obtain configuration file names
     try:
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
+        testDbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -541,7 +546,8 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(path, dbFilename)
+        print os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
+        dbFilename = os.path.join(os.path.expanduser('~'),'.faraday.', 'lib', dbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
