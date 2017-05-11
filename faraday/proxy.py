@@ -26,14 +26,24 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.join('etc', 'faraday', 'loggingConfig.ini')
-logging.config.fileConfig(filename)
+
+relpath = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.expanduser('~/.faraday')
+path = ''
+
+for location in os.curdir, relpath, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
 logger = logging.getLogger('Proxy')
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.join('etc', 'faraday', 'proxy.ini')
-proxyConfig.read(filename)
+proxyConfig.read(os.path.join(path, "proxy.ini"))
 
 # Create and initialize dictionary queues
 postDict = {}
@@ -431,11 +441,11 @@ def initDB():
     # Obtain configuration file names
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join('etc', 'faraday', dbFilename)
+        dbFilename = os.path.join(path, dbFilename)
+
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join('etc', 'faraday', dbSchema)
-
+        dbSchema = os.path.join(path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -527,7 +537,8 @@ def sqlInsert(data):
 
     # Read in name of database
     try:
-        db = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = os.path.join(path, dbFilename)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -545,7 +556,7 @@ def sqlInsert(data):
 
         # Connect to database, create SQL query, execute query, and close database
         try:
-            conn = sqlite3.connect(db)
+            conn = sqlite3.connect(dbFilename)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
