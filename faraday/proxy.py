@@ -35,7 +35,6 @@ path = ''
 
 for location in os.curdir, relpath1, relpath2, setuppath, userpath:
     try:
-        print location
         logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
         path = location
         break
@@ -43,6 +42,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
         pass
 
 logger = logging.getLogger('Proxy')
+logger.debug("PATH: " + path)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
@@ -449,7 +449,9 @@ def initDB():
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Proxy Database: " + dbPath)
+        dbFilename = dbPath
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
         dbSchema = os.path.join(path, dbSchema)
@@ -489,7 +491,9 @@ def openTestDB():
     # Obtain configuration file names
     try:
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
-        testDbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
+        logger.debug("Proxy Test Database: " + dbPath)
+        testDbFilename = dbPath
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -546,8 +550,9 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        print os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
-        dbFilename = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Proxy Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
