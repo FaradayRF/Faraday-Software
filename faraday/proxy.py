@@ -19,6 +19,8 @@ import sqlite3
 import sys
 import threading
 import time
+import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -44,9 +46,45 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 logger = logging.getLogger('Proxy')
 logger.debug("PATH: " + path)
 
+#Create Proxy configuration file path
+proxyConfigPath = os.path.join(path, "proxy.ini")
+
+# Command line input
+parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy application')
+parser.add_argument('--config', action='store_true', help='Configure Proxy application')
+parser.add_argument('--callsign', default='NOCALL', help='Faraday Callsign')
+parser.add_argument('--nodeid', type=int, default=0, help='Faraday Node ID')
+parser.add_argument('--port', default='COM1', help='Faraday UART port')
+args = parser.parse_args()
+print args
+
+
+def initializeProxyConfig(init):
+    print "initializing proxy"
+    print path
+    shutil.copy(os.path.join(path,"proxy.sample.ini"),os.path.join(path,"proxy.ini"))
+
+def configureProxy(args,proxyConfigPath):
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "proxy.ini"))
+    config.set('UNIT0', 'CALLSIGN', args.callsign)
+    config.set('UNIT0', 'NODEID', args.nodeid)
+    config.set('UNIT0', 'COM', args.port)
+    with open(proxyConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+if args.init:
+    initializeProxyConfig(args.init)
+
+if args.config:
+    configureProxy(args,proxyConfigPath)
+
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read(os.path.join(path, "proxy.ini"))
+
+proxyConfig.read(proxyConfigPath)
+
 
 # Create and initialize dictionary queues
 postDict = {}
