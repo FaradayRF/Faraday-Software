@@ -72,6 +72,8 @@ parser.add_argument('--database', help='Set Faraday Proxy database')
 parser.add_argument('--schema', help='Set Faraday database schema')
 parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
 parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
+parser.add_argument('--save-log', dest='savelog', help='Save Proxy log database into new SAVELOG file')
+parser.add_argument('--showlogs', action='store_true', help='Show Proxy log database files')
 
 # Proxy Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
@@ -86,14 +88,27 @@ def initializeProxyConfig(init):
     logger.info("Initialization complete")
     sys.exit(0)
 
-def initializeProxyLog(initlog, config):
+def initializeProxyLog(config):
     logger.info("Initializing Proxy Log File")
     log = config.get("DATABASE", "filename")
     logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
     os.remove(logpath)
     logger.info("Log initialization complete")
 
+def saveProxyLog(name, config):
+    log = config.get("DATABASE", "filename")
+    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
+    shutil.move(oldpath,newpath)
+    sys.exit(0)
 
+def showProxyLogs():
+    logger.info("The following logs exist for Proxy...")
+    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    for file in os.listdir(path):
+        if file.endswith(".db"):
+            logger.info(file)
+    sys.exit(0)
 
 def configureProxy(args, proxyConfigPath):
     config = ConfigParser.RawConfigParser()
@@ -168,7 +183,15 @@ proxyConfig.read(proxyConfigPath)
 
 # Initialize Proxy log database
 if args.initlog:
-    initializeProxyLog(args.initlog, proxyConfig)
+    initializeProxyLog(proxyConfig)
+
+# Save Proxy log database
+if args.savelog is not None:
+    saveProxyLog(args.savelog, proxyConfig)
+
+# List Proxy log database files
+if args.showlogs:
+    showProxyLogs()
 
 
 # Create and initialize dictionary queues
