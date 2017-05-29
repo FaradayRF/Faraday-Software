@@ -79,30 +79,61 @@ parser.add_argument('--showlogs', action='store_true', help='Show Proxy log data
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
 parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Flask server port')
 
-
+# Parse the arguments
 args = parser.parse_args()
 
-def initializeProxyConfig(init):
+
+def initializeProxyConfig():
+    '''
+    Initialize proxy configuration file from proxy.sample.ini
+
+    :return: None, exits program
+    '''
+
     logger.info("Initializing Proxy")
     shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
+
 def initializeProxyLog(config):
+    '''
+    Initialize the log database by deleting file
+
+    :param config: Proxy ConfigParser object from proxy.ini
+    :return: None
+    '''
+
     logger.info("Initializing Proxy Log File")
     log = config.get("DATABASE", "filename")
     logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
     os.remove(logpath)
     logger.info("Log initialization complete")
 
+
 def saveProxyLog(name, config):
+    '''
+    Save proxy log database into a new file
+
+    :param name: Name of file to save data into (should be .db)
+    :param config: Proxy ConfigParser object from proxy.ini
+    :return: None
+    '''
+
     log = config.get("DATABASE", "filename")
     oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
     newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
-    shutil.move(oldpath,newpath)
+    shutil.move(oldpath, newpath)
     sys.exit(0)
 
+
 def showProxyLogs():
+    '''
+    Show proxy log database filenames in user path ~/.faraday/lib folder
+
+    :return: None, exits program
+    '''
+
     logger.info("The following logs exist for Proxy...")
     path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
     for file in os.listdir(path):
@@ -110,7 +141,16 @@ def showProxyLogs():
             logger.info(file)
     sys.exit(0)
 
+
 def configureProxy(args, proxyConfigPath):
+    '''
+    Configure proxy configuration file from command line
+
+    :param args: argparse arguments
+    :param proxyConfigPath: Path to proxy.ini file
+    :return: None
+    '''
+
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "proxy.ini"))
 
@@ -166,15 +206,13 @@ def configureProxy(args, proxyConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
-
-
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
-# Initialize proxy
+
+# Initialize and configure proxy
 if args.init:
     initializeProxyConfig(args.init)
-
 configureProxy(args, proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
@@ -192,7 +230,6 @@ if args.savelog is not None:
 # List Proxy log database files
 if args.showlogs:
     showProxyLogs()
-
 
 # Create and initialize dictionary queues
 postDict = {}
