@@ -58,6 +58,7 @@ parser.add_argument('--port', help='Set Faraday UART port')
 parser.add_argument('--baudrate', default='115200', help='Set Faraday UART baudrate')
 parser.add_argument('--timeout', type=int, default=5, help='Set Faraday UART timeout')
 parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
+parser.add_argument('-n', '--number', type=int, default=0, help='Set number of Faraday radios to use')
 args = parser.parse_args()
 print args
 
@@ -73,9 +74,8 @@ def configureProxy(args, proxyConfigPath):
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "proxy.ini"))
 
-    # Set unit to configure
+    # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
-    print "UNIT: ", unit
     if args.unit is not 0:
         try:
             config.add_section(unit)
@@ -93,6 +93,11 @@ def configureProxy(args, proxyConfigPath):
         config.set(unit, 'BAUDRATE', args.baudrate)
     if args.timeout:
         config.set(unit, 'TIMEOUT', args.timeout)
+
+    # Configure Proxy section items
+    if args.number is not 0:
+        config.set('PROXY', 'units', args.number)
+
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
