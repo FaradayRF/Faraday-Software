@@ -51,34 +51,38 @@ proxyConfigPath = os.path.join(path, "proxy.ini")
 
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
-parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy application')
-parser.add_argument('--config', action='store_true', help='Configure Proxy application')
-parser.add_argument('--callsign', default='NOCALL', help='Faraday Callsign')
-parser.add_argument('--nodeid', type=int, default=0, help='Faraday Node ID')
-parser.add_argument('--port', default='COM1', help='Faraday UART port')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy configuration file')
+parser.add_argument('--callsign', help='Set Faraday callsign')
+parser.add_argument('--nodeid', type=int, help='Set Faraday node ID')
+parser.add_argument('--port', help='Set Faraday UART port')
+parser.add_argument('--baudrate', help='Set Faraday UART baudrate')
+parser.add_argument('--timeout', help='Set Faraday UART timeout')
 args = parser.parse_args()
 print args
 
 
 def initializeProxyConfig(init):
-    print "initializing proxy"
-    print path
+    logger.info("Initializing Proxy")
     shutil.copy(os.path.join(path,"proxy.sample.ini"),os.path.join(path,"proxy.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
 
 def configureProxy(args,proxyConfigPath):
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "proxy.ini"))
-    config.set('UNIT0', 'CALLSIGN', args.callsign)
-    config.set('UNIT0', 'NODEID', args.nodeid)
-    config.set('UNIT0', 'COM', args.port)
+    if args.callsign is not None:
+        config.set('UNIT0', 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        config.set('UNIT0', 'NODEID', args.nodeid)
+    if args.port is not None:
+        config.set('UNIT0', 'COM', args.port)
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
 if args.init:
     initializeProxyConfig(args.init)
 
-if args.config:
-    configureProxy(args,proxyConfigPath)
+configureProxy(args,proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
