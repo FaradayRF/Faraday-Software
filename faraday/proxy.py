@@ -71,6 +71,7 @@ parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='S
 parser.add_argument('--database', help='Set Faraday Proxy database')
 parser.add_argument('--schema', help='Set Faraday database schema')
 parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
+parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
 
 # Proxy Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
@@ -78,14 +79,20 @@ parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Farada
 
 
 args = parser.parse_args()
-print args
-
 
 def initializeProxyConfig(init):
     logger.info("Initializing Proxy")
     shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
+
+def initializeProxyLog(initlog, config):
+    logger.info("Initializing Proxy Log File")
+    log = config.get("DATABASE", "filename")
+    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    os.remove(logpath)
+    logger.info("Log initialization complete")
+
 
 
 def configureProxy(args, proxyConfigPath):
@@ -144,10 +151,12 @@ def configureProxy(args, proxyConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
+
+
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
-
+# Initialize proxy
 if args.init:
     initializeProxyConfig(args.init)
 
@@ -155,8 +164,11 @@ configureProxy(args, proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-
 proxyConfig.read(proxyConfigPath)
+
+# Initialize Proxy log database
+if args.initlog:
+    initializeProxyLog(args.initlog, proxyConfig)
 
 
 # Create and initialize dictionary queues
