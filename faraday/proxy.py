@@ -32,7 +32,7 @@ from faraday.uart import layer_4_service
 relpath1 = os.path.join('etc', 'faraday')
 relpath2 = os.path.join('..', 'etc', 'faraday')
 setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.expanduser('~/.faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
 path = ''
 
 for location in os.curdir, relpath1, relpath2, setuppath, userpath:
