@@ -55,8 +55,9 @@ parser.add_argument('--init-config', dest='init', action='store_true', help='Ini
 parser.add_argument('--callsign', help='Set Faraday callsign')
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID')
 parser.add_argument('--port', help='Set Faraday UART port')
-parser.add_argument('--baudrate', help='Set Faraday UART baudrate')
-parser.add_argument('--timeout', help='Set Faraday UART timeout')
+parser.add_argument('--baudrate', default='115200', help='Set Faraday UART baudrate')
+parser.add_argument('--timeout', type=int, default=5, help='Set Faraday UART timeout')
+parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
 args = parser.parse_args()
 print args
 
@@ -71,12 +72,27 @@ def initializeProxyConfig(init):
 def configureProxy(args, proxyConfigPath):
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "proxy.ini"))
+
+    # Set unit to configure
+    unit = 'UNIT' + str(args.unit)
+    print "UNIT: ", unit
+    if args.unit is not 0:
+        try:
+            config.add_section(unit)
+
+        except ConfigParser.DuplicateSectionError:
+            pass
+
     if args.callsign is not None:
-        config.set('UNIT0', 'CALLSIGN', args.callsign)
+        config.set(unit, 'CALLSIGN', args.callsign)
     if args.nodeid is not None:
-        config.set('UNIT0', 'NODEID', args.nodeid)
+        config.set(unit, 'NODEID', args.nodeid)
     if args.port is not None:
-        config.set('UNIT0', 'COM', args.port)
+        config.set(unit, 'COM', args.port)
+    if args.baudrate:
+        config.set(unit, 'BAUDRATE', args.baudrate)
+    if args.timeout:
+        config.set(unit, 'TIMEOUT', args.timeout)
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
