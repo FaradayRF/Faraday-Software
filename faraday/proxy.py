@@ -58,7 +58,25 @@ parser.add_argument('--port', help='Set Faraday UART port')
 parser.add_argument('--baudrate', default='115200', help='Set Faraday UART baudrate')
 parser.add_argument('--timeout', type=int, default=5, help='Set Faraday UART timeout')
 parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
-parser.add_argument('-n', '--number', type=int, default=0, help='Set number of Faraday radios to use')
+
+#Proxy options
+parser.add_argument('--number', type=int, default=0, help='Set number of Faraday radios to use')
+parser.add_argument('--log', action='store_true', help='Set Proxy into logging mode')
+parser.add_argument('--test-mode', dest='testmode', action='store_true', help='Set Proxy into test mode')
+parser.add_argument('--test-callsign', dest='testcallsign', help='Set Faraday test mode callsign')
+parser.add_argument('--test-nodeid', dest='testnodeid', type=int, help='Set Faraday test mode nodeid')
+parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='Set Faraday test mode rate')
+
+# Proxy database options
+parser.add_argument('--database', help='Set Faraday Proxy database')
+parser.add_argument('--schema', help='Set Faraday database schema')
+parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
+
+# Proxy Flask options
+parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
+parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Flask server port')
+
+
 args = parser.parse_args()
 print args
 
@@ -97,6 +115,34 @@ def configureProxy(args, proxyConfigPath):
     # Configure Proxy section items
     if args.number is not 0:
         config.set('PROXY', 'units', args.number)
+    if args.log:
+        config.set('PROXY', 'log', 1)
+    else:
+        config.set('PROXY', 'log', 0)
+    if args.testmode:
+        config.set('PROXY', 'testmode', 1)
+    else:
+        config.set('PROXY', 'testmode', 0)
+    if args.testcallsign is not None:
+        config.set('PROXY', 'testcallsign', args.testcallsign)
+    if args.testnodeid is not None:
+        config.set('PROXY', 'testnodeid', args.testnodeid)
+    if args.testrate:
+        config.set('PROXY', 'testrate', args.testrate)
+
+    #Configure Proxy databases
+    if args.database is not None:
+        config.set('DATABASE', 'filename', args.database)
+    if args.schema is not None:
+        config.set('DATABASE', 'schemaname', args.schema)
+    if args.testdatabase is not None:
+        config.set('TESTDATABASE', 'filename', args.testdatabase)
+
+    # Configure Proxy flask server
+    if args.flaskhost is not None:
+        config.set('FLASK', 'host', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'port', args.flaskport)
 
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
