@@ -63,11 +63,12 @@ print args
 
 def initializeProxyConfig(init):
     logger.info("Initializing Proxy")
-    shutil.copy(os.path.join(path,"proxy.sample.ini"),os.path.join(path,"proxy.ini"))
+    shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
-def configureProxy(args,proxyConfigPath):
+
+def configureProxy(args, proxyConfigPath):
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "proxy.ini"))
     if args.callsign is not None:
@@ -79,10 +80,11 @@ def configureProxy(args,proxyConfigPath):
     with open(proxyConfigPath, 'wb') as configfile:
         config.write(configfile)
 
+
 if args.init:
     initializeProxyConfig(args.init)
 
-configureProxy(args,proxyConfigPath)
+configureProxy(args, proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
