@@ -212,7 +212,7 @@ def configureProxy(args, proxyConfigPath):
 
 # Initialize and configure proxy
 if args.init:
-    initializeProxyConfig(args.init)
+    initializeProxyConfig()
 configureProxy(args, proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
