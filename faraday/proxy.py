@@ -48,6 +48,7 @@ logger.debug("PATH: " + path)
 
 #Create Proxy configuration file path
 proxyConfigPath = os.path.join(path, "proxy.ini")
+logger.debug('Proxy.ini PATH: ', proxyConfigPath)
 
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
