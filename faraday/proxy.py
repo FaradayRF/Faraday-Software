@@ -19,6 +19,8 @@ import sqlite3
 import sys
 import threading
 import time
+import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -26,14 +28,208 @@ from flask import request
 from faraday.uart import layer_4_service
 
 # Start logging after importing modules
-filename = os.path.abspath("loggingConfig.ini")
-logging.config.fileConfig(filename)
+
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
 logger = logging.getLogger('Proxy')
+
+#Create Proxy configuration file path
+proxyConfigPath = os.path.join(path, "proxy.ini")
+logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
+
+# Command line input
+parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy configuration file')
+parser.add_argument('--callsign', help='Set Faraday callsign')
+parser.add_argument('--nodeid', type=int, help='Set Faraday node ID')
+parser.add_argument('--port', help='Set Faraday UART port')
+parser.add_argument('--baudrate', default='115200', help='Set Faraday UART baudrate')
+parser.add_argument('--timeout', type=int, default=5, help='Set Faraday UART timeout')
+parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
+
+#Proxy options
+parser.add_argument('--number', type=int, default=0, help='Set number of Faraday radios to use')
+parser.add_argument('--log', action='store_true', help='Set Proxy into logging mode')
+parser.add_argument('--test-mode', dest='testmode', action='store_true', help='Set Proxy into test mode')
+parser.add_argument('--test-callsign', dest='testcallsign', help='Set Faraday test mode callsign')
+parser.add_argument('--test-nodeid', dest='testnodeid', type=int, help='Set Faraday test mode nodeid')
+parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='Set Faraday test mode rate')
+
+# Proxy database options
+parser.add_argument('--database', help='Set Faraday Proxy database')
+parser.add_argument('--schema', help='Set Faraday database schema')
+parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
+parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
+parser.add_argument('--save-log', dest='savelog', help='Save Proxy log database into new SAVELOG file')
+parser.add_argument('--showlogs', action='store_true', help='Show Proxy log database files')
+
+# Proxy Flask options
+parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
+parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Flask server port')
+
+# Parse the arguments
+args = parser.parse_args()
+
+
+def initializeProxyConfig():
+    '''
+    Initialize proxy configuration file from proxy.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Proxy")
+    shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def initializeProxyLog(config):
+    '''
+    Initialize the log database by deleting file
+
+    :param config: Proxy ConfigParser object from proxy.ini
+    :return: None
+    '''
+
+    logger.info("Initializing Proxy Log File")
+    log = config.get("DATABASE", "filename")
+    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    os.remove(logpath)
+    logger.info("Log initialization complete")
+
+
+def saveProxyLog(name, config):
+    '''
+    Save proxy log database into a new file
+
+    :param name: Name of file to save data into (should be .db)
+    :param config: Proxy ConfigParser object from proxy.ini
+    :return: None
+    '''
+
+    log = config.get("DATABASE", "filename")
+    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
+    shutil.move(oldpath, newpath)
+    sys.exit(0)
+
+
+def showProxyLogs():
+    '''
+    Show proxy log database filenames in user path ~/.faraday/lib folder
+
+    :return: None, exits program
+    '''
+
+    logger.info("The following logs exist for Proxy...")
+    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    for file in os.listdir(path):
+        if file.endswith(".db"):
+            logger.info(file)
+    sys.exit(0)
+
+
+def configureProxy(args, proxyConfigPath):
+    '''
+    Configure proxy configuration file from command line
+
+    :param args: argparse arguments
+    :param proxyConfigPath: Path to proxy.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "proxy.ini"))
+
+    # Configure UNITx sections
+    unit = 'UNIT' + str(args.unit)
+    if args.unit is not 0:
+        try:
+            config.add_section(unit)
+
+        except ConfigParser.DuplicateSectionError:
+            pass
+
+    if args.callsign is not None:
+        config.set(unit, 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        config.set(unit, 'NODEID', args.nodeid)
+    if args.port is not None:
+        config.set(unit, 'COM', args.port)
+    if args.baudrate:
+        config.set(unit, 'BAUDRATE', args.baudrate)
+    if args.timeout:
+        config.set(unit, 'TIMEOUT', args.timeout)
+
+    # Configure Proxy section items
+    if args.number is not 0:
+        config.set('PROXY', 'units', args.number)
+    if args.log:
+        config.set('PROXY', 'log', 1)
+    else:
+        config.set('PROXY', 'log', 0)
+    if args.testmode:
+        config.set('PROXY', 'testmode', 1)
+    else:
+        config.set('PROXY', 'testmode', 0)
+    if args.testcallsign is not None:
+        config.set('PROXY', 'testcallsign', args.testcallsign)
+    if args.testnodeid is not None:
+        config.set('PROXY', 'testnodeid', args.testnodeid)
+    if args.testrate:
+        config.set('PROXY', 'testrate', args.testrate)
+
+    #Configure Proxy databases
+    if args.database is not None:
+        config.set('DATABASE', 'filename', args.database)
+    if args.schema is not None:
+        config.set('DATABASE', 'schemaname', args.schema)
+    if args.testdatabase is not None:
+        config.set('TESTDATABASE', 'filename', args.testdatabase)
+
+    # Configure Proxy flask server
+    if args.flaskhost is not None:
+        config.set('FLASK', 'host', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'port', args.flaskport)
+
+    with open(proxyConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+
+# Initialize and configure proxy
+if args.init:
+    initializeProxyConfig()
+configureProxy(args, proxyConfigPath)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-filename = os.path.abspath("proxy.ini")
-proxyConfig.read(filename)
+proxyConfig.read(proxyConfigPath)
+
+# Initialize Proxy log database
+if args.initlog:
+    initializeProxyLog(proxyConfig)
+
+# Save Proxy log database
+if args.savelog is not None:
+    saveProxyLog(args.savelog, proxyConfig)
+
+# List Proxy log database files
+if args.showlogs:
+    showProxyLogs()
 
 # Create and initialize dictionary queues
 postDict = {}
@@ -427,11 +623,21 @@ def initDB():
 
     :return: True or False if successful
     """
+    # make directory tree, necessary?
+    try:
+        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+    except:
+        pass
 
-    # Obtain configuration file names
+    # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Proxy Database: " + dbPath)
+        dbFilename = dbPath
+
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join(path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -468,6 +674,9 @@ def openTestDB():
     # Obtain configuration file names
     try:
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
+        logger.debug("Proxy Test Database: " + dbPath)
+        testDbFilename = dbPath
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -523,7 +732,10 @@ def sqlInsert(data):
 
     # Read in name of database
     try:
-        db = proxyConfig.get("DATABASE", "FILENAME")
+        dbFilename = proxyConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Proxy Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -541,7 +753,7 @@ def sqlInsert(data):
 
         # Connect to database, create SQL query, execute query, and close database
         try:
-            conn = sqlite3.connect(db)
+            conn = sqlite3.connect(dbFilename)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))

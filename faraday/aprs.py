@@ -14,16 +14,19 @@ import threading
 import ConfigParser
 import socket
 import requests
+import os
 from time import sleep
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
+filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'APRS', 'loggingConfig.ini')
+logging.config.fileConfig(filename)
 logger = logging.getLogger('APRS')
 
 # Load Telemetry Configuration from telemetry.ini file
 # Should have common file for apps...
+filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'APRS', 'aprs.ini')
 aprsConfig = ConfigParser.RawConfigParser()
-aprsConfig.read('aprs.ini')
+aprsConfig.read(filename)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
