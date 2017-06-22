@@ -18,6 +18,7 @@ import os
 import sqlite3
 import json
 import sys
+import argparse
 
 from flask import Flask
 from flask import request
@@ -61,6 +62,14 @@ if len(telemetryFile) == 0:
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
+# Command line input
+parser = argparse.ArgumentParser(description='Telemetry application saves and queries Faraday telemetry')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Telemetry configuration file')
+parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect to')
+parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
+
+# Parse the arguments
+args = parser.parse_args()
 
 def telemetry_worker(config):
     """
