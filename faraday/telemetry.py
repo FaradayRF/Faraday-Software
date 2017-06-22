@@ -450,12 +450,21 @@ def initDB():
     :return: True or False if successful
     """
 
-    # Obtain configuration file names
+    # make directory tree, necessary?
+    try:
+        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+    except:
+        pass
+
+    # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', dbFilename)
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = dbPath
+
         dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', dbSchema)
+        dbSchema = os.path.join(path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
