@@ -783,14 +783,16 @@ def queryStationsDb(parameters):
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
 
-    # Get telemetry database name from configuration file
+    # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbFilename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', dbFilename)
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        return sqlData
+        return False
 
     # Connect to database, create SQL query, execute query, and close database
     try:
