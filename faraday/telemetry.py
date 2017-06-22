@@ -63,6 +63,14 @@ parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
 parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
 
+# Telemetry database options
+parser.add_argument('--database', help='Set Telemetry database name')
+parser.add_argument('--schema', help='Set Telemetry database schema')
+
+# Proxy Flask options
+parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Telemetry Flask server host address')
+parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Telemetry Flask server port')
+
 # Parse the arguments
 args = parser.parse_args()
 
