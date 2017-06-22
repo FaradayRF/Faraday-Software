@@ -19,6 +19,7 @@ import sqlite3
 import json
 import sys
 import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -51,13 +52,6 @@ logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
-telemetryFile = telemetryConfig.read(telemetryConfigPath)
-
-if len(telemetryFile) == 0:
-    #  File missing, indicate error and infinite loop
-    while True:
-            logger.error("telemetry.ini missing")
-            time.sleep(1)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
@@ -67,9 +61,66 @@ parser = argparse.ArgumentParser(description='Telemetry application saves and qu
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Telemetry configuration file')
 parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect to')
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
+parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
 
 # Parse the arguments
 args = parser.parse_args()
+
+def initializeTelemetryConfig():
+    '''
+    Initialize telemetry configuration file from telemetry.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Telemetry")
+    shutil.copy(os.path.join(path, "telemetry.sample.ini"), os.path.join(path, "telemetry.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+def configureTelemetry(args, telemetryConfigPath):
+    '''
+    Configure proxy configuration file from command line
+
+    :param args: argparse arguments
+    :param proxyConfigPath: Path to proxy.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "telemetry.ini"))
+
+    # Configure UNITx sections
+    unit = 'UNIT' + str(args.unit)
+    if args.unit is not 0:
+        try:
+            config.add_section(unit)
+
+        except ConfigParser.DuplicateSectionError:
+            pass
+
+    if args.callsign is not None:
+        config.set('TELEMETRY', unit + 'CALL', args.callsign)
+    if args.nodeid is not None:
+        config.set('TELEMETRY', unit + 'ID', args.nodeid)
+
+    with open(telemetryConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+# Now act upon the command line arguments
+# Initialize and configure proxy
+if args.init:
+    initializeTelemetryConfig()
+configureTelemetry(args, telemetryConfigPath)
+
+# Read in telemetry configuration parameters
+telemetryFile = telemetryConfig.read(telemetryConfigPath)
+
+if len(telemetryFile) == 0:
+    #  File missing, indicate error and infinite loop
+    while True:
+            logger.error("telemetry.ini missing")
+            time.sleep(1)
 
 def telemetry_worker(config):
     """
