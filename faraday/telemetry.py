@@ -560,10 +560,12 @@ def sqlInsert(data):
     :return: Status True or False on SQL insertion success
     """
 
-    # Read in name of telemetry database
+    # Read in name of database
     try:
-        db = telemetryConfig.get("DATABASE", "FILENAME")
-        db = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', db)
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        db = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
