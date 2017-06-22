@@ -17,6 +17,7 @@ from collections import deque
 import os
 import sqlite3
 import json
+import sys
 
 from flask import Flask
 from flask import request
@@ -26,21 +27,30 @@ from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import telemetryparser
 
 # Start logging after importing modules
-try:
-    filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', 'loggingConfig.ini')
-    logging.config.fileConfig(filename)
-    logger = logging.getLogger('telemetry')
 
-except ConfigParser.Error as e:
-    #  File missing, indicate error and infinite loop. Logger isn't available.
-    while True:
-        print("ERROR: loggingConfig.ini missing")
-        time.sleep(1)
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+logger = logging.getLogger('Telemetry')
+
+#Create Proxy configuration file path
+telemetryConfigPath = os.path.join(path, "telemetry.ini")
+logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'Telemetry', 'telemetry.ini')
-telemetryFile = telemetryConfig.read(filename)
+telemetryFile = telemetryConfig.read(telemetryConfigPath)
 
 if len(telemetryFile) == 0:
     #  File missing, indicate error and infinite loop
