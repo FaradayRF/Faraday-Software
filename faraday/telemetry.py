@@ -77,6 +77,7 @@ parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Farada
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeTelemetryConfig():
     '''
     Initialize telemetry configuration file from telemetry.sample.ini
@@ -88,6 +89,7 @@ def initializeTelemetryConfig():
     shutil.copy(os.path.join(path, "telemetry.sample.ini"), os.path.join(path, "telemetry.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
+
 
 def initializeTelemetryLog(config):
     '''
@@ -134,6 +136,7 @@ def showTelemetryLogs():
             logger.info(file)
     sys.exit(0)
 
+
 def configureTelemetry(args, telemetryConfigPath):
     '''
     Configure proxy configuration file from command line
@@ -176,6 +179,7 @@ def configureTelemetry(args, telemetryConfigPath):
     with open(telemetryConfigPath, 'wb') as configfile:
         config.write(configfile)
 
+
 # Now act upon the command line arguments
 # Initialize and configure proxy
 if args.init:
@@ -203,6 +207,7 @@ if len(telemetryFile) == 0:
     while True:
             logger.error("telemetry.ini missing")
             time.sleep(1)
+
 
 def telemetry_worker(config):
     """
@@ -826,8 +831,6 @@ def queryDb(parameters):
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         return False
-
-
 
     # Connect to database, create SQL query, execute query, and close database
     try:
