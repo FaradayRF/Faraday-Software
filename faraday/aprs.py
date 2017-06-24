@@ -21,15 +21,30 @@ import argparse
 import shutil
 
 # Start logging after importing modules
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'APRS', 'loggingConfig.ini')
-logging.config.fileConfig(filename)
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
 logger = logging.getLogger('APRS')
 
 # Load Telemetry Configuration from telemetry.ini file
-# Should have common file for apps...
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'APRS', 'aprs.ini')
+
+#Create Proxy configuration file path
+aprsConfigPath = os.path.join(path, "aprs.ini")
+logger.debug('aprs.ini PATH: ' + aprsConfigPath)
+
 aprsConfig = ConfigParser.RawConfigParser()
-aprsConfig.read(filename)
+aprsConfig.read(aprsConfigPath)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
