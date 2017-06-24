@@ -16,6 +16,9 @@ import socket
 import requests
 import os
 from time import sleep
+import sys
+import argparse
+import shutil
 
 # Start logging after importing modules
 filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'APRS', 'loggingConfig.ini')
