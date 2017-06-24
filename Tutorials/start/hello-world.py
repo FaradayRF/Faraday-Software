@@ -18,7 +18,7 @@ faraday_cmd = faradaycommands.faraday_commands()
 callsign = 'REPLACEME'
 node_id = 0
 
-while(1):
+while True:
     #Turn LED 1 ON (GREEN)
     print "Turning LED 1 ON"
     command = faraday_cmd.CommandLocalGPIOLED1On()

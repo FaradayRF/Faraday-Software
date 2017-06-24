@@ -112,7 +112,7 @@ class ReceiveObject(threading.Thread):
 
     def run(self):
         # Loop continuously through the faraday experimental RF command message application RX routine
-        while 1:
+        while True:
             rx_message_dict = self.faraday_rx_msg_object.rxmsgloop(self.local_device_callsign,
                                                                    self.local_device_node_id,
                                                                    self.rx_uart_service_port_application_number,

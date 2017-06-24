@@ -254,7 +254,7 @@ def uart_worker(modem, getDicts, units, log):
     getDicts[modem['unit']] = {}
 
     # Loop through each unit checking for data, if True place into deque
-    while(1):
+    while True:
         # Place data into the FIFO coming from UART
         try:
             for port in modem['com'].RxPortListOpen():

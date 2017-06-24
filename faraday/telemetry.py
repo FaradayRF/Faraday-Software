@@ -29,7 +29,6 @@ from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import telemetryparser
 
 # Start logging after importing modules
-
 relpath1 = os.path.join('etc', 'faraday')
 relpath2 = os.path.join('..', 'etc', 'faraday')
 setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
@@ -46,7 +45,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Telemetry')
 
-#Create Proxy configuration file path
+# Create Proxy configuration file path
 telemetryConfigPath = os.path.join(path, "telemetry.ini")
 logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
@@ -139,10 +138,10 @@ def showTelemetryLogs():
 
 def configureTelemetry(args, telemetryConfigPath):
     '''
-    Configure proxy configuration file from command line
+    Configure telemetry configuration file from command line
 
     :param args: argparse arguments
-    :param proxyConfigPath: Path to proxy.ini file
+    :param telemetryConfigPath: Path to telemetry.ini file
     :return: None
     '''
 
@@ -181,7 +180,7 @@ def configureTelemetry(args, telemetryConfigPath):
 
 
 # Now act upon the command line arguments
-# Initialize and configure proxy
+# Initialize and configure telemetry
 if args.init:
     initializeTelemetryConfig()
 configureTelemetry(args, telemetryConfigPath)
