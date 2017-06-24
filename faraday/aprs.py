@@ -53,6 +53,12 @@ telemetryDicts = {}
 parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize APRS configuration file')
 parser.add_argument('--callsign', help='Set APRS-IS callsign for passcode generation')
+parser.add_argument('--server', help='Set APRS-IS server address')
+parser.add_argument('--port', help='Set APRS-IS server port')
+parser.add_argument('--rate', help='Set APRS-IS update rate in seconds')
+parser.add_argument('--stationsage', help='Set age station date can be to send to APRS-IS in seconds')
+parser.add_argument('--comment', help='Set APRS comment for nodes, use quotes(43 characters maximum)')
+parser.add_argument('--altcomment', help='Set APRS alternate comment for access points, use quotes (43 characters maximum)')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -84,6 +90,18 @@ def configureAPRS(args, aprsConfigPath):
 
     if args.callsign is not None:
         config.set('APRSIS', 'CALLSIGN', args.callsign)
+    if args.server is not None:
+        config.set('APRSIS', 'SERVER', args.server)
+    if args.port is not None:
+        config.set('APRSIS', 'PORT', args.port)
+    if args.rate is not None:
+        config.set('APRSIS', 'RATE', args.rate)
+    if args.stationsage is not None:
+        config.set('APRSIS', 'STATIONSAGE', args.stationsage)
+    if args.comment is not None:
+        config.set('APRS', 'COMMENT', args.comment[:43])
+    if args.altcomment is not None:
+        config.set('APRS', 'ALTCOMMENT', args.altcomment[:43])
 
 
     with open(aprsConfigPath, 'wb') as configfile:
