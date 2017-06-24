@@ -57,7 +57,7 @@ parser.add_argument('--server', help='Set APRS-IS server address')
 parser.add_argument('--port', help='Set APRS-IS server port')
 parser.add_argument('--rate', help='Set APRS-IS update rate in seconds')
 parser.add_argument('--stationsage', help='Set age station date can be to send to APRS-IS in seconds')
-parser.add_argument('--comment', help='Set APRS comment for nodes, use quotes(43 characters maximum)')
+parser.add_argument('--comment', help='Set APRS comment for nodes, use quotes (43 characters maximum)')
 parser.add_argument('--altcomment', help='Set APRS alternate comment for access points, use quotes (43 characters maximum)')
 
 # Parse the arguments
