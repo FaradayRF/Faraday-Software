@@ -49,6 +49,45 @@ aprsConfig.read(aprsConfigPath)
 # Create and initialize dictionary queues
 telemetryDicts = {}
 
+# Command line input
+parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize APRS configuration file')
+parser.add_argument('--callsign', help='Set APRS-IS callsign for passcode generation')
+
+# Parse the arguments
+args = parser.parse_args()
+
+def initializeAPRSConfig():
+    '''
+    Initialize APRS configuration file from aprs.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing APRS")
+    shutil.copy(os.path.join(path, "aprs.sample.ini"), os.path.join(path, "aprs.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def configureAPRS(args, aprsConfigPath):
+    '''
+    Configure aprs configuration file from command line
+
+    :param args: argparse arguments
+    :param aprsConfigPath: Path to aprs.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "aprs.ini"))
+
+    if args.callsign is not None:
+        config.set('APRSIS', 'CALLSIGN', args.callsign)
+
+
+    with open(aprsConfigPath, 'wb') as configfile:
+        config.write(configfile)
 
 def aprs_worker(config, sock):
     """
@@ -83,6 +122,15 @@ def aprs_worker(config, sock):
 
         # Sleep for intended update rate (seconds)
         sleep(rate)
+
+# Now act upon the command line arguments
+# Initialize and configure aprs
+if args.init:
+    initializeAPRSConfig()
+configureAPRS(args, aprsConfigPath)
+
+# Read in telemetry configuration parameters
+aprsFile = aprsConfig.read(aprsConfigPath)
 
 
 def getStations():
