@@ -63,6 +63,7 @@ parser.add_argument('--altcomment', help='Set APRS alternate comment for access 
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeAPRSConfig():
     '''
     Initialize APRS configuration file from aprs.sample.ini
@@ -103,9 +104,9 @@ def configureAPRS(args, aprsConfigPath):
     if args.altcomment is not None:
         config.set('APRS', 'ALTCOMMENT', args.altcomment[:43])
 
-
     with open(aprsConfigPath, 'wb') as configfile:
         config.write(configfile)
+
 
 def aprs_worker(config, sock):
     """
@@ -140,6 +141,7 @@ def aprs_worker(config, sock):
 
         # Sleep for intended update rate (seconds)
         sleep(rate)
+
 
 # Now act upon the command line arguments
 # Initialize and configure aprs
