@@ -51,7 +51,58 @@ simpleuiConfigPath = os.path.join(path, "simpleui.ini")
 logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
 
 simpleuiConfig = ConfigParser.RawConfigParser()
+
+# Command line input
+parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
+parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
+parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
+
+# Parse the arguments
+args = parser.parse_args()
+
+def initializeSimpleUIConfig():
+    '''
+    Initialize SimpleUI configuration file from simpleui.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing SimpleUI")
+    shutil.copy(os.path.join(path, "simpleUI.sample.ini"), os.path.join(path, "simpleui.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def configureSimpleUI(args, simpleuiConfigPath):
+    '''
+    Configure SimpleUI configuration file from command line
+
+    :param args: argparse arguments
+    :param SimpleUIConfigPath: Path to simpleui.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "simpleui.ini"))
+
+    if args.callsign is not None:
+        config.set('SIMPLEUI', 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        config.set('SIMPLEUI', 'NODEID', args.nodeid)
+
+    with open(simpleuiConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+# Now act upon the command line arguments
+# Initialize and configure SimpleUI
+if args.init:
+    initializeSimpleUIConfig()
+configureSimpleUI(args, simpleuiConfigPath)
+
+# Read in configuration file settings
 simpleuiConfig.read(simpleuiConfigPath)
+
 
 # Initialize Flask microframework
 app = Flask(__name__,
