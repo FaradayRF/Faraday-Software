@@ -57,6 +57,16 @@ parser = argparse.ArgumentParser(description='SimpleUI application provides a si
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
 parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
 parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
+parser.add_argument('--cmdlocalcallsign', help='Set Local SimpleUI command callsign')
+parser.add_argument('--cmdlocalnodeid', help='Set Local SimpleUI command nodeid')
+parser.add_argument('--cmdremotecallsign', help='Set remote SimpleUI command callsign')
+parser.add_argument('--cmdremotenodeid', help='Set remote SimpleUI command nodeid')
+parser.add_argument('--flaskhost', help='Set Flask server hostname/address')
+parser.add_argument('--flaskport', help='Set Flask server port')
+parser.add_argument('--proxyhost', help='Set Proxy server hostname/address')
+parser.add_argument('--proxyport', help='Set Proxy server port')
+parser.add_argument('--telemetryhost', help='Set Telemetry server hostname/address')
+parser.add_argument('--telemetryport', help='Set Telemetry server port')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -90,6 +100,26 @@ def configureSimpleUI(args, simpleuiConfigPath):
         config.set('SIMPLEUI', 'CALLSIGN', args.callsign)
     if args.nodeid is not None:
         config.set('SIMPLEUI', 'NODEID', args.nodeid)
+    if args.cmdlocalcallsign is not None:
+        config.set('SIMPLEUI', 'LOCALCALLSIGN', args.cmdlocalcallsign)
+    if args.cmdlocalnodeid is not None:
+        config.set('SIMPLEUI', 'LOCALNODEID', args.cmdlocalnodeid)
+    if args.cmdremotecallsign is not None:
+        config.set('SIMPLEUI', 'REMOTECALLSIGN', args.cmdremotecallsign)
+    if args.cmdremotenodeid is not None:
+        config.set('SIMPLEUI', 'REMOTENODEID', args.cmdremotenodeid)
+    if args.flaskhost is not None:
+        config.set('FLASK', 'HOST', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'PORT', args.flaskport)
+    if args.proxyhost is not None:
+        config.set('PROXY', 'HOST', args.proxyhost)
+    if args.proxyport is not None:
+        config.set('PROXY', 'PORT', args.proxyport)
+    if args.telemetryhost is not None:
+        config.set('TELEMETRY', 'HOST', args.telemetryhost)
+    if args.telemetryport is not None:
+        config.set('TELEMETRY', 'PORT', args.telemetryport)
 
     with open(simpleuiConfigPath, 'wb') as configfile:
         config.write(configfile)
