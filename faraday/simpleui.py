@@ -71,6 +71,7 @@ parser.add_argument('--telemetryport', help='Set Telemetry server port')
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeSimpleUIConfig():
     '''
     Initialize SimpleUI configuration file from simpleui.sample.ini
@@ -123,6 +124,7 @@ def configureSimpleUI(args, simpleuiConfigPath):
 
     with open(simpleuiConfigPath, 'wb') as configfile:
         config.write(configfile)
+
 
 # Now act upon the command line arguments
 # Initialize and configure SimpleUI
@@ -300,6 +302,7 @@ def simpleui():
                                                                                 remotenodeid,
                                                                                 gpioallocations.DIGITAL_IO_0,
                                                                                 0, 0, 0, 0, 0))
+
         if request.form["IO"] == "GPIO0R OFF":
             logger.debug("Remote {0}-{1} GPIO0 commanded OFF".format(remotecallsign, remotenodeid))
             command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
