@@ -30,15 +30,28 @@ from faraday.proxyio import faradaycommands
 from faraday.proxyio import gpioallocations
 
 # Start logging after importing modules
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'loggingConfig.ini')
-filename = os.path.abspath(filename)
-logging.config.fileConfig(filename)
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
 logger = logging.getLogger('SimpleUI')
 
-# Load configuration file
-simpleuiconfig = ConfigParser.RawConfigParser()
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'simpleui.ini')
-simpleuiconfig.read(filename)
+#Create SimpleUI configuration file path
+simpleuiConfigPath = os.path.join(path, "simpleui.ini")
+logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
+
+simpleuiConfig = ConfigParser.RawConfigParser()
+simpleuiConfig.read(simpleuiConfigPath)
 
 # Initialize Flask microframework
 app = Flask(__name__,
@@ -57,8 +70,8 @@ def simpleui():
     """
     if request.method == "GET":
         # Obtain telemetry station from config file
-        callsign = simpleuiconfig.get("SIMPLEUI", "CALLSIGN").upper()
-        nodeid = simpleuiconfig.getint("SIMPLEUI", "NODEID")
+        callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
+        nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
 
         #Return HTML/Javascript template
         return render_template('index.html',
@@ -72,8 +85,8 @@ def simpleui():
         faraday_cmd = faradaycommands.faraday_commands()
 
         # Obtain local station from config file, check form data for intended command
-        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
-        nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
+        callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
+        nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
 
         if request.form["IO"] == "LED1 ON":
             logger.debug("Local {0}-{1} LED1 commanded ON".format(callsign, nodeid))
@@ -180,8 +193,8 @@ def simpleui():
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
         # Obtain remote station from config file, check form data for intended command
-        remotecallsign = simpleuiconfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
-        remotenodeid = simpleuiconfig.getint("SIMPLEUI", "REMOTENODEID")
+        remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
+        remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
 
         if request.form["IO"] == "LED1R ON":
             logger.debug("Remote {0}-{1} LED1 commanded ON".format(remotecallsign, remotenodeid))
@@ -360,8 +373,8 @@ def main():
     logger.info('Starting Simple User Interface')
 
     # Start the flask server on localhost:8000
-    uihost = simpleuiconfig.get("FLASK", "host")
-    uiport = simpleuiconfig.getint("FLASK", "port")
+    uihost = simpleuiConfig.get("FLASK", "host")
+    uiport = simpleuiConfig.getint("FLASK", "port")
 
     app.run(host=uihost, port=uiport, threaded=True)
 
