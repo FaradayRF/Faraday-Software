@@ -15,6 +15,10 @@ import json
 import logging.config
 import ConfigParser
 import os
+import sys
+import argparse
+import shutil
+import webbrowser
 
 from flask import Flask
 from flask import request
@@ -27,15 +31,122 @@ from faraday.proxyio import faradaycommands
 from faraday.proxyio import gpioallocations
 
 # Start logging after importing modules
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'loggingConfig.ini')
-filename = os.path.abspath(filename)
-logging.config.fileConfig(filename)
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
 logger = logging.getLogger('SimpleUI')
 
-# Load configuration file
-simpleuiconfig = ConfigParser.RawConfigParser()
-filename = os.path.join(os.path.dirname(__file__), '..', 'Applications', 'SimpleUI', 'simpleui.ini')
-simpleuiconfig.read(filename)
+#Create SimpleUI configuration file path
+simpleuiConfigPath = os.path.join(path, "simpleui.ini")
+logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
+
+simpleuiConfig = ConfigParser.RawConfigParser()
+
+# Command line input
+parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
+parser.add_argument('--start', action='store_true', help='Start SimpleUI in browser')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
+parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
+parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
+parser.add_argument('--cmdlocalcallsign', help='Set Local SimpleUI command callsign')
+parser.add_argument('--cmdlocalnodeid', help='Set Local SimpleUI command nodeid')
+parser.add_argument('--cmdremotecallsign', help='Set remote SimpleUI command callsign')
+parser.add_argument('--cmdremotenodeid', help='Set remote SimpleUI command nodeid')
+parser.add_argument('--flaskhost', help='Set Flask server hostname/address')
+parser.add_argument('--flaskport', help='Set Flask server port')
+parser.add_argument('--proxyhost', help='Set Proxy server hostname/address')
+parser.add_argument('--proxyport', help='Set Proxy server port')
+parser.add_argument('--telemetryhost', help='Set Telemetry server hostname/address')
+parser.add_argument('--telemetryport', help='Set Telemetry server port')
+
+# Parse the arguments
+args = parser.parse_args()
+
+
+def initializeSimpleUIConfig():
+    '''
+    Initialize SimpleUI configuration file from simpleui.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing SimpleUI")
+    shutil.copy(os.path.join(path, "simpleUI.sample.ini"), os.path.join(path, "simpleui.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def configureSimpleUI(args, simpleuiConfigPath):
+    '''
+    Configure SimpleUI configuration file from command line
+
+    :param args: argparse arguments
+    :param SimpleUIConfigPath: Path to simpleui.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "simpleui.ini"))
+
+    if args.callsign is not None:
+        config.set('SIMPLEUI', 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        config.set('SIMPLEUI', 'NODEID', args.nodeid)
+    if args.cmdlocalcallsign is not None:
+        config.set('SIMPLEUI', 'LOCALCALLSIGN', args.cmdlocalcallsign)
+    if args.cmdlocalnodeid is not None:
+        config.set('SIMPLEUI', 'LOCALNODEID', args.cmdlocalnodeid)
+    if args.cmdremotecallsign is not None:
+        config.set('SIMPLEUI', 'REMOTECALLSIGN', args.cmdremotecallsign)
+    if args.cmdremotenodeid is not None:
+        config.set('SIMPLEUI', 'REMOTENODEID', args.cmdremotenodeid)
+    if args.flaskhost is not None:
+        config.set('FLASK', 'HOST', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'PORT', args.flaskport)
+    if args.proxyhost is not None:
+        config.set('PROXY', 'HOST', args.proxyhost)
+    if args.proxyport is not None:
+        config.set('PROXY', 'PORT', args.proxyport)
+    if args.telemetryhost is not None:
+        config.set('TELEMETRY', 'HOST', args.telemetryhost)
+    if args.telemetryport is not None:
+        config.set('TELEMETRY', 'PORT', args.telemetryport)
+
+    with open(simpleuiConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+
+# Now act upon the command line arguments
+# Initialize and configure SimpleUI
+if args.init:
+    initializeSimpleUIConfig()
+configureSimpleUI(args, simpleuiConfigPath)
+
+# Read in configuration file settings
+simpleuiConfig.read(simpleuiConfigPath)
+
+# Start web browser pointed to SimpleUI if requested
+if args.start:
+    host = simpleuiConfig.get("FLASK", "HOST")
+    port = simpleuiConfig.get("FLASK", "PORT")
+    url = "http://" + host + ":" + port
+
+    logging.debug("SimpleUI URL: " + url)
+
+    webbrowser.open_new(url)
+
 
 # Initialize Flask microframework
 app = Flask(__name__,
@@ -54,8 +165,8 @@ def simpleui():
     """
     if request.method == "GET":
         # Obtain telemetry station from config file
-        callsign = simpleuiconfig.get("SIMPLEUI", "CALLSIGN").upper()
-        nodeid = simpleuiconfig.getint("SIMPLEUI", "NODEID")
+        callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
+        nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
 
         #Return HTML/Javascript template
         return render_template('index.html',
@@ -69,8 +180,8 @@ def simpleui():
         faraday_cmd = faradaycommands.faraday_commands()
 
         # Obtain local station from config file, check form data for intended command
-        callsign = simpleuiconfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
-        nodeid = simpleuiconfig.getint("SIMPLEUI", "LOCALNODEID")
+        callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
+        nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
 
         if request.form["IO"] == "LED1 ON":
             logger.debug("Local {0}-{1} LED1 commanded ON".format(callsign, nodeid))
@@ -177,8 +288,8 @@ def simpleui():
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
         # Obtain remote station from config file, check form data for intended command
-        remotecallsign = simpleuiconfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
-        remotenodeid = simpleuiconfig.getint("SIMPLEUI", "REMOTENODEID")
+        remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
+        remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
 
         if request.form["IO"] == "LED1R ON":
             logger.debug("Remote {0}-{1} LED1 commanded ON".format(remotecallsign, remotenodeid))
@@ -203,6 +314,7 @@ def simpleui():
                                                                                 remotenodeid,
                                                                                 gpioallocations.DIGITAL_IO_0,
                                                                                 0, 0, 0, 0, 0))
+
         if request.form["IO"] == "GPIO0R OFF":
             logger.debug("Remote {0}-{1} GPIO0 commanded OFF".format(remotecallsign, remotenodeid))
             command = faraday_cmd.CommandLocal(9, faraday_cmd.CommandRemoteGPIO(remotecallsign,
@@ -357,8 +469,8 @@ def main():
     logger.info('Starting Simple User Interface')
 
     # Start the flask server on localhost:8000
-    uihost = simpleuiconfig.get("FLASK", "host")
-    uiport = simpleuiconfig.getint("FLASK", "port")
+    uihost = simpleuiConfig.get("FLASK", "host")
+    uiport = simpleuiConfig.getint("FLASK", "port")
 
     app.run(host=uihost, port=uiport, threaded=True)
 
