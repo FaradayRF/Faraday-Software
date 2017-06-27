@@ -82,7 +82,7 @@ def initializeSimpleUIConfig():
     '''
 
     logger.info("Initializing SimpleUI")
-    shutil.copy(os.path.join(path, "simpleUI.sample.ini"), os.path.join(path, "simpleui.ini"))
+    shutil.copy(os.path.join(path, "simpleui.sample.ini"), os.path.join(path, "simpleui.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
