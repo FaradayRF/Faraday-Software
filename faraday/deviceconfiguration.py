@@ -11,19 +11,34 @@ import base64
 from flask import Flask
 from flask import request
 
-# Add Faraday library to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
 from faraday.proxyio import deviceconfig
 
+# Start logging after importing modules
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+logger = logging.getLogger('Device-Configuration')
+logger.error('test')
+
 # Global Constants
 UART_PORT_APP_COMMAND = 2
 
-# Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
-logger = logging.getLogger('deviceconfiguration')
+# # Start logging after importing modules
+# logging.config.fileConfig('loggingConfig.ini')
+# logger = logging.getLogger('deviceconfiguration')
 
 # Load Telemetry Configuration from telemetry.ini file
 # Should have common file for apps...
