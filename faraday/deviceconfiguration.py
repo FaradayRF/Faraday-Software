@@ -7,6 +7,8 @@ import sys
 import json
 import ConfigParser
 import base64
+import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -38,6 +40,33 @@ logger.debug('deviceconfiguration.ini PATH: ' + deviceConfigurationConfigPath)
 
 # Load Device Configuration Configuration from deviceconfiguration.ini file
 deviceConfig = ConfigParser.RawConfigParser()
+
+# Command line input
+parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
+parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
+parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
+
+# Parse the arguments
+args = parser.parse_args()
+
+def initializeDeviceConfigurationConfig():
+    '''
+    Initialize device configuration configuration file from deviceconfiguration.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Device Configuration")
+    shutil.copy(os.path.join(path, "deviceconfiguration.sample.ini"), os.path.join(path, "deviceconfiguration.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+# Now act upon the command line arguments
+# Initialize and configure Device Configuration
+if args.init:
+    initializeDeviceConfigurationConfig()
+configureDeviceConfiguration(args, deviceConfigurationConfigPath)
 
 # Load configuration from deviceconfiguration.ini file
 deviceConfig.read(deviceConfigurationConfigPath)
