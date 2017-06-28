@@ -45,7 +45,9 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 # Send POST data to Proxy to configure unit
 try:
+    print 'etst'
     r = requests.post('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+    print r.url
 
 except requests.exceptions.RequestException as e:
     # Some error occurred

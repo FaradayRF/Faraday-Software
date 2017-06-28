@@ -9,6 +9,7 @@ import ConfigParser
 import base64
 import argparse
 import shutil
+import requests
 
 from flask import Flask
 from flask import request
@@ -46,6 +47,7 @@ parser = argparse.ArgumentParser(description='Device Configuration application p
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
+parser.add_argument('--program', action='store_true', help='Program Faraday radio with configuration')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -61,6 +63,37 @@ def initializeDeviceConfigurationConfig():
     shutil.copy(os.path.join(path, "deviceconfiguration.sample.ini"), os.path.join(path, "deviceconfiguration.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
+
+def programFaraday(deviceConfigurationConfigPath):
+    '''
+
+    :param deviceConfigurationConfigPath: Path to deviceconfiguration.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "deviceconfiguration.ini"))
+
+    # Variables
+    local_device_callsign = config.get("DEVICES", "CALLSIGN")
+    local_device_node_id = config.get("DEVICES", "NODEID")
+    local_device_callsign = str(local_device_callsign).upper()
+
+    hostname = config.get("PROXY", "HOST")
+    port = config.get("PROXY", "PORT")
+    cmdPort = config.get("PROXY", "CMDPORT")
+
+    # Send POST data to Proxy to configure unit
+    try:
+        r = requests.post('http://{0}:{1}'.format(hostname, port),
+                          params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id), 'port': cmdPort})
+        logger.info(r.url)
+        logger.info("Sent Programming Request")
+
+    except requests.exceptions.RequestException as e:
+        # Some error occurred
+        logger.error(r.text)
+
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath):
     '''
@@ -91,7 +124,6 @@ configureDeviceConfiguration(args, deviceConfigurationConfigPath)
 
 # Load configuration from deviceconfiguration.ini file
 deviceConfig.read(deviceConfigurationConfigPath)
-logger.info("worked!")
 
 # Global Constants
 UART_PORT_APP_COMMAND = 2
@@ -104,6 +136,10 @@ faradayCmd = faradaycommands.faraday_commands()
 
 # Initialize Flask microframework
 app = Flask(__name__)
+
+# Program the Faraday device
+if args.program:
+    programFaraday(deviceConfigurationConfigPath)
 
 
 @app.route('/', methods=['GET', 'POST'])
