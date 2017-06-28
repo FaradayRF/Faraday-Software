@@ -26,8 +26,8 @@ filename = os.path.abspath("deviceconfiguration.ini")
 config.read(filename)
 
 #Variables
-local_device_callsign = config.get("DEVICES", "UNIT0CALL")
-local_device_node_id = config.get("DEVICES", "UNIT0ID")
+local_device_callsign = config.get("DEVICES", "CALLSIGN")
+local_device_node_id = config.get("DEVICES", "NODEID")
 local_device_callsign = str(local_device_callsign).upper()
 
 hostname = config.get("FLASK", "HOST")

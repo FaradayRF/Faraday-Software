@@ -62,6 +62,27 @@ def initializeDeviceConfigurationConfig():
     logger.info("Initialization complete")
     sys.exit(0)
 
+def configureDeviceConfiguration(args, deviceConfigurationConfigPath):
+    '''
+    Configure device configuration configuration file from command line
+
+    :param args: argparse arguments
+    :param deviceConfigurationConfigPath: Path to deviceconfiguration.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "deviceconfiguration.ini"))
+
+    if args.callsign is not None:
+        config.set('DEVICES', 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        config.set('DEVICES', 'NODEID', args.nodeid)
+
+    with open(deviceConfigurationConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+
 # Now act upon the command line arguments
 # Initialize and configure Device Configuration
 if args.init:
