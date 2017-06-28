@@ -31,7 +31,17 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
         pass
 
 logger = logging.getLogger('Device-Configuration')
-logger.error('test')
+
+# Create Device Configuration configuration file path
+deviceConfigurationConfigPath = os.path.join(path, "deviceconfiguration.ini")
+logger.debug('deviceconfiguration.ini PATH: ' + deviceConfigurationConfigPath)
+
+# Load Device Configuration Configuration from deviceconfiguration.ini file
+deviceConfig = ConfigParser.RawConfigParser()
+
+# Load configuration from deviceconfiguration.ini file
+deviceConfig.read(deviceConfigurationConfigPath)
+logger.info("worked!")
 
 # Global Constants
 UART_PORT_APP_COMMAND = 2
@@ -39,11 +49,6 @@ UART_PORT_APP_COMMAND = 2
 # # Start logging after importing modules
 # logging.config.fileConfig('loggingConfig.ini')
 # logger = logging.getLogger('deviceconfiguration')
-
-# Load Telemetry Configuration from telemetry.ini file
-# Should have common file for apps...
-deviceConfig = ConfigParser.RawConfigParser()
-deviceConfig.read('deviceconfiguration.ini')
 
 # Initialize proxy object
 proxy = faradaybasicproxyio.proxyio()
