@@ -46,10 +46,6 @@ logger.info("worked!")
 # Global Constants
 UART_PORT_APP_COMMAND = 2
 
-# # Start logging after importing modules
-# logging.config.fileConfig('loggingConfig.ini')
-# logger = logging.getLogger('deviceconfiguration')
-
 # Initialize proxy object
 proxy = faradaybasicproxyio.proxyio()
 
