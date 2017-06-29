@@ -92,38 +92,39 @@ else:
     # Decode and depickle (serialize) device configuration parsed dictionary data
     b64_unit_json = base64.b64decode(raw_unit_json['data'])
     unit_configuration_dict = json.loads(b64_unit_json)
+    logging.info(unit_configuration_dict)
 
     #Print configuration values
-    print "\n************************************"
+    logging.info("************************************")
 
-    print "POST CONFIGURATION UPDATE"
-    print "\nBASIC"
-    print "Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']]
-    print "ID:", str(unit_configuration_dict['local_callsign_id'])
-    print "CONFIGBOOTBITMASK:", format(unit_configuration_dict['configuration_bitmask'], '#010b')
-    print "GPIO_P3:", format(unit_configuration_dict['default_gpio_port_3_bitmask'], '#010b')
-    print "GPIO_P4:", format(unit_configuration_dict['default_gpio_port_4_bitmask'], '#010b')
-    print "GPIO_P5:", format(unit_configuration_dict['default_gpio_port_5_bitmask'], '#010b')
-    print "\nRF"
-    print "BOOT_FREQUENCY_MHZ 0:", str(unit_configuration_dict['default_boot_freq_0'])
-    print "BOOT_FREQUENCY_MHZ 1:", str(unit_configuration_dict['default_boot_freq_1'])
-    print "BOOT_FREQUENCY_MHZ 2:", str(unit_configuration_dict['default_boot_freq_2'])
-    print "BOOT_RF_POWER:", str(unit_configuration_dict['default_rf_power'])
-    print "\nGPS"
-    print "DEFAULT_LATITUDE:", str(unit_configuration_dict['default_gps_latitude'])
-    print "DEFAULT_LATITUDE_DIR:", str(unit_configuration_dict['default_gps_latitude_dir'])
-    print "DEFAULT_LONGITUDE:", str(unit_configuration_dict['default_longitude'])
-    print "DEFAULT_LONGITUDE_DIR:", str(unit_configuration_dict['default_longitude_dir'])
-    print "DEFAULT_ALTITUDE:", str(unit_configuration_dict['default_altitude'])
-    print "DEFAULT_ALTITUDE_UNITS:", str(unit_configuration_dict['default_altitude_units'])
-    print "GPS_BOOT_BIT & GPS_PRESENT_BIT:", format(unit_configuration_dict['gps_boot_bitmask'], '#010b')
-    print "\nTELEMETRY"
-    print "UART_TELEMETRY_BOOT_BIT & RF_TELEMETRY_BOOT_BIT:", format(unit_configuration_dict['telemetry_boot_bitmask'], '#010b')
-    print "TELEMETRY_DEFAULT_UART_INTERVAL:", str(unit_configuration_dict['default_telemetry_uart_beacon_interval'])
-    print "TELEMETRY_DEFAULT_RF_INTERVAL:", str(unit_configuration_dict['default_telemetry_rf_beacon_interval'])
-
-    print "************************************"
-    print "\nQuit with ctrl+c"
+    logging.info("POST CONFIGURATION UPDATE")
+    logging.info("***BASIC***")
+    #logging.info("Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']])
+    logging.info("ID: {0}".format(str(unit_configuration_dict['local_callsign_id'])))
+    logging.info("CONFIGBOOTBITMASK: {0}".format(unit_configuration_dict['configuration_bitmask'], '#010b'))
+    logging.info("GPIO_P3: {0}".format(unit_configuration_dict['default_gpio_port_3_bitmask'], '#010b'))
+    logging.info("GPIO_P4: {0}".format(unit_configuration_dict['default_gpio_port_4_bitmask'], '#010b'))
+    logging.info("GPIO_P5: {0}".format(unit_configuration_dict['default_gpio_port_5_bitmask'], '#010b'))
+    logging.info("***RF***")
+    logging.info("BOOT_FREQUENCY_MHZ 0: {0}".format(str(unit_configuration_dict['default_boot_freq_0'])))
+    logging.info( "BOOT_FREQUENCY_MHZ 1: {0}".format(str(unit_configuration_dict['default_boot_freq_1'])))
+    logging.info( "BOOT_FREQUENCY_MHZ 2: {0}".format(str(unit_configuration_dict['default_boot_freq_2'])))
+    logging.info( "BOOT_RF_POWER: {0}".format(str(unit_configuration_dict['default_rf_power'])))
+    logging.info( "***GPS***")
+    logging.info( "DEFAULT_LATITUDE: {0}".format(str(unit_configuration_dict['default_gps_latitude'])))
+    logging.info( "DEFAULT_LATITUDE_DIR: {0}".format(str(unit_configuration_dict['default_gps_latitude_dir'])))
+    logging.info( "DEFAULT_LONGITUDE: {0}".format(str(unit_configuration_dict['default_longitude'])))
+    logging.info( "DEFAULT_LONGITUDE_DIR: {0}".format(str(unit_configuration_dict['default_longitude_dir'])))
+    logging.info( "DEFAULT_ALTITUDE: {0}".format(str(unit_configuration_dict['default_altitude'])))
+    logging.info( "DEFAULT_ALTITUDE_UNITS: {0}".format(str(unit_configuration_dict['default_altitude_units'])))
+    logging.info( "GPS_BOOT_BIT & GPS_PRESENT_BIT: {0}".format(unit_configuration_dict['gps_boot_bitmask'], '#010b'))
+    logging.info( "***TELEMETRY***")
+    logging.info( "UART_TELEMETRY_BOOT_BIT & RF_TELEMETRY_BOOT_BIT: {0}".format(unit_configuration_dict['telemetry_boot_bitmask'], '#010b'))
+    logging.info( "TELEMETRY_DEFAULT_UART_INTERVAL: {0}".format(str(unit_configuration_dict['default_telemetry_uart_beacon_interval'])))
+    logging.info( "TELEMETRY_DEFAULT_RF_INTERVAL: {0}".format(str(unit_configuration_dict['default_telemetry_rf_beacon_interval'])))
+    #
+    logging.info( "************************************")
+    logging.info( "Quit with ctrl+c")
     while True:
         #Loop until user presses ctrl+c so they can read response
         time.sleep(1)
