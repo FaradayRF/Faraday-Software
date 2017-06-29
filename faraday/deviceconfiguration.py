@@ -37,8 +37,9 @@ logger = logging.getLogger('Device-Configuration')
 
 # Create Device Configuration configuration file path
 deviceConfigurationConfigPath = os.path.join(path, "deviceconfiguration.ini")
+faradayConfigPath = os.path.join(path, "faraday_config.ini")
 logger.debug('deviceconfiguration.ini PATH: ' + deviceConfigurationConfigPath)
-logging.info(os.path.isfile(deviceConfigurationConfigPath))
+logger.debug('faraday_config.ini PATH: ' + faradayConfigPath)
 
 # Load Device Configuration Configuration from deviceconfiguration.ini file
 deviceConfig = ConfigParser.RawConfigParser()
@@ -49,6 +50,28 @@ parser.add_argument('--init-config', dest='init', action='store_true', help='Ini
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
 parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
+
+# Faraday Configuration
+parser.add_argument('--fcallsign', help='Set Faraday radio callsign')
+parser.add_argument('--fnodeid', type=int, help='Set Faraday radio nodeid')
+parser.add_argument('--fconfigboot', action='store_false', help='Set Faraday radio config boot bit OFF')
+parser.add_argument('--fgpiop3', type=int, help='Set Faraday radio fgpio_p3')
+parser.add_argument('--fgpiop4', type=int, help='Set Faraday radio fgpio_p4')
+parser.add_argument('--fgpiop5', type=int, help='Set Faraday radio fgpio_p5')
+parser.add_argument('--fbootfrequency', type=float, help='Set Faraday radio boot frequency')
+parser.add_argument('--fbootrfpower', type=int, help='Set Faraday radio boot RF power')
+parser.add_argument('--flatitude', type=float, help='Set Faraday radio default latitude')
+parser.add_argument('--flongitude', type=float, help='Set Faraday radio default longitude')
+parser.add_argument('--flatitudedir', help='Set Faraday radio default latitude direction (N/S)')
+parser.add_argument('--flongitudedir', help='Set Faraday radio default longitude direction (E/W)')
+parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude')
+# Purposely do not allow editing of GPS altitude units
+parser.add_argument('--fgpsboot', action='store_false',  help='Set Faraday radio GPS boot OFF')
+parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON/OFF')
+parser.add_argument('--fuarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry ON/OFF')
+parser.add_argument('--frftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON/OFF')
+parser.add_argument('--fuartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
+parser.add_argument('--frfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -108,7 +131,7 @@ def programFaraday(deviceConfigurationConfigPath):
         logger.error(r.text)
 
 
-def configureDeviceConfiguration(args, deviceConfigurationConfigPath):
+def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
     '''
     Configure device configuration configuration file from command line
 
@@ -118,15 +141,76 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "deviceconfiguration.ini"))
+    config.read(deviceConfigurationConfigPath)
+
+    fconfig = ConfigParser.RawConfigParser()
+    fconfig.read(faradayConfigPath)
+
+
 
     if args.callsign is not None:
         config.set('DEVICES', 'CALLSIGN', args.callsign)
     if args.nodeid is not None:
         config.set('DEVICES', 'NODEID', args.nodeid)
 
+    # Faraday radio configuration
+    if args.fcallsign is not None:
+        fconfig.set('BASIC', 'CALLSIGN', args.fcallsign)
+    if args.fnodeid is not None:
+        fconfig.set('BASIC', 'ID', args.fnodeid)
+    if args.fconfigboot:
+        fconfig.set('BASIC', 'configbootbitmask', 1)
+    else:
+        fconfig.set('BASIC', 'configbootbitmask', 0)
+    if args.fgpiop3 is not None:
+        fconfig.set('BASIC', 'gpio_P3', args.fgpiop3)
+    if args.fgpiop4 is not None:
+        fconfig.set('BASIC', 'gpio_p4', args.fgpiop4)
+    if args.fgpiop5 is not None:
+        fconfig.set('BASIC', 'gpio_p5', args.fgpiop5)
+    if args.fbootfrequency is not None:
+        fconfig.set('RF', 'boot_frequency_mhz', args.fbootfrequency)
+    if args.fbootrfpower is not None:
+        fconfig.set('RF', 'boot_rf_power', args.fbootrfpower)
+    if args.flatitude is not None:
+        fconfig.set('GPS', 'default_latitude', args.flatitude)
+    if args.flongitude is not None:
+        fconfig.set('GPS', 'default_longitude', args.flongitude)
+    if args.flatitudedir is not None:
+        fconfig.set('GPS', 'default_latitude_direction', args.flatitudedir)
+    if args.flongitudedir is not None:
+        fconfig.set('GPS', 'default_longitude_direction', args.flongitudedir)
+    if args.faltitude is not None:
+        fconfig.set('GPS', 'default_altitude', args.faltitude)
+    if args.fgpsboot:
+        fconfig.set('GPS', 'gps_boot_bit', 1)
+    else:
+        fconfig.set('GPS', 'gps_boot_bit', 0)
+    if args.fgps:
+        fconfig.set('GPS', 'gps_present_bit', 1)
+    else:
+        fconfig.set('GPS', 'gps_present_bit', 0)
+    if args.fuarttelemetry:
+        fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 1)
+    else:
+        fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 0)
+    if args.frftelemetry:
+        fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 1)
+    else:
+        fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 0)
+    if args.fuartinterval is not None:
+        fconfig.set('TELEMETRY', 'telemetry_default_uart_interval', args.fuartinterval)
+    if args.frfinterval is not None:
+        fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.frfinterval)
+
+    # Save device configuration
     with open(deviceConfigurationConfigPath, 'wb') as configfile:
         config.write(configfile)
+
+    # Save Faraday configuration
+    with open(faradayConfigPath, 'wb') as configfile:
+        fconfig.write(configfile)
+
 
 
 # Now act upon the command line arguments
@@ -138,11 +222,17 @@ if args.initfaraday:
 
 # Check if configuration file is present
 if not os.path.isfile(deviceConfigurationConfigPath):
-    logging.error("Please initialize with \'--init-config\' option")
+    logging.error("Please initialize device configuration with \'--init-config\' option")
+    sys.exit(0)
+
+# Check if configuration file is present
+faradayConfigPath = os.path.join(path, "faraday_config.ini")
+if not os.path.isfile(faradayConfigPath):
+    logging.error("Please initialize Faraday configuration with \'--init-faraday-config\' option")
     sys.exit(0)
 
 # Configure configuration file
-configureDeviceConfiguration(args, deviceConfigurationConfigPath)
+configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath)
 
 
 # Load configuration from deviceconfiguration.ini file
