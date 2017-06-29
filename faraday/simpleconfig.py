@@ -61,22 +61,21 @@ faraday_parser = telemetryparser.TelemetryParse()
 
 # Send POST data to Proxy to configure unit
 try:
-    print 'etst'
     r = requests.post('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
-    print r.url
+    logging.debug("POST URL: " + r.url)
 
 except requests.exceptions.RequestException as e:
     # Some error occurred
-    print r.text
+    logging.error(r.text)
 
 #Check to see if programming was successful (HTTP 204 response)
 if r.status_code != 204:
-    print r.text
+    logging.error(r.text)
 else:
     # Programming apparently successful. Let unit reboot and then query for flash data
 
     timer = 5  # Wait five seconds
-    print "Programmed Faraday, waiting {0} seconds for reboot".format(str(timer))
+    logging.info("Programmed Faraday, waiting {0} seconds for reboot".format(str(timer)))
     while(timer > 0):
         time.sleep(1)  # Sleep to allow unit to process, polling and slow, not sure why THIS slow...
         timer += -1
@@ -85,7 +84,7 @@ else:
         r = requests.get("http://127.0.0.1:8002", params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
     except requests.exceptions.RequestException as e:
         # Some error occurred
-        print r.text
+        logging.error(r.text)
 
     # Obtain JSON response with data from Faraday
     raw_unit_json = r.json()
