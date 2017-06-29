@@ -45,6 +45,7 @@ deviceConfig = ConfigParser.RawConfigParser()
 # Command line input
 parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
+parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
 parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
 
@@ -60,6 +61,18 @@ def initializeDeviceConfigurationConfig():
 
     logger.info("Initializing Device Configuration")
     shutil.copy(os.path.join(path, "deviceconfiguration.sample.ini"), os.path.join(path, "deviceconfiguration.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+def initializeFaradayConfig():
+    '''
+    Initialize Faraday radio configuration file from faraday_config.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Faraday Configuration")
+    shutil.copy(os.path.join(path, "faraday_config.sample.ini"), os.path.join(path, "faraday_config.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -119,6 +132,8 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath):
 # Initialize and configure Device Configuration
 if args.init:
     initializeDeviceConfigurationConfig()
+if args.initfaraday:
+    initializeFaradayConfig()
 configureDeviceConfiguration(args, deviceConfigurationConfigPath)
 
 # Load configuration from deviceconfiguration.ini file
