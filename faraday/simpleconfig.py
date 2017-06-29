@@ -63,6 +63,7 @@ faraday_parser = telemetryparser.TelemetryParse()
 try:
     r = requests.post('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
     logging.debug("POST URL: " + r.url)
+    logging.info("Sent POST configuration command to Proxy")
 
 except requests.exceptions.RequestException as e:
     # Some error occurred
@@ -92,7 +93,7 @@ else:
     # Decode and depickle (serialize) device configuration parsed dictionary data
     b64_unit_json = base64.b64decode(raw_unit_json['data'])
     unit_configuration_dict = json.loads(b64_unit_json)
-    logging.info(unit_configuration_dict)
+    logging.debug(unit_configuration_dict)
 
     #Print configuration values
     logging.info("************************************")
