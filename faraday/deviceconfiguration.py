@@ -47,7 +47,6 @@ parser = argparse.ArgumentParser(description='Device Configuration application p
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
-parser.add_argument('--program', action='store_true', help='Program Faraday radio with configuration')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -137,11 +136,6 @@ faradayCmd = faradaycommands.faraday_commands()
 # Initialize Flask microframework
 app = Flask(__name__)
 
-# Program the Faraday device
-if args.program:
-    programFaraday(deviceConfigurationConfigPath)
-
-
 @app.route('/', methods=['GET', 'POST'])
 def unitconfig():
     """
@@ -153,6 +147,7 @@ def unitconfig():
     """
     if request.method == "POST":
         try:
+            print "test POST"
             # Obtain URL parameters (for local unit device callsign/ID assignment)
             callsign = request.args.get("callsign", "%")
             nodeid = request.args.get("nodeid", "%")
