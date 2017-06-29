@@ -38,6 +38,7 @@ logger = logging.getLogger('Device-Configuration')
 # Create Device Configuration configuration file path
 deviceConfigurationConfigPath = os.path.join(path, "deviceconfiguration.ini")
 logger.debug('deviceconfiguration.ini PATH: ' + deviceConfigurationConfigPath)
+logging.info(os.path.isfile(deviceConfigurationConfigPath))
 
 # Load Device Configuration Configuration from deviceconfiguration.ini file
 deviceConfig = ConfigParser.RawConfigParser()
@@ -134,7 +135,15 @@ if args.init:
     initializeDeviceConfigurationConfig()
 if args.initfaraday:
     initializeFaradayConfig()
+
+# Check if configuration file is present
+if not os.path.isfile(deviceConfigurationConfigPath):
+    logging.error("Please initialize with \'--init-config\' option")
+    sys.exit(0)
+
+# Configure configuration file
 configureDeviceConfiguration(args, deviceConfigurationConfigPath)
+
 
 # Load configuration from deviceconfiguration.ini file
 deviceConfig.read(deviceConfigurationConfigPath)
