@@ -50,6 +50,7 @@ parser.add_argument('--init-config', dest='init', action='store_true', help='Ini
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
 parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
+parser.add_argument('--faradayconfig', action='store_true', help='Display Faraday configuration file contents')
 
 # Faraday Configuration
 parser.add_argument('--fcallsign', help='Set Faraday radio callsign')
@@ -60,11 +61,11 @@ parser.add_argument('--fgpiop4', type=int, help='Set Faraday radio fgpio_p4')
 parser.add_argument('--fgpiop5', type=int, help='Set Faraday radio fgpio_p5')
 parser.add_argument('--fbootfrequency', type=float, help='Set Faraday radio boot frequency')
 parser.add_argument('--fbootrfpower', type=int, help='Set Faraday radio boot RF power')
-parser.add_argument('--flatitude', type=float, help='Set Faraday radio default latitude')
-parser.add_argument('--flongitude', type=float, help='Set Faraday radio default longitude')
+parser.add_argument('--flatitude', type=float, help='Set Faraday radio default latitude. Format \"ddmm.mmmm\"')
+parser.add_argument('--flongitude', type=float, help='Set Faraday radio default longitude. Format \"dddmm.mmmm\"')
 parser.add_argument('--flatitudedir', help='Set Faraday radio default latitude direction (N/S)')
 parser.add_argument('--flongitudedir', help='Set Faraday radio default longitude direction (E/W)')
-parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude')
+parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
 # Purposely do not allow editing of GPS altitude units
 parser.add_argument('--fgpsboot', action='store_false',  help='Set Faraday radio GPS boot OFF')
 parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON/OFF')
@@ -130,6 +131,11 @@ def programFaraday(deviceConfigurationConfigPath):
         # Some error occurred
         logger.error(r.text)
 
+
+def displayConfig(faradayConfigPath):
+    with open(faradayConfigPath, 'r') as configFile:
+        print configFile.read()
+        sys.exit(0)
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
     '''
@@ -219,6 +225,8 @@ if args.init:
     initializeDeviceConfigurationConfig()
 if args.initfaraday:
     initializeFaradayConfig()
+if args.faradayconfig:
+    displayConfig(faradayConfigPath)
 
 # Check if configuration file is present
 if not os.path.isfile(deviceConfigurationConfigPath):
