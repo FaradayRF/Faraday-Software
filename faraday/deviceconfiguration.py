@@ -67,7 +67,7 @@ parser.add_argument('--flatitudedir', help='Set Faraday radio default latitude d
 parser.add_argument('--flongitudedir', help='Set Faraday radio default longitude direction (E/W)')
 parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
 # Purposely do not allow editing of GPS altitude units
-parser.add_argument('--fgpsboot', action='store_false',  help='Set Faraday radio GPS boot OFF')
+parser.add_argument('--fgpsboot', action='store_false', help='Set Faraday radio GPS boot OFF')
 parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON/OFF')
 parser.add_argument('--fuarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry ON/OFF')
 parser.add_argument('--frftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON/OFF')
@@ -76,6 +76,7 @@ parser.add_argument('--frfinterval', type=int, help='Set Faraday radio RF teleme
 
 # Parse the arguments
 args = parser.parse_args()
+
 
 def initializeDeviceConfigurationConfig():
     '''
@@ -89,6 +90,7 @@ def initializeDeviceConfigurationConfig():
     logger.info("Initialization complete")
     sys.exit(0)
 
+
 def initializeFaradayConfig():
     '''
     Initialize Faraday radio configuration file from faraday_config.sample.ini
@@ -100,6 +102,7 @@ def initializeFaradayConfig():
     shutil.copy(os.path.join(path, "faraday_config.sample.ini"), os.path.join(path, "faraday_config.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
+
 
 def programFaraday(deviceConfigurationConfigPath):
     '''
@@ -129,6 +132,7 @@ def programFaraday(deviceConfigurationConfigPath):
 
     except requests.exceptions.RequestException as e:
         # Some error occurred
+        logger.error(e)
         logger.error(r.text)
 
 
@@ -136,6 +140,7 @@ def displayConfig(faradayConfigPath):
     with open(faradayConfigPath, 'r') as configFile:
         print configFile.read()
         sys.exit(0)
+
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
     '''
@@ -151,8 +156,6 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
 
     fconfig = ConfigParser.RawConfigParser()
     fconfig.read(faradayConfigPath)
-
-
 
     if args.callsign is not None:
         config.set('DEVICES', 'CALLSIGN', args.callsign)
@@ -218,7 +221,6 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.write(configfile)
 
 
-
 # Now act upon the command line arguments
 # Initialize and configure Device Configuration
 if args.init:
@@ -257,6 +259,7 @@ faradayCmd = faradaycommands.faraday_commands()
 
 # Initialize Flask microframework
 app = Flask(__name__)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def unitconfig():
