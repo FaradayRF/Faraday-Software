@@ -100,7 +100,7 @@ else:
 
     logging.info("POST CONFIGURATION UPDATE")
     logging.info("***BASIC***")
-    #logging.info("Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']])
+    logging.info("Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']])
     logging.info("ID: {0}".format(str(unit_configuration_dict['local_callsign_id'])))
     logging.info("CONFIGBOOTBITMASK: {0}".format(unit_configuration_dict['configuration_bitmask'], '#010b'))
     logging.info("GPIO_P3: {0}".format(unit_configuration_dict['default_gpio_port_3_bitmask'], '#010b'))
