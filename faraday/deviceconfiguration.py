@@ -67,10 +67,10 @@ parser.add_argument('--flatitudedir', help='Set Faraday radio default latitude d
 parser.add_argument('--flongitudedir', help='Set Faraday radio default longitude direction (E/W)')
 parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
 # Purposely do not allow editing of GPS altitude units
-parser.add_argument('--fgpsboot', action='store_false', help='Set Faraday radio GPS boot OFF')
-parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON/OFF')
-parser.add_argument('--fuarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry ON/OFF')
-parser.add_argument('--frftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON/OFF')
+parser.add_argument('--fgpsboot', action='store_false', help='Set Faraday radio GPS boot power OFF')
+parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON')
+parser.add_argument('--fuarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry OFF')
+parser.add_argument('--frftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON')
 parser.add_argument('--fuartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
 parser.add_argument('--frfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
 
