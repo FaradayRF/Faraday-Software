@@ -33,7 +33,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
     except ConfigParser.NoSectionError:
         pass
 
-logger = logging.getLogger('Device-Configuration')
+logger = logging.getLogger('DeviceConfiguration')
 
 # Create Device Configuration configuration file path
 deviceConfigurationConfigPath = os.path.join(path, "deviceconfiguration.ini")
@@ -232,13 +232,13 @@ if args.faradayconfig:
 
 # Check if configuration file is present
 if not os.path.isfile(deviceConfigurationConfigPath):
-    logging.error("Please initialize device configuration with \'--init-config\' option")
+    logger.error("Please initialize device configuration with \'--init-config\' option")
     sys.exit(0)
 
 # Check if configuration file is present
 faradayConfigPath = os.path.join(path, "faraday_config.ini")
 if not os.path.isfile(faradayConfigPath):
-    logging.error("Please initialize Faraday configuration with \'--init-faraday-config\' option")
+    logger.error("Please initialize Faraday configuration with \'--init-faraday-config\' option")
     sys.exit(0)
 
 # Configure configuration file
