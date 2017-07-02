@@ -60,7 +60,10 @@ parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio
 parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
 parser.add_argument('--unitconfigured', action='store_true', help='Set Faraday radio configured bit ON')
 parser.add_argument('--unitunconfigured', action='store_true', help='Set Faraday radio configured bit OFF')
-parser.add_argument('--gpiop3', type=int, help='Set Faraday radio fgpio_p3')
+parser.add_argument('--gpiop3on', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn ON')
+parser.add_argument('--gpiop3off', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn OFF')
+parser.add_argument('--gpiop3clear', action='store_true', help='Reset Faraday radio GPIO port 3 bits to OFF')
+
 parser.add_argument('--gpiop4', type=int, help='Set Faraday radio fgpio_p4')
 parser.add_argument('--gpiop5', type=int, help='Set Faraday radio fgpio_p5')
 parser.add_argument('--bootfrequency', type=float, help='Set Faraday radio boot frequency')
@@ -205,8 +208,39 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     configbootbitmask = eightBitListToInt(bootmask)
     fconfig.set('BASIC', 'CONFIGBOOTBITMASK', configbootbitmask)
 
-    if args.gpiop3 is not None:
-        fconfig.set('BASIC', 'gpio_P3', args.gpiop3)
+    if args.gpiop3on >= 0 and args.gpiop3on <= 7:
+        if args.gpiop3on is not None:
+            fconfig.set('BASIC', 'GPIO_P3_' + str(args.gpiop3on), 1)
+    if args.gpiop3off >= 0 and args.gpiop3off <= 7:
+        if args.gpiop3off is not None:
+            fconfig.set('BASIC', 'GPIO_P3_' + str(args.gpiop3off), 0)
+
+    gpiomask = [0]*8
+    if not args.gpiop3clear:
+        gpio0 = fconfig.get('BASIC', 'GPIO_P3_0')
+        gpio1 = fconfig.get('BASIC', 'GPIO_P3_1')
+        gpio2 = fconfig.get('BASIC', 'GPIO_P3_2')
+        gpio3 = fconfig.get('BASIC', 'GPIO_P3_3')
+        gpio4 = fconfig.get('BASIC', 'GPIO_P3_4')
+        gpio5 = fconfig.get('BASIC', 'GPIO_P3_5')
+        gpio6 = fconfig.get('BASIC', 'GPIO_P3_6')
+        gpio7 = fconfig.get('BASIC', 'GPIO_P3_7')
+        gpiomask = [gpio7,gpio6,gpio5,gpio4,gpio3,gpio2,gpio1,gpio0]
+    if args.gpiop3clear:
+        fconfig.set('BASIC', 'GPIO_P3_0', 0)
+        fconfig.set('BASIC', 'GPIO_P3_1', 0)
+        fconfig.set('BASIC', 'GPIO_P3_2', 0)
+        fconfig.set('BASIC', 'GPIO_P3_3', 0)
+        fconfig.set('BASIC', 'GPIO_P3_4', 0)
+        fconfig.set('BASIC', 'GPIO_P3_5', 0)
+        fconfig.set('BASIC', 'GPIO_P3_6', 0)
+        fconfig.set('BASIC', 'GPIO_P3_7', 0)
+
+    print gpiomask
+    gpiop3bitmask = eightBitListToInt(gpiomask)
+    print gpiop3bitmask
+    fconfig.set('BASIC', 'GPIO_P3', gpiop3bitmask)
+
     if args.gpiop4 is not None:
         fconfig.set('BASIC', 'gpio_p4', args.gpiop4)
     if args.gpiop5 is not None:
