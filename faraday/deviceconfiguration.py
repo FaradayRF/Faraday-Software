@@ -60,6 +60,7 @@ parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio
 parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
 parser.add_argument('--unitconfigured', action='store_true', help='Set Faraday radio configured bit ON')
 parser.add_argument('--unitunconfigured', action='store_true', help='Set Faraday radio configured bit OFF')
+
 parser.add_argument('--gpiop3on', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn ON')
 parser.add_argument('--gpiop3off', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn OFF')
 parser.add_argument('--gpiop3clear', action='store_true', help='Reset Faraday radio GPIO port 3 bits to OFF')
@@ -67,6 +68,10 @@ parser.add_argument('--gpiop3clear', action='store_true', help='Reset Faraday ra
 parser.add_argument('--gpiop4on', type=int, help='Set Faraday radio GPIO port 4 bits on, specify bit to turn ON')
 parser.add_argument('--gpiop4off', type=int, help='Set Faraday radio GPIO port 4 bits on, specify bit to turn OFF')
 parser.add_argument('--gpiop4clear', action='store_true', help='Reset Faraday radio GPIO port 4 bits to OFF')
+
+parser.add_argument('--gpiop5on', type=int, help='Set Faraday radio GPIO port 5 bits on, specify bit to turn ON')
+parser.add_argument('--gpiop5off', type=int, help='Set Faraday radio GPIO port 5 bits on, specify bit to turn OFF')
+parser.add_argument('--gpiop5clear', action='store_true', help='Reset Faraday radio GPIO port 5 bits to OFF')
 
 parser.add_argument('--gpiop5', type=int, help='Set Faraday radio fgpio_p5')
 parser.add_argument('--bootfrequency', type=float, help='Set Faraday radio boot frequency')
@@ -275,8 +280,38 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     gpiop4bitmask = eightBitListToInt(gpiomask)
     fconfig.set('BASIC', 'GPIO_P4', gpiop4bitmask)
 
-    if args.gpiop5 is not None:
-        fconfig.set('BASIC', 'gpio_p5', args.gpiop5)
+    # Detect and set GPIO P5 settings, create bitmask
+    if args.gpiop5on >= 0 and args.gpiop5on <= 7:
+        if args.gpiop5on is not None:
+            fconfig.set('BASIC', 'GPIO_P5_' + str(args.gpiop5on), 1)
+    if args.gpiop5off >= 0 and args.gpiop5off <= 7:
+        if args.gpiop5off is not None:
+            fconfig.set('BASIC', 'GPIO_P5_' + str(args.gpiop5off), 0)
+
+    gpiomask = [0]*8
+    if not args.gpiop5clear:
+        gpio0 = fconfig.get('BASIC', 'GPIO_P5_0')
+        gpio1 = fconfig.get('BASIC', 'GPIO_P5_1')
+        gpio2 = fconfig.get('BASIC', 'GPIO_P5_2')
+        gpio3 = fconfig.get('BASIC', 'GPIO_P5_3')
+        gpio4 = fconfig.get('BASIC', 'GPIO_P5_4')
+        gpio5 = fconfig.get('BASIC', 'GPIO_P5_5')
+        gpio6 = fconfig.get('BASIC', 'GPIO_P5_6')
+        gpio7 = fconfig.get('BASIC', 'GPIO_P5_7')
+        gpiomask = [gpio7,gpio6,gpio5,gpio4,gpio3,gpio2,gpio1,gpio0]
+    if args.gpiop5clear:
+        fconfig.set('BASIC', 'GPIO_P5_0', 0)
+        fconfig.set('BASIC', 'GPIO_P5_1', 0)
+        fconfig.set('BASIC', 'GPIO_P5_2', 0)
+        fconfig.set('BASIC', 'GPIO_P5_3', 0)
+        fconfig.set('BASIC', 'GPIO_P5_4', 0)
+        fconfig.set('BASIC', 'GPIO_P5_5', 0)
+        fconfig.set('BASIC', 'GPIO_P5_6', 0)
+        fconfig.set('BASIC', 'GPIO_P5_7', 0)
+
+    gpiop5bitmask = eightBitListToInt(gpiomask)
+    fconfig.set('BASIC', 'GPIO_P5', gpiop5bitmask)
+
     if args.bootfrequency is not None:
         fconfig.set('RF', 'boot_frequency_mhz', args.bootfrequency)
     if args.bootrfpower is not None:
@@ -307,9 +342,9 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 1)
     if args.rftelemetrydisabled:
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 0)
-    if args.uartinterval is not None:
+    if args.uartinterval is not None and args.uartinterval > 0:
         fconfig.set('TELEMETRY', 'telemetry_default_uart_interval', args.uartinterval)
-    if args.rfinterval is not None:
+    if args.rfinterval is not None and args.rfinterval > 0:
         fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.rfinterval)
 
     # Save device configuration
