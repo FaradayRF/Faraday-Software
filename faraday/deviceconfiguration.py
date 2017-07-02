@@ -56,7 +56,10 @@ parser.add_argument('--faradayconfig', action='store_true', help='Display Farada
 # Faraday Configuration
 parser.add_argument('--callsign', help='Set Faraday radio callsign')
 parser.add_argument('--nodeid', type=int, help='Set Faraday radio nodeid')
-parser.add_argument('--configboot', action='store_false', help='Set Faraday radio config boot bit OFF')
+parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio RED LED during RF transmissions ON')
+parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
+parser.add_argument('--unitconfigured', action='store_true', help='Set Faraday radio configured bit ON')
+parser.add_argument('--unitunconfigured', action='store_true', help='Set Faraday radio configured bit OFF')
 parser.add_argument('--gpiop3', type=int, help='Set Faraday radio fgpio_p3')
 parser.add_argument('--gpiop4', type=int, help='Set Faraday radio fgpio_p4')
 parser.add_argument('--gpiop5', type=int, help='Set Faraday radio fgpio_p5')
@@ -146,6 +149,16 @@ def displayConfig(faradayConfigPath):
         print configFile.read()
         sys.exit(0)
 
+def eightBitListToInt(list):
+    '''
+    turn an eight bit list of integers into an integer
+
+    :param list: list to convert to an integer
+    :return: integer
+    '''
+
+    if len(list) == 8:
+        return int(''.join(str(e) for e in list),2)
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
     '''
@@ -172,10 +185,26 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('BASIC', 'CALLSIGN', args.callsign)
     if args.nodeid is not None:
         fconfig.set('BASIC', 'ID', args.nodeid)
-    if args.configboot:
-        fconfig.set('BASIC', 'configbootbitmask', 1)
-    else:
-        fconfig.set('BASIC', 'configbootbitmask', 0)
+
+
+    if args.redledtxon:
+        fconfig.set('BASIC', 'REDLEDTX', 1)
+    if args.redledtxoff:
+        fconfig.set('BASIC', 'REDLEDTX', 0)
+    if args.unitconfigured:
+        fconfig.set('BASIC', 'UNITCONFIGURED', 1)
+    if args.unitunconfigured:
+        fconfig.set('BASIC', 'UNITCONFIGURED', 0)
+
+    # Create configuration boot bitmask integer
+    bootmask = [0]*8
+    redledtx = fconfig.get('BASIC', 'REDLEDTX')
+    unitconfigured = fconfig.get('BASIC', 'UNITCONFIGURED')
+    bootmask[7] = redledtx
+    bootmask[6] = unitconfigured
+    configbootbitmask = eightBitListToInt(bootmask)
+    fconfig.set('BASIC', 'CONFIGBOOTBITMASK', configbootbitmask)
+
     if args.gpiop3 is not None:
         fconfig.set('BASIC', 'gpio_P3', args.gpiop3)
     if args.gpiop4 is not None:
