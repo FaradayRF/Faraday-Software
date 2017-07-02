@@ -236,9 +236,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('BASIC', 'GPIO_P3_6', 0)
         fconfig.set('BASIC', 'GPIO_P3_7', 0)
 
-    print gpiomask
     gpiop3bitmask = eightBitListToInt(gpiomask)
-    print gpiop3bitmask
     fconfig.set('BASIC', 'GPIO_P3', gpiop3bitmask)
 
     if args.gpiop4 is not None:
