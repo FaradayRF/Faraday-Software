@@ -67,10 +67,14 @@ parser.add_argument('--latitudedir', help='Set Faraday radio default latitude di
 parser.add_argument('--longitudedir', help='Set Faraday radio default longitude direction (E/W)')
 parser.add_argument('--altitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
 # Purposely do not allow editing of GPS altitude units
-parser.add_argument('--gpsboot', action='store_false', help='Set Faraday radio GPS boot power OFF')
-parser.add_argument('--gps', action='store_true', help='Set Faraday radio GPS use ON')
-parser.add_argument('--uarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry OFF')
-parser.add_argument('--rftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON')
+parser.add_argument('--gpsbooton', action='store_true', help='Set Faraday radio GPS boot power ON')
+parser.add_argument('--gpsbootoff', action='store_true', help='Set Faraday radio GPS boot power OFF')
+parser.add_argument('--gpsenabled', action='store_true', help='Set Faraday radio GPS use ON')
+parser.add_argument('--gpsdisabled', action='store_true', help='Set Faraday radio GPS use OFF')
+parser.add_argument('--uarttelemetryenabled', action='store_true', help='Set Faraday radio UART Telemetry ON')
+parser.add_argument('--uarttelemetrydisabled', action='store_true', help='Set Faraday radio UART Telemetry OFF')
+parser.add_argument('--rftelemetryenabled', action='store_true', help='Set Faraday radio RF Telemetry ON')
+parser.add_argument('--rftelemetrydisabled', action='store_true', help='Set Faraday radio RF Telemetry OFF')
 parser.add_argument('--uartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
 parser.add_argument('--rfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
 
@@ -191,21 +195,21 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('GPS', 'default_longitude_direction', args.longitudedir)
     if args.altitude is not None:
         fconfig.set('GPS', 'default_altitude', args.altitude)
-    if args.gpsboot:
+    if args.gpsbooton:
         fconfig.set('GPS', 'gps_boot_bit', 1)
-    else:
+    if args.gpsbootoff:
         fconfig.set('GPS', 'gps_boot_bit', 0)
-    if args.gps:
+    if args.gpsenabled:
         fconfig.set('GPS', 'gps_present_bit', 1)
-    else:
+    if args.gpsdisabled:
         fconfig.set('GPS', 'gps_present_bit', 0)
-    if args.uarttelemetry:
+    if args.uarttelemetryenabled:
         fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 1)
-    else:
+    if args.uarttelemetrydisabled:
         fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 0)
-    if args.rftelemetry:
+    if args.rftelemetryenabled:
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 1)
-    else:
+    if args.rftelemetrydisabled:
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 0)
     if args.uartinterval is not None:
         fconfig.set('TELEMETRY', 'telemetry_default_uart_interval', args.uartinterval)
