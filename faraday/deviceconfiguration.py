@@ -160,6 +160,7 @@ def displayConfig(faradayConfigPath):
         print configFile.read()
         sys.exit(0)
 
+
 def eightBitListToInt(list):
     '''
     turn an eight bit list of integers into an integer
@@ -169,7 +170,8 @@ def eightBitListToInt(list):
     '''
 
     if len(list) == 8:
-        return int(''.join(str(e) for e in list),2)
+        return int(''.join(str(e) for e in list), 2)
+
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
     '''
@@ -197,7 +199,6 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     if args.nodeid is not None:
         fconfig.set('BASIC', 'ID', args.nodeid)
 
-
     if args.redledtxon:
         fconfig.set('BASIC', 'REDLEDTX', 1)
     if args.redledtxoff:
@@ -208,7 +209,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('BASIC', 'UNITCONFIGURED', 0)
 
     # Create configuration boot bitmask integer
-    bootmask = [0]*8
+    bootmask = [0] * 8
     redledtx = fconfig.get('BASIC', 'REDLEDTX')
     unitconfigured = fconfig.get('BASIC', 'UNITCONFIGURED')
     bootmask[7] = redledtx
@@ -224,7 +225,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         if args.gpiop3off is not None:
             fconfig.set('BASIC', 'GPIO_P3_' + str(args.gpiop3off), 0)
 
-    gpiomask = [0]*8
+    gpiomask = [0] * 8
     if not args.gpiop3clear:
         gpio0 = fconfig.get('BASIC', 'GPIO_P3_0')
         gpio1 = fconfig.get('BASIC', 'GPIO_P3_1')
@@ -234,7 +235,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         gpio5 = fconfig.get('BASIC', 'GPIO_P3_5')
         gpio6 = fconfig.get('BASIC', 'GPIO_P3_6')
         gpio7 = fconfig.get('BASIC', 'GPIO_P3_7')
-        gpiomask = [gpio7,gpio6,gpio5,gpio4,gpio3,gpio2,gpio1,gpio0]
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
     if args.gpiop3clear:
         fconfig.set('BASIC', 'GPIO_P3_0', 0)
         fconfig.set('BASIC', 'GPIO_P3_1', 0)
@@ -256,7 +257,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         if args.gpiop4off is not None:
             fconfig.set('BASIC', 'GPIO_P4_' + str(args.gpiop4off), 0)
 
-    gpiomask = [0]*8
+    gpiomask = [0] * 8
     if not args.gpiop4clear:
         gpio0 = fconfig.get('BASIC', 'GPIO_P4_0')
         gpio1 = fconfig.get('BASIC', 'GPIO_P4_1')
@@ -266,7 +267,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         gpio5 = fconfig.get('BASIC', 'GPIO_P4_5')
         gpio6 = fconfig.get('BASIC', 'GPIO_P4_6')
         gpio7 = fconfig.get('BASIC', 'GPIO_P4_7')
-        gpiomask = [gpio7,gpio6,gpio5,gpio4,gpio3,gpio2,gpio1,gpio0]
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
     if args.gpiop4clear:
         fconfig.set('BASIC', 'GPIO_P4_0', 0)
         fconfig.set('BASIC', 'GPIO_P4_1', 0)
@@ -288,7 +289,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         if args.gpiop5off is not None:
             fconfig.set('BASIC', 'GPIO_P5_' + str(args.gpiop5off), 0)
 
-    gpiomask = [0]*8
+    gpiomask = [0] * 8
     if not args.gpiop5clear:
         gpio0 = fconfig.get('BASIC', 'GPIO_P5_0')
         gpio1 = fconfig.get('BASIC', 'GPIO_P5_1')
@@ -298,7 +299,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         gpio5 = fconfig.get('BASIC', 'GPIO_P5_5')
         gpio6 = fconfig.get('BASIC', 'GPIO_P5_6')
         gpio7 = fconfig.get('BASIC', 'GPIO_P5_7')
-        gpiomask = [gpio7,gpio6,gpio5,gpio4,gpio3,gpio2,gpio1,gpio0]
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
     if args.gpiop5clear:
         fconfig.set('BASIC', 'GPIO_P5_0', 0)
         fconfig.set('BASIC', 'GPIO_P5_1', 0)
