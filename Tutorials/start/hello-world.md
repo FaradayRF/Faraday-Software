@@ -22,7 +22,7 @@ This subpackage contains the class proxyio which abstracts the RESTful interface
 This subpackage abstracts commands one might wish to send to Faraday. It contains functions which build up generic commands such as `CommandLocal()` or task-specific commands such as `CommandLocalGPIOLED1On()` which turns on LED1.
 
 ## LED Code
-The following code example will enter an infinite loop to turn LED1 ON (green) and OFF with a period of one second. We've placed `hello-world.py` in the start tutorials folder and all you need to do is modify it with your Faraday radio callsign-nodeid where `REPLACEME` is located. Alternatively you can _right-click_ and "Save Link As" on the link above in the Prerequisites section. Below is `hello-world.py` modified for use by KB1LQD-1.
+The following code example will enter an infinite loop to turn LED1 ON (green) and OFF with a period of one second. We've placed `hello-world.py` in the start tutorials folder and all you need to do is modify it with your Faraday radio callsign-nodeid where `callsign = 'REPLACEME'` and `node_id = 0` are located. Alternatively you can _right-click_ and "Save Link As" on the link above in the Prerequisites section. Below is `hello-world.py` modified for use by KB1LQD-1.
 
 ```
 #!/usr/bin/env python
