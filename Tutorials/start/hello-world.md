@@ -1,25 +1,27 @@
 # Hello World
 
-With hardware connected as well as Proxy configured and running you are ready to write your first Python script to command hardware using the API! We're going to communicate through Proxy over the USB cable with the CC430 and turn the LED's ON and OFF. Let's go!
+With hardware connected, hardware configured, and Proxy running you are ready to write your first Python script to command hardware using the API! We're going to communicate through Proxy over the USB cable with the CC430 and turn the LED's ON and OFF. It's our very own "[hello-world](https://en.wikipedia.org/wiki/%22Hello,_World!%22_program)". Let's go!
 
 > NOTE: All commands are checked for corruption by the CC430 prior to accepting them but they are not currently acknowledged or guaranteed to be received.
 
-###Prerequisites
- * Faraday radio connected via USB to the computer
- * Proxy configured and running
- 
+## Prerequisites
+* Faraday radio connected via USB to the computer
+* Faraday radio configured correctly
+* Proxy configured and running
+
 # Code Overview
 ## Importing Faraday Modules
-The FaradayIO module contains several subpackages which make using Faraday much more straight forward. These are the ```faradaybasicproxyio``` and ```faradaycommands``` classes which implement communications over proxy with an abstracted API using several of their attributes.
+The FaradayIO module contains several subpackages which make using Faraday much more straight forward. These are the `faradaybasicproxyio` and `faradaycommands` classes which implement communications over proxy with an abstracted API using several of their attributes.
 
-###Faradaybasicproxyio
-This subpackage contains the class proxyio which abstracts the RESTful interface provided by Proxy. Two of the most important functions provided are ```GET()``` and ```POST()``` which perform GET and POST HTTP methods with properly formatted BASE64 payloads Proxy expects.
+## Faradaybasicproxyio
+This subpackage contains the class proxyio which abstracts the RESTful interface provided by Proxy. Two of the most important functions provided are `GET()` and `POST()` which perform GET and POST HTTP methods with properly formatted BASE64 payloads Proxy expects.
 
-### Faradaycommands
-This subpackage abstracts commands one might wish to send to Faraday. IT contains functions which build up generic commands such as ```CommandLocal()``` or task-specific commands such as ```CommandLocalGPIOLED1On()``` which turns on LED1.
+## Faradaycommands
+This subpackage abstracts commands one might wish to send to Faraday. It contains functions which build up generic commands such as `CommandLocal()` or task-specific commands such as `CommandLocalGPIOLED1On()` which turns on LED1.
 
-##LED Code
-The following code example will enter an infinite loop to turn LED1 ON (green) and OFF in a total of one second. `hello-world.py` should be modified with your callsign and node ID where `REPLACEME` has been added. Below is `hello-world.py` modified for use by KB1LQD-1.
+## LED Code
+The following code example will enter an infinite loop to turn LED1 ON (green) and OFF with a period of one second. We've placed `hello-world.py` in the start tutorials folder and all you need to do is modify it with your Faraday radio callsign-nodeid where `REPLACEME` is located. Below is `hello-world.py` modified for use by KB1LQD-1.
+
 ```
 #!/usr/bin/env python
 
@@ -27,42 +29,42 @@ import os
 import sys
 import time
 
-# Add Faraday library to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
 # Imports - Faraday Specific
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
 
 #Setup a Faraday IO object
-faraday_1 = faradaybasicproxyio.proxyio() #default proxy port
+faraday_1 = faradaybasicproxyio.proxyio()  #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
+
+callsign = 'KB1LQD'
+node_id = 1
 
 while True:
     #Turn LED 1 ON (GREEN)
     print "Turning LED 1 ON"
     command = faraday_cmd.CommandLocalGPIOLED1On()
-    faraday_1.POST('KB1LQD', 1, faraday_1.CMD_UART_PORT, command)
+    faraday_1.POST(callsign, node_id, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
 
     #Turn LED 1 OFF
     print "Turning LED 1 OFF"
     command = faraday_cmd.CommandLocalGPIOLED1Off()
-    faraday_1.POST('KB1LQD', 1, faraday_1.CMD_UART_PORT, command)
+    faraday_1.POST(callsign, node_id, faraday_1.CMD_UART_PORT, command)
     time.sleep(0.5)
 ```
 
-To run the code example we've placed `hello-world.py` in the start folder
+
 ### Windows
- * Double-click on hello-world.py and run with python
- * Navigate to `C:\faradayrf\faraday-software\Tutorials\start' and run `python hello-world.py`
- 
+* Double-click on hello-world.py and run with python
+* Navigate to `C:\faradayrf\faraday-software\Tutorials\start` and run `python hello-world.py`
+
 Ensure that Proxy is running in the background!
- 
+
 ### Linux (Debian-based)
- * Navigate in terminal to `/git/faraday-software/Python_Developer_Tutorials/start` and run `sudo python hello-world.py`
-  * sudo is needed to ensure you can write to `/dev/ttyUSB0`
-  
+* Navigate in terminal to `/git/faraday-software/Python_Developer_Tutorials/start` and run `sudo python hello-world.py`
+* sudo is needed to ensure you can write to `/dev/ttyUSB0`
+
 Ensure that Proxy is running in the background!
 
 ## Time To Play With RF

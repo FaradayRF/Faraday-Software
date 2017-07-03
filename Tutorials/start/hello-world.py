@@ -4,9 +4,6 @@ import os
 import sys
 import time
 
-# Add Faraday library to the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
 # Imports - Faraday Specific
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
@@ -15,8 +12,8 @@ from faraday.proxyio import faradaycommands
 faraday_1 = faradaybasicproxyio.proxyio()  #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
 
-callsign = 'REPLACEME'
-node_id = 0
+callsign = 'KB1LQC'
+node_id = 2
 
 while True:
     #Turn LED 1 ON (GREEN)
