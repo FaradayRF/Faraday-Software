@@ -19,26 +19,30 @@ Now we need to tell the `faraday-deviceconfiguration` program where to find Prox
 ![Device Configuration options](images/deviceconfiguration-options.jpg)
 
 The options we must change include:
-* `--callsign CALLSIGN` The callsign that Proxy is using
-* `--nodeid NODEID` the nodeid that Proxy is using
-* `--fcallsign CALLSIGN` the callsign to program Faraday with
-* `--fnodeid NODEID` the nodeid to program Faraday with
+* `--proxycallsign CALLSIGN`: The callsign that Proxy is using
+* `--proxynodeid NODEID`: the nodeid that Proxy is using
+* `--callsign CALLSIGN`: the callsign to program Faraday with
+* `--nodeid NODEID`: the nodeid to program Faraday with
+* `--start`: Tells `faraday-deviceconfiguration` server to start
 
 The options you may want to change depending on hardware and needs:
-* `--flatitude FLATITUDE` default latitude to use when GPS is disabled
-* `--flongitude FLONGITUDE` default longitude to use when GPS is disabled
-* `--flatitudedir FLATITUDEDIR` default latitude direction (N/S) to use when GPS is disabled
-* `--flongitudedir FLONGITUDEDIR` default longitude direction (E/W) to use when GPS is disabled
-* `--faltitude FALTITUDE` default altitude (0-17999.99 meters) to use when GPS is disabled.
-* `--fgpsboot` disable GPS power
-* `--fgps` enable GPS use
-* `frftelemetry` enable RF telemetry transmissions
-* `frfinterval FRFINTERVAL` RF transmission interval in seconds
+* `--latitude LATITUDE`: default latitude to use when GPS is disabled
+* `--longitude LONGITUDE`: default longitude to use when GPS is disabled
+* `--latitudedir LATITUDEDIR`: default latitude direction (N/S) to use when GPS is disabled
+* `--longitudedir LONGITUDEDIR`: default longitude direction (E/W) to use when GPS is disabled
+* `--altitude ALTITUDE`: default altitude (0-17999.99 meters) to use when GPS is disabled.
+* `--gpsbooton`: Enable GPS boot power
+* `--gpsbootoff`: Disable GPS boot power
+* `--gpsenabled`: enable GPS use
+* `--gpsdisabled`: enable GPS use
+* `--rftelemetryenable`: enable RF telemetry transmissions
+* `--rftelemetrydisabled`: Disable RF telemetry transmissions
+* `--rfinterval RFINTERVAL`: RF transmission interval in seconds
 
 An example configuration command would be:
 
  ```
- faraday-deviceconfiguration --callsign kb1lqc --nodeid 2 -fcallsign kb1lqc --fnodeid 10 --frftelemetry --frfinterval 2
+ faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
  ```
 
 At this point the configuration server is running and ready to program our intended data to the radio. If you do need to change a faraday setting and have already told `faraday-deviceconfiguration` where Proxy is then there is no need to reconfigure those values.
@@ -51,7 +55,7 @@ We've added a useful feature to SimpleConfig which lets you query Faraday withou
 
 * `faraday-simpleconfig --read`
 
-![SimpleConfig read](images/simpleconfig-read.jpg)
+![SimpleConfig read](images/simpleconfig.jpg)
 
 ### Programming CC430 FLASH configuration
 Now the time has come to actually program Faraday. To do so you simply run SimpleConfig which results in Device Configuration sending a POST request to Proxy to program the radio. After waiting five seconds, SimpleConfig will also send a GET request to query the contents of the CC430 FLASH memory helping confirm the intended settings.
