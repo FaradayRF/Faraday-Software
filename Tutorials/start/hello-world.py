@@ -12,8 +12,8 @@ from faraday.proxyio import faradaycommands
 faraday_1 = faradaybasicproxyio.proxyio()  #default proxy port
 faraday_cmd = faradaycommands.faraday_commands()
 
-callsign = 'KB1LQC'
-node_id = 2
+callsign = 'REPLACEME' # Callsign string
+node_id = REPLACEME # Integer 0-255
 
 while True:
     #Turn LED 1 ON (GREEN)
