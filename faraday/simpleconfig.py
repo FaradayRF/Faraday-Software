@@ -114,12 +114,14 @@ logger.info("***BASIC***")
 logger.info("Unit Callsign: {0}".format(str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']]))
 logger.info("ID: {0}".format(str(unit_configuration_dict['local_callsign_id'])))
 
+# Convert configboot bitmask to a list and display
 bootbitmask = bin(unit_configuration_dict['configuration_bitmask'])[2:].zfill(8)
 bootbitmask = list(bootbitmask)
 bootbitmask.reverse()
 logger.info("UNITCONFIGURED: {0}".format(bootbitmask[0]))
 logger.info("REDLEDTX: {0}".format(bootbitmask[1]))
 
+# Convert gpiop3 bitmask to a list and display
 gpiop3 = bin(unit_configuration_dict['default_gpio_port_3_bitmask'])[2:].zfill(8)
 gpiop3 = list(gpiop3)
 gpiop3.reverse()
@@ -132,7 +134,7 @@ logger.info("GPIO_P3_5: {0}".format(gpiop3[5]))
 logger.info("GPIO_P3_6: {0}".format(gpiop3[6]))
 logger.info("GPIO_P3_7: {0}".format(gpiop3[7]))
 
-
+# Convert gpiop4 bitmask to a list and display
 gpiop4 = bin(unit_configuration_dict['default_gpio_port_4_bitmask'])[2:].zfill(8)
 gpiop4 = list(gpiop4)
 gpiop4.reverse()
@@ -145,6 +147,7 @@ logger.info("GPIO_P4_5: {0}".format(gpiop4[5]))
 logger.info("GPIO_P4_6: {0}".format(gpiop4[6]))
 logger.info("GPIO_P4_7: {0}".format(gpiop4[7]))
 
+# Convert gpiop5 bitmask to a list and display
 gpiop5 = bin(unit_configuration_dict['default_gpio_port_5_bitmask'])[2:].zfill(8)
 gpiop5 = list(gpiop5)
 gpiop5.reverse()
