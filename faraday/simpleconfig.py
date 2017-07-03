@@ -1,9 +1,15 @@
-#!/usr/bin/env python
-
-#Warning - Must run the "deviceconfiguration" proxy application
+#-------------------------------------------------------------------------------
+# Name:        /faraday/simpleconfig.py
+# Purpose:     Kick off faraday-deviceconfiguration programming via API and
+#              print results to the screen
+#
+# Author:      Brent Salmi / Bryce Salmi
+#
+# Created:     7/2/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 #Imports - General
-
 import os
 import sys
 import requests
@@ -77,7 +83,15 @@ if not args.read:
 
     except requests.exceptions.RequestException as e:
         # Some error occurred
-        logger.error(r.text)
+        logger.error("Request exception!")
+        logger.error("Is \'faraday-deviceconfiguration\' configured and running?")
+        sys.exit(0)
+
+    except ValueError as e:
+        # Some error occurred
+        logger.error("ValueError!")
+        logger.error("Is \'faraday-deviceconfiguration\' configured correctly for Proxy?")
+        sys.exit(0)
 
     #Check to see if programming was successful (HTTP 204 response)
     if r.status_code != 204:
@@ -95,9 +109,12 @@ if not args.read:
 # Read configuration of FLASH memory
 try:
     r = requests.get('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+
 except requests.exceptions.RequestException as e:
     # Some error occurred
-    logger.error(r.text)
+    logger.error("Request exception!")
+    logger.error("Is \'faraday-deviceconfiguration\' configured and running?")
+    sys.exit(0)
 
 # Obtain JSON response with data from Faraday
 raw_unit_json = r.json()
@@ -111,12 +128,55 @@ logger.debug(unit_configuration_dict)
 logger.info("************************************")
 logger.info("POST CONFIGURATION UPDATE")
 logger.info("***BASIC***")
-logger.info("Unit Callsign:", str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']])
+logger.info("Unit Callsign: {0}".format(str(unit_configuration_dict['local_callsign'])[0:unit_configuration_dict['local_callsign_length']]))
 logger.info("ID: {0}".format(str(unit_configuration_dict['local_callsign_id'])))
-logger.info("CONFIGBOOTBITMASK: {0}".format(unit_configuration_dict['configuration_bitmask'], '#010b'))
-logger.info("GPIO_P3: {0}".format(unit_configuration_dict['default_gpio_port_3_bitmask'], '#010b'))
-logger.info("GPIO_P4: {0}".format(unit_configuration_dict['default_gpio_port_4_bitmask'], '#010b'))
-logger.info("GPIO_P5: {0}".format(unit_configuration_dict['default_gpio_port_5_bitmask'], '#010b'))
+
+# Convert configboot bitmask to a list and display
+bootbitmask = bin(unit_configuration_dict['configuration_bitmask'])[2:].zfill(8)
+bootbitmask = list(bootbitmask)
+bootbitmask.reverse()
+logger.info("UNITCONFIGURED: {0}".format(bootbitmask[0]))
+logger.info("REDLEDTX: {0}".format(bootbitmask[1]))
+
+# Convert gpiop3 bitmask to a list and display
+gpiop3 = bin(unit_configuration_dict['default_gpio_port_3_bitmask'])[2:].zfill(8)
+gpiop3 = list(gpiop3)
+gpiop3.reverse()
+logger.info("GPIO_P3_0: {0}".format(gpiop3[0]))
+logger.info("GPIO_P3_1: {0}".format(gpiop3[1]))
+logger.info("GPIO_P3_2: {0}".format(gpiop3[2]))
+logger.info("GPIO_P3_3: {0}".format(gpiop3[3]))
+logger.info("GPIO_P3_4: {0}".format(gpiop3[4]))
+logger.info("GPIO_P3_5: {0}".format(gpiop3[5]))
+logger.info("GPIO_P3_6: {0}".format(gpiop3[6]))
+logger.info("GPIO_P3_7: {0}".format(gpiop3[7]))
+
+# Convert gpiop4 bitmask to a list and display
+gpiop4 = bin(unit_configuration_dict['default_gpio_port_4_bitmask'])[2:].zfill(8)
+gpiop4 = list(gpiop4)
+gpiop4.reverse()
+logger.info("GPIO_P4_0: {0}".format(gpiop4[0]))
+logger.info("GPIO_P4_1: {0}".format(gpiop4[1]))
+logger.info("GPIO_P4_2: {0}".format(gpiop4[2]))
+logger.info("GPIO_P4_3: {0}".format(gpiop4[3]))
+logger.info("GPIO_P4_4: {0}".format(gpiop4[4]))
+logger.info("GPIO_P4_5: {0}".format(gpiop4[5]))
+logger.info("GPIO_P4_6: {0}".format(gpiop4[6]))
+logger.info("GPIO_P4_7: {0}".format(gpiop4[7]))
+
+# Convert gpiop5 bitmask to a list and display
+gpiop5 = bin(unit_configuration_dict['default_gpio_port_5_bitmask'])[2:].zfill(8)
+gpiop5 = list(gpiop5)
+gpiop5.reverse()
+logger.info("GPIO_P5_0: {0}".format(gpiop5[0]))
+logger.info("GPIO_P5_1: {0}".format(gpiop5[1]))
+logger.info("GPIO_P5_2: {0}".format(gpiop5[2]))
+logger.info("GPIO_P5_3: {0}".format(gpiop5[3]))
+logger.info("GPIO_P5_4: {0}".format(gpiop5[4]))
+logger.info("GPIO_P5_5: {0}".format(gpiop5[5]))
+logger.info("GPIO_P5_6: {0}".format(gpiop5[6]))
+logger.info("GPIO_P5_7: {0}".format(gpiop5[7]))
+
 logger.info("***RF***")
 logger.info("BOOT_FREQUENCY_MHZ 0: {0}".format(str(unit_configuration_dict['default_boot_freq_0'])))
 logger.info("BOOT_FREQUENCY_MHZ 1: {0}".format(str(unit_configuration_dict['default_boot_freq_1'])))

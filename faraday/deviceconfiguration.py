@@ -1,4 +1,14 @@
-#!/usr/bin/env python
+#-------------------------------------------------------------------------------
+# Name:        /faraday/deviceconfiguration.py
+# Purpose:     Configure the Faraday radio by manipulating relevant INI files
+#              and providing a Flask server to kick off programming with via
+#              proxy.
+#
+# Author:      Brent Salmi / Bryce Salmi
+#
+# Created:     7/2/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 import time
 import logging.config
@@ -48,31 +58,50 @@ deviceConfig = ConfigParser.RawConfigParser()
 parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
-parser.add_argument('--callsign', help='Set Proxy Faraday callsign to connect to and program')
-parser.add_argument('--nodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
+parser.add_argument('--start', action='store_true', help='Start device configuration server')
+parser.add_argument('--proxycallsign', help='Set Proxy Faraday callsign to connect to and program')
+parser.add_argument('--proxynodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
 parser.add_argument('--faradayconfig', action='store_true', help='Display Faraday configuration file contents')
 
 # Faraday Configuration
-parser.add_argument('--fcallsign', help='Set Faraday radio callsign')
-parser.add_argument('--fnodeid', type=int, help='Set Faraday radio nodeid')
-parser.add_argument('--fconfigboot', action='store_false', help='Set Faraday radio config boot bit OFF')
-parser.add_argument('--fgpiop3', type=int, help='Set Faraday radio fgpio_p3')
-parser.add_argument('--fgpiop4', type=int, help='Set Faraday radio fgpio_p4')
-parser.add_argument('--fgpiop5', type=int, help='Set Faraday radio fgpio_p5')
-parser.add_argument('--fbootfrequency', type=float, help='Set Faraday radio boot frequency')
-parser.add_argument('--fbootrfpower', type=int, help='Set Faraday radio boot RF power')
-parser.add_argument('--flatitude', type=float, help='Set Faraday radio default latitude. Format \"ddmm.mmmm\"')
-parser.add_argument('--flongitude', type=float, help='Set Faraday radio default longitude. Format \"dddmm.mmmm\"')
-parser.add_argument('--flatitudedir', help='Set Faraday radio default latitude direction (N/S)')
-parser.add_argument('--flongitudedir', help='Set Faraday radio default longitude direction (E/W)')
-parser.add_argument('--faltitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
+parser.add_argument('--callsign', help='Set Faraday radio callsign')
+parser.add_argument('--nodeid', type=int, help='Set Faraday radio nodeid')
+parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio RED LED during RF transmissions ON')
+parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
+parser.add_argument('--unitconfigured', action='store_true', help='Set Faraday radio configured bit ON')
+parser.add_argument('--unitunconfigured', action='store_true', help='Set Faraday radio configured bit OFF')
+
+parser.add_argument('--gpiop3on', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn ON')
+parser.add_argument('--gpiop3off', type=int, help='Set Faraday radio GPIO port 3 bits on, specify bit to turn OFF')
+parser.add_argument('--gpiop3clear', action='store_true', help='Reset Faraday radio GPIO port 3 bits to OFF')
+
+parser.add_argument('--gpiop4on', type=int, help='Set Faraday radio GPIO port 4 bits on, specify bit to turn ON')
+parser.add_argument('--gpiop4off', type=int, help='Set Faraday radio GPIO port 4 bits on, specify bit to turn OFF')
+parser.add_argument('--gpiop4clear', action='store_true', help='Reset Faraday radio GPIO port 4 bits to OFF')
+
+parser.add_argument('--gpiop5on', type=int, help='Set Faraday radio GPIO port 5 bits on, specify bit to turn ON')
+parser.add_argument('--gpiop5off', type=int, help='Set Faraday radio GPIO port 5 bits on, specify bit to turn OFF')
+parser.add_argument('--gpiop5clear', action='store_true', help='Reset Faraday radio GPIO port 5 bits to OFF')
+
+parser.add_argument('--gpiop5', type=int, help='Set Faraday radio fgpio_p5')
+parser.add_argument('--bootfrequency', type=float, help='Set Faraday radio boot frequency')
+parser.add_argument('--bootrfpower', type=int, help='Set Faraday radio boot RF power')
+parser.add_argument('--latitude', type=float, help='Set Faraday radio default latitude. Format \"ddmm.mmmm\"')
+parser.add_argument('--longitude', type=float, help='Set Faraday radio default longitude. Format \"dddmm.mmmm\"')
+parser.add_argument('--latitudedir', help='Set Faraday radio default latitude direction (N/S)')
+parser.add_argument('--longitudedir', help='Set Faraday radio default longitude direction (E/W)')
+parser.add_argument('--altitude', type=float, help='Set Faraday radio default altitude in meters. Maximum of 17999.99 Meters')
 # Purposely do not allow editing of GPS altitude units
-parser.add_argument('--fgpsboot', action='store_false', help='Set Faraday radio GPS boot power OFF')
-parser.add_argument('--fgps', action='store_true', help='Set Faraday radio GPS use ON')
-parser.add_argument('--fuarttelemetry', action='store_false', help='Set Faraday radio UART Telemetry OFF')
-parser.add_argument('--frftelemetry', action='store_true', help='Set Faraday radio RF Telemetry ON')
-parser.add_argument('--fuartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
-parser.add_argument('--frfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
+parser.add_argument('--gpsbooton', action='store_true', help='Set Faraday radio GPS boot power ON')
+parser.add_argument('--gpsbootoff', action='store_true', help='Set Faraday radio GPS boot power OFF')
+parser.add_argument('--gpsenabled', action='store_true', help='Set Faraday radio GPS use ON')
+parser.add_argument('--gpsdisabled', action='store_true', help='Set Faraday radio GPS use OFF')
+parser.add_argument('--uarttelemetryenabled', action='store_true', help='Set Faraday radio UART Telemetry ON')
+parser.add_argument('--uarttelemetrydisabled', action='store_true', help='Set Faraday radio UART Telemetry OFF')
+parser.add_argument('--rftelemetryenabled', action='store_true', help='Set Faraday radio RF Telemetry ON')
+parser.add_argument('--rftelemetrydisabled', action='store_true', help='Set Faraday radio RF Telemetry OFF')
+parser.add_argument('--uartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
+parser.add_argument('--rfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -106,6 +135,7 @@ def initializeFaradayConfig():
 
 def programFaraday(deviceConfigurationConfigPath):
     '''
+    Programs Faraday by generating a HTTP POST query that Proxy uses to send data to the CC430 FLASH memory.
 
     :param deviceConfigurationConfigPath: Path to deviceconfiguration.ini file
     :return: None
@@ -137,9 +167,27 @@ def programFaraday(deviceConfigurationConfigPath):
 
 
 def displayConfig(faradayConfigPath):
+    '''
+    Prints out the Faraday Configuration file
+
+    :param faradayConfigPath: path to faraday configuration file
+    :return: None
+    '''
     with open(faradayConfigPath, 'r') as configFile:
         print configFile.read()
         sys.exit(0)
+
+
+def eightBitListToInt(list):
+    '''
+    Turn an eight bit list of integers into an integer
+
+    :param list: list to convert to an integer
+    :return: integer
+    '''
+
+    if len(list) == 8:
+        return int(''.join(str(e) for e in list), 2)
 
 
 def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
@@ -157,60 +205,167 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     fconfig = ConfigParser.RawConfigParser()
     fconfig.read(faradayConfigPath)
 
-    if args.callsign is not None:
-        config.set('DEVICES', 'CALLSIGN', args.callsign)
-    if args.nodeid is not None:
-        config.set('DEVICES', 'NODEID', args.nodeid)
+    # Obtain proxy configuration
+    if args.proxycallsign is not None:
+        config.set('DEVICES', 'CALLSIGN', args.proxycallsign)
+    if args.proxynodeid is not None:
+        config.set('DEVICES', 'NODEID', args.proxynodeid)
 
     # Faraday radio configuration
-    if args.fcallsign is not None:
-        fconfig.set('BASIC', 'CALLSIGN', args.fcallsign)
-    if args.fnodeid is not None:
-        fconfig.set('BASIC', 'ID', args.fnodeid)
-    if args.fconfigboot:
-        fconfig.set('BASIC', 'configbootbitmask', 1)
-    else:
-        fconfig.set('BASIC', 'configbootbitmask', 0)
-    if args.fgpiop3 is not None:
-        fconfig.set('BASIC', 'gpio_P3', args.fgpiop3)
-    if args.fgpiop4 is not None:
-        fconfig.set('BASIC', 'gpio_p4', args.fgpiop4)
-    if args.fgpiop5 is not None:
-        fconfig.set('BASIC', 'gpio_p5', args.fgpiop5)
-    if args.fbootfrequency is not None:
-        fconfig.set('RF', 'boot_frequency_mhz', args.fbootfrequency)
-    if args.fbootrfpower is not None:
-        fconfig.set('RF', 'boot_rf_power', args.fbootrfpower)
-    if args.flatitude is not None:
-        fconfig.set('GPS', 'default_latitude', args.flatitude)
-    if args.flongitude is not None:
-        fconfig.set('GPS', 'default_longitude', args.flongitude)
-    if args.flatitudedir is not None:
-        fconfig.set('GPS', 'default_latitude_direction', args.flatitudedir)
-    if args.flongitudedir is not None:
-        fconfig.set('GPS', 'default_longitude_direction', args.flongitudedir)
-    if args.faltitude is not None:
-        fconfig.set('GPS', 'default_altitude', args.faltitude)
-    if args.fgpsboot:
+    if args.callsign is not None:
+        fconfig.set('BASIC', 'CALLSIGN', args.callsign)
+    if args.nodeid is not None:
+        fconfig.set('BASIC', 'ID', args.nodeid)
+
+    # Obtain configboot bitmask options
+    if args.redledtxon:
+        fconfig.set('BASIC', 'REDLEDTX', 1)
+    if args.redledtxoff:
+        fconfig.set('BASIC', 'REDLEDTX', 0)
+    if args.unitconfigured:
+        fconfig.set('BASIC', 'UNITCONFIGURED', 1)
+    if args.unitunconfigured:
+        fconfig.set('BASIC', 'UNITCONFIGURED', 0)
+
+    # Create configuration boot bitmask integer
+    bootmask = [0] * 8
+    redledtx = fconfig.get('BASIC', 'REDLEDTX')
+    unitconfigured = fconfig.get('BASIC', 'UNITCONFIGURED')
+    bootmask[6] = redledtx
+    bootmask[7] = unitconfigured
+    configbootbitmask = eightBitListToInt(bootmask)
+    fconfig.set('BASIC', 'CONFIGBOOTBITMASK', configbootbitmask)
+
+    # Detect and set GPIO P3 settings, create bitmask
+    if args.gpiop3on >= 0 and args.gpiop3on <= 7:
+        if args.gpiop3on is not None:
+            fconfig.set('BASIC', 'GPIO_P3_' + str(args.gpiop3on), 1)
+    if args.gpiop3off >= 0 and args.gpiop3off <= 7:
+        if args.gpiop3off is not None:
+            fconfig.set('BASIC', 'GPIO_P3_' + str(args.gpiop3off), 0)
+
+    gpiomask = [0] * 8
+    if not args.gpiop3clear:
+        gpio0 = fconfig.get('BASIC', 'GPIO_P3_0')
+        gpio1 = fconfig.get('BASIC', 'GPIO_P3_1')
+        gpio2 = fconfig.get('BASIC', 'GPIO_P3_2')
+        gpio3 = fconfig.get('BASIC', 'GPIO_P3_3')
+        gpio4 = fconfig.get('BASIC', 'GPIO_P3_4')
+        gpio5 = fconfig.get('BASIC', 'GPIO_P3_5')
+        gpio6 = fconfig.get('BASIC', 'GPIO_P3_6')
+        gpio7 = fconfig.get('BASIC', 'GPIO_P3_7')
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
+    if args.gpiop3clear:
+        fconfig.set('BASIC', 'GPIO_P3_0', 0)
+        fconfig.set('BASIC', 'GPIO_P3_1', 0)
+        fconfig.set('BASIC', 'GPIO_P3_2', 0)
+        fconfig.set('BASIC', 'GPIO_P3_3', 0)
+        fconfig.set('BASIC', 'GPIO_P3_4', 0)
+        fconfig.set('BASIC', 'GPIO_P3_5', 0)
+        fconfig.set('BASIC', 'GPIO_P3_6', 0)
+        fconfig.set('BASIC', 'GPIO_P3_7', 0)
+
+    gpiop3bitmask = eightBitListToInt(gpiomask)
+    fconfig.set('BASIC', 'GPIO_P3', gpiop3bitmask)
+
+    # Detect and set GPIO P4 settings, create bitmask
+    if args.gpiop4on >= 0 and args.gpiop4on <= 7:
+        if args.gpiop4on is not None:
+            fconfig.set('BASIC', 'GPIO_P4_' + str(args.gpiop4on), 1)
+    if args.gpiop4off >= 0 and args.gpiop4off <= 7:
+        if args.gpiop4off is not None:
+            fconfig.set('BASIC', 'GPIO_P4_' + str(args.gpiop4off), 0)
+
+    gpiomask = [0] * 8
+    if not args.gpiop4clear:
+        gpio0 = fconfig.get('BASIC', 'GPIO_P4_0')
+        gpio1 = fconfig.get('BASIC', 'GPIO_P4_1')
+        gpio2 = fconfig.get('BASIC', 'GPIO_P4_2')
+        gpio3 = fconfig.get('BASIC', 'GPIO_P4_3')
+        gpio4 = fconfig.get('BASIC', 'GPIO_P4_4')
+        gpio5 = fconfig.get('BASIC', 'GPIO_P4_5')
+        gpio6 = fconfig.get('BASIC', 'GPIO_P4_6')
+        gpio7 = fconfig.get('BASIC', 'GPIO_P4_7')
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
+    if args.gpiop4clear:
+        fconfig.set('BASIC', 'GPIO_P4_0', 0)
+        fconfig.set('BASIC', 'GPIO_P4_1', 0)
+        fconfig.set('BASIC', 'GPIO_P4_2', 0)
+        fconfig.set('BASIC', 'GPIO_P4_3', 0)
+        fconfig.set('BASIC', 'GPIO_P4_4', 0)
+        fconfig.set('BASIC', 'GPIO_P4_5', 0)
+        fconfig.set('BASIC', 'GPIO_P4_6', 0)
+        fconfig.set('BASIC', 'GPIO_P4_7', 0)
+
+    gpiop4bitmask = eightBitListToInt(gpiomask)
+    fconfig.set('BASIC', 'GPIO_P4', gpiop4bitmask)
+
+    # Detect and set GPIO P5 settings, create bitmask
+    if args.gpiop5on >= 0 and args.gpiop5on <= 7:
+        if args.gpiop5on is not None:
+            fconfig.set('BASIC', 'GPIO_P5_' + str(args.gpiop5on), 1)
+    if args.gpiop5off >= 0 and args.gpiop5off <= 7:
+        if args.gpiop5off is not None:
+            fconfig.set('BASIC', 'GPIO_P5_' + str(args.gpiop5off), 0)
+
+    gpiomask = [0] * 8
+    if not args.gpiop5clear:
+        gpio0 = fconfig.get('BASIC', 'GPIO_P5_0')
+        gpio1 = fconfig.get('BASIC', 'GPIO_P5_1')
+        gpio2 = fconfig.get('BASIC', 'GPIO_P5_2')
+        gpio3 = fconfig.get('BASIC', 'GPIO_P5_3')
+        gpio4 = fconfig.get('BASIC', 'GPIO_P5_4')
+        gpio5 = fconfig.get('BASIC', 'GPIO_P5_5')
+        gpio6 = fconfig.get('BASIC', 'GPIO_P5_6')
+        gpio7 = fconfig.get('BASIC', 'GPIO_P5_7')
+        gpiomask = [gpio7, gpio6, gpio5, gpio4, gpio3, gpio2, gpio1, gpio0]
+    if args.gpiop5clear:
+        fconfig.set('BASIC', 'GPIO_P5_0', 0)
+        fconfig.set('BASIC', 'GPIO_P5_1', 0)
+        fconfig.set('BASIC', 'GPIO_P5_2', 0)
+        fconfig.set('BASIC', 'GPIO_P5_3', 0)
+        fconfig.set('BASIC', 'GPIO_P5_4', 0)
+        fconfig.set('BASIC', 'GPIO_P5_5', 0)
+        fconfig.set('BASIC', 'GPIO_P5_6', 0)
+        fconfig.set('BASIC', 'GPIO_P5_7', 0)
+
+    gpiop5bitmask = eightBitListToInt(gpiomask)
+    fconfig.set('BASIC', 'GPIO_P5', gpiop5bitmask)
+
+    if args.bootfrequency is not None:
+        fconfig.set('RF', 'boot_frequency_mhz', args.bootfrequency)
+    if args.bootrfpower is not None:
+        fconfig.set('RF', 'boot_rf_power', args.bootrfpower)
+    if args.latitude is not None:
+        fconfig.set('GPS', 'default_latitude', args.latitude)
+    if args.longitude is not None:
+        fconfig.set('GPS', 'default_longitude', args.longitude)
+    if args.latitudedir is not None:
+        fconfig.set('GPS', 'default_latitude_direction', args.latitudedir)
+    if args.longitudedir is not None:
+        fconfig.set('GPS', 'default_longitude_direction', args.longitudedir)
+    if args.altitude is not None:
+        fconfig.set('GPS', 'default_altitude', args.altitude)
+    if args.gpsbooton:
         fconfig.set('GPS', 'gps_boot_bit', 1)
-    else:
+    if args.gpsbootoff:
         fconfig.set('GPS', 'gps_boot_bit', 0)
-    if args.fgps:
+    if args.gpsenabled:
         fconfig.set('GPS', 'gps_present_bit', 1)
-    else:
+    if args.gpsdisabled:
         fconfig.set('GPS', 'gps_present_bit', 0)
-    if args.fuarttelemetry:
+    if args.uarttelemetryenabled:
         fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 1)
-    else:
+    if args.uarttelemetrydisabled:
         fconfig.set('TELEMETRY', 'uart_telemetry_boot_bit', 0)
-    if args.frftelemetry:
+    if args.rftelemetryenabled:
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 1)
-    else:
+    if args.rftelemetrydisabled:
         fconfig.set('TELEMETRY', 'rf_telemetry_boot_bit', 0)
-    if args.fuartinterval is not None:
-        fconfig.set('TELEMETRY', 'telemetry_default_uart_interval', args.fuartinterval)
-    if args.frfinterval is not None:
-        fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.frfinterval)
+    if args.uartinterval is not None and args.uartinterval > 0:
+        fconfig.set('TELEMETRY', 'telemetry_default_uart_interval', args.uartinterval)
+    if args.rfinterval is not None and args.rfinterval > 0:
+        fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.rfinterval)
 
     # Save device configuration
     with open(deviceConfigurationConfigPath, 'wb') as configfile:
@@ -244,6 +399,11 @@ if not os.path.isfile(faradayConfigPath):
 # Configure configuration file
 configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath)
 
+# Check if server is to be started
+if not args.start:
+    logger.info("Device configuration exiting!")
+    logger.info("run with --start to start server application")
+    sys.exit(0)
 
 # Load configuration from deviceconfiguration.ini file
 deviceConfig.read(deviceConfigurationConfigPath)
