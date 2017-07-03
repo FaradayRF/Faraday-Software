@@ -1,4 +1,14 @@
-#!/usr/bin/env python
+#-------------------------------------------------------------------------------
+# Name:        /faraday/deviceconfiguration.py
+# Purpose:     Configure the Faraday radio by manipulating relevant INI files
+#              and providing a Flask server to kick off programming with via
+#              proxy.
+#
+# Author:      Brent Salmi / Bryce Salmi
+#
+# Created:     7/2/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 import time
 import logging.config
@@ -125,6 +135,7 @@ def initializeFaradayConfig():
 
 def programFaraday(deviceConfigurationConfigPath):
     '''
+    Programs Faraday by generating a HTTP POST query that Proxy uses to send data to the CC430 FLASH memory.
 
     :param deviceConfigurationConfigPath: Path to deviceconfiguration.ini file
     :return: None
@@ -156,6 +167,12 @@ def programFaraday(deviceConfigurationConfigPath):
 
 
 def displayConfig(faradayConfigPath):
+    '''
+    Prints out the Faraday Configuration file
+
+    :param faradayConfigPath: path to faraday configuration file
+    :return: None
+    '''
     with open(faradayConfigPath, 'r') as configFile:
         print configFile.read()
         sys.exit(0)
@@ -163,7 +180,7 @@ def displayConfig(faradayConfigPath):
 
 def eightBitListToInt(list):
     '''
-    turn an eight bit list of integers into an integer
+    Turn an eight bit list of integers into an integer
 
     :param list: list to convert to an integer
     :return: integer
@@ -188,6 +205,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     fconfig = ConfigParser.RawConfigParser()
     fconfig.read(faradayConfigPath)
 
+    # Obtain proxy configuration
     if args.proxycallsign is not None:
         config.set('DEVICES', 'CALLSIGN', args.proxycallsign)
     if args.proxynodeid is not None:
@@ -199,6 +217,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     if args.nodeid is not None:
         fconfig.set('BASIC', 'ID', args.nodeid)
 
+    # Obtain configboot bitmask options
     if args.redledtxon:
         fconfig.set('BASIC', 'REDLEDTX', 1)
     if args.redledtxoff:

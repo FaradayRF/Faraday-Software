@@ -1,9 +1,15 @@
-#!/usr/bin/env python
-
-#Warning - Must run the "deviceconfiguration" proxy application
+#-------------------------------------------------------------------------------
+# Name:        /faraday/simpleconfig.py
+# Purpose:     Kick off faraday-deviceconfiguration programming via API and
+#              print results to the screen
+#
+# Author:      Brent Salmi / Bryce Salmi
+#
+# Created:     7/2/2017
+# Licence:     GPLv3
+#-------------------------------------------------------------------------------
 
 #Imports - General
-
 import os
 import sys
 import requests
