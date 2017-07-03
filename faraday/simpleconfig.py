@@ -87,6 +87,12 @@ if not args.read:
         logger.error("Is \'faraday-deviceconfiguration\' configured and running?")
         sys.exit(0)
 
+    except ValueError as e:
+        # Some error occurred
+        logger.error("ValueError!")
+        logger.error("Is \'faraday-deviceconfiguration\' configured correctly for Proxy?")
+        sys.exit(0)
+
     #Check to see if programming was successful (HTTP 204 response)
     if r.status_code != 204:
         logger.error(r.text)
