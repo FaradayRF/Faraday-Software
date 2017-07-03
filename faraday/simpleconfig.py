@@ -83,7 +83,9 @@ if not args.read:
 
     except requests.exceptions.RequestException as e:
         # Some error occurred
-        logger.error(r.text)
+        logger.error("Request exception!")
+        logger.error("Is \'faraday-deviceconfiguration\' configured and running?")
+        sys.exit(0)
 
     #Check to see if programming was successful (HTTP 204 response)
     if r.status_code != 204:
@@ -101,9 +103,12 @@ if not args.read:
 # Read configuration of FLASH memory
 try:
     r = requests.get('http://{0}:{1}'.format(hostname, port), params={'callsign': str(local_device_callsign), 'nodeid': int(local_device_node_id)})
+    
 except requests.exceptions.RequestException as e:
     # Some error occurred
-    logger.error(r.text)
+    logger.error("Request exception!")
+    logger.error("Is \'faraday-deviceconfiguration\' configured and running?")
+    sys.exit(0)
 
 # Obtain JSON response with data from Faraday
 raw_unit_json = r.json()
