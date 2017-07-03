@@ -8,6 +8,8 @@ With hardware connected, hardware configured, and Proxy running you are ready to
 * Faraday radio connected via USB to the computer
 * Faraday radio configured correctly
 * Proxy configured and running
+* Download [hello-world.py](https://github.com/kb1lqc/Faraday-Software/raw/issue220/Tutorials/start/configuring-proxy.md) to you computer, open in a text editor
+ * right-click save as
 
 # Code Overview
 ## Importing Faraday Modules
@@ -20,7 +22,7 @@ This subpackage contains the class proxyio which abstracts the RESTful interface
 This subpackage abstracts commands one might wish to send to Faraday. It contains functions which build up generic commands such as `CommandLocal()` or task-specific commands such as `CommandLocalGPIOLED1On()` which turns on LED1.
 
 ## LED Code
-The following code example will enter an infinite loop to turn LED1 ON (green) and OFF with a period of one second. We've placed `hello-world.py` in the start tutorials folder and all you need to do is modify it with your Faraday radio callsign-nodeid where `REPLACEME` is located. Below is `hello-world.py` modified for use by KB1LQD-1.
+The following code example will enter an infinite loop to turn LED1 ON (green) and OFF with a period of one second. We've placed `hello-world.py` in the start tutorials folder and all you need to do is modify it with your Faraday radio callsign-nodeid where `REPLACEME` is located. Alternatively you can _right-click_ and "Save Link As" on the link above in the Prerequisites section. Below is `hello-world.py` modified for use by KB1LQD-1.
 
 ```
 #!/usr/bin/env python
