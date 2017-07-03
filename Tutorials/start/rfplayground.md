@@ -11,10 +11,10 @@ The base station, access point, etc is simply a Faraday attached to a computer v
 You can choose any Faraday you like to be your base station but for this tutorial we will assume it is a non-GPS enabled Faraday with a Serial Number of SN 40. Let's set it up:
 
 1. Connect Faraday SN 40 to the USB port of a computer. Ensure the antenna is installed!
-2. Start [proxy](../../Proxy) and [telemetry](../../Applications/Telemetry) applications up after configuring their respective `.ini` files for SN 40's configuration
-3. Check that the [Telemetry](../../Applications/Telemetry) application is receiving new data from Faraday (local) using the web browser or DB Browser for SQLite.
+2. Start [proxy](../../Proxy) and [telemetry](../../Applications/Telemetry) applications up after configuring their respective settings.
+3. Check that the [Telemetry](../../Applications/Telemetry) application is receiving new data from Faraday (local) in a web browser at [http://localhost:8001](http://localhost:8001)
 
-Your base station is ready to go!
+If you see your local node data displayed in your browser your base station is ready to go!
 
 ## Remote Node
 Next up our Faraday radio which includes GPS on-board will be used for the remote node. This is a Faraday radio with a Serial Number of SN 7 in this example. Already configured for RF transmissions, it needs to be powered and moved at least 10 feet from the base station to prevent desensing of the receiver. Faraday has some strong filters but in-band signals from other 33cm radios may cause problems.
@@ -26,7 +26,7 @@ Connected to a laptop or desktop computer, Faraday works just fine transmitting 
 #### External Power
 A 9V battery connected to the [9V battery cable](https://faradayrf.com/product/9v-battery-power-cable/) included in the [Faraday Starter Pack](https://faradayrf.com/product/faraday-starter-pack/) is the easiest way to make the radio portable. This external [VCC/MOSFET External Cable](https://faradayrf.com/product/vccmosfet-unterminated-cable/) can be connected to a power source ranging from 4.5V to 17V as well. Be careful when connecting to a car battery system as [load dump](https://en.wikipedia.org/wiki/Load_dump) from the alternator could destroy Faraday. If you do this additional protection circuitry should be used though you may get away with a 5V USB adapter in a car (those protect themselves).
 
-The connector P4 is labeled with a small "POWER" silkscreen text and is the correct connector to plug in the 9V battery cable to. Do not worry about mixing up connectors P4 and P3. While you should always power Faraday from P4 we used some snazzy engineering to prevent any damage from occurring if you mix up both connectors and battery polarity. Plug in with ease of mind!
+The connector P4 is labeled with a small "POWER" silkscreen text and is the correct connector to plug in the 9V battery cable to. Do not worry about temporarily mixing up connectors P4 and P3. While you should always power Faraday from P4 we used some snazzy engineering to prevent any damage from occurring if you mix up both connectors and battery polarity. Plug in with ease of mind!
 
 ![Faraday External Power Connector](images/FaradayTop_VCC_MOSFET_2_1500w_LowRes.jpg)
 
@@ -36,9 +36,9 @@ Faraday will boot up and automatically transmit at the RF telemetry interval and
 First off, let's see what stations your base station is hearing. The [telemetry](../../Applications/Telemetry) application provides a handy `/stations` API that will return the callsign, nodeid, and latest EPOCH of all stations heard within the last five minutes.
 
 ### /Stations URL
-* Open up a web browser and navigate to `http://localhost:8001/stations`
+* Open up a web browser and navigate to [http://localhost:8001/stations](http://localhost:8001/stations)
 
-You should see at least two stations present, the base station (KB1LQC-1) and the RF remote node (KB1LQC-2) as shown in the example below. This is a quick way to check if everything is working! You will have to wait for whatever RF interval the radios were programmed to before data appears. Additionally, any time longer than 5 minutes simply will not work unless you specify a new timespan for the `/stations` call. Please see the [telemetry](../../Applications/Telemetry) documentation to do this if necessary.
+You should see at least two stations present, the base station (KB1LQC-1) and the RF remote node (KB1LQC-2) as shown in the example below. This is a quick way to check if everything is working! You will have to wait for whatever RF interval the radios were programmed to before data appears. Additionally, stations which have not transmitted less than 5 minutes ago simply will not show up unless you specify a new timespan for the `/stations` query. Please see the [telemetry](../../Applications/Telemetry) documentation to do this if necessary.
 
 ![Telemetry application stations URL](images/TelemetryStations.png)
 
@@ -89,5 +89,3 @@ Base stations use the APRS "#" symbol representing a "digi" as shown below on [a
 Your Faraday radio is now setup with a callsign and node ID it will use to identify itself even after reboot. We've also installed all necessary programs and configured them to communicate over USB serial ports and over RF using the 33cm ham band. You're ready to go!
 
 >We suggest you head back to the [project overview](../../README.md) and explore until ready to learn to develop applications for Faraday.
-
-We're providing the building blocks to experiment, lets go!
