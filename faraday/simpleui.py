@@ -174,7 +174,6 @@ def simpleui():
                                nodeid=nodeid)
 
     if request.method == "POST":
-        # Start the proxy server after configuring the configuration file correctly
         # Setup a Faraday IO object
         faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
         faraday_cmd = faradaycommands.faraday_commands()
