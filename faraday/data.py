@@ -113,8 +113,8 @@ def rfdataport():
     if request.method == 'POST':
         try:
             # Parse Flask arguments
-            localcallsign = request.args.get("localcallsign").upper() # Local device proxy unit
-            localnodeid = request.args.get("localnodeid") # Local device proxy unit
+            proxycallsign = request.args.get("localcallsign").upper() # Local device proxy unit
+            proxynodeid = request.args.get("localnodeid") # Local device proxy unit
             # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
             destinationcallsign = request.args.get("destinationcallsign").upper()
             destinationnodeid = request.args.get("destinationnodeid")
@@ -141,7 +141,7 @@ def rfdataport():
                         datapacket = packet_struct.pack(cmd, seq, str(item))
 
                         # Transmit data packet
-                        faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                        faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
                 else:
                     # Create rfdataport application packet
@@ -151,7 +151,7 @@ def rfdataport():
                     datapacket = packet_struct.pack(cmd, seq, str(data))
 
                     # Transmit data packet
-                    faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                    faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
 
                 # Return status
@@ -168,11 +168,11 @@ def rfdataport():
     else:
         #pass
         # Parse Flask arguments
-        localcallsign = request.args.get("localcallsign").upper()
-        localnodeid = request.args.get("localnodeid")
+        proxycallsign = request.args.get("localcallsign").upper()
+        proxynodeid = request.args.get("localnodeid")
 
         # Get data from proxy for specified unit if available.
-        rxdata = faraday_1.GET(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT)
+        rxdata = faraday_1.GET(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT)
 
         try:
             if rxdata is not None:
