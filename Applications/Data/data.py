@@ -16,6 +16,6 @@ import os
 
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../'))
-from faraday import rfdataport_server
+from faraday import data
 
-rfdataport_server.main()
+data.main()
