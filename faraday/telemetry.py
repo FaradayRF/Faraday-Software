@@ -45,7 +45,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Telemetry')
 
-# Create Proxy configuration file path
+# Create Telemery configuration file path
 telemetryConfigPath = os.path.join(path, "telemetry.ini")
 logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
@@ -69,7 +69,7 @@ parser.add_argument('--init-log', dest='initlog', action='store_true', help='Ini
 parser.add_argument('--save-log', dest='savelog', help='Save Telemetry log database into new SAVELOG file')
 parser.add_argument('--show-logs', dest='showlogs', action='store_true', help='Show Telemetry log database files')
 
-# Proxy Flask options
+# Telemetry Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Telemetry Flask server host address')
 parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Telemetry Flask server port')
 
@@ -98,7 +98,7 @@ def initializeTelemetryLog(config):
     :return: None
     '''
 
-    logger.info("Initializing Proxy Log File")
+    logger.info("Initializing Telemetry Log File")
     log = config.get("DATABASE", "filename")
     logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
     os.remove(logpath)
@@ -169,7 +169,7 @@ def configureTelemetry(args, telemetryConfigPath):
     if args.schema is not None:
         config.set('DATABASE', 'schemaname', args.schema)
 
-    # Configure Proxy flask server
+    # Configure Telemetry flask server
     if args.flaskhost is not None:
         config.set('FLASK', 'host', args.flaskhost)
     if args.flaskport is not None:
