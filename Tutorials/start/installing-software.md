@@ -43,10 +43,6 @@ That's it!
 ## Installing in Pip Editable Mode
 If you want to be able to develop with faraday software then we suggest cloning our Git Repository as described below and install with pip in 'editable' mode. Please note that in 'editable' mode you may have to run faraday software from the root project directory due to filepath issues when running in this mode.
 
-Checkout the Git repository as explained below and then install with the following:
-* Navigate to the repository root directory
-* `pip install -e .`
-
 ### Windows
 
 The open-source software is provided on our GitHub repository. This guide assumes [Git is installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) along with Git Bash.
