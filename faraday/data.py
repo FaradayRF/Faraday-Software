@@ -111,62 +111,55 @@ def rfdataport():
     """
     # If POST
     if request.method == 'POST':
+        # Parse Flask arguments
+        proxycallsign = request.args.get("localcallsign").upper() # Local device proxy unit
+        proxynodeid = request.args.get("localnodeid") # Local device proxy unit
+        # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
+        destinationcallsign = request.args.get("destinationcallsign").upper()
+        destinationnodeid = request.args.get("destinationnodeid")
+        data = request.args.get("data")
+
         try:
-            # Parse Flask arguments
-            proxycallsign = request.args.get("localcallsign").upper() # Local device proxy unit
-            proxynodeid = request.args.get("localnodeid") # Local device proxy unit
-            # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
-            destinationcallsign = request.args.get("destinationcallsign").upper()
-            destinationnodeid = request.args.get("destinationnodeid")
-            data = request.args.get("data")
+            data = base64.b64decode(data) # All incoming data packets must be BASE64
+        except TypeError as e:
+            logger.info("BASE64 data error: {0}".format(e))
 
-            try:
-                data = base64.b64decode(data) # All incoming data packets must be BASE64
-            except TypeError as e:
-                logger.info("BASE64 data error: {0}".format(e))
+            # Return status
+            return json.dumps(
+                {"status": "BASE64 data error."}), 400
+        else:
 
-                # Return status
-                return json.dumps(
-                    {"status": "BASE64 data error."}), 400
-            else:
+            if len(data) > PAYLOAD_LEN:
+                # Fragment data
+                fragment_list = fragmentmsg(data, PAYLOAD_LEN)
 
-                if len(data) > PAYLOAD_LEN:
-                    # Fragment data
-                    fragment_list = fragmentmsg(data, PAYLOAD_LEN)
-
-                    for item in fragment_list:
-                        # Create rfdataport application packet
-                        cmd = 0 # Data Frame
-                        seq = 0 # Not used, yet
-                        datapacket = packet_struct.pack(cmd, seq, str(item))
-
-                        # Transmit data packet
-                        faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
-
-                else:
+                for item in fragment_list:
                     # Create rfdataport application packet
-                    logger.debug("data {0}".format(str(data)))
-                    cmd = 0  # Data Frame
-                    seq = 0  # Not used, yet
-                    datapacket = packet_struct.pack(cmd, seq, str(data))
+                    cmd = 0 # Data Frame
+                    seq = 0 # Not used, yet
+                    datapacket = packet_struct.pack(cmd, seq, str(item))
 
                     # Transmit data packet
                     faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
+            else:
+                # Create rfdataport application packet
+                logger.debug("data {0}".format(str(data)))
+                cmd = 0  # Data Frame
+                seq = 0  # Not used, yet
+                datapacket = packet_struct.pack(cmd, seq, str(data))
 
-                # Return status
-                return json.dumps(
-                    {"status": "Posted Packet(s)"}), 200
+                # Transmit data packet
+                faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
-        except KeyError as e:
-            print "KeyError:", e
 
-        except:
-            print "Unexpected Error:", sys.exc_info()[0]
+            # Return status
+            return json.dumps(
+                {"status": "Posted Packet(s)"}), 200
+
 
     # If GET
     else:
-        #pass
         # Parse Flask arguments
         proxycallsign = request.args.get("localcallsign").upper()
         proxynodeid = request.args.get("localnodeid")
@@ -187,12 +180,10 @@ def rfdataport():
                        {'Content-Type': 'application/json'}
         except:
             # No data available, return error 204 indicating "No Content"
-            # logger.info("Empty buffer for port %d", port)
             return '', 204  # HTTP 204 response cannot have message data
 
         else:
             # No data available, return error 204 indicating "No Content"
-            #logger.info("Empty buffer for port %d", port)
             return '', 204  # HTTP 204 response cannot have message data
 
 
