@@ -459,7 +459,6 @@ def proxy():
                 {"error": "Error: No 'data' key in dictionary"}), 400
         else:
             total = len(data["data"])
-            print "length:", total
             sent = 0
             for item in data['data']:
                 try:
