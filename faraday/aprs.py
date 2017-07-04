@@ -44,9 +44,6 @@ logger.debug('aprs.ini PATH: ' + aprsConfigPath)
 aprsConfig = ConfigParser.RawConfigParser()
 aprsConfig.read(aprsConfigPath)
 
-# Create and initialize dictionary queues
-telemetryDicts = {}
-
 # Command line input
 parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize APRS configuration file')
