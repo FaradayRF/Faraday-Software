@@ -57,6 +57,7 @@ logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy configuration file')
+parser.add_argument('--start', action='store_true', help='Start Proxy server')
 parser.add_argument('--callsign', help='Set Faraday callsign')
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID')
 parser.add_argument('--port', help='Set Faraday UART port')
@@ -78,7 +79,7 @@ parser.add_argument('--schema', help='Set Faraday database schema')
 parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
 parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
 parser.add_argument('--save-log', dest='savelog', help='Save Proxy log database into new SAVELOG file')
-parser.add_argument('--show-logs', action='store_true', help='Show Proxy log database files')
+parser.add_argument('--show-logs', dest='showlogs', action='store_true', help='Show Proxy log database files')
 
 # Proxy Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
@@ -235,6 +236,11 @@ if args.savelog is not None:
 # List Proxy log database files
 if args.showlogs:
     showProxyLogs()
+
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting Proxy server!")
+    sys.exit(0)
 
 # Create and initialize dictionary queues
 postDict = {}
