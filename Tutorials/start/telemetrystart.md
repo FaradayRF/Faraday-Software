@@ -20,6 +20,9 @@ Running this command will start the Telemetry application which should be left r
 
 ![Faraday Telemetry](images/faraday-telemetry.jpg)
 
+### Log File Locations
+Please note that the telemetry log file is stored in a user specific `.faraday/lib` folder. In Windows this will be in the `%USERPROFILE%\.faraday\lib` folder and in Linux/MAX OS X this location will be `~/.faraday/lib` folder. Please see the [Telemetry](../../Applications/Telemetry) documentation for more information on manipulating these logs.
+
 ## Querying The Telemetry Application
 
 `faraday-telemetry` uses a RESTful API to communicate over HTTP requests. However, you can easily use your web browser to interact. When you are querying the [Telemetry](../../Applications/Telemetry) application you will see data printed directly to your web browser. Reloading the webpage will perform the query again and update the information on the screen. This is a handy way to quickly debug applications as you develop them!
