@@ -90,9 +90,9 @@ def initializeProxyConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Proxy")
+    logger.debug("Initializing Proxy")
     shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
-    logger.info("Initialization complete")
+    logger.debug("Initialization complete")
     sys.exit(0)
 
 
@@ -246,7 +246,7 @@ def uart_worker(modem, getDicts, units, log):
     that checks all Faraday "ports" for data and appends/pops data from
     queues for send and receive directions.
     """
-    logger.info('Starting uart_worker thread')
+    logger.debug('Starting uart_worker thread')
 
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
@@ -316,7 +316,7 @@ def testdb_read_worker():
     is not present.  The callsign and nodeid are derived from
     the config file.
     """
-    logger.info('Starting testdb_read_worker thread')
+    logger.debug('Starting testdb_read_worker thread')
 
     # Obtain the test callsign and nodeid and create a
     # deque
@@ -567,7 +567,7 @@ def proxy():
                     {'Content-Type': 'application/json'}
             else:
                 # No data in service port, but port is being used
-                logger.info("Empty buffer for port {0}".format(port))
+                logger.debug("Empty buffer for port {0}".format(port))
                 return '', 204  # HTTP 204 response cannot have message data
 
         except ValueError as e:
