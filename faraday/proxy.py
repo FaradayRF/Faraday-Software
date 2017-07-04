@@ -567,7 +567,7 @@ def proxy():
                     {'Content-Type': 'application/json'}
             else:
                 # No data in service port, but port is being used
-                logger.info("Empty buffer for port %d", port)
+                logger.info("Empty buffer for port {0}".format(port))
                 return '', 204  # HTTP 204 response cannot have message data
 
         except ValueError as e:
@@ -803,7 +803,7 @@ def main():
             unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
         for key in unitDict:
-            logger.info('Starting Thread For Unit: ' + str(key))
+            logger.info('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
             t.start()
