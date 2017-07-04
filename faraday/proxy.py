@@ -452,7 +452,8 @@ def proxy():
         # present, create port queue for it and append data to that queue
         try:
             data["data"]
-        except:
+
+        except KeyError:
             logger.error("Error: No 'data' key in dictionary")
             return json.dumps(
                 {"error": "Error: No 'data' key in dictionary"}), 400
