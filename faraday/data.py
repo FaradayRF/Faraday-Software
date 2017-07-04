@@ -120,6 +120,7 @@ def rfdataport():
         data = request.args.get("data")
 
         try:
+            logger.info("Predecode POST: {0}".format(data))
             data = base64.b64decode(data) # All incoming data packets must be BASE64
         except TypeError as e:
             logger.info("BASE64 data error: {0}".format(e))
@@ -140,16 +141,22 @@ def rfdataport():
                     datapacket = packet_struct.pack(cmd, seq, str(item))
 
                     # Transmit data packet
-                    faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                    logger.info("POST DATA: {0}".format(datapacket))
+                    #faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                    requests.post("http://127.0.0.1:" + str(8000) + "/?" + "callsign=" + str(
+                        proxycallsign).upper() + '&port=' + str(APP_RFDATAPORT_UART_PORT) + '&' + 'nodeid=' + str(
+                        proxynodeid), json=datapacket)
 
             else:
                 # Create rfdataport application packet
-                logger.debug("data {0}".format(str(data)))
                 cmd = 0  # Data Frame
                 seq = 0  # Not used, yet
-                datapacket = packet_struct.pack(cmd, seq, str(data))
+                logger.info("POST prestr: {0}".format(type(data)))
+                datapacket = packet_struct.pack(cmd, seq, data)
 
                 # Transmit data packet
+                logger.info("POST DATA: {0}".format(data))
+                logger.info("POST DATApacket: {0}".format(datapacket))
                 faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
 
@@ -167,25 +174,28 @@ def rfdataport():
         # Get data from proxy for specified unit if available.
         rxdata = faraday_1.GET(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT)
 
-        try:
-            if rxdata is not None:
-
+        if rxdata is not None:
+            if 'error' in rxdata:
+                # Request processed but unit not found in proxy
+                return rxdata['error'], 404  # HTTP 204 response cannot have message data
+            else:
                 for item in rxdata:
-                    unpacked_rxdata = packet_struct.unpack(base64.b64decode(item['data']))
-                    item['data'] = base64.b64encode(unpacked_rxdata[2])
-
-
-                # If data available return as JSON
-                return json.dumps(rxdata, indent=1), 200, \
-                       {'Content-Type': 'application/json'}
-        except:
-            # No data available, return error 204 indicating "No Content"
-            return '', 204  # HTTP 204 response cannot have message data
+                    try:
+                        logger.info("GOT DATA: {0}".format(item['data']))
+                        logger.info("GOT DATAB64 Decode: {0}".format(base64.b64decode(item['data'])))
+                        unpacked_rxdata = packet_struct.unpack(repr(base64.b64decode(item['data'])))
+                    except struct.error as e:
+                        # Error packing/unpacking due to malformed data - Likely too short/long.)
+                        return "Struct Error: {0}".format(e), 400  # HTTP 204 response cannot have message data
+                    else:
+                        item['data'] = base64.b64encode(unpacked_rxdata[2])
+                        # Data is available for requested unit, return as JSON
+                        return json.dumps(rxdata, indent=1), 200, \
+                               {'Content-Type': 'application/json'}
 
         else:
-            # No data available, return error 204 indicating "No Content"
+            # No data available from requested unit, return error 204 indicating "No Content"
             return '', 204  # HTTP 204 response cannot have message data
-
 
 def fragmentmsg(msg, fragmentsize):
     """
