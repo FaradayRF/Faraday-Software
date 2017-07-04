@@ -17,7 +17,7 @@ You can choose any Faraday you like to be your base station but for this tutoria
 If you see your local node data displayed in your browser your base station is ready to go!
 
 ## Remote Node
-Next up our Faraday radio which includes GPS on-board will be used for the remote node. This is a Faraday radio with a Serial Number of SN 7 in this example. Already configured for RF transmissions, it needs to be powered and moved at least 10 feet from the base station to prevent desensing of the receiver. Faraday has some strong filters but in-band signals from other 33cm radios may cause problems.
+Next up our Faraday radio which includes GPS on-board will be used for the remote node. This is a Faraday radio with a Serial Number of SN 7 in this example. Already configured for RF transmissions, it needs to be powered and moved a few feet from the base station to prevent desensing of the receiver. We find 3 feet or more works with a power setting of 20 or less. Faraday has some strong filters but in-band signals from other 33cm radios may cause problems.
 
 ### Power Sources
 #### USB
