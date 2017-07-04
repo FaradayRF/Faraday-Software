@@ -22,8 +22,9 @@ You will need the COM port to configure the Proxy application.
 ### Linux (Debian-based)
 Debian 8 did not need to install any additional drivers when plugging Faraday in. The Following steps will ensure your computer has the correct drivers:
 
-1. In terminal ```ls /dev/ttyUSB*``` to see what USB serial ports are connected.
-2. Note the displayed filenames. This is the device dev path in Linux. If you have other serial devices plugged in you may want to remove Faraday and run the same command to see which file goes away. Faraday would be the file that disapeared.
+1. Ensure Faraday is plugged in, then run `dmesg | grep FaradayRF` which should show the port name Faraday is attached to. i.e. "FTDI USB Serial Device converter now attached to ttyUSB0" indicates Faraday is attached to `/dev/ttyUSB0`.
+2. Alternatively, in terminal ```ls /dev/ttyUSB*``` to see what USB serial ports are connected.
+3. Note the displayed filenames. This is the device dev path in Linux. If you have other serial devices plugged in you may want to remove Faraday and run the same command to see which file goes away. Faraday would be the file that disapeared.
 
 Faraday will show up as ```/dev/ttyUSB0``` if only one is connected
 
