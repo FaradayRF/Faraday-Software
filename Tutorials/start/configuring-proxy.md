@@ -34,7 +34,7 @@ Proxy provides a server which other programs can communicate with the radio thro
 Congratulations, Proxy is now running successfully!
 
 #### UARTStack Fail Messages
-Do not be concerned if you see any messges such as that shown below. This is simple a bad packet sent to Proxy over UART which failed CRC checking and was thrown out. This occasionally happens and is OK. With noisy computer grounds and poor quality USB cables one can expect to see more of these messages.
+Do not be concerned if you see any message such as that shown below. This is simply a bad packet sent to Proxy over UART which failed CRC checking and was thrown out. This occasionally happens and is OK. With noisy computer grounds and poor quality USB cables one can expect to see more of these messages.
 
 ![Proxy INI UARTStack Fail](images/proxy-uartstackfail.jpg "Proxy command prompt")
 
