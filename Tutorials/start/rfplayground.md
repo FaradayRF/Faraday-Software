@@ -52,6 +52,9 @@ Looking at your [telemetry](../../Applications/Telemetry) database (telemetry.db
 
 If `SOURCECALLSIGN`-`SOURCEID` == `DESTINATIONCALLSIGN`-`DESTINATIONID` then that telemetry is local telemetry sent over UART, not RF. If they are not equal then the telemetry is from a remote node transmitted via RF.
 
+#### Log File Locations
+Please note that the telemetry log file is stored in a user specific `.faraday/lib` folder. In Windows this will be in the `%USERPROFILE%\.faraday\lib` folder and in Linux/MAX OS X this location will be `~/.faraday/lib` folder. Please see the [Telemetry](../../Applications/Telemetry) documentation for more information on manipulating these logs.
+
 #### Plotting Data
 DB Browser for SQLite lets you plot data easily. If not already shown select `View->Plot` from the main menu bar to bring up the plotting menu. Select `KEYID` as the X axis and `BOARDTEMP` as the Y axis to display board temperature.
 
