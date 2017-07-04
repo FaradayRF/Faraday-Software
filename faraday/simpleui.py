@@ -55,7 +55,6 @@ simpleuiConfig = ConfigParser.RawConfigParser()
 
 # Command line input
 parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
-parser.add_argument('--start', action='store_true', help='Start SimpleUI in browser')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
 parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
 parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
@@ -69,6 +68,7 @@ parser.add_argument('--proxyhost', help='Set Proxy server hostname/address')
 parser.add_argument('--proxyport', help='Set Proxy server port')
 parser.add_argument('--telemetryhost', help='Set Telemetry server hostname/address')
 parser.add_argument('--telemetryport', help='Set Telemetry server port')
+parser.add_argument('--start', action='store_true', help='Start SimpleUI server')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -137,15 +137,18 @@ configureSimpleUI(args, simpleuiConfigPath)
 # Read in configuration file settings
 simpleuiConfig.read(simpleuiConfigPath)
 
-# Start web browser pointed to SimpleUI if requested
-if args.start:
-    host = simpleuiConfig.get("FLASK", "HOST")
-    port = simpleuiConfig.get("FLASK", "PORT")
-    url = "http://" + host + ":" + port
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting SimpleUI server!")
+    sys.exit(0)
 
-    logging.debug("SimpleUI URL: " + url)
+host = simpleuiConfig.get("FLASK", "HOST")
+port = simpleuiConfig.get("FLASK", "PORT")
+url = "http://" + host + ":" + port
 
-    webbrowser.open_new(url)
+logging.debug("SimpleUI URL: " + url)
+
+webbrowser.open_new(url)
 
 
 # Initialize Flask microframework
