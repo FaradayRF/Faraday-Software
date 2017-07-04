@@ -61,6 +61,7 @@ parser.add_argument('--init-config', dest='init', action='store_true', help='Ini
 parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect to')
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
 parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
+parser.add_argument('--start', action='store_true', help='Start Telemetry server')
 
 # Telemetry database options
 parser.add_argument('--database', help='Set Telemetry database name')
@@ -199,6 +200,11 @@ if args.savelog is not None:
 # List Telemetry log database files
 if args.showlogs:
     showTelemetryLogs()
+
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting Telemetry server!")
+    sys.exit(0)
 
 
 if len(telemetryFile) == 0:
