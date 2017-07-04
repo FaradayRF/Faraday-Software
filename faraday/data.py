@@ -113,40 +113,50 @@ def rfdataport():
     if request.method == 'POST':
         try:
             # Parse Flask arguments
-            localcallsign = request.args.get("localcallsign").upper()
-            localnodeid = request.args.get("localnodeid")
+            localcallsign = request.args.get("localcallsign").upper() # Local device proxy unit
+            localnodeid = request.args.get("localnodeid") # Local device proxy unit
+            # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
             destinationcallsign = request.args.get("destinationcallsign").upper()
             destinationnodeid = request.args.get("destinationnodeid")
             data = request.args.get("data")
-            data = base64.b64decode(data)
 
-            if len(data) > PAYLOAD_LEN:
-                # Fragment data
-                fragment_list = fragmentmsg(data, PAYLOAD_LEN)
+            try:
+                data = base64.b64decode(data) # All incoming data packets must be BASE64
+            except TypeError as e:
+                logger.info("BASE64 data error: {0}".format(e))
 
-                for item in fragment_list:
+                # Return status
+                return json.dumps(
+                    {"status": "BASE64 data error."}), 400
+            else:
+
+                if len(data) > PAYLOAD_LEN:
+                    # Fragment data
+                    fragment_list = fragmentmsg(data, PAYLOAD_LEN)
+
+                    for item in fragment_list:
+                        # Create rfdataport application packet
+                        cmd = 0 # Data Frame
+                        seq = 0 # Not used, yet
+                        datapacket = packet_struct.pack(cmd, seq, str(item))
+
+                        # Transmit data packet
+                        faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+
+                else:
                     # Create rfdataport application packet
-                    cmd = 0 # Data Frame
-                    seq = 0 # Not used, yet
-                    datapacket = packet_struct.pack(cmd, seq, str(item))
+                    logger.debug("data {0}".format(str(data)))
+                    cmd = 0  # Data Frame
+                    seq = 0  # Not used, yet
+                    datapacket = packet_struct.pack(cmd, seq, str(data))
 
                     # Transmit data packet
                     faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
-            else:
-                # Create rfdataport application packet
-                logger.debug("data {0}".format(str(data)))
-                cmd = 0  # Data Frame
-                seq = 0  # Not used, yet
-                datapacket = packet_struct.pack(cmd, seq, str(data))
 
-                # Transmit data packet
-                faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
-
-
-            # Return status
-            return json.dumps(
-                {"status": "Posted Packet(s)"}), 200
+                # Return status
+                return json.dumps(
+                    {"status": "Posted Packet(s)"}), 200
 
         except KeyError as e:
             print "KeyError:", e
