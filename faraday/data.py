@@ -5,6 +5,8 @@ import json
 import base64
 import sys
 import struct
+import logging.config
+
 
 from flask import Flask
 from flask import request
@@ -17,10 +19,22 @@ from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import commandmodule
 #import packet
 
-# Open configuration INI
-config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("rfdataport.ini")
-config.read(filename)
+# Start logging after importing modules
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+logger = logging.getLogger('Data')
 
 # Global variables
 packet_struct = struct.Struct('2B 40s')
