@@ -109,7 +109,6 @@ def rfdataport():
     """
     Flask function that provides the "transmit" and "receive" functionality.
     """
-    logger.info("Working!")
     # If POST
     if request.method == 'POST':
         try:
@@ -119,9 +118,7 @@ def rfdataport():
             destinationcallsign = request.args.get("destinationcallsign").upper()
             destinationnodeid = request.args.get("destinationnodeid")
             data = request.args.get("data")
-            print "LEN:", len(data), data
             data = base64.b64decode(data)
-            print "DECODE:", data
 
             if len(data) > PAYLOAD_LEN:
                 # Fragment data
@@ -139,7 +136,7 @@ def rfdataport():
 
             else:
                 # Create rfdataport application packet
-                logger.info("data {0}".format(str(data)))
+                logger.debug("data {0}".format(str(data)))
                 cmd = 0  # Data Frame
                 seq = 0  # Not used, yet
                 datapacket = packet_struct.pack(cmd, seq, str(data))
