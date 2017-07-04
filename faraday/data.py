@@ -6,7 +6,8 @@ import base64
 import sys
 import struct
 import logging.config
-
+import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -44,6 +45,31 @@ logger.debug('data.ini PATH: ' + dataConfigPath)
 
 dataConfig = ConfigParser.RawConfigParser()
 dataConfig.read(dataConfigPath)
+
+# Command line input
+parser = argparse.ArgumentParser(description='Provides a generic data server to proxy.')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Data configuration file')
+
+# Parse the arguments
+args = parser.parse_args()
+
+def initializeDataConfig():
+    '''
+    Initialize Data configuration file from data.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Data")
+    shutil.copy(os.path.join(path, "data.sample.ini"), os.path.join(path, "data.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+# Now act upon the command line arguments
+# Initialize and configure Data
+if args.init:
+    initializeDataConfig()
 
 # Global variables
 packet_struct = struct.Struct('2B 40s')
