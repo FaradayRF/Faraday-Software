@@ -57,14 +57,17 @@ while True:
 
 
 ### Windows
-* Double-click on hello-world.py and run with python
-* Navigate to `C:\faradayrf\faraday-software\Tutorials\start` and run `python hello-world.py`
+* Navigate to the downloaded `hello-world.py` and open with a text editor
+* Update `callsign` and `node_id` variables
+* Run `python hello-world.py` from command line
 
 Ensure that Proxy is running in the background!
 
 ### Linux (Debian-based)
-* Navigate in terminal to `/git/faraday-software/Python_Developer_Tutorials/start` and run `sudo python hello-world.py`
-* sudo is needed to ensure you can write to `/dev/ttyUSB0`
+* Navigate to the downloaded `hello-world.py` and open with a text editor
+* Update `callsign` and `node_id` variables
+* Run `sudo python hello-world.py` from command line
+ * sudo is needed to ensure you can write to `/dev/ttyUSB0`
 
 Ensure that Proxy is running in the background!
 
