@@ -36,6 +36,15 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Data')
 
+# Load Telemetry Configuration from telemetry.ini file
+
+#Create Proxy configuration file path
+dataConfigPath = os.path.join(path, "data.ini")
+logger.debug('data.ini PATH: ' + dataConfigPath)
+
+dataConfig = ConfigParser.RawConfigParser()
+dataConfig.read(dataConfigPath)
+
 # Global variables
 packet_struct = struct.Struct('2B 40s')
 PACKET_LEN = 42
@@ -74,6 +83,7 @@ def rfdataport():
     """
     Flask function that provides the "transmit" and "receive" functionality.
     """
+    logger.info("Working!")
     # If POST
     if request.method == 'POST':
         try:
@@ -83,9 +93,9 @@ def rfdataport():
             destinationcallsign = request.args.get("destinationcallsign").upper()
             destinationnodeid = request.args.get("destinationnodeid")
             data = request.args.get("data")
-            #print "LEN:", len(data), data
+            print "LEN:", len(data), data
             data = base64.b64decode(data)
-            #print "DECODE:", data
+            print "DECODE:", data
 
             if len(data) > PAYLOAD_LEN:
                 # Fragment data
@@ -103,7 +113,7 @@ def rfdataport():
 
             else:
                 # Create rfdataport application packet
-                print "data", str(data)
+                logger.info("data {0}".format(str(data)))
                 cmd = 0  # Data Frame
                 seq = 0  # Not used, yet
                 datapacket = packet_struct.pack(cmd, seq, str(data))
@@ -172,11 +182,11 @@ def main():
     """Main function which starts the Flask server."""
 
     # Get INI file configuration for Flask server
-    rfdataporthost = config.get("FLASK", "HOST")
-    rfdataportport = config.get("FLASK", "PORT")
+    host = dataConfig.get("FLASK", "HOST")
+    port = dataConfig.get("FLASK", "PORT")
 
     # Start the flask server
-    app.run(host=rfdataporthost, port=rfdataportport, threaded=True)
+    app.run(host=host, port=port, threaded=True)
 
 
 if __name__ == '__main__':
