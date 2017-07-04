@@ -45,6 +45,11 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Proxy')
 
+# Set werkzeug logging level
+
+werkzeuglog = logging.getLogger('werkzeug')
+werkzeuglog.setLevel(logging.ERROR)
+
 #Create Proxy configuration file path
 proxyConfigPath = os.path.join(path, "proxy.ini")
 logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
@@ -374,6 +379,7 @@ def testdb_read_worker():
 
 # Initialize Flask microframework
 app = Flask(__name__)
+
 
 
 @app.route('/', methods=['GET', 'POST'])
