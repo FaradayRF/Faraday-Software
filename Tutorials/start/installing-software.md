@@ -41,7 +41,11 @@ Just want to run the latest `faraday` software? Open up a command prompt and exe
 That's it!
 
 ## Installing in Pip Editable Mode
-If you want to be able to develop with Faraday Software then we suggest cloning our Git Repository as described here.
+If you want to be able to develop with faraday software then we suggest cloning our Git Repository as described below and install with pip in 'editable' mode. Please note that in 'editable' mode you may have to run faraday software from the root project directory due to filepath issues when running in this mode.
+
+Checkout the Git repository as explained below and then install with the following:
+* Navigate to the repository root directory
+* `pip install -e .`
 
 ### Windows
 
