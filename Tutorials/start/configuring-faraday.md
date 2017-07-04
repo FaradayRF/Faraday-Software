@@ -45,7 +45,7 @@ An example configuration command would be:
  faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
  ```
 
-At this point the configuration server is running and ready to program our intended data to the radio. If you do need to change a faraday setting and have already told `faraday-deviceconfiguration` where Proxy is then there is no need to reconfigure those values.
+Please remember if you already configured a setting it does not need to be set again in future executions of `faraday-deviceconfiguration`. You may check the current Faraday configuration file by running `--faradayconfig` which will print out the file contents.
 
 ## Programming Faraday
 You're almost there! One more step. We've configured the `faraday-deviceconfiguration` server and told it what values to program the radio with. Now it's time to actually program Faraday. We do this by interfacing the `faraday-deviceconfiguration` API to "kick" off the programming using a script provided with faraday called `faraday-simpleconfig`.
