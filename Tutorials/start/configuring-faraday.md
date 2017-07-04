@@ -1,83 +1,69 @@
 # Configuring Faraday
 
-Now we should configure Faraday itself. The device configuration data is stored in the CC430 Flash memory and is used to store the callsign, ID, static GPS location, telemetry interval, and other settings.
+Now we should configure Faraday itself. The device configuration data is stored in the CC430 Flash memory and is used to store the callsign, ID, static GPS location, telemetry interval, among other settings.
 
-In the deviceconfiguration folder located in the Applications folder lives our Device Configuration program, `deviceconfiguration.py`, which is a Flask application that is run in the background waiting to be given data to program on Faraday. It exposes a RESTful API to do so and communicates with Proxy in order to configure the radio. `simpleconfig.py` is a script which reads the `faraday_config.ini` file and sends HTTP POST and GET queries to the `deviceconfiguration.py` server.
+The `faraday-deviceconfiguration` program communicates with the Proxy server enabling easy configuration of Faraday hardware. Let's use it to give your Faraday radio a callsign and other necessary configuration values. Additionally, we use `faraday-simpleconfig` to kick off the programming actions and display relevant information back to you.
 
-The application files are located:
+## Initializing Device Configuration
+Just as with Proxy, we need to initialize the configuration file for `faraday-deviceconfiguration`. To do this run the following command:
+* `faraday-deviceconfiguration --init-config`
 
- * `~/Applications/deviceconfiguration`
+Additionally we need to initialize the faraday radio configuration file. This is nearly the same:
+* `faraday-deviceconfiguration --init-faraday-config`
 
-> NOTE: Device Configuration using the application tool in this tutorial is currently limited to programming a single device at a time. Also, this process will be automated in the future.
+![Device Configuration Initialization](images/deviceconfiguration-init.jpg)
 
-## Device Configuration Setup
- 
-First, we should ensure the Device Configuration program can communicate with Proxy running in the background. For this we need to create the `deviceconfiguration.ini` file from `deviceconfiguration.sample.ini` as we did for Proxy. Next, edit the `[DEVICES]` section to contain the same configuration Proxy is configured with in `proxy.ini`
- 
-`[FLASK]`: Flask server configuration values
- * `HOST`: IP Address or hostname of flask server
- * `PORT`: Network port to serve data
- 
- 
-`[DEVICES]`: Section for unit Callsigns and Node IDs
- * `UNITS`: Quantity of Faraday radios to configure (supports one at this time)
- * `UNIT0CALL`: Callsign to associate with radio connected to Proxy
- * `UNIT0ID`: Node ID of radio connected to Proxy
- 
-## Faraday Configuration
- 
-Now you should create and update `faraday_config.ini` which will be used by `simpleconfig.py` to program Faraday. For now just update the `CALLSIGN` and `ID` as well as any placeholder GPS fields. Simpleconfig will error with relevant information about what is wrong in your configuration.
- 
+## Configuring Device Configuration
+Now we need to tell the `faraday-deviceconfiguration` program where to find Proxy and what to configure the radio with. At this time the resulting command can be long so please be careful. Here are the configuration options:
 
-`[BASIC]`
- * `CONFIGBOOTBITMASK` Keep set to 1, indicates configuration has occured.
- * `CALLSIGN` Faraday radio callsign (9 characters)
- * `ID` Faraday radio node ID (0-255)
- * `GPIO_P3` Default CC430 P3 IO state, all considerd outputs at this time
- * `GPIO_P4` Default CC430 P4 IO state, all considerd outputs at this time
- * `GPIO_P5` Default CC430 P5 IO state, all considerd outputs at this time
+![Device Configuration options](images/deviceconfiguration-options.jpg)
 
-`[RF]`
- * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot, 914.5 MHz is current default. Range is 902-928MHz
- * `BOOT_RF_POWER` Faraday RF power setting, 152 is maximum however not optimal, 20 is suggested for desktop use to prevent desensing
+The options we must change include:
+* `--proxycallsign CALLSIGN`: The callsign that Proxy is using
+* `--proxynodeid NODEID`: the nodeid that Proxy is using
+* `--callsign CALLSIGN`: the callsign to program Faraday with
+* `--nodeid NODEID`: the nodeid to program Faraday with
+* `--start`: Tells `faraday-deviceconfiguration` server to start
 
-`[GPS]`
- * `DEFAULT_LATITUDE` Latitude to default to when no GPS is present or is not used
- * `DEFAULT_LATITUDE_DIRECTION` Latitude direction to default to when no GPS is present or is not used
- * `DEFAULT_LONGITUDE` Longitude to default to when no GPS is present or is not used
- * `DEFAULT_LONGITUDE_DIRECTION` Longitude direction to default to when no GPS is present or is not used
- * `DEFAULT_ALTITUDE` Altitude to default to when no GPS is present or is not used
- * `DEFAULT_ALTITUDE_UNITS`Altitude to default to when no GPS is present or is not used
- * `GPS_BOOT_BIT` ON/OFF to allow GPS to turn on at boot
- * `GPS_PRESENT_BIT` Boolean value to inform Faraday whether there is a GPS present or not
+The options you may want to change depending on hardware and needs:
+* `--latitude LATITUDE`: default latitude to use when GPS is disabled
+* `--longitude LONGITUDE`: default longitude to use when GPS is disabled
+* `--latitudedir LATITUDEDIR`: default latitude direction (N/S) to use when GPS is disabled
+* `--longitudedir LONGITUDEDIR`: default longitude direction (E/W) to use when GPS is disabled
+* `--altitude ALTITUDE`: default altitude (0-17999.99 meters) to use when GPS is disabled.
+* `--gpsbooton`: Enable GPS boot power
+* `--gpsbootoff`: Disable GPS boot power
+* `--gpsenabled`: enable GPS use
+* `--gpsdisabled`: enable GPS use
+* `--rftelemetryenable`: enable RF telemetry transmissions
+* `--rftelemetrydisabled`: Disable RF telemetry transmissions
+* `--rfinterval RFINTERVAL`: RF transmission interval in seconds
 
-`[TELEMETRY]`
- * `UART_TELEMETRY_BOOT_BIT` ON/OFF sending telemetry over UART after boot
- * `RF_TELEMETRY_BOOT_BIT` ON/OFF sending telemetry over RF after boot
- * `TELEMETRY_DEFAULT_UART_INTERVAL` UART telemetry interval (seconds)
- * `TELEMETRY_DEFAULT_RF_INTERVAL` RF telemetry beacon interval (seconds)
+An example configuration command would be:
 
-## Configuring Hardware
+ ```
+ faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
+ ```
 
-We are almost there! Eventually this will be automated but for now this is what we have. The following steps will start the Device Configuration application server and then send a POST command to it in order to initiate programming. Please ensure Proxy is running prior to these steps.
+Please remember if you already configured a setting it does not need to be set again in future executions of `faraday-deviceconfiguration`. You may check the current Faraday configuration file by running `--faradayconfig` which will print out the file contents.
 
-1. Navigate to `deviceconfiguration` folder in Explorer or terminal
-2. Run `deviceconfiguration.py`
-  * Windows: double-click on `deviceconfiguration.py`
-  * Linux: `python deviceconfiguration.py`
-3. Run `simpleconfig.py` to send configuration data to Faraday
-4. Press `ctrl+c` to exit simpleconfig when complete after reviewing changes
-5. Close `deviceconfiguration.py` window
+## Programming Faraday
+You're almost there! One more step. We've configured the `faraday-deviceconfiguration` server and told it what values to program the radio with. Now it's time to actually program Faraday. We do this by interfacing the `faraday-deviceconfiguration` API to "kick" off the programming using a script provided with faraday called `faraday-simpleconfig`.
 
-Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming the script queries Faraday over UART to send its Flash contents so we can confirm proper programming.
+### Reading the CC430 FLASH Configuration
+We've added a useful feature to SimpleConfig which lets you query Faraday without programming it. Therefore you can see what the current FLASH configuration is. You must have `faraday-proxy` and `faraday-deviceconfiguration` running to perform this action.
 
-![Simpleconfig.py output](images/simpleconfig.png)
+* `faraday-simpleconfig --read`
 
-Note:
- * Some fields such as `BOOT_FREQUENCY_MHZ` and bitmasks return MSP430 specific values which differ from configuration values or bitmasks.
+![SimpleConfig read](images/simpleconfig.jpg)
+
+### Programming CC430 FLASH configuration
+Now the time has come to actually program Faraday. To do so you simply run SimpleConfig which results in Device Configuration sending a POST request to Proxy to program the radio. After waiting five seconds, SimpleConfig will also send a GET request to query the contents of the CC430 FLASH memory helping confirm the intended settings.
+
+* `faraday-simpleconfig`
 
 ## Proxy Considerations
-Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.
+Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different.
 
 # Time to Use the API
-With the Proxy setup we now have the ability to communicate with Faraday using a RESTful API. Next step, [run the  Telemetry application](telemetrystart.md) and use the Faraday API to see data in your web browser!
+With the Proxy setup and the radio programmed, we now have the ability to communicate with Faraday using a RESTful API. Next step, [run the  Telemetry application](telemetrystart.md) and use the Faraday API to see data in your web browser!
