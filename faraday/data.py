@@ -130,7 +130,6 @@ def rfdataport():
                     seq = 0 # Not used, yet
                     datapacket = packet_struct.pack(cmd, seq, str(item))
 
-                    print str(item)
                     # Transmit data packet
                     faraday_1.POST(localcallsign, localnodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
