@@ -8,7 +8,7 @@ With hardware connected, hardware configured, and Proxy running you are ready to
 * Faraday radio connected via USB to the computer
 * Faraday radio configured correctly
 * Proxy configured and running
-* Download [hello-world.py](https://github.com/kb1lqc/Faraday-Software/raw/issue220/Tutorials/start/configuring-proxy.md) to you computer, open in a text editor
+* Download [hello-world.py](hello-world.py) to you computer, open in a text editor
  * right-click save as
 
 # Code Overview
