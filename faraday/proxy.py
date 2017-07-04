@@ -78,7 +78,7 @@ parser.add_argument('--schema', help='Set Faraday database schema')
 parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
 parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
 parser.add_argument('--save-log', dest='savelog', help='Save Proxy log database into new SAVELOG file')
-parser.add_argument('--showlogs', action='store_true', help='Show Proxy log database files')
+parser.add_argument('--show-logs', action='store_true', help='Show Proxy log database files')
 
 # Proxy Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
