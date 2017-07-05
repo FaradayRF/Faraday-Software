@@ -221,6 +221,7 @@ try:
 except ConfigParser.NoSectionError as e:
     # Possible that no configuration file found
     logger.error('Proxy configuration file error!')
+    logger.error('Did you rememebr to --init-config?')
     logger.error(e)
     sys.exit(0)
 
