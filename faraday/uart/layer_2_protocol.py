@@ -27,7 +27,6 @@ class layer_2_object(object):
         self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
 
 
-
 class layer_2_protocol(threading.Thread):
     def __init__(self, port, baud, timeout):
         self._port = port
