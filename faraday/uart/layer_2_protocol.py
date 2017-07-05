@@ -80,7 +80,7 @@ class layer_2_protocol(threading.Thread):
                     if self.ser.inWaiting() > 0:
                         rx_buffer_inwaiting = self.ser.inWaiting()
                         self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
-                except serial.SerialException as e:
+                except serial.SerialException:
                     logger.error("Port '{0}' disconnected!".format(self._port))
                     self.abort()
 
