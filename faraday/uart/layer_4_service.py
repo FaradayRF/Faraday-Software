@@ -79,7 +79,7 @@ class faraday_uart_object(threading.Thread):
         logger.debug('payload: {0}'.format(payload))
 
         #Calculation protocol violations before trying to create a transport packet
-        payload_check = len(payload) < self.TRANPORT_PAYLOAD_LENGTH
+        #payload_check = len(payload) < self.TRANPORT_PAYLOAD_LENGTH
         service_number_check = service_number < 256
         payload_len_check = payload_length <= self.TRANPORT_PAYLOAD_LENGTH
 
@@ -92,7 +92,6 @@ class faraday_uart_object(threading.Thread):
             self.transmit_datagram_queue_put(transport_packet_padded)
         else:
             logger.warning('Transport protocol violation')
-
 
     def GET(self, service_port):
         """

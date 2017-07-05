@@ -39,7 +39,6 @@ class Layer2ServiceObject(threading.Thread):
         except:
             logger.error("Layer2ServiceObject POST() error")
 
-
     def GET(self):
         """
         Gets the next received Layer 2 datagram in the FIFO
@@ -57,7 +56,6 @@ class Layer2ServiceObject(threading.Thread):
             return self.rx.IsEmpty()
         except:
             logger.error("Layer2ServiceObject isEmpty() error")
-
 
     def Abort(self):
         logger.error("Aborting Layer2ServiceObject!")
