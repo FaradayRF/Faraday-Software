@@ -52,9 +52,15 @@ config.read(filename)
 parser = argparse.ArgumentParser(description='SimpleConfig sends a request to faraday-deviceconfiguration to initiate a POST or GET command resulting in programming a Faraday radio and/or reading its FLASH memory configuration')
 
 parser.add_argument('--read', action='store_true', help='Read FLASH configuration only, do not program')
+parser.add_argument('--start', action='store_true', help='Start SimpleConfig script')
 
 # Parse the arguments
 args = parser.parse_args()
+
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting SimpleConfig script!")
+    sys.exit(0)
 
 #Variables
 local_device_callsign = config.get("DEVICES", "CALLSIGN")
