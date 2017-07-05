@@ -213,7 +213,16 @@ def configureProxy(args, proxyConfigPath):
 # Initialize and configure proxy
 if args.init:
     initializeProxyConfig()
-configureProxy(args, proxyConfigPath)
+
+# Attempt to configure proxy
+try:
+    configureProxy(args, proxyConfigPath)
+
+except ConfigParser.NoSectionError as e:
+    # Possible that no configuration file found
+    logger.error('Proxy configuration file error!')
+    logger.error(e)
+    sys.exit(0)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
