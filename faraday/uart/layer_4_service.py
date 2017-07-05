@@ -73,6 +73,10 @@ class faraday_uart_object(threading.Thread):
         """
         Places a given payload data to the given UART service number to be transmited to the UART device. This places the item in the transmit FIFO.
         """
+        logger.debug('Started layer 4 POST function')
+        logger.debug('service_number: {0}'.format(service_number))
+        logger.debug('payload_length: {0}'.format(payload_length))
+        logger.debug('payload: {0}'.format(payload))
 
         #Calculation protocol violations before trying to create a transport packet
         payload_check = len(payload) < self.TRANPORT_PAYLOAD_LENGTH
@@ -87,20 +91,20 @@ class faraday_uart_object(threading.Thread):
             transport_packet_padded = transport_packet + chr(0xff) * (self.TRANPORT_PAYLOAD_LENGTH - len(payload))
             self.transmit_datagram_queue_put(transport_packet_padded)
         else:
-            logger.info('ERROR: Transport protocol violation')
-            logger.info('Payload Length' + str(payload_check) + str(len(payload)))
-            logger.info('Payload Length Byte' + str(payload_len_check) + str(payload_length))
-            logger.info('Service Number Check' + str(service_number_check) + str(service_number))
+            logger.warning('Transport protocol violation')
+
 
     def GET(self, service_port):
         """
         Returns the next received datagram payload from the FIFO for the given UART service port number. Returns False if no items to be retrieved.
 
         """
+        logger.debug('service_port: {0}'.format(service_port))
         try:
             rx_data = self.receive_parsed_queue_dict[service_port].get_nowait()
             return rx_data
         except:
+            logger.warning('Returned False from layer 4 GET()')
             return False
 
     def transmit_datagram_queue_put(self, item):
@@ -135,8 +139,7 @@ class faraday_uart_object(threading.Thread):
 
     def process_received_datagram(self, datagram):
         parsed_datagram_dict = layer_4_protocol.parse_packet(datagram)
-        if DEBUG:
-            logger.info('RX Datagram:' + str(parsed_datagram_dict))
+        logger.debug('RX Datagram: {0}'.format(str(parsed_datagram_dict)))
 
     def RxPortHasItem(self, service_number):
         try:
@@ -155,7 +158,6 @@ class faraday_uart_object(threading.Thread):
 
     def receive_service_queue_put(self, payload, service_number):
         # THIS FUNCTION POPS OLD DATA AND REPLACES WITH NEW DATA. WHY?
-        #print "#", service_number, str(service_number).encode('hex')
         try:
             if(self.receive_parsed_queue_dict[service_number].full()):
                 #Pop old data off then insert new data
@@ -196,13 +198,14 @@ class faraday_uart_object(threading.Thread):
                     transport_payload = unpacked_transport[2][:length]  #.encode('hex')
                     self.receive_service_queue_put(transport_payload, rx_service_number)
                 except:
-                    logger.info('data fail UART layer 4 receive link')
+                    logger.error('data fail UART layer 4 receive link')
             except:
-                logger.info('Layer 4 transport fail')
+                logger.error('Layer 4 transport fail')
         else:
             pass
 
     def Abort(self):
+        logger.error("Abording layer 4 faraday_uart_object")
         self.layer_2_object.Abort()  #Abort lower layers
         self.enabled = False
 
@@ -222,7 +225,7 @@ class faraday_uart_object(threading.Thread):
                     self.receive_service_queue_put(parsed_l4_packet[2], parsed_l4_packet[0])
 
                 except:
-                    logger.info('FAILED PARSING' + str(rx_datagram))
+                    logger.warning('FAILED PARSING: {0}'.format(str(rx_datagram)))
                     pass
             #Check uart datalink receive for new datagrams to parse
             self.uart_layer_receive_link()
