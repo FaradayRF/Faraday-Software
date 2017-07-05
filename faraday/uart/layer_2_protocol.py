@@ -23,12 +23,9 @@ logger = logging.getLogger('UARTStack')
 
 class layer_2_object(object):
     def __init__(self, port, baud, timeout):
-        # Start up serial object and if it fails exit the program
-        try:
-            self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
-        except serial.SerialException as e:
-            logger.error(e)
-            sys.exit(1)  # Sys.exit(1) is an error
+        # Start up serial object
+        self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
+
 
 
 class layer_2_protocol(threading.Thread):
@@ -36,10 +33,14 @@ class layer_2_protocol(threading.Thread):
         self._port = port
         self._baud = baud
         self._timeout = timeout
-        self.ser = serial.Serial(port, baud, timeout=timeout)
         self.serial_rx_queue = Queue.Queue()  # Infinite
         self.serial_tx_queue = Queue.Queue()  # Infinite
         self.enabled = True
+        try:
+            self.ser = serial.Serial(port, baud, timeout=timeout)
+        except serial.SerialException as e:
+            logger.error(e)
+            sys.exit(1)  # Sys.exit(1) is an error
 
         #Start
         threading.Thread.__init__(self)
