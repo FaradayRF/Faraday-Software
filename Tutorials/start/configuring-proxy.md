@@ -1,124 +1,42 @@
 
 # The Proxy Interface
 
-[Proxy](../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read its documentation.
+[Proxy](../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read the application documentation. This guide is a quick tutorial to get you up and running.
+
+## Running Proxy
+Once installed with `pip` or in editable mode, you can start proxy by simply running `faraday-proxy` from the command line. However it must be properly configured before it will run.
+
+![Proxy INI](images/proxy.jpg "Proxy command prompt")
 
 ## Configuring Proxy
->This guide will walk you through these steps for the proxy configuration file.  The config files for other applications are modified in the same way.
+First you must initialize the configuration file by running `faraday-proxy --init-config`. This copies our *proxy.sample.ini* configuration file into a custom *proxy.ini* file. Repeat this step whenever you'd like to start with a fresh configuration file as well.
 
-### Configuration Files
-Some applications require user specific information in order to operate. Most commonly, `CALLSIGN` and `NODEID` are required so the software knows which radio to communicate with. Each application that needs user information looks for it in a configuration file. In general, a given application `ex: application.py` it will gather configuration information from the *.ini* file in the same folder with the same name as the application `ex: application.ini`. Since these configuration files contain user specific information, they are listed in the .gitignore file to prevent contributors from committing their personal configs to the repository by accident. For each application, a default file is stored in the git repository  with *.sample* added to the file name before the extension `ex: application.sample.ini`. This file contains all of the required fields with either default information or `REPLACEME` noting that user information is required.
- 
-Before you can use an application that requires user specific information, you need to create the *.ini* file with your info.
- 
- 1. Navigate to the folder with the application
- 2. Create a copy of `application.sample.ini` in the same folder
- 3. Remove the *.sample* from the name of the new file leaving `application.ini`
- 4. Open `application.ini` in a text editor and update the requested information noted by `REPLACEME`
- 
-### Proxy Configs Overview
-Proxy.ini is a plaintext ASCII file which contains the necessary configuration values to properly connect with and identify hardware when Proxy is initialized. Multiple Radios can be connected at once by simple extension of the [UNITx] sections where x is the zero-indexed enumeration of Faraday radios connected to the computer.
- 
->This guide assumes you have already [connected a Faraday radio](connecting-hardware.md) to your computer!
- 
- * `[FLASK]`: Flask server configuration values
-  * `HOST`: IP Address or hostname of flask server
-  * `PORT`: Network port to serve data
- * `[DATABASE]`: SQLite3 database settings for logging
-  * `FILENAME`: Filename of SQLite3 database to create/open
-  * `SCHEMANAME`: Filename of SQLite3 schema file for database creation
- * `[PROXY]`: Proxy server high level configuration
-  * `LOG`: Boolean indicating if Proxy data should be logged to SQLite3 database
-  * `UNITS`: Quantity of Faraday radios connected to computer
- * `[UNIT0]`: Unit 0 Proxy configuration values section
-  * `CALLSIGN`: Callsign to associate with radio on this USB port
-  * `NODEID`: Node ID of radio connected on this USB port
-  * `COM`: COM/serial Port associated with the radio connected
- 
-### Windows
- 
-> There is no need to change any other Proxy.ini settings unless you know what you're doing!
- 
- 1. Navigate to the `Proxy` folder
- 2. Create a copy of `proxy.sample.ini` and rename the new file `proxy.ini`
- 3. Open the `proxy.ini` file in a text editor to edit `[UNIT0]` values
- 4. Change `CALLSIGN` Replace `REPLACEME` to match your callsign
- 5. Change `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
- 6. Change `COM` to match the COM port indicated while [connecting Faraday](connecting-hardware.md). `x` represents a number.
- 6. Save the file as `proxy.ini`
- 
-A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on `COM71`.
- 
-![Proxy INI Example](images/Proxy-INI-Example.png "Proxy INI Example")
- 
-###Linux (Debian-Based)
- 
-> There is no need to change any other Proxy.ini settings unless you know what you're doing!
- 
- 1. Open `proxy.sample.ini` with a text editor i.e `gedit git/faradayrf/software/Proxy/proxy.sample.ini`
- 2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
- 3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
- 4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
- 5. Save the file as `proxy.ini`
- 
-A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on `COM71`. For Debian `COM71` would be `/dev/ttyUSB0` in this example.
- 
-###Mac OS X
- 
-> There is no need to change any other Proxy.ini settings unless you know what you're doing!
- 
- 1. Open `proxy.sample.ini` with a text editor `faradayrf/software/Proxy/proxy.sample.ini`
- 2. Update `CALLSIGN` Replace `REPLACEME` to match your callsign
- 3. Update `NODEID` to an appropriate node ID value that is not already in use. Numbers between 0-255 are valid.
- 4. Update `COM` to match the device dev path indicated while [connecting Faraday](connecting-hardware.md).
- 5. Save the file as `proxy.ini`
- 
-A proper configuration file will look similar to the configuration below. Notice the radio is `KB1LQD-1` on COM71. For Mac OS X `COM71` would be `/dev/cu.usbserial-40` as an example.
+*prox.ini* comes mostly configured so little needs to be changed. However, we do require changes to `--callsign`, `--nodeid`, and `--port` options.
+* `--callsign CALLSIGN` replace CALLSIGN with the Faraday radio callsign
+* `--nodeid NODEID` replace NODEID with an integer between 0-255 to ID the radio
+* `--port PORT` replace PORT with the UART port faraday is connected to such as *COM10*
 
-## Connecting Proxy to Faraday
+The entire command will look something like this:
+`faraday-proxy --callsign kb1lqc --nodeid 2 --port COM23`
 
-Double-click on `proxy.py` to run it from a file explorer.
-Alternatively one can simply run proxy from command line:
+![Proxy Configuration Example](images/proxy-configuration.jpg "Proxy configuration")
 
-### Windows
-For example `python C:\faradayrf\software\Proxy\proxy.py`
+Proxy will automatically start when this command is run. Once configured you do not have to reconfigured unless desired and can start Proxy with `faraday-proxy`.
 
-###Linux (Debian-Based)
-For example `python faradayrf/software/Proxy/proxy.py`
+> * Linux users may have a port value such as `--port /dev/ttyUSB0`
+> * Max OS X users may have a port value such as `--port /dev/cu.usbserial-40`
 
-###Mac OS X
-For example `python faradayrf/software/Proxy/proxy.py`
+### Proxy Running
+Proxy provides a server which other programs can communicate with the radio through and therefore must always be run when using the hardware. We suggest giving and entire command prompt window to Faraday as it tends to print out information when queried.
 
-###Proxy Running
-With Faraday connected and `proxy.py` properly configured you will see a screen similar to that shown below upon initialization.
-
-![Successful Proxy Connection](images/Proxy-Success-Connection.png "Successful Proxy Connection")
-
-> Once connected leave proxy running. It is a background application which provides a service to our core applications.
+![Proxy INI](images/proxy.jpg "Proxy command prompt")
 
 Congratulations, Proxy is now running successfully!
 
-### Connection Error
+#### UARTStack Fail Messages
+Do not be concerned if you see any message such as that shown below. This is simply a bad packet sent to Proxy over UART which failed CRC checking and was thrown out. This occasionally happens and is OK. With noisy computer grounds and poor quality USB cables one can expect to see more of these messages.
 
-An incorrect COM/serial port assignment or unconnected Faraday radio will cause the following common error to appear.
-
-![Proxy Connection ERROR](images/Proxy-Error-Connection.png "Proxy Connection ERROR")
-
-> Check your COM port settings and that you did not change `baudrate` in `proxy.ini`
-
-## Connecting To Multiple Faraday Devices
-
-> This feature is currently broken in `Master` and we are actively working on [Issue #86](https://github.com/FaradayRF/Faraday-Software/issues/86) to fix it!
-
-The proxy interface can connect to more than one Faraday digital radio at a time and this is achieved by creating more instances of `[UNITx]` sections and updating the `UNITS` value in the `[PROXY]` section.
-
-### Windows
- 1. [Connect](connecting-hardware.md) ***both*** Faraday radios to your computer via USB and identify their respective COM ports. 
- 2. Open and configure the `proxy.ini` by changing `UNITS` in the [PROXY] section to indicate the quantity of radios connected to the computer. Also add a `[UNITx]` section for each radio.
-
-A proper ```proxy.ini``` configuration file will resemble the example below.
-
-![Device Manager](images/Proxy-INI-Example-Multiple-Units.png "Device Manager")
+![Proxy INI UARTStack Fail](images/proxy-uartstackfail.jpg "Proxy command prompt")
 
 # It's Time To Configure Faraday
 Now that Proxy is running, we can communicate with the radio. This means we should program it with some basic information such as your callsign and its node ID. Let's [configure Faraday](configuring-faraday.md).

@@ -109,7 +109,7 @@ except KeyError as e:
 
 print "\n************************************"
 print "\nQuit with ctrl+c"
-while (True):
+while True:
     # Loop until user presses ctrl+c so they can read response
     time.sleep(1)
     pass

@@ -39,7 +39,7 @@ def main():
     """
 
     print "Receiver Started On: ", localcallsign.upper() + '-' + str(localnodeid)
-    while 1:
+    while True:
         # Sleep to release python process
         time.sleep(0.1)
 

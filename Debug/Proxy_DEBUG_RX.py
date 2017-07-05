@@ -31,7 +31,7 @@ PROXY_GET_TIMEOUT = 10  #Second(s)
 data = None
 
 #While loop to wait for reception of data packet from experimental message application
-while(1):
+while True:
     #Wait until there is new data on the message application port OR timout
     for i in range(0, 255, 1):
         try:

@@ -1,85 +1,38 @@
 # Configuring Faraday for RF Operation
-Congrats on powering through local telemetry viewing and LED commanding with Faraday! Having [configured Faraday](configuring-faraday.imd) for local USB connected use it's time to configure a second Faraday (or any) to transmit RF using `deviceconfiguration` again. By default the configuration disables the RF transmitter. So let's turn it on!
+Congrats on powering through local telemetry viewing and LED commanding with Faraday! It's time to configure a second Faraday (or any) to transmit RF using `faraday-deviceconfiguration` again. By default the configuration disables the RF transmitter. So let's turn it on!
 
-> Remember you need `proxy` properly configured and running to run `deviceconfiguration`.
+> Remember you need `faraday-proxy` properly configured and running
 
 A base station or remote node could be configured for RF transmissions. Base stations sending out telemetry to the remote nodes or other base stations is useful.
 
-## Faraday Configuration
+## Faraday RF Configuration
 
-To program a unit for initial RF operation with default settings,  `faraday_config.sample.ini` should be copied to a new file named  `faraday_config.ini` and the following values should be updated in the new `faraday_config.ini` file:
+To enable RF we program faraday with the standard [configuration](configuring-faraday.md) settings and add a few additional options. Below is an example for configuring `KB1LQC-2` for RF transmissions:
 
- * `CALLSIGN=<Intended Callsign>`
- * `ID=<intended ID>`
- * `BOOT_RF_POWER=20`
- * `RF_TELEMETRY_BOOT_BIT=1`
- * `TELEMETRY_DEFAULT_RF_INTERVAL=10`
+> All Faraday radios must have unique callsign-nodeid configurations!
+
+```
+faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenabled --rfinterval 2 --start
+```
+
+* `--rftelemetryenabled`: Enable RF telemetry transmissions.
+* `--rfinterval RFINTERVAL`: Transmission interval in seconds (default 2 seconds).
+
+If proxy callsign and nodeid are already configured for `faraday-deviceconfiguration` then those commands could be ommitted.
+
+Additional options for RF operation include
+* `--rftelemetrydisabled`: Disable RF telemetry transmissions.
+* `--bootfrequency BOOTFREQUENCY`: Floating point transmission frequency in MHz.
+* `--bootrrpower BOOTRFPOWER`: RF Power from 0 to 142. Default setting is 20.
+* `--redledtxon`: Enable the red LED when RF Transmitted.
+* `--redledtxoff`: Disable the red LED when RF Transmitted.
 
 We suggest a RF power setting of 20 for desktop use and higher could easily desense the radio causing packets to be missed. RF power of about 140 seems to be the maximum output. Also, please make sure the "Callsign-NodeID" combination is unique for every radio!
 
-A Faraday radio configured for RF use might look like this:
-
- * `CALLSIGN=KB1LQC`
- * `ID=2`
- * `BOOT_RF_POWER=140`
- * `RF_TELEMETRY_BOOT_BIT=1`
- * `TELEMETRY_DEFAULT_RF_INTERVAL=10`
-
-It is also highly recommended to program default GPS location and altitudes in even if you have a GPS installed. Simply setting them to zero can be a good failsafe
-
- * `DEFAULT_LATITUDE=0000.0000`
- * `DEFAULT_LONGITUDE=00000.0000`
- * `DEFAULT_ALTITUDE=00000.00`
-
-### Configuration Reference
- Below is a reference of the entire `faraday_config.ini` with an explanation of each setting.
-
-`[BASIC]`
- * `CALLSIGN` Faraday radio callsign (9 characters)
- * `ID` Faraday radio node ID (0-255)
- * `GPIO_P3` Default CC430 P3 IO state, all considered outputs at this time
- * `GPIO_P4` Default CC430 P4 IO state, all considered outputs at this time
- * `GPIO_P5` Default CC430 P5 IO state, all considered outputs at this time
-
-`[RF]`
- * `BOOT_FREQUENCY_MHZ` Faraday radio frequency after a reboot, 914.5 MHz is current default. Range is 902-928MHz
- * `BOOT_RF_POWER` Faraday RF power setting, 152 is maximum however not optimal, 20 is suggested for desktop use to prevent desensing
-
-`[GPS]`
- * `DEFAULT_LATITUDE` Latitude to default to when no GPS is present or is not used
- * `DEFAULT_LATITUDE_DIRECTION` Latitude direction to default to when no GPS is present or is not used
- * `DEFAULT_LONGITUDE` Longitude to default to when no GPS is present or is not used
- * `DEFAULT_LONGITUDE_DIRECTION` Longitude direction to default to when no GPS is present or is not used
- * `DEFAULT_ALTITUDE` Altitude to default to when no GPS is present or is not used
- * `DEFAULT_ALTITUDE_UNITS`Altitude to default to when no GPS is present or is not used
- * `GPS_BOOT_BIT` ON/OFF to allow GPS to turn on at boot
- * `GPS_PRESENT_BIT` Boolean value to inform Faraday whether there is a GPS present or not
-
-`[TELEMETRY]`
- * `UART_TELEMETRY_BOOT_BIT` ON/OFF sending telemetry over UART after boot
- * `RF_TELEMETRY_BOOT_BIT` ON/OFF sending telemetry over RF after boot
- * `TELEMETRY_DEFAULT_UART_INTERVAL` UART telemetry interval (seconds)
- * `TELEMETRY_DEFAULT_RF_INTERVAL` RF telemetry beacon interval (seconds)
-
 ## Configuring Hardware
+Hardware is configured for RF use the same way we programmed the USB connected Faraday radio. With `faraday-proxy` running you must start the `faraday-deviceconfiguration` server with appropriate configuration settings and then kick-off the configuration with `faraday-simpleconfig`. Remember you can query the current configuration of the CC430 hardware with `faraday-simpleconfig --read`
 
-We are almost there! Eventually this will be automated but for now this is what we have. The following steps will start the Device Configuration application server and then send a POST command to it in order to initiate programming. Please ensure Proxy is running prior to these steps.
-
-1. Navigate to `deviceconfiguration` folder in Explorer or terminal
-2. Run `deviceconfiguration.py`
-  * Windows: double-click on `deviceconfiguration.py`
-  * Linux: `python deviceconfiguration.py`
-  * Mac OS X: `python deviceconfiguration.py`
-3. Run `simpleconfig.py` to send configuration data to Faraday
-4. Press `ctrl+c` to exit simpleconfig when complete after reviewing changes
-5. Close `deviceconfiguration.py` window
-
-Successful operation of `simpleconfig.py` will print out the Flash contents Faraday is programmed with. After successful programming, the script queries Faraday over UART to send its flash memory contents so we can confirm proper programming.
-
-![Simpleconfig.py output](images/simpleconfig.png)
-
-Note:
- * Some fields such as `BOOT_FREQUENCY_MHZ` and bitmasks return MSP430 specific values which differ from configuration values or bitmasks.
+Lastly, remember to include the `--start` option when running `faraday-deviceconfiguration`!
 
 ## Proxy Considerations
 Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different and we suggest making the update when convenient.

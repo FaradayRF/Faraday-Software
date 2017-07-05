@@ -18,7 +18,7 @@ print "Initialized Faraday Messaging Objects"
 print "Unit 1 Queue Size:", unit_1.receive.getqueuesize()
 print "Unit 2 Queue Size:", unit_2.receive.getqueuesize()
 
-while 1:
+while True:
     print "\n *** Transmit Message ***"
     # Send user input from Unit #1 to Unit #2
     user_input = raw_input("Enter message: ")

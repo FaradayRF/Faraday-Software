@@ -14,19 +14,98 @@ import threading
 import ConfigParser
 import socket
 import requests
+import os
 from time import sleep
+import sys
+import argparse
+import shutil
 
 # Start logging after importing modules
-logging.config.fileConfig('loggingConfig.ini')
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
 logger = logging.getLogger('APRS')
 
 # Load Telemetry Configuration from telemetry.ini file
-# Should have common file for apps...
+
+#Create Proxy configuration file path
+aprsConfigPath = os.path.join(path, "aprs.ini")
+logger.debug('aprs.ini PATH: ' + aprsConfigPath)
+
 aprsConfig = ConfigParser.RawConfigParser()
-aprsConfig.read('aprs.ini')
+aprsConfig.read(aprsConfigPath)
 
 # Create and initialize dictionary queues
 telemetryDicts = {}
+
+# Command line input
+parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize APRS configuration file')
+parser.add_argument('--callsign', help='Set APRS-IS callsign for passcode generation')
+parser.add_argument('--server', help='Set APRS-IS server address')
+parser.add_argument('--port', help='Set APRS-IS server port')
+parser.add_argument('--rate', help='Set APRS-IS update rate in seconds')
+parser.add_argument('--stationsage', help='Set age station date can be to send to APRS-IS in seconds')
+parser.add_argument('--comment', help='Set APRS comment for nodes, use quotes (43 characters maximum)')
+parser.add_argument('--altcomment', help='Set APRS alternate comment for access points, use quotes (43 characters maximum)')
+
+# Parse the arguments
+args = parser.parse_args()
+
+
+def initializeAPRSConfig():
+    '''
+    Initialize APRS configuration file from aprs.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing APRS")
+    shutil.copy(os.path.join(path, "aprs.sample.ini"), os.path.join(path, "aprs.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def configureAPRS(args, aprsConfigPath):
+    '''
+    Configure aprs configuration file from command line
+
+    :param args: argparse arguments
+    :param aprsConfigPath: Path to aprs.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "aprs.ini"))
+
+    if args.callsign is not None:
+        config.set('APRSIS', 'CALLSIGN', args.callsign)
+    if args.server is not None:
+        config.set('APRSIS', 'SERVER', args.server)
+    if args.port is not None:
+        config.set('APRSIS', 'PORT', args.port)
+    if args.rate is not None:
+        config.set('APRSIS', 'RATE', args.rate)
+    if args.stationsage is not None:
+        config.set('APRSIS', 'STATIONSAGE', args.stationsage)
+    if args.comment is not None:
+        config.set('APRS', 'COMMENT', args.comment[:43])
+    if args.altcomment is not None:
+        config.set('APRS', 'ALTCOMMENT', args.altcomment[:43])
+
+    with open(aprsConfigPath, 'wb') as configfile:
+        config.write(configfile)
 
 
 def aprs_worker(config, sock):
@@ -44,7 +123,7 @@ def aprs_worker(config, sock):
     telemSequence = 0
 
     # Start infinite loop to send station data to APRS-IS
-    while(True):
+    while True:
         # Query telemetry database for station data
         stations = getStations()
         stationData = getStationData(stations)
@@ -62,6 +141,16 @@ def aprs_worker(config, sock):
 
         # Sleep for intended update rate (seconds)
         sleep(rate)
+
+
+# Now act upon the command line arguments
+# Initialize and configure aprs
+if args.init:
+    initializeAPRSConfig()
+configureAPRS(args, aprsConfigPath)
+
+# Read in telemetry configuration parameters
+aprsFile = aprsConfig.read(aprsConfigPath)
 
 
 def getStations():
@@ -628,7 +717,7 @@ def connectAPRSIS():
             sleep(10)  # Try to reconnect every 10 seconds
         return aprssock
     else:
-        while(True):
+        while True:
             logger.error("APRS-IS LOGIN ERROR!")
             sleep(1)
 

@@ -17,6 +17,9 @@ from collections import deque
 import os
 import sqlite3
 import json
+import sys
+import argparse
+import shutil
 
 from flask import Flask
 from flask import request
@@ -26,28 +29,183 @@ from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import telemetryparser
 
 # Start logging after importing modules
-try:
-    logging.config.fileConfig('loggingConfig.ini')
-    logger = logging.getLogger('telemetry')
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
 
-except ConfigParser.Error as e:
-    #  File missing, indicate error and infinite loop. Logger isn't available.
-    while True:
-        print("ERROR: loggingConfig.ini missing")
-        time.sleep(1)
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+logger = logging.getLogger('Telemetry')
+
+# Create Proxy configuration file path
+telemetryConfigPath = os.path.join(path, "telemetry.ini")
+logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
-telemetryFile = telemetryConfig.read('telemetry.ini')
+
+# Create and initialize dictionary queues
+telemetryDicts = {}
+
+# Command line input
+parser = argparse.ArgumentParser(description='Telemetry application saves and queries Faraday telemetry')
+parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Telemetry configuration file')
+parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect to')
+parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
+parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
+
+# Telemetry database options
+parser.add_argument('--database', help='Set Telemetry database name')
+parser.add_argument('--schema', help='Set Telemetry database schema')
+parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Telemetry log database')
+parser.add_argument('--save-log', dest='savelog', help='Save Telemetry log database into new SAVELOG file')
+parser.add_argument('--show-logs', dest='showlogs', action='store_true', help='Show Telemetry log database files')
+
+# Proxy Flask options
+parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Telemetry Flask server host address')
+parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Faraday Telemetry Flask server port')
+
+# Parse the arguments
+args = parser.parse_args()
+
+
+def initializeTelemetryConfig():
+    '''
+    Initialize telemetry configuration file from telemetry.sample.ini
+
+    :return: None, exits program
+    '''
+
+    logger.info("Initializing Telemetry")
+    shutil.copy(os.path.join(path, "telemetry.sample.ini"), os.path.join(path, "telemetry.ini"))
+    logger.info("Initialization complete")
+    sys.exit(0)
+
+
+def initializeTelemetryLog(config):
+    '''
+    Initialize the log database by deleting file
+
+    :param config: Telemetry ConfigParser object from telemetry.ini
+    :return: None
+    '''
+
+    logger.info("Initializing Proxy Log File")
+    log = config.get("DATABASE", "filename")
+    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    os.remove(logpath)
+    logger.info("Log initialization complete")
+
+
+def saveTelemetryLog(name, config):
+    '''
+    Save telemetry log database into a new file
+
+    :param name: Name of file to save data into (should be .db)
+    :param config: Telemetry ConfigParser object from telmetry.ini
+    :return: None
+    '''
+
+    log = config.get("DATABASE", "filename")
+    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
+    shutil.move(oldpath, newpath)
+    sys.exit(0)
+
+
+def showTelemetryLogs():
+    '''
+    Show telemetry log database filenames in user path ~/.faraday/lib folder
+
+    :return: None, exits program
+    '''
+
+    logger.info("The following logs exist for Telemetry...")
+    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    for file in os.listdir(path):
+        if file.endswith(".db"):
+            logger.info(file)
+    sys.exit(0)
+
+
+def configureTelemetry(args, telemetryConfigPath):
+    '''
+    Configure telemetry configuration file from command line
+
+    :param args: argparse arguments
+    :param telemetryConfigPath: Path to telemetry.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "telemetry.ini"))
+
+    # Configure UNITx sections
+    unit = 'UNIT' + str(args.unit)
+    if args.unit is not 0:
+        try:
+            config.set('TELEMETRY', unit + "CALL", "REPLACEME")
+            config.set('TELEMETRY', unit + "ID", "REPLACEME")
+
+        except ConfigParser.DuplicateSectionError:
+            pass
+
+    if args.callsign is not None:
+        config.set('TELEMETRY', unit + 'CALL', args.callsign)
+    if args.nodeid is not None:
+        config.set('TELEMETRY', unit + 'ID', args.nodeid)
+
+    #Configure Telemetry databases
+    if args.database is not None:
+        config.set('DATABASE', 'filename', args.database)
+    if args.schema is not None:
+        config.set('DATABASE', 'schemaname', args.schema)
+
+    # Configure Proxy flask server
+    if args.flaskhost is not None:
+        config.set('FLASK', 'host', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'port', args.flaskport)
+
+    with open(telemetryConfigPath, 'wb') as configfile:
+        config.write(configfile)
+
+
+# Now act upon the command line arguments
+# Initialize and configure telemetry
+if args.init:
+    initializeTelemetryConfig()
+configureTelemetry(args, telemetryConfigPath)
+
+# Read in telemetry configuration parameters
+telemetryFile = telemetryConfig.read(telemetryConfigPath)
+
+# Initialize Telemetry log database
+if args.initlog:
+    initializeTelemetryLog(telemetryConfig)
+
+# Save Telemetry log database
+if args.savelog is not None:
+    saveTelemetryLog(args.savelog, telemetryConfig)
+
+# List Telemetry log database files
+if args.showlogs:
+    showTelemetryLogs()
+
 
 if len(telemetryFile) == 0:
     #  File missing, indicate error and infinite loop
     while True:
             logger.error("telemetry.ini missing")
             time.sleep(1)
-
-# Create and initialize dictionary queues
-telemetryDicts = {}
 
 
 def telemetry_worker(config):
@@ -438,10 +596,21 @@ def initDB():
     :return: True or False if successful
     """
 
-    # Obtain configuration file names
+    # make directory tree, necessary?
+    try:
+        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+    except:
+        pass
+
+    # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = dbPath
+
         dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
+        dbSchema = os.path.join(path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -537,9 +706,12 @@ def sqlInsert(data):
     :return: Status True or False on SQL insertion success
     """
 
-    # Read in name of telemetry database
+    # Read in name of database
     try:
-        db = telemetryConfig.get("DATABASE", "FILENAME")
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        db = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -648,13 +820,16 @@ def queryDb(parameters):
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
     logger.debug(sql)
 
-    # Open configuration file
+    # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        return sqlData
+        return False
 
     # Connect to database, create SQL query, execute query, and close database
     try:
@@ -752,13 +927,16 @@ def queryStationsDb(parameters):
     # Create SQL query string
     sql = sqlBeg + sqlWhere + sqlEnd
 
-    # Get telemetry database name from configuration file
+    # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        return sqlData
+        return False
 
     # Connect to database, create SQL query, execute query, and close database
     try:
