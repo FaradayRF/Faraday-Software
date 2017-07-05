@@ -223,7 +223,7 @@ except ConfigParser.NoSectionError as e:
     logger.error('Proxy configuration file error!')
     logger.error('Did you rememebr to --init-config?')
     logger.error(e)
-    sys.exit(0)
+    sys.exit(1)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
