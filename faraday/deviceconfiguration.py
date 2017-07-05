@@ -58,7 +58,7 @@ deviceConfig = ConfigParser.RawConfigParser()
 parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
-parser.add_argument('--start', action='store_true', help='Start device configuration server')
+parser.add_argument('--start', action='store_true', help='Start Device Configuration server')
 parser.add_argument('--proxycallsign', help='Set Proxy Faraday callsign to connect to and program')
 parser.add_argument('--proxynodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
 parser.add_argument('--faradayconfig', action='store_true', help='Display Faraday configuration file contents')
@@ -399,10 +399,9 @@ if not os.path.isfile(faradayConfigPath):
 # Configure configuration file
 configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath)
 
-# Check if server is to be started
+# Check for --start option and exit if not present
 if not args.start:
-    logger.info("Device configuration exiting!")
-    logger.info("run with --start to start server application")
+    logger.warning("--start option not present, exiting Device Configuration server!")
     sys.exit(0)
 
 # Load configuration from deviceconfiguration.ini file
@@ -586,14 +585,14 @@ def unitconfig():
 
 
 def main():
-    """Main function which starts telemetry worker thread + Flask server."""
-    logger.info('Starting device configuration server')
+    """Main function which starts deviceconfiguration Flask server."""
+    logger.info('Starting deviceconfiguration server')
 
-    # Start the flask server on localhost:8001
-    telemetryhost = deviceConfig.get("FLASK", "HOST")
-    telemetryport = deviceConfig.getint("FLASK", "PORT")
+    # Start the flask server
+    deviceConfigHost = deviceConfig.get("FLASK", "HOST")
+    deviceConfigPort = deviceConfig.getint("FLASK", "PORT")
 
-    app.run(host=telemetryhost, port=telemetryport, threaded=True)
+    app.run(host=deviceConfigHost, port=deviceConfigPort, threaded=True)
 
 
 if __name__ == '__main__':

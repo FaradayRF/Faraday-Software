@@ -37,17 +37,12 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('APRS')
 
-# Load Telemetry Configuration from telemetry.ini file
-
-#Create Proxy configuration file path
+#Create APRS configuration file path
 aprsConfigPath = os.path.join(path, "aprs.ini")
 logger.debug('aprs.ini PATH: ' + aprsConfigPath)
 
 aprsConfig = ConfigParser.RawConfigParser()
 aprsConfig.read(aprsConfigPath)
-
-# Create and initialize dictionary queues
-telemetryDicts = {}
 
 # Command line input
 parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
@@ -59,6 +54,7 @@ parser.add_argument('--rate', help='Set APRS-IS update rate in seconds')
 parser.add_argument('--stationsage', help='Set age station date can be to send to APRS-IS in seconds')
 parser.add_argument('--comment', help='Set APRS comment for nodes, use quotes (43 characters maximum)')
 parser.add_argument('--altcomment', help='Set APRS alternate comment for access points, use quotes (43 characters maximum)')
+parser.add_argument('--start', action='store_true', help='Start APRS server')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -149,8 +145,13 @@ if args.init:
     initializeAPRSConfig()
 configureAPRS(args, aprsConfigPath)
 
-# Read in telemetry configuration parameters
+# Read in APRS configuration parameters
 aprsFile = aprsConfig.read(aprsConfigPath)
+
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting APRS server!")
+    sys.exit(0)
 
 
 def getStations():
