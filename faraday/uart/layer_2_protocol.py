@@ -32,8 +32,11 @@ class layer_2_object(object):
 
 
 class layer_2_protocol(threading.Thread):
-    def __init__(self, com, baud, timeout_time):
-        self.ser = serial.Serial(com, baud, timeout=timeout_time)
+    def __init__(self, port, baud, timeout):
+        self._port = port
+        self._baud = baud
+        self._timeout = timeout
+        self.ser = serial.Serial(port, baud, timeout=timeout)
         self.serial_rx_queue = Queue.Queue()  # Infinite
         self.serial_tx_queue = Queue.Queue()  # Infinite
         self.enabled = True
@@ -44,7 +47,7 @@ class layer_2_protocol(threading.Thread):
 
     def abort(self):
         self.enabled = False
-        logger.info('Aborting Layer 2 Class Main')
+        logger.error('Aborting Layer 2 protocol class!')
         self.ser.close()
 
     def close_connection(self):
@@ -78,9 +81,8 @@ class layer_2_protocol(threading.Thread):
                         rx_buffer_inwaiting = self.ser.inWaiting()
                         self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
                 except serial.SerialException as e:
-                    logging.error("USB cable likely disconnected!")
-                    logging.error(e)
-                    sys.exit(1)  # Sys.exit(1) is an error
+                    logger.error("Port '{0}' disconnected!".format(self._port))
+                    self.abort()
 
 
 ################################################################################
