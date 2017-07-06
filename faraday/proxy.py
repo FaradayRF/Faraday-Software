@@ -45,6 +45,11 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Proxy')
 
+# Set werkzeug logging level
+
+werkzeuglog = logging.getLogger('werkzeug')
+werkzeuglog.setLevel(logging.ERROR)
+
 #Create Proxy configuration file path
 proxyConfigPath = os.path.join(path, "proxy.ini")
 logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
@@ -52,6 +57,7 @@ logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy configuration file')
+parser.add_argument('--start', action='store_true', help='Start Proxy server')
 parser.add_argument('--callsign', help='Set Faraday callsign')
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID')
 parser.add_argument('--port', help='Set Faraday UART port')
@@ -73,7 +79,7 @@ parser.add_argument('--schema', help='Set Faraday database schema')
 parser.add_argument('--test-database', dest='testdatabase', help='Set Faraday test mode database')
 parser.add_argument('--init-log', dest='initlog', action='store_true', help='Initialize Proxy log database')
 parser.add_argument('--save-log', dest='savelog', help='Save Proxy log database into new SAVELOG file')
-parser.add_argument('--showlogs', action='store_true', help='Show Proxy log database files')
+parser.add_argument('--show-logs', dest='showlogs', action='store_true', help='Show Proxy log database files')
 
 # Proxy Flask options
 parser.add_argument('--flask-host', dest='flaskhost', help='Set Faraday Flask server host address')
@@ -90,9 +96,9 @@ def initializeProxyConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Proxy")
+    logger.debug("Initializing Proxy")
     shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
-    logger.info("Initialization complete")
+    logger.debug("Initialization complete")
     sys.exit(0)
 
 
@@ -231,6 +237,11 @@ if args.savelog is not None:
 if args.showlogs:
     showProxyLogs()
 
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting Proxy server!")
+    sys.exit(0)
+
 # Create and initialize dictionary queues
 postDict = {}
 postDicts = {}
@@ -246,7 +257,7 @@ def uart_worker(modem, getDicts, units, log):
     that checks all Faraday "ports" for data and appends/pops data from
     queues for send and receive directions.
     """
-    logger.info('Starting uart_worker thread')
+    logger.debug('Starting uart_worker thread')
 
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
@@ -316,7 +327,7 @@ def testdb_read_worker():
     is not present.  The callsign and nodeid are derived from
     the config file.
     """
-    logger.info('Starting testdb_read_worker thread')
+    logger.debug('Starting testdb_read_worker thread')
 
     # Obtain the test callsign and nodeid and create a
     # deque
@@ -452,13 +463,13 @@ def proxy():
         # present, create port queue for it and append data to that queue
         try:
             data["data"]
-        except:
+
+        except KeyError:
             logger.error("Error: No 'data' key in dictionary")
             return json.dumps(
                 {"error": "Error: No 'data' key in dictionary"}), 400
         else:
             total = len(data["data"])
-            print "length:", total
             sent = 0
             for item in data['data']:
                 try:
@@ -567,7 +578,7 @@ def proxy():
                     {'Content-Type': 'application/json'}
             else:
                 # No data in service port, but port is being used
-                logger.info("Empty buffer for port %d", port)
+                logger.debug("Empty buffer for port {0}".format(port))
                 return '', 204  # HTTP 204 response cannot have message data
 
         except ValueError as e:
@@ -803,7 +814,7 @@ def main():
             unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
 
         for key in unitDict:
-            logger.info('Starting Thread For Unit: ' + str(key))
+            logger.info('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
             t.start()
