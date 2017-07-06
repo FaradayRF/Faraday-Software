@@ -7,10 +7,30 @@ import time
 import json
 import base64
 import struct
+import logging.config
+import sys
 
 packet_msg_struct = struct.Struct('6s 3B 31s')
 PACKET_CALLSIGN_LEN = 6
 PACKET_PAYLOAD_LEN = 31
+
+
+# Start logging after importing modules
+relpath1 = os.path.join('etc', 'faraday')
+relpath2 = os.path.join('..', 'etc', 'faraday')
+setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+path = ''
+
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+logger = logging.getLogger('Data')
 
 def main():
     """
