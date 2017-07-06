@@ -8,7 +8,6 @@ import struct
 import logging.config
 import argparse
 import shutil
-import requests
 
 from flask import Flask
 from flask import request
@@ -20,8 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Imports - Faraday Specific
 from faraday.proxyio import faradaybasicproxyio
-from faraday.proxyio import commandmodule
-#import packet
+
 
 # Start logging after importing modules
 relpath1 = os.path.join('etc', 'faraday')
@@ -29,6 +27,7 @@ relpath2 = os.path.join('..', 'etc', 'faraday')
 setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
 userpath = os.path.join(os.path.expanduser('~'), '.faraday')
 path = ''
+
 
 for location in os.curdir, relpath1, relpath2, setuppath, userpath:
     try:
@@ -61,6 +60,7 @@ parser.add_argument('--start', action='store_true', help='Start Data server')
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeDataConfig():
     '''
     Initialize Data configuration file from data.sample.ini
@@ -72,6 +72,7 @@ def initializeDataConfig():
     shutil.copy(os.path.join(path, "data.sample.ini"), os.path.join(path, "data.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
+
 
 def configureData(args, simpleuiConfigPath):
     '''
@@ -96,6 +97,7 @@ def configureData(args, simpleuiConfigPath):
 
     with open(simpleuiConfigPath, 'wb') as configfile:
         config.write(configfile)
+
 
 # Now act upon the command line arguments
 # Initialize and configure Data
@@ -130,23 +132,6 @@ faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
 # Initialize Flask micro-framework
 app = Flask(__name__)
 
-def configparse():
-    """ Parses configuration file for callsigns and node ID and returns them in JSON format"""
-    local = {}
-    units = range(0, config.getint('PROXY', 'UNITS'))
-
-    for unit in units:
-        # TODO We don't really check for valid input here yet
-        item = "UNIT" + str(unit)
-        callsign = config.get(item, "callsign").upper()
-        nodeid = config.getint(item, "nodeid")
-
-        local[str(item)] = {
-            "callsign": callsign,
-            "nodeid": nodeid,
-        }
-
-    return local
 
 @app.route('/', methods=['GET', 'POST'])
 def rfdataport():
@@ -156,15 +141,15 @@ def rfdataport():
     # If POST
     if request.method == 'POST':
         # Parse Flask arguments
-        proxycallsign = request.args.get("localcallsign").upper() # Local device proxy unit
-        proxynodeid = request.args.get("localnodeid") # Local device proxy unit
+        proxycallsign = request.args.get("localcallsign").upper()  # Local device proxy unit
+        proxynodeid = request.args.get("localnodeid")  # Local device proxy unit
         # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
         destinationcallsign = request.args.get("destinationcallsign").upper()
         destinationnodeid = request.args.get("destinationnodeid")
         data = request.args.get("data")
 
         try:
-            data = base64.b64decode(data) # All incoming data packets must be BASE64
+            data = base64.b64decode(data)  # All incoming data packets must be BASE64
         except TypeError as e:
             logger.info("BASE64 data error: {0}".format(e))
 
@@ -185,27 +170,19 @@ def rfdataport():
 
                     # Transmit data packet
                     faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
-                    #requests.post("http://127.0.0.1:" + str(8000) + "/?" + "callsign=" + str(
-                    #    proxycallsign).upper() + '&port=' + str(APP_RFDATAPORT_UART_PORT) + '&' + 'nodeid=' + str(
-                    #    proxynodeid), json=datapacket)
 
             else:
                 # Create rfdataport application packet
                 cmd = 0  # Data Frame
                 seq = 0  # Not used, yet
-                #logger.info("POST prestr: {0}".format(type(data)))
                 datapacket = packet_struct.pack(cmd, seq, data)
 
                 # Transmit data packet
-                #logger.info("POST DATA: {0}".format(data))
-                #logger.info("POST DATApacket: {0}".format(datapacket))
                 faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
-
 
             # Return status
             return json.dumps(
                 {"status": "Posted Packet(s)"}), 200
-
 
     # If GET
     else:
@@ -238,10 +215,10 @@ def rfdataport():
                 return json.dumps(rxdata, indent=1), 200, \
                        {'Content-Type': 'application/json'}
 
-
         else:
             # No data available from requested unit, return error 204 indicating "No Content"
             return '', 204  # HTTP 204 response cannot have message data
+
 
 def fragmentmsg(msg, fragmentsize):
     """
@@ -257,12 +234,9 @@ def fragmentmsg(msg, fragmentsize):
                               range(0, len(msg), fragmentsize)]
     return list_message_fragments
 
+
 def main():
     """Main function which starts the Flask server."""
-
-    # Get INI file configuration for Flask server
-    #host = dataConfig.get("FLASK", "HOST")
-    #port = dataConfig.get("FLASK", "PORT")
 
     # Start the flask server
     app.run(host=host, port=port, threaded=True)
