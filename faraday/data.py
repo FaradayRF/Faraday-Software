@@ -52,6 +52,11 @@ dataConfig.read(dataConfigPath)
 # Command line input
 parser = argparse.ArgumentParser(description='Provides a generic data server to proxy.')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Data configuration file')
+parser.add_argument('--flaskhost', help='Set Flask server hostname/address')
+parser.add_argument('--flaskport', help='Set Flask server port')
+parser.add_argument('--proxyhost', help='Set Proxy server hostname/address')
+parser.add_argument('--proxyport', help='Set Proxy server port')
+parser.add_argument('--start', action='store_true', help='Start Data server')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -68,11 +73,47 @@ def initializeDataConfig():
     logger.info("Initialization complete")
     sys.exit(0)
 
+def configureData(args, simpleuiConfigPath):
+    '''
+    Configure Data configuration file from command line
+
+    :param args: argparse arguments
+    :param SimpleUIConfigPath: Path to simpleui.ini file
+    :return: None
+    '''
+
+    config = ConfigParser.RawConfigParser()
+    config.read(os.path.join(path, "data.ini"))
+
+    if args.flaskhost is not None:
+        config.set('FLASK', 'HOST', args.flaskhost)
+    if args.flaskport is not None:
+        config.set('FLASK', 'PORT', args.flaskport)
+    if args.proxyhost is not None:
+        config.set('PROXY', 'HOST', args.proxyhost)
+    if args.proxyport is not None:
+        config.set('PROXY', 'PORT', args.proxyport)
+
+    with open(simpleuiConfigPath, 'wb') as configfile:
+        config.write(configfile)
 
 # Now act upon the command line arguments
 # Initialize and configure Data
 if args.init:
     initializeDataConfig()
+
+configureData(args, dataConfigPath)
+
+# Read in configuration file settings
+dataConfig.read(dataConfigPath)
+
+# Check for --start option and exit if not present
+if not args.start:
+    logger.warning("--start option not present, exiting Data server!")
+    sys.exit(0)
+
+host = dataConfig.get("FLASK", "HOST")
+port = dataConfig.get("FLASK", "PORT")
 
 # Global variables
 packet_struct = struct.Struct('2B 40s')
@@ -220,8 +261,8 @@ def main():
     """Main function which starts the Flask server."""
 
     # Get INI file configuration for Flask server
-    host = dataConfig.get("FLASK", "HOST")
-    port = dataConfig.get("FLASK", "PORT")
+    #host = dataConfig.get("FLASK", "HOST")
+    #port = dataConfig.get("FLASK", "PORT")
 
     # Start the flask server
     app.run(host=host, port=port, threaded=True)
