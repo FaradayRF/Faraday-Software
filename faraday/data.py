@@ -8,9 +8,12 @@ import struct
 import logging.config
 import argparse
 import shutil
+import requests
 
 from flask import Flask
 from flask import request
+
+DATA_FIXED_LEN = 42
 
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -120,7 +123,6 @@ def rfdataport():
         data = request.args.get("data")
 
         try:
-            logger.info("Predecode POST: {0}".format(data))
             data = base64.b64decode(data) # All incoming data packets must be BASE64
         except TypeError as e:
             logger.info("BASE64 data error: {0}".format(e))
@@ -141,22 +143,21 @@ def rfdataport():
                     datapacket = packet_struct.pack(cmd, seq, str(item))
 
                     # Transmit data packet
-                    logger.info("POST DATA: {0}".format(datapacket))
-                    #faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
-                    requests.post("http://127.0.0.1:" + str(8000) + "/?" + "callsign=" + str(
-                        proxycallsign).upper() + '&port=' + str(APP_RFDATAPORT_UART_PORT) + '&' + 'nodeid=' + str(
-                        proxynodeid), json=datapacket)
+                    faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                    #requests.post("http://127.0.0.1:" + str(8000) + "/?" + "callsign=" + str(
+                    #    proxycallsign).upper() + '&port=' + str(APP_RFDATAPORT_UART_PORT) + '&' + 'nodeid=' + str(
+                    #    proxynodeid), json=datapacket)
 
             else:
                 # Create rfdataport application packet
                 cmd = 0  # Data Frame
                 seq = 0  # Not used, yet
-                logger.info("POST prestr: {0}".format(type(data)))
+                #logger.info("POST prestr: {0}".format(type(data)))
                 datapacket = packet_struct.pack(cmd, seq, data)
 
                 # Transmit data packet
-                logger.info("POST DATA: {0}".format(data))
-                logger.info("POST DATApacket: {0}".format(datapacket))
+                #logger.info("POST DATA: {0}".format(data))
+                #logger.info("POST DATApacket: {0}".format(datapacket))
                 faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
 
 
@@ -181,17 +182,20 @@ def rfdataport():
             else:
                 for item in rxdata:
                     try:
-                        logger.info("GOT DATA: {0}".format(item['data']))
-                        logger.info("GOT DATAB64 Decode: {0}".format(base64.b64decode(item['data'])))
-                        unpacked_rxdata = packet_struct.unpack(repr(base64.b64decode(item['data'])))
-                    except struct.error as e:
-                        # Error packing/unpacking due to malformed data - Likely too short/long.)
-                        return "Struct Error: {0}".format(e), 400  # HTTP 204 response cannot have message data
-                    else:
+                        # Truncate Layer 4 UART 123 byte packet to expected fixed size RF data 42 byte payload
+                        data_truncated = base64.b64decode(item['data'])[0:DATA_FIXED_LEN]
+                        # Unpack packet
+                        unpacked_rxdata = packet_struct.unpack(data_truncated)
+                        
                         item['data'] = base64.b64encode(unpacked_rxdata[2])
                         # Data is available for requested unit, return as JSON
                         return json.dumps(rxdata, indent=1), 200, \
                                {'Content-Type': 'application/json'}
+
+                    except struct.error as e:
+                        # Error packing/unpacking due to malformed data - Likely too short/long.)
+                        return "Struct Error: {0}".format(e), 400  # HTTP 204 response cannot have message data
+
 
         else:
             # No data available from requested unit, return error 204 indicating "No Content"
