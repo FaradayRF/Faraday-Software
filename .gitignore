@@ -26,6 +26,9 @@ Applications/Hermes/hermes.ini
 Applications/SimpleUI/simpleui.ini
 Applications/SimpleUI/node_modules/
 
+# DataApplication
+Applications/Data/data.ini
+
 #IDE (Pycharm)
 .idea*
 .idea/*
