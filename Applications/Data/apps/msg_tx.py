@@ -12,11 +12,6 @@ config = ConfigParser.RawConfigParser()
 filename = os.path.abspath("rfdataport.ini")
 config.read(filename)
 
-proxylocalcallsign = 'KB1LQD' #config.get('UNIT0', 'CALLSIGN')
-proxylocalnodeid = 1 #int(config.get('UNIT0', 'NODEID'))
-destinationcallsign = 'KB1LQD' #config.get('UNIT1', 'CALLSIGN')
-destinationnodeid = 2 #int(config.get('UNIT1', 'NODEID'))
-
 msglocalcallsign = '' #config.get('UNIT0', 'CALLSIGN')
 msglocalnodeid = 0 #int(config.get('UNIT0', 'NODEID'))
 
@@ -33,8 +28,10 @@ def main():
     getting user input text to transmit to the Flask server for wireless transmission to the intended remote device.
     """
 
-    msglocalcallsign = raw_input("Enter TX ID CALLSIGN: ")
-    msglocalnodeid = int(raw_input("Enter TX ID NODEID: "))
+    proxylocalcallsign = raw_input("Enter LOCAL (PROXY) ID CALLSIGN: ")
+    proxylocalnodeid = int(raw_input("Enter LOCAL (PROXY) NODEID: "))
+    destinationcallsign = raw_input("Enter DESTINATION CALLSIGN: ")
+    destinationnodeid = int(raw_input("Enter DESTINATION NODEID: "))
 
     while True:
         message = raw_input("Enter Message: ")
@@ -48,14 +45,14 @@ def main():
 
         for item in frag_data_list:
             if frag_data_list_len == 1:
-                data_tx = packet_msg_struct.pack(str(msglocalcallsign).upper(), msglocalnodeid, 254, len(item),
+                data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, 254, len(item),
                                                  str(item))
             elif sequence_cnt == frag_data_list_len-1:
-                data_tx = packet_msg_struct.pack(str(msglocalcallsign).upper(), msglocalnodeid, 255, len(item),
+                data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, 255, len(item),
                                                  str(item))
             else:
                 #Create datapacket
-                data_tx = packet_msg_struct.pack(str(msglocalcallsign).upper(), msglocalnodeid, sequence_cnt, len(item), str(item))
+                data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, sequence_cnt, len(item), str(item))
             data_tx = base64.b64encode(data_tx)
             payload = {'localcallsign': proxylocalcallsign, 'localnodeid': proxylocalnodeid,
                        'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid,

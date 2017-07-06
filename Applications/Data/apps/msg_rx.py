@@ -15,8 +15,6 @@ config = ConfigParser.RawConfigParser()
 #filename = os.path.abspath("../rfdataport.ini")
 #config.read(filename)
 
-localcallsign = 'KB1LQD' #config.get('UNIT0', 'CALLSIGN')
-localnodeid = 2 #int(config.get('UNIT0', 'NODEID'))
 
 packet_msg_struct = struct.Struct('6s 3B 31s')
 PACKET_CALLSIGN_LEN = 6
@@ -29,10 +27,14 @@ def main():
     """
     rx_msg = ''
     rx_station = ''
+
+    proxylocalcallsign = raw_input("Enter LOCAL (PROXY) ID CALLSIGN: ")
+    proxylocalnodeid = int(raw_input("Enter LOCAL (PROXY) NODEID: "))
+
     while True:
 
         try:
-            payload = {'localcallsign': localcallsign, 'localnodeid': localnodeid}
+            payload = {'localcallsign': proxylocalcallsign, 'localnodeid': proxylocalnodeid}
             rxdata = requests.get('http://127.0.0.1:8009/', params=payload)
             if rxdata.status_code == 204:
                 pass
