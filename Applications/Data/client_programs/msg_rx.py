@@ -31,6 +31,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('Data')
 
+
 def main():
     """
     Main function of the receiver client test program for the Faraday DATA server.
@@ -69,14 +70,14 @@ def main():
                 else:
                     logger.info("Request Status Code: {0}".format(rxdata.status_code))
 
-
         except Exception as e:
             logger.info("Exception: {0}".format(e))
         time.sleep(0.1)
 
+
 def parse_pkt(rx_packet):
     """
-    This function parses the raw packet arguement using the expected DATA packet fragment fields.
+    This function parses the raw packet argument using the expected DATA packet fragment fields.
 
     :param rx_packet: Received packet to be parsed into fields
 
@@ -84,6 +85,7 @@ def parse_pkt(rx_packet):
     """
     parsed_data = packet_msg_struct.unpack(rx_packet)
     return parsed_data
+
 
 if __name__ == '__main__':
     main()
