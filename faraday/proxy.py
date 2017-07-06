@@ -815,7 +815,7 @@ def main():
                 node = str(values["callsign"] + "-" + values["nodeid"])
                 unitDict[node] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
             except:
-                logger.error('Could not connect to {0} on {1}'.format(node,values["com"]))
+                logger.error('Could not connect to {0} on {1}'.format(node, values["com"]))
 
         for key in unitDict:
             logger.info('Starting Thread For Unit: {0}'.format(str(key)))
