@@ -186,15 +186,16 @@ def rfdataport():
                         data_truncated = base64.b64decode(item['data'])[0:DATA_FIXED_LEN]
                         # Unpack packet
                         unpacked_rxdata = packet_struct.unpack(data_truncated)
-                        
+                        # Save unpacked data back into rxdata
                         item['data'] = base64.b64encode(unpacked_rxdata[2])
-                        # Data is available for requested unit, return as JSON
-                        return json.dumps(rxdata, indent=1), 200, \
-                               {'Content-Type': 'application/json'}
 
                     except struct.error as e:
                         # Error packing/unpacking due to malformed data - Likely too short/long.)
                         return "Struct Error: {0}".format(e), 400  # HTTP 204 response cannot have message data
+
+                # Data is available for requested unit, return as JSON
+                return json.dumps(rxdata, indent=1), 200, \
+                       {'Content-Type': 'application/json'}
 
 
         else:
