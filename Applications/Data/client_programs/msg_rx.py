@@ -54,17 +54,17 @@ def main():
                         data_extract = base64.b64decode(item['data'])
                         data_parsed = parse_pkt(data_extract)
 
-                        if data_parsed[2] == 0:
+                        if data_parsed[2] == 0:  # Start of new message
                             rx_station = str(data_parsed[0]) + '-' + str(data_parsed[1])
                             rx_msg = str(data_parsed[4][0:data_parsed[3]])
-                        elif data_parsed[2] == 254:
+                        elif data_parsed[2] == 254:  # Message length == 1, end of data.
                             rx_station = str(data_parsed[0]) + '-' + str(data_parsed[1])
                             rx_msg = str(data_parsed[4][0:data_parsed[3]])
                             print("RX Message ({0}): {1}".format(rx_station, rx_msg))
-                        elif data_parsed[2] == 255:
+                        elif data_parsed[2] == 255:  # Final fragment, end of data.
                             rx_msg += str(data_parsed[4][0:data_parsed[3]])
                             print("RX Message ({0}): {1}".format(rx_station, rx_msg))
-                        else:
+                        else:  # Append message fragment
                             rx_msg += str(data_parsed[4][0:data_parsed[3]])
                 else:
                     logger.info("Request Status Code: {0}".format(rxdata.status_code))
