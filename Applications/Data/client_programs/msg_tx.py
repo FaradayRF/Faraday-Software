@@ -3,7 +3,6 @@
 import requests
 import ConfigParser
 import os
-import time
 import base64
 import struct
 import logging.config
@@ -48,7 +47,6 @@ def main():
         message = raw_input("Enter Message: ")
 
         frag_data_list = fragmentmsg(message, PACKET_PAYLOAD_LEN)
-        data_tx_len = len(frag_data_list)
         sequence_cnt = 0
 
         frag_data_list_len = len(frag_data_list)
@@ -57,11 +55,11 @@ def main():
             if frag_data_list_len == 1:
                 data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, 254, len(item),
                                                  str(item))
-            elif sequence_cnt == frag_data_list_len-1:
+            elif sequence_cnt == frag_data_list_len - 1:
                 data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, 255, len(item),
                                                  str(item))
             else:
-                #Create datapacket
+                # Create datapacket
                 data_tx = packet_msg_struct.pack(str(proxylocalcallsign).upper(), proxylocalnodeid, sequence_cnt, len(item), str(item))
             data_tx = base64.b64encode(data_tx)
             payload = {'localcallsign': proxylocalcallsign, 'localnodeid': proxylocalnodeid,
@@ -71,7 +69,6 @@ def main():
             requests.post('http://127.0.0.1:8009/', params=payload)
             sequence_cnt += 1
 
-#def pack_data():
 
 def fragmentmsg(msg, fragmentsize):
     """
@@ -86,6 +83,7 @@ def fragmentmsg(msg, fragmentsize):
     list_message_fragments = [msg[i:i + fragmentsize] for i in
                               range(0, len(msg), fragmentsize)]
     return list_message_fragments
+
 
 if __name__ == '__main__':
     main()
