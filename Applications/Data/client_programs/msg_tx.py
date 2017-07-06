@@ -6,14 +6,6 @@ import os
 import time
 import base64
 import struct
-#import packet
-
-config = ConfigParser.RawConfigParser()
-filename = os.path.abspath("rfdataport.ini")
-config.read(filename)
-
-msglocalcallsign = '' #config.get('UNIT0', 'CALLSIGN')
-msglocalnodeid = 0 #int(config.get('UNIT0', 'NODEID'))
 
 INTERVAL_SEC = 0.001
 

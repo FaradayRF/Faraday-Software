@@ -7,14 +7,6 @@ import time
 import json
 import base64
 import struct
-#import packet
-
-
-
-config = ConfigParser.RawConfigParser()
-#filename = os.path.abspath("../rfdataport.ini")
-#config.read(filename)
-
 
 packet_msg_struct = struct.Struct('6s 3B 31s')
 PACKET_CALLSIGN_LEN = 6
@@ -61,7 +53,7 @@ def main():
         except:
             print "Fail"
             pass
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 def parse_pkt(rx_packet):
     parsed_data = packet_msg_struct.unpack(rx_packet)
