@@ -144,8 +144,8 @@ def rfdataport():
         proxycallsign = request.args.get("localcallsign").upper()  # Local device proxy unit
         proxynodeid = request.args.get("localnodeid")  # Local device proxy unit
         # Destination device not supported at this time. All transmissions are broadcast 'CQCQCQ' to all units.
-        destinationcallsign = request.args.get("destinationcallsign").upper()
-        destinationnodeid = request.args.get("destinationnodeid")
+        # destinationcallsign = request.args.get("destinationcallsign").upper()
+        # destinationnodeid = request.args.get("destinationnodeid")
         data = request.args.get("data")
 
         try:
@@ -164,8 +164,8 @@ def rfdataport():
 
                 for item in fragment_list:
                     # Create rfdataport application packet
-                    cmd = 0 # Data Frame
-                    seq = 0 # Not used, yet
+                    cmd = 0  # Data Frame
+                    seq = 0  # Not used, yet
                     datapacket = packet_struct.pack(cmd, seq, str(item))
 
                     # Transmit data packet
@@ -213,7 +213,7 @@ def rfdataport():
 
                 # Data is available for requested unit, return as JSON
                 return json.dumps(rxdata, indent=1), 200, \
-                       {'Content-Type': 'application/json'}
+                    {'Content-Type': 'application/json'}
 
         else:
             # No data available from requested unit, return error 204 indicating "No Content"
