@@ -4,7 +4,6 @@ import requests
 import ConfigParser
 import os
 import time
-import json
 import base64
 import struct
 import logging.config
@@ -34,8 +33,7 @@ logger = logging.getLogger('Data')
 
 def main():
     """
-    Main function of the transmit example of Hermes messaging application using Flask. This function loops continuously
-    getting user input text to transmit to the Flask server for wireless transmission to the intended remote device.
+    Main function of the receiver client test program for the Faraday DATA server.
     """
     rx_msg = ''
     rx_station = ''
@@ -49,7 +47,7 @@ def main():
             payload = {'localcallsign': proxylocalcallsign, 'localnodeid': proxylocalnodeid}
             rxdata = requests.get('http://127.0.0.1:8009/', params=payload)
             if rxdata.status_code == 204:
-                pass
+                logger.info("Request Status Code: {0}".format(rxdata.status_code))
             else:
                 if rxdata.status_code != 500:
                     for item in rxdata.json():
@@ -62,20 +60,28 @@ def main():
                         elif data_parsed[2] == 254:
                             rx_station = str(data_parsed[0]) + '-' + str(data_parsed[1])
                             rx_msg = str(data_parsed[4][0:data_parsed[3]])
-                            print rx_station + ': ' + rx_msg
+                            print("RX Message ({0}): {1}".format(rx_station, rx_msg))
                         elif data_parsed[2] == 255:
                             rx_msg += str(data_parsed[4][0:data_parsed[3]])
-                            print rx_station + ': ' + rx_msg
+                            print("RX Message ({0}): {1}".format(rx_station, rx_msg))
                         else:
                             rx_msg += str(data_parsed[4][0:data_parsed[3]])
+                else:
+                    logger.info("Request Status Code: {0}".format(rxdata.status_code))
 
 
-        except:
-            print "Fail"
-            pass
-        time.sleep(0.01)
+        except Exception as e:
+            logger.info("Exception: {0}".format(e))
+        time.sleep(0.1)
 
 def parse_pkt(rx_packet):
+    """
+    This function parses the raw packet arguement using the expected DATA packet fragment fields.
+
+    :param rx_packet: Received packet to be parsed into fields
+
+    :Return: The parsed packet as a list of fields.
+    """
     parsed_data = packet_msg_struct.unpack(rx_packet)
     return parsed_data
 
