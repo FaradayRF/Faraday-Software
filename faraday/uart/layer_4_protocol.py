@@ -32,7 +32,10 @@ def create_packet(service_number, payload_length, payload):
 
 def parse_packet(datagram):
     #Parse Layer 4 datagram
-    parsedpacket = struct.unpack('BB123s', datagram)
+    try:
+        parsedpacket = struct.unpack('BB123s', datagram)
+    except struct.error as e:
+        logger.error('Layer 4 protocol: {0}'.format(e))
 
     #Return parsed datagram
     return parsedpacket

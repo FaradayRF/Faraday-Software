@@ -219,7 +219,17 @@ def configureProxy(args, proxyConfigPath):
 # Initialize and configure proxy
 if args.init:
     initializeProxyConfig()
-configureProxy(args, proxyConfigPath)
+
+# Attempt to configure proxy
+try:
+    configureProxy(args, proxyConfigPath)
+
+except ConfigParser.NoSectionError as e:
+    # Possible that no configuration file found
+    logger.error('Proxy configuration file error!')
+    logger.error('Did you remember to --init-config?')
+    logger.error(e)
+    sys.exit(1)
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
@@ -811,7 +821,11 @@ def main():
 
     if testmode == 0:
         for key, values in units.iteritems():
-            unitDict[str(values["callsign"] + "-" + values["nodeid"])] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
+            try:
+                node = str(values["callsign"] + "-" + values["nodeid"])
+                unitDict[node] = layer_4_service.faraday_uart_object(str(values["com"]), int(values["baudrate"]), int(values["timeout"]))
+            except:
+                logger.error('Could not connect to {0} on {1}'.format(node, values["com"]))
 
         for key in unitDict:
             logger.info('Starting Thread For Unit: {0}'.format(str(key)))

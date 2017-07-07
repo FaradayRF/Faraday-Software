@@ -15,6 +15,7 @@ import Queue
 import time
 import struct
 import logging
+import sys
 
 # Get configured logger
 logger = logging.getLogger('UARTStack')
@@ -22,15 +23,23 @@ logger = logging.getLogger('UARTStack')
 
 class layer_2_object(object):
     def __init__(self, port, baud, timeout):
+        # Start up serial object
         self.serial_physical_obj = layer_2_protocol(port, baud, timeout)
 
 
 class layer_2_protocol(threading.Thread):
-    def __init__(self, com, baud, timeout_time):
-        self.ser = serial.Serial(com, baud, timeout=timeout_time)
+    def __init__(self, port, baud, timeout):
+        self._port = port
+        self._baud = baud
+        self._timeout = timeout
         self.serial_rx_queue = Queue.Queue()  # Infinite
         self.serial_tx_queue = Queue.Queue()  # Infinite
         self.enabled = True
+        try:
+            self.ser = serial.Serial(port, baud, timeout=timeout)
+        except serial.SerialException as e:
+            logger.error(e)
+            sys.exit(1)  # Sys.exit(1) is an error
 
         #Start
         threading.Thread.__init__(self)
@@ -38,7 +47,7 @@ class layer_2_protocol(threading.Thread):
 
     def abort(self):
         self.enabled = False
-        logger.info('Aborting Layer 2 Class Main')
+        logger.error('Aborting Layer 2 protocol class!')
         self.ser.close()
 
     def close_connection(self):
@@ -67,9 +76,13 @@ class layer_2_protocol(threading.Thread):
                     while(not self.serial_tx_queue.empty()):
                         self.ser.write(self.serial_tx_queue.get())
                 #Check for bytes to receive from serial
-                if self.ser.inWaiting() > 0:
-                    rx_buffer_inwaiting = self.ser.inWaiting()
-                    self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
+                try:
+                    if self.ser.inWaiting() > 0:
+                        rx_buffer_inwaiting = self.ser.inWaiting()
+                        self.serial_rx_queue.put(self.ser.read(rx_buffer_inwaiting))
+                except serial.SerialException:
+                    logger.error("Port '{0}' disconnected!".format(self._port))
+                    self.abort()
 
 
 ################################################################################
@@ -190,7 +203,7 @@ class Transmit_Insert_Data_Queue_Class(threading.Thread):
                 for i in range(0, self.tx_data_queue.qsize()):
                     #Get next queue item to transmit
                     self.datalink_payload = self.tx_data_queue.get()
-                    #print "transmit L2", self.tx_queue_item
+                    logger.debug(self.tx_queue_item)
 
                     #Create datalink packet
                     datalink_packet = self.create_datalink_packet(0xff, 0xff, self.datalink_payload)
@@ -439,9 +452,10 @@ class Receiver_Datalink_Device_Class(threading.Thread):
                         unpacked_datalink = self.datalink_packet_struct.unpack(data)
                         #Place datalink payload into payload queue
                         self.rx_data_payload_queue.put(unpacked_datalink[3])
+
                     except:
-                        logger.info('FAIL Layer 2 UART Protocol Unpack')
-                        pass  #print "Failed parsing" !!!!!FIX!!!!!
+                        logger.warning('Layer 2 UART Protocol Unpack')
+                        logger.warning('Data: {0}'.format(repr(unpacked_datalink[3])))
 
 
 ################################################################################
@@ -486,7 +500,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
     ################################################################################
     def abort(self):
         self.enable_flag = False
-        logger.info('Aborting Layer 2 Protocol!')
+        logger.error('Aborting Layer 2 datalink parser class!')
 
     def run(self):
         while self.enable_flag:
@@ -526,7 +540,7 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet = ''  #Clear partial packet contents for new packet
                             #Unknown State - Error
                             else:
-                                logger.info('ERROR: ' + str(self.partial_packet))
+                                logger.error('Partial Packet: {0}'.format(str(self.partial_packet)))
                         #Check if current BYTE is being escaped (framing) - TRUE
                         elif self.logic_escapebyte_received:
                             #Escaped Packet data received
@@ -535,10 +549,10 @@ class Receiver_Datalink_Device_State_Parser_Class(threading.Thread):
                                 self.partial_packet += rx_byte
                             #Unknown State - Error
                             else:
-                                logger.info('ERROR: ' + str(self.partial_packet))
+                                logger.error('Partial Packet: {0}'.format(str(self.partial_packet)))
                     #Unknown State - Error
                     else:
-                        logger.info('ERROR: ' + str(self.partial_packet))
+                        logger.error('Partial Packet: {0}'.format(str(self.partial_packet)))
             #No new databyte to parse
             else:
                     pass  #No new data
