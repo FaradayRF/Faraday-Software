@@ -224,6 +224,7 @@ def fragmentmsg(msg, fragmentsize):
     be reassembled after reception.
 
     :param msg: The data to be fragmented
+    :param fragmentsize: Size of each fragment in bytes
 
     :returns A list containing the fragmented "chunks" of data of the pre-determined size.
     """
