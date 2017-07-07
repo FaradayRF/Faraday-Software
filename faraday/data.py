@@ -155,7 +155,6 @@ def rfdataport():
             return json.dumps(
                 {"status": "BASE64 data error."}), 400
         else:
-
             if len(data) > PAYLOAD_LEN:
                 # Fragment data
                 fragment_list = fragmentmsg(data, PAYLOAD_LEN)
