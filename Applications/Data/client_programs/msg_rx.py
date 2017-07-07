@@ -49,7 +49,7 @@ def main():
                 else:
                     print("Request Status Code: {0}".format(rxdata.status_code))
 
-        except Exception as e:
+        except:
             pass  # Commenting out for now to avoid constant prints when no data on boot
             #print("Exception: {0}".format(e))
         time.sleep(0.1)
