@@ -44,7 +44,9 @@ All packets transmitted through the data server will be a fixed size of the MTU 
 
 
 # Client Applications
-Several client applications are provided, mostly for initial bring-up and testing purposes at this time.
+Several client applications are provided, mostly for initial bring-up and testing purposes at this time. The following program must be running prior to running the client applications:
+* Proxy (`faraday-proxy`)
+* Data server (`faraday-data`)
 
 ## msg_tx.py
 This is a simple non-reliable (no error detection/retry) text message program transmitter for the Faraday data server. Run this program after starting the Data server and enter the requested callsign information.
