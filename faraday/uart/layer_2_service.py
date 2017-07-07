@@ -34,21 +34,31 @@ class Layer2ServiceObject(threading.Thread):
         self.start()  #Starts the run() function and thread
 
     def POST(self, payload_data):
-        self.tx.insert_data(payload_data)
+        try:
+            self.tx.insert_data(payload_data)
+        except:
+            logger.error("Layer2ServiceObject POST() error")
 
     def GET(self):
         """
         Gets the next received Layer 2 datagram in the FIFO
         """
-        return self.rx.GET()
+        try:
+            return self.rx.GET()
+        except:
+            logger.error("Layer2ServiceObject GET() error")
 
     def IsEmpty(self):
         """
         Returns True if FIFO is empty, returns False if item(s) in FIFO.
         """
-        return self.rx.IsEmpty()
+        try:
+            return self.rx.IsEmpty()
+        except:
+            logger.error("Layer2ServiceObject isEmpty() error")
 
     def Abort(self):
+        logger.error("Aborting Layer2ServiceObject!")
         #Self abort
         self.enabled = False
 
