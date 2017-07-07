@@ -12,7 +12,7 @@ import shutil
 from flask import Flask
 from flask import request
 
-DATA_FIXED_LEN = 42
+DATA_FIXED_LEN = 42  # Maximum transmissible unit through Faraday over RF at this time
 
 # Add Faraday library to the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
