@@ -1,5 +1,7 @@
 # Faraday Data Server Proxy Application Documentation
 
+NOTE: This program is in active development. It is possible that bugs are present and features not yet added. Please report any bugs found or features that you feel should be included in the next release.
+
 ## Starting The Data Server
 
 First, ensure that `faraday-data` is installed properly along with the faraday `pip` installation process.
