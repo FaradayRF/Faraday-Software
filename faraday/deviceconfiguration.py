@@ -227,8 +227,8 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     if args.greenledrxon:
         fconfig.set('BASIC', 'GREENLEDRX', 1)
     if args.greenledrxoff:
-        fconfig.set('BASIC', 'GREENLEDRX', 0
-    if args.unitconfigured:
+        fconfig.set('BASIC', 'GREENLEDRX', 0)
+        if args.unitconfigured:
         fconfig.set('BASIC', 'UNITCONFIGURED', 1)
     if args.unitunconfigured:
         fconfig.set('BASIC', 'UNITCONFIGURED', 0)
