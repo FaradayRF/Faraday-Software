@@ -68,6 +68,8 @@ parser.add_argument('--callsign', help='Set Faraday radio callsign')
 parser.add_argument('--nodeid', type=int, help='Set Faraday radio nodeid')
 parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio RED LED during RF transmissions ON')
 parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
+parser.add_argument('--greenledrxon', action='store_true', help='Set Faraday radio GREEN LED during RF reception ON')
+parser.add_argument('--greenledrxoff', action='store_true', help='Set Faraday radio GREEN LED during RF reception OFF')
 parser.add_argument('--unitconfigured', action='store_true', help='Set Faraday radio configured bit ON')
 parser.add_argument('--unitunconfigured', action='store_true', help='Set Faraday radio configured bit OFF')
 
@@ -222,6 +224,10 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('BASIC', 'REDLEDTX', 1)
     if args.redledtxoff:
         fconfig.set('BASIC', 'REDLEDTX', 0)
+    if args.greenledrxon:
+        fconfig.set('BASIC', 'GREENLEDRX', 1)
+    if args.greenledrxoff:
+        fconfig.set('BASIC', 'GREENLEDRX', 0
     if args.unitconfigured:
         fconfig.set('BASIC', 'UNITCONFIGURED', 1)
     if args.unitunconfigured:
@@ -230,8 +236,10 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     # Create configuration boot bitmask integer
     bootmask = [0] * 8
     redledtx = fconfig.get('BASIC', 'REDLEDTX')
+    greenledrx = fconfig.get('BASIC', 'GREENLEDRX')
     unitconfigured = fconfig.get('BASIC', 'UNITCONFIGURED')
     bootmask[6] = redledtx
+    bootmask[2] = greenledrx
     bootmask[7] = unitconfigured
     configbootbitmask = eightBitListToInt(bootmask)
     fconfig.set('BASIC', 'CONFIGBOOTBITMASK', configbootbitmask)
