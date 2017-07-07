@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 #-------------------------------------------------------------------------------
-# Name:        /Applications/Hermes/hermesflaskserver.py
-# Purpose:      Starts up the hermesflaskserver python module
+# Name:        /Applications/Data/data.py
+# Purpose:      Provides a generic data server for Faraday through Proxy.
 #
 # Author:      Brent Salmi
 #
-# Created:     04/27/2017
+# Created:     07/06/2017
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
