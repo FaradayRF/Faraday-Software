@@ -238,7 +238,7 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
     redledtx = fconfig.get('BASIC', 'REDLEDTX')
     greenledrx = fconfig.get('BASIC', 'GREENLEDRX')
     unitconfigured = fconfig.get('BASIC', 'UNITCONFIGURED')
-    bootmask[2] = greenledrx
+    bootmask[5] = greenledrx
     bootmask[6] = redledtx
     bootmask[7] = unitconfigured
     configbootbitmask = eightBitListToInt(bootmask)
