@@ -122,7 +122,7 @@ PAYLOAD_LEN = 40
 
 
 # Definitions
-APP_RFDATAPORT_UART_PORT = 1
+APP_DATA_UART_PORT = dataConfig.get("DATA", "UARTPORT")
 
 # # Setup a Faraday IO object
 faraday_1 = faradaybasicproxyio.proxyio()  # default proxy port
@@ -167,7 +167,7 @@ def rfdataport():
                     datapacket = packet_struct.pack(cmd, seq, str(item))
 
                     # Transmit data packet
-                    faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                    faraday_1.POST(proxycallsign, proxynodeid, APP_DATA_UART_PORT, datapacket)
 
             else:
                 # Create rfdataport application packet
@@ -176,7 +176,7 @@ def rfdataport():
                 datapacket = packet_struct.pack(cmd, seq, data)
 
                 # Transmit data packet
-                faraday_1.POST(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT, datapacket)
+                faraday_1.POST(proxycallsign, proxynodeid, APP_DATA_UART_PORT, datapacket)
 
             # Return status
             return json.dumps(
@@ -189,7 +189,7 @@ def rfdataport():
         proxynodeid = request.args.get("localnodeid")
 
         # Get data from proxy for specified unit if available.
-        rxdata = faraday_1.GET(proxycallsign, proxynodeid, APP_RFDATAPORT_UART_PORT)
+        rxdata = faraday_1.GET(proxycallsign, proxynodeid, APP_DATA_UART_PORT)
 
         if rxdata is not None:
             if 'error' in rxdata:
