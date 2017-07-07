@@ -204,7 +204,7 @@ class faraday_uart_object(threading.Thread):
             pass
 
     def Abort(self):
-        logger.error("Abording layer 4 faraday_uart_object")
+        logger.error("Aborting layer 4 faraday_uart_object")
         self.layer_2_object.Abort()  #Abort lower layers
         self.enabled = False
 
