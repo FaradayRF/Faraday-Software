@@ -72,12 +72,12 @@ def initializeDataConfig():
     sys.exit(0)
 
 
-def configureData(args, simpleuiConfigPath):
+def configureData(args, dataConfigPath):
     '''
     Configure Data configuration file from command line
 
     :param args: argparse arguments
-    :param SimpleUIConfigPath: Path to simpleui.ini file
+    :param dataConfigPath: Path to data.ini file
     :return: None
     '''
 
@@ -93,7 +93,7 @@ def configureData(args, simpleuiConfigPath):
     if args.proxyport is not None:
         config.set('PROXY', 'PORT', args.proxyport)
 
-    with open(simpleuiConfigPath, 'wb') as configfile:
+    with open(dataConfigPath, 'wb') as configfile:
         config.write(configfile)
 
 
