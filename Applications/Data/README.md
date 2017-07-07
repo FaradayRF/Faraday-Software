@@ -23,6 +23,8 @@ If a POST request is sent to the data server containing data larger than the max
 
 ## Server Packets
 
+Detailed information can be found in the [packet definition Excel](Packets.xlsx).
+
 ### Transmits Packets
 As noted in the packet excel document the transmitted packets contain:
 * Packet Type
