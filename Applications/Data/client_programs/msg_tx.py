@@ -1,35 +1,14 @@
 #!/usr/bin/env python
 
 import requests
-import ConfigParser
-import os
 import base64
 import struct
-import logging.config
-import sys
 
 INTERVAL_SEC = 0.001
 
 packet_msg_struct = struct.Struct('6s 3B 31s')
 PACKET_CALLSIGN_LEN = 6
 PACKET_PAYLOAD_LEN = 31
-
-# Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
-
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('Data')
 
 
 def main():
@@ -65,7 +44,7 @@ def main():
             payload = {'localcallsign': proxylocalcallsign, 'localnodeid': proxylocalnodeid,
                        'destinationcallsign': destinationcallsign, 'destinationnodeid': destinationnodeid,
                        'data': data_tx}
-            logger.info("Transmitting [{0}]: {1}".format(str(sequence_cnt), data_tx))  # Not sure if properly showing up in CMD window...
+            print("Transmitting [{0}]: {1}".format(str(sequence_cnt), data_tx))  # Not sure if properly showing up in CMD window...
             requests.post('http://127.0.0.1:8009/', params=payload)
             sequence_cnt += 1
 
