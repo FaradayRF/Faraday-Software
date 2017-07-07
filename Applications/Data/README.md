@@ -2,6 +2,14 @@
 
 NOTE: This program is in active development. It is possible that bugs are present and features not yet added. Please report any bugs found or features that you feel should be included in the next release.
 
+## Firmware
+
+This application requires that all faraday units are programmed with [0e2e87ea838a1c8ee17174a4b56a0b9c34423424](https://github.com/FaradayRF/Faraday-Firmware/commit/0e2e87ea838a1c8ee17174a4b56a0b9c34423424) or the latest commit.
+
+Use the [bootstrap loader software](https://github.com/FaradayRF/Faraday-Software/tree/master/Firmware_Bootstrap_Loader) to load the TI-HEX file located in `Debug/Faraday_D1_Release.txt`
+
+[0e2e87ea838a1c8ee17174a4b56a0b9c34423424](https://github.com/FaradayRF/Faraday-Firmware/blob/0e2e87ea838a1c8ee17174a4b56a0b9c34423424/Debug/Faraday_D1_Release.txt) TI-HEX.
+
 ## Starting The Data Server
 
 First, ensure that `faraday-data` is installed properly along with the faraday `pip` installation process.
