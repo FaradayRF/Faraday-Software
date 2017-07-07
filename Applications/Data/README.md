@@ -10,6 +10,9 @@ Ensure that the configuration files are properly initialized using `faraday-data
 
 To start the server once properly configured make sure the proxy is already running and use `faraday-data --start`.
 
+![Successful data server running.](images/dataserver_1.PNG)
+
+
 ## Sending And Receiving Data
 While the data server is running data can be sent to or retrieved from the server by use of POST/GET requests.
 
@@ -57,8 +60,13 @@ This is a simple non-reliable (no error detection/retry) text message program tr
   * This is the callsign and nodeid of the Faraday unit (as programmed in firmware) intended to receive the message.
     * NOTE: At this time all transmissions are 'broadcast' and all units will receive and display the data.
 
+Run the `msg_tx.py` script and *follow the prompts to enter faraday device connection information* for the transmitter and remote unit that is intended to receive the messages.
+
+![Successful msg_tx.py program running.](images/tx_init_1.PNG)
 
 To transmit a message simply type the message and hit [Enter].
+
+![Successful message transmission.](images/tx_1.PNG)
 
 ## msg_rx.py
 This is a simple non-reliable text message program receiver for the faraday data server. Run this program after starting the Data server and enter the requested callsign information.
@@ -66,4 +74,10 @@ This is a simple non-reliable text message program receiver for the faraday data
 * Local (Proxy) Callsign & Nodeid
   * This is the callsign and nodeid of the unit as connected to by the local proxy application. This is also the callsign that will be embedded into the text message frames for reassembly and TX station ID from the RX application.
 
+Run the `msg_rx.py` script and *follow the prompts to enter faraday device connection information* for the receiver.
+
+![Successful msg_rx.py program running.](images/rx_init_1.PNG)
+
 While running the program will display all messages in real time as received. Note that due to the non-reliable nature of the application if a fragment is missing/corrupted then the transmitted data as received will either be corrupted, missing a portion of data, or not received all-together.
+
+![Successful message reception.](images/rx_1.PNG)
