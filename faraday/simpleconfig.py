@@ -143,6 +143,7 @@ bootbitmask = list(bootbitmask)
 bootbitmask.reverse()
 logger.info("UNITCONFIGURED: {0}".format(bootbitmask[0]))
 logger.info("REDLEDTX: {0}".format(bootbitmask[1]))
+logger.info("GREENLEDRX: {0}".format(bootbitmask[2]))
 
 # Convert gpiop3 bitmask to a list and display
 gpiop3 = bin(unit_configuration_dict['default_gpio_port_3_bitmask'])[2:].zfill(8)
