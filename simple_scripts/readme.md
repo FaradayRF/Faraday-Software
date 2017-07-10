@@ -75,11 +75,13 @@ DDMM.mmmm Lon (RAW) = `W 118 26.171`
 Converting into a valid Faraday configuration:
 
 ```
-DDMM.mmmm Lat (Faraday) = `0340.0100`
+DDMM.mmmm Lat (Faraday) = `3400.0100`
 DDMM.mmmm Lat Direction (Faraday) = `N`
 DDMM.mmmm Lon (Faraday) = `11826.1710`
 DDMM.mmmm Lon Direction (Faraday) = `W`
 ```
+
+_NOTE: Be aware that the `ddMM` conversion resulted in `3400` not `0340`!_
 
 #### GPS References
 * http://www.latlong.net/
