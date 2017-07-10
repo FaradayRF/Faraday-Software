@@ -7,9 +7,9 @@ proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
 proxy_unit0_callsign = 'REPLACEME'
 proxy_unit0_nodeid = REPLACEME
 proxy_unit0_port = 'REPLACEME'
-proxy_unit1_callsign = 'REPLACEME'
-proxy_unit1_nodeid = REPLACEME
-proxy_unit1_port = 'REPLACEME'
+#proxy_unit1_callsign = 'REPLACEME'
+#proxy_unit1_nodeid = REPLACEME
+#proxy_unit1_port = 'REPLACEME'
 
 # APRS
 aprs_callsign = 'REPLACEME'
