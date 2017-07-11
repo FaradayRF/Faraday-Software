@@ -9,7 +9,7 @@ running_os = sys.platform
 
 # Proxy
 proxy_callsign = 'REPLACEME'
-proxy_nodeid = REPLACEME
+proxy_nodeid = 0
 proxy_port = 'REPLACEME'
 
 
@@ -19,15 +19,15 @@ rfbootpower = 20  # MAX = 152
 uart_interval = 5  # Seconds
 rf_interval = 20  # Seconds
 # DEFAULT_LATITUDE MAX LENGTH = 9 Bytes in format "ddmm.mmmm" (including decimal)
-default_latitude='0000.0000'
+default_latitude = '0000.0000'
 # DEFAULT_LATITUDE_DIRECTION MAX LENGTH = 1 Byte
-default_latitude_direction='N'
+default_latitude_direction = 'N'
 # DEFAULT_LONGITUDE MAX LENGTH = 10 Bytes in format "dddmm.mmmm" (including decimal)
-default_longitude='00000.0000'
+default_longitude = '00000.0000'
 # DEFAULT_LONGITUDE_DIRECTION MAX LENGTH = 1 Byte
-default_longitude_direction='W'
+default_longitude_direction = 'W'
 # DEFAULT_ALTITUDE MAX LENGTH = 8 Bytes (including decimal) in meters
-default_altitude='00000.00'
+default_altitude = '00000.00'
 
 # initialize configurations files
 print ("--- INITIALIZING PROXY SERVER ---")
@@ -63,23 +63,23 @@ call(['faraday-deviceconfiguration', '--bootrfpower', str(rfbootpower)])
 print ("--- STARTING PROXY SERVER ---")
 print type(running_os), running_os == 'linux2'
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
+    command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 elif running_os == 'linux2':
-	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
+    command = " ".join(['gnome-terminal', '-x', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 os.system(command)
 
 print ("--- STARTING DEVICE CONFIGURATION SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-deviceconfiguration', '--start'])
+    command = " ".join(['start', 'cmd', '/k', 'faraday-deviceconfiguration', '--start'])
 elif running_os == 'linux2':
-	command = " ".join(['gnome-terminal', '-x', 'faraday-deviceconfiguration', '--start'])
+    command = " ".join(['gnome-terminal', '-x', 'faraday-deviceconfiguration', '--start'])
 os.system(command)
 
 time.sleep(3)
 
 print ("--- STARTING SIMPLECONFIG SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleconfig', '--start'])
+    command = " ".join(['start', 'cmd', '/k', 'faraday-simpleconfig', '--start'])
 elif running_os == 'linux2':
-	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleconfig', '--start'])
+    command = " ".join(['gnome-terminal', '-x', 'faraday-simpleconfig', '--start'])
 os.system(command)
