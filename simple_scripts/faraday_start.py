@@ -9,19 +9,19 @@ running_os = sys.platform
 
 # Proxy
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
-proxy_unit0_callsign = 'REPLACEME'
-proxy_unit0_nodeid = REPLACEME
-proxy_unit0_port = 'REPLACEME'
+proxy_unit0_callsign = 'kb1lqd'
+proxy_unit0_nodeid = 10
+proxy_unit0_port = '/dev/ttyUSB0'
 #proxy_unit1_callsign = 'REPLACEME'
 #proxy_unit1_nodeid = REPLACEME
 #proxy_unit1_port = 'REPLACEME'
 
 # APRS
-aprs_callsign = 'REPLACEME'
+aprs_callsign = 'kb1lqd'
 
 # SIMPLEUI
-simpleui_cmdremotecallsign = 'REPLACEME'
-simpleui_cmdremotenodeid = REPLACEME
+simpleui_cmdremotecallsign = 'kb1lqd'
+simpleui_cmdremotenodeid = 2
 
 
 # initialize configurations files
@@ -67,9 +67,10 @@ elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-aprs', '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
+time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
+
 print ("--- STARTING SIMPLEUI SERVER ---")
 if running_os == 'win32':
-time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
 	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start']) ## Windows ONLY!
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleui', '--start'])
