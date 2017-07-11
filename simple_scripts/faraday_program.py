@@ -65,7 +65,7 @@ print type(running_os), running_os == 'linux2'
 if running_os == 'win32':
 	command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 elif running_os == 'linux2':
-	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy --number', str(proxy_unitcnt), '--start'])
+	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
 print ("--- STARTING DEVICE CONFIGURATION SERVER ---")

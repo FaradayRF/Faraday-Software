@@ -1,6 +1,11 @@
 from subprocess import call
 import os
 import time
+import sys
+
+#Detect operating system
+#LINUX: Assumed terminal is gnome-terminal standard with Ubuntu
+running_os = sys.platform
 
 # Proxy
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
@@ -41,19 +46,31 @@ call(['faraday-simpleui', '--cmdremotecallsign', simpleui_cmdremotecallsign, '--
 
 # Start servers
 print ("--- STARTING PROXY SERVER ---")
-command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start']) ## Windows ONLY!
-os.system(command)  # Not sure how to do this with call()...
+if running_os == 'win32':
+	command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
+os.system(command)
 
 print ("--- STARTING TELEMETRY SERVER ---")
-command = " ".join(['start', 'cmd', '/k', 'faraday-telemetry', '--start']) ## Windows ONLY!
+if running_os == 'win32':
+	command = " ".join(['start', 'cmd', '/k', 'faraday-telemetry', '--start']) ## Windows ONLY!
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-telemetry', '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
 print ("--- STARTING APRS SERVER ---")
+if running_os == 'win32':
 time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
-command = " ".join(['start', 'cmd', '/k', 'faraday-aprs', '--start']) ## Windows ONLY!
+	command = " ".join(['start', 'cmd', '/k', 'faraday-aprs', '--start']) ## Windows ONLY!
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-aprs', '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
 print ("--- STARTING SIMPLEUI SERVER ---")
+if running_os == 'win32':
 time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
-command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start']) ## Windows ONLY!
+	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start']) ## Windows ONLY!
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleui', '--start'])
 os.system(command)  # Not sure how to do this with call()...
