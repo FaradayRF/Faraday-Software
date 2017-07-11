@@ -59,15 +59,14 @@ elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-telemetry', '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
+time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
+
 print ("--- STARTING APRS SERVER ---")
 if running_os == 'win32':
-time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
 	command = " ".join(['start', 'cmd', '/k', 'faraday-aprs', '--start']) ## Windows ONLY!
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-aprs', '--start'])
 os.system(command)  # Not sure how to do this with call()...
-
-time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
 
 print ("--- STARTING SIMPLEUI SERVER ---")
 if running_os == 'win32':
