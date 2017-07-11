@@ -1,6 +1,11 @@
 from subprocess import call
 import os
 import time
+import sys
+
+#Detect operating system
+#LINUX: Assumed terminal is gnome-terminal standard with Ubuntu
+running_os = sys.platform
 
 # Proxy
 proxy_callsign = 'REPLACEME'
@@ -11,8 +16,8 @@ proxy_port = 'REPLACEME'
 # Device Configuration
 proxy_unitcnt = 1  # Only program a single unit at a time!
 rfbootpower = 20  # MAX = 152
-uart_interval = 1  # Seconds
-rf_interval = 1  # Seconds
+uart_interval = 5  # Seconds
+rf_interval = 20  # Seconds
 # DEFAULT_LATITUDE MAX LENGTH = 9 Bytes in format "ddmm.mmmm" (including decimal)
 default_latitude='0000.0000'
 # DEFAULT_LATITUDE_DIRECTION MAX LENGTH = 1 Byte
@@ -56,15 +61,25 @@ call(['faraday-deviceconfiguration', '--bootrfpower', str(rfbootpower)])
 
 # Start servers
 print ("--- STARTING PROXY SERVER ---")
-command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start']) ## Windows ONLY!
+print type(running_os), running_os == 'linux2'
+if running_os == 'win32':
+	command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy --number', str(proxy_unitcnt), '--start'])
 os.system(command)  # Not sure how to do this with call()...
 
 print ("--- STARTING DEVICE CONFIGURATION SERVER ---")
-command = " ".join(['start', 'cmd', '/k', 'faraday-deviceconfiguration', '--start']) ## Windows ONLY!
+if running_os == 'win32':
+	command = " ".join(['start', 'cmd', '/k', 'faraday-deviceconfiguration', '--start'])
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-deviceconfiguration', '--start'])
 os.system(command)  # Not sure how to do this with call()..
 
 time.sleep(3)
 
 print ("--- STARTING SIMPLECONFIG SERVER ---")
-command = " ".join(['start', 'cmd', '/k', 'faraday-simpleconfig', '--start']) ## Windows ONLY!
+if running_os == 'win32':
+	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleconfig', '--start'])
+elif running_os == 'linux2':
+	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleconfig', '--start'])
 os.system(command)  # Not sure how to do this with call()..
