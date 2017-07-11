@@ -66,14 +66,14 @@ if running_os == 'win32':
 	command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
-os.system(command)  # Not sure how to do this with call()...
+os.system(command)
 
 print ("--- STARTING DEVICE CONFIGURATION SERVER ---")
 if running_os == 'win32':
 	command = " ".join(['start', 'cmd', '/k', 'faraday-deviceconfiguration', '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-deviceconfiguration', '--start'])
-os.system(command)  # Not sure how to do this with call()..
+os.system(command)
 
 time.sleep(3)
 
@@ -82,4 +82,4 @@ if running_os == 'win32':
 	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleconfig', '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleconfig', '--start'])
-os.system(command)  # Not sure how to do this with call()..
+os.system(command)

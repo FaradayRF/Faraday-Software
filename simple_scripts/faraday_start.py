@@ -9,19 +9,19 @@ running_os = sys.platform
 
 # Proxy
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
-proxy_unit0_callsign = 'kb1lqd'
-proxy_unit0_nodeid = 10
-proxy_unit0_port = '/dev/ttyUSB0'
+proxy_unit0_callsign = 'REPLACEME'
+proxy_unit0_nodeid = REPLACEME
+proxy_unit0_port = 'REPLACEME'
 #proxy_unit1_callsign = 'REPLACEME'
 #proxy_unit1_nodeid = REPLACEME
 #proxy_unit1_port = 'REPLACEME'
 
 # APRS
-aprs_callsign = 'kb1lqd'
+aprs_callsign = 'REPLACEME'
 
 # SIMPLEUI
-simpleui_cmdremotecallsign = 'kb1lqd'
-simpleui_cmdremotenodeid = 2
+simpleui_cmdremotecallsign = 'REPLACEME'
+simpleui_cmdremotenodeid = REPLACEME
 
 
 # initialize configurations files
@@ -54,23 +54,23 @@ os.system(command)
 
 print ("--- STARTING TELEMETRY SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-telemetry', '--start']) ## Windows ONLY!
+	command = " ".join(['start', 'cmd', '/k', 'faraday-telemetry', '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-telemetry', '--start'])
-os.system(command)  # Not sure how to do this with call()...
+os.system(command)
 
 time.sleep(2)  # Sleep time to allow proxy and telemetry to initialize and serve data
 
 print ("--- STARTING APRS SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-aprs', '--start']) ## Windows ONLY!
+	command = " ".join(['start', 'cmd', '/k', 'faraday-aprs', '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-aprs', '--start'])
-os.system(command)  # Not sure how to do this with call()...
+os.system(command)
 
 print ("--- STARTING SIMPLEUI SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start']) ## Windows ONLY!
+	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start'])
 elif running_os == 'linux2':
 	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleui', '--start'])
-os.system(command)  # Not sure how to do this with call()...
+os.system(command)
