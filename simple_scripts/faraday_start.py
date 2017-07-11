@@ -70,7 +70,7 @@ os.system(command)
 
 print ("--- STARTING SIMPLEUI SERVER ---")
 if running_os == 'win32':
-	command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start'])
+    command = " ".join(['start', 'cmd', '/k', 'faraday-simpleui', '--start'])
 elif running_os == 'linux2':
-	command = " ".join(['gnome-terminal', '-x', 'faraday-simpleui', '--start'])
+    command = " ".join(['gnome-terminal', '-x', 'faraday-simpleui', '--start'])
 os.system(command)
