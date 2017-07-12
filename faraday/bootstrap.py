@@ -19,6 +19,8 @@ import sys
 import argparse
 import shutil
 
+from classes import createtiscript
+
 # Start logging after importing modules
 relpath1 = os.path.join('etc', 'faraday')
 relpath2 = os.path.join('..', 'etc', 'faraday')
@@ -104,6 +106,10 @@ def main():
     """
 
     logger.info('Starting Faraday Bootstrap Loader application')
+
+    test = createtiscript.CreateTiBslScript(filename, comport)
+
+    test.createscript()
 
     # Initialize local variables
     threads = []
