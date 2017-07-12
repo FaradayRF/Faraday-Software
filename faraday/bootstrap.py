@@ -9,12 +9,12 @@
 #-------------------------------------------------------------------------------
 
 import logging.config
-import threading
+#import threading
 import ConfigParser
-import socket
-import requests
+#import socket
+#import requests
 import os
-from time import sleep
+#from time import sleep
 import sys
 import argparse
 import shutil
@@ -53,6 +53,7 @@ parser.add_argument('--start', action='store_true', help='Start APRS server')
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeBSLConfig():
     '''
     Initialize BSL configuration file from bsl.sample.ini
@@ -84,6 +85,7 @@ def configureBSL(args, bslConfigPath):
     with open(bslConfigPath, 'wb') as configfile:
         config.write(configfile)
 
+
 # Now act upon the command line arguments
 # Initialize and configure bsl
 if args.init:
@@ -98,6 +100,7 @@ if not args.start:
     logger.warning("--start option not present, exiting BSL server!")
     sys.exit(0)
 
+
 def main():
     """
     Main function which starts the Boostrap Loader.
@@ -109,10 +112,10 @@ def main():
 
     test = createtiscript.CreateTiBslScript(filename, comport)
 
-    test.createscript()
+    #test.createscript()
 
     # Initialize local variables
-    threads = []
+    #threads = []
 
     # t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
     # threads.append(t)
