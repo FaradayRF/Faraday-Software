@@ -95,3 +95,23 @@ bslFile = bslConfig.read(bslConfigPath)
 if not args.start:
     logger.warning("--start option not present, exiting BSL server!")
     sys.exit(0)
+
+def main():
+    """
+    Main function which starts the Boostrap Loader.
+
+    :return: None
+    """
+
+    logger.info('Starting Faraday Bootstrap Loader application')
+
+    # Initialize local variables
+    threads = []
+
+    # t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
+    # threads.append(t)
+    # t.start()
+
+
+if __name__ == '__main__':
+    main()
