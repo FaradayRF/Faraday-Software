@@ -20,6 +20,7 @@ import argparse
 import shutil
 
 from classes import createtiscript
+from classes import faradayFTDI
 
 # Start logging after importing modules
 relpath1 = os.path.join('etc', 'faraday')
@@ -110,11 +111,19 @@ def main():
 
     logger.info('Starting Faraday Bootstrap Loader application')
 
-    print os.path.join(path, 'Faraday_D1_Release.txt')
+    print os.path.join(path, 'firmware.txt')
 
-    test = createtiscript.CreateTiBslScript(path, 'Faraday_D1_Release.txt', 'COM24')
+    test = createtiscript.CreateTiBslScript(path, 'firmware.txt', 'COM24')
 
     test.createscript()
+
+    #Enable BSL Mode
+    device_bsl = faradayFTDI.FtdiD2xxCbusControlObject()
+    #
+    device_bsl.EnableBslMode()
+    # subprocess.call(['faradaybsl/bsl-scripter-windows.exe', 'faradaybsl/FaradayFirmwareUpgradeScript.txt'])
+    # device_bsl.DisableBslMode()
+
 
     # Initialize local variables
     #threads = []

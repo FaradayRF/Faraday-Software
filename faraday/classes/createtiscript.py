@@ -102,7 +102,6 @@ class CreateTiBslScript(object):
         textfile.writelines(("RX_DATA_BLOCK ", "../", self.filename, '\n'))
         for i in range(0, len(self.crc_script_index)):
             textfile.writelines((str(self.crc_script_index[i]), '\n'))
-        print 'test'
 
 #ParseTiTxtHexFile(file_program_hex)
 #CreateOutputFile()

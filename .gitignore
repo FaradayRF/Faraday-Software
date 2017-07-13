@@ -7,33 +7,26 @@ __pycache__/
 # Sphinx documentation
 docs/_build/
 
-# Telemetry Application
-Applications/Telemetry/telemetry.ini
-Applications/Telemetry/*.db
-Applications/Telemetry/*.db-journal
-
-# APRS Application
-Applications/APRS/aprs.ini
-
-# Device Configuration
-Applications/deviceconfiguration/deviceconfiguration.ini
-Applications/deviceconfiguration/faraday_config.ini
+# Application Configuration files
+etc/faraday/telemetry.ini
+etc/faraday/aprs.ini
+etc/faraday/deviceconfiguration.ini
+etc/faraday/faraday_config.ini
+etc/faraday/simpleui.ini
+etc/faraday/proxy.ini
+etc/faraday/bsl.ini
+etc/faraday/firmware.txt
 
 # Hermes Application
 Applications/Hermes/hermes.ini
 
 # SimpleUI Application
-Applications/SimpleUI/simpleui.ini
 Applications/SimpleUI/node_modules/
 
 #IDE (Pycharm)
 .idea*
 .idea/*
 Tutorials/Tutorials/2-Advanced_Proxy_Programs/Simple_Text_Messaging/Engineering_Documents/~$Packets.xlsx
-
-# Proxy
-proxy/proxy.ini
-proxy/*.db
 
 #Virtualenv
 faradayenv/
@@ -44,3 +37,7 @@ Tutorials\Python_Developer_Tutorials\foundation\Commanding-Remote-RF\commanding-
 
 # Bootstrap Loader
 etc/faraday/faradayFirmwareUpgradeScript.txt'
+
+#Setuptools
+build/
+dist/
