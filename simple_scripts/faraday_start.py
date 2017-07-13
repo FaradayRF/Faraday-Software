@@ -10,12 +10,12 @@ running_os = sys.platform
 # Proxy - Unit #0
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
 proxy_unit0_callsign = 'REPLACEME'
-proxy_unit0_nodeid = 0  # Replace with proxy_nodeid of local unit to be programmed
+proxy_unit0_nodeid = 0  # Replace with proxy_nodeid of local unit #0
 proxy_unit0_port = 'REPLACEME'
 
 # Proxy - Unit #1 (Uncomment and modify as needed if using a second faraday locally)
 #proxy_unit1_callsign = 'REPLACEME'
-#proxy_unit1_nodeid = 0  # Replace with proxy_nodeid of local unit to be programmed
+#proxy_unit1_nodeid = 0  # Replace with proxy_nodeid of local unit #1
 #proxy_unit1_port = 'REPLACEME'
 
 # APRS
@@ -23,7 +23,7 @@ aprs_callsign = 'REPLACEME'
 
 # SIMPLEUI
 simpleui_cmdremotecallsign = 'REPLACEME'
-simpleui_cmdremotenodeid = 0
+simpleui_cmdremotenodeid = 0 # Replace with proxy_nodeid of local unit to be viewed by SimpleUI
 
 
 # initialize configurations files
