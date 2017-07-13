@@ -85,7 +85,7 @@ DDDMM.mmmm Lon (Faraday) = `11826.1710`
 DDDMM.mmmm Lon Direction (Faraday) = `W`
 ```
 
-_NOTE: Be aware that the `ddMM` conversion resulted in `3400` not `0340`!_
+_**NOTE:** Be aware that the `ddMM` conversion resulted in `3400` not `0340`!_
 
 #### GPS References
 * http://www.latlong.net/
