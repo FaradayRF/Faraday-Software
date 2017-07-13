@@ -23,7 +23,7 @@ aprs_callsign = 'REPLACEME'
 
 # SIMPLEUI
 simpleui_cmdremotecallsign = 'REPLACEME'
-simpleui_cmdremotenodeid = 0 # Replace with proxy_nodeid of local unit to be viewed by SimpleUI
+simpleui_cmdremotenodeid = 0  # Replace with proxy_nodeid of local unit to be viewed by SimpleUI
 
 
 # initialize configurations files
