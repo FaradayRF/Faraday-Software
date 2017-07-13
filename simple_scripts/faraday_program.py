@@ -9,7 +9,7 @@ running_os = sys.platform
 
 # Proxy
 proxy_callsign = 'REPLACEME'
-proxy_nodeid = 0
+proxy_nodeid = 0  # Replace with proxy_nodeid of local unit to be programmed
 proxy_port = 'REPLACEME'
 
 
@@ -61,7 +61,6 @@ call(['faraday-deviceconfiguration', '--bootrfpower', str(rfbootpower)])
 
 # Start servers
 print ("--- STARTING PROXY SERVER ---")
-print type(running_os), running_os == 'linux2'
 if running_os == 'win32':
     command = " ".join(['start', 'cmd', '/k', 'faraday-proxy', '--number', str(proxy_unitcnt), '--start'])
 elif running_os == 'linux2':
