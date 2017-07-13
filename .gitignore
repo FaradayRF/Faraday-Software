@@ -41,3 +41,6 @@ faradayenv/
 # Developer Tutorials
 Tutorials\Python_Developer_Tutorials\foundation\Commanding-Local\command_local.ini
 Tutorials\Python_Developer_Tutorials\foundation\Commanding-Remote-RF\commanding-remote.ini
+
+# Bootstrap Loader
+etc/faraday/faradayFirmwareUpgradeScript.txt'
