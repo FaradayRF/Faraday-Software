@@ -9,6 +9,7 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import array
+import os
 
 #filename = sys.argv[1]
 # filename = 'RF_Test_Firmware_1-17-17.txt'
@@ -25,14 +26,15 @@ import array
 
 class CreateTiBslScript(object):
 
-    def __init__(self, filename, comport):
+    def __init__(self, path, filename, comport):
+        self.path = path
         self.filename = filename
         self.comport = comport
         self.mem_addr_index = []
         self.section_data_index = []
 
     def createscript(self):
-        f = open(self.filename, 'r')
+        f = open(os.path.join(self.path,self.filename), 'r')
         file_program_hex = f.read()
         self.ParseTiTxtHexFile(file_program_hex)
         self.CreateOutputFile()
@@ -71,7 +73,7 @@ class CreateTiBslScript(object):
     crc_script_index = []
 
     def CreateOutputFile(self):
-        textfile = open("faradaybsl/Program_CRC_Calculations.txt", 'w')
+        textfile = open(os.path.join(self.path,'programCRCCalculations.txt'), 'w')
         for i in range(0, len(self.mem_addr_index)):
             final_addr = self.mem_addr_index[i].encode('hex')
             final_len = hex(len(self.section_data_index[i]))
@@ -90,7 +92,7 @@ class CreateTiBslScript(object):
     def CreateBslScript(self):
         #global device_com_port
         #com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
-        textfile = open("faradaybsl/FaradayFirmwareUpgradeScript.txt", 'w')
+        textfile = open(os.path.join(self.path,'faradayFirmwareUpgradeScript.txt'), 'w')
         textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))
@@ -100,6 +102,7 @@ class CreateTiBslScript(object):
         textfile.writelines(("RX_DATA_BLOCK ", "../", self.filename, '\n'))
         for i in range(0, len(self.crc_script_index)):
             textfile.writelines((str(self.crc_script_index[i]), '\n'))
+        print 'test'
 
 #ParseTiTxtHexFile(file_program_hex)
 #CreateOutputFile()

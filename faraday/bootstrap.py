@@ -110,9 +110,11 @@ def main():
 
     logger.info('Starting Faraday Bootstrap Loader application')
 
-    test = createtiscript.CreateTiBslScript(filename, comport)
+    print os.path.join(path, 'Faraday_D1_Release.txt')
 
-    #test.createscript()
+    test = createtiscript.CreateTiBslScript(path, 'Faraday_D1_Release.txt', 'COM24')
+
+    test.createscript()
 
     # Initialize local variables
     #threads = []
