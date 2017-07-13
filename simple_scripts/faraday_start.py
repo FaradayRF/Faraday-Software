@@ -7,13 +7,15 @@ import sys
 #LINUX: Assumed terminal is gnome-terminal standard with Ubuntu
 running_os = sys.platform
 
-# Proxy
+# Proxy - Unit #0
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
 proxy_unit0_callsign = 'REPLACEME'
-proxy_unit0_nodeid = 0
+proxy_unit0_nodeid = 0  # Replace with proxy_nodeid of local unit to be programmed
 proxy_unit0_port = 'REPLACEME'
+
+# Proxy - Unit #1 (Uncomment and modify as needed if using a second faraday locally)
 #proxy_unit1_callsign = 'REPLACEME'
-#proxy_unit1_nodeid = REPLACEME
+#proxy_unit1_nodeid = 0  # Replace with proxy_nodeid of local unit to be programmed
 #proxy_unit1_port = 'REPLACEME'
 
 # APRS
