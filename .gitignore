@@ -36,7 +36,7 @@ Tutorials\Python_Developer_Tutorials\foundation\Commanding-Local\command_local.i
 Tutorials\Python_Developer_Tutorials\foundation\Commanding-Remote-RF\commanding-remote.ini
 
 # Bootstrap Loader
-etc/faraday/faradayFirmwareUpgradeScript.txt'
+etc/faraday/faradayFirmwareUpgradeScript.txt
 
 #Setuptools
 build/

@@ -99,7 +99,7 @@ class CreateTiBslScript(object):
         textfile.writelines(("RX_PASSWORD pass32_wrong.txt", '\n'))  #gives the wrong password to mass erase the memory
         textfile.writelines(("RX_PASSWORD pass32_default.txt", '\n'))
         print "Script file:", self.filename
-        textfile.writelines(("RX_DATA_BLOCK ", "../", self.filename, '\n'))
+        textfile.writelines(("RX_DATA_BLOCK ", self.filename, '\n'))
         for i in range(0, len(self.crc_script_index)):
             textfile.writelines((str(self.crc_script_index[i]), '\n'))
 
