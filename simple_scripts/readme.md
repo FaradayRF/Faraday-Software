@@ -3,7 +3,7 @@ The python scripts provided in this folder offer a concise location for configur
 
 These scripts provide a base, _modify them as needed_ to provide the functionality desired.
 
-These scripts currently only open new terminals in Windows. Updates will soon allow this to be cross-platform.
+** NOTE: ** These scripts are provided on the Github repository for experimental use prior to a more streamlined (installable) production user interface.
 
 **Scripts Provides**
 * `faraday_start.py` - A script to configure and start all hardware operation software
@@ -13,13 +13,15 @@ These scripts currently only open new terminals in Windows. Updates will soon al
 This script configures and opens new terminals for each faraday program. Edit the main variables block as needed. Comment out python script code to not configure/open programs as desired.
 
 ```python
-# Proxy
+# Proxy - Unit #0
 proxy_unitcnt = 1  # Number of units proxy is connecting to (starts at unit0)
 proxy_unit0_callsign = 'REPLACEME'
-proxy_unit0_nodeid = REPLACEME
+proxy_unit0_nodeid = 0  # Replace with proxy_nodeid of local unit #0
 proxy_unit0_port = 'REPLACEME'
+
+# Proxy - Unit #1 (Uncomment and modify as needed if using a second faraday locally)
 #proxy_unit1_callsign = 'REPLACEME'
-#proxy_unit1_nodeid = REPLACEME
+#proxy_unit1_nodeid = 0  # Replace with proxy_nodeid of local unit #1
 #proxy_unit1_port = 'REPLACEME'
 
 # APRS
@@ -27,7 +29,7 @@ aprs_callsign = 'REPLACEME'
 
 # SIMPLEUI
 simpleui_cmdremotecallsign = 'REPLACEME'
-simpleui_cmdremotenodeid = REPLACEME
+simpleui_cmdremotenodeid = 0 # Replace with proxy_nodeid of local unit to be viewed by SimpleUI
 ```
 ## `faraday_program.py`
 This script configures and opens new terminals for `faraday-proxy` and `faraday-deviceconfiguration` and programs the FLASH memory configuration of a local faraday device. Unit configuration such as unit callsign/nodeid, boot functionality, and GPS defaults can be programmed into the device.
@@ -59,7 +61,9 @@ default_altitude='00000.00'
 ```
 
 ### GPS Defaults `DDMM.mmmm` format
-The GPS default values to be used (i.e if no GPS present AND GPS is disabled) are saved in `DDMM.mmmm` format as received in NMEA from the GPS unit on Faraday. An example of how to convert from lat/lon to DDMM.mmmm format is below.
+The GPS default values to be used (i.e if no GPS present AND GPS is disabled) are saved in `DDMM.mmmm` format as received in NMEA from the GPS unit on Faraday.
+
+An example of how to convert from lat/lon to DDMM.mmmm format is below.
 
 ```
 Location: Los Angeles, CA
@@ -69,7 +73,7 @@ Lon = `-118.243685`
 Converting Lat/Lon to `DDMM.mmmm`.
 ```
 DDMM.mmmm Lat (RAW) = `N 34 0.010`
-DDMM.mmmm Lon (RAW) = `W 118 26.171`
+DDDMM.mmmm Lon (RAW) = `W 118 26.171`
 ```
 
 Converting into a valid Faraday configuration:
@@ -77,12 +81,16 @@ Converting into a valid Faraday configuration:
 ```
 DDMM.mmmm Lat (Faraday) = `3400.0100`
 DDMM.mmmm Lat Direction (Faraday) = `N`
-DDMM.mmmm Lon (Faraday) = `11826.1710`
-DDMM.mmmm Lon Direction (Faraday) = `W`
+DDDMM.mmmm Lon (Faraday) = `11826.1710`
+DDDMM.mmmm Lon Direction (Faraday) = `W`
 ```
 
 _NOTE: Be aware that the `ddMM` conversion resulted in `3400` not `0340`!_
 
 #### GPS References
 * http://www.latlong.net/
+  * Lat/Lon from an address
 * http://www.gpscoordinates.eu/convert-gps-coordinates.php
+  * Lat/Lon conversions to other formats
+* https://support.google.com/maps/answer/18539?co=GENIE.Platform%3DAndroid&hl=en
+  * Getting lat/lon coordinates from Google maps
