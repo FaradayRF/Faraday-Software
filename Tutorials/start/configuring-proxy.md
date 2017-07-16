@@ -4,7 +4,7 @@
 [Proxy](../../proxy) is the gateway to Faraday. It is a Flask server providing a RESTful interface with Faraday hardware. All actions with Faraday from a computer go through Proxy. To learn the details of Proxy read the application documentation. This guide is a quick tutorial to get you up and running.
 
 ## Running Proxy
-Once installed with `pip` or in editable mode, you can start proxy by simply running `faraday-proxy` from the command line. However it must be properly configured before it will run.
+Once installed with `pip` or in editable mode, you can start proxy by simply running `faraday-proxy --start` from the command line. However it must be properly configured before it will run.
 
 ![Proxy INI](images/proxy.jpg "Proxy command prompt")
 
@@ -17,11 +17,13 @@ First you must initialize the configuration file by running `faraday-proxy --ini
 * `--port PORT` replace PORT with the UART port faraday is connected to such as *COM10*
 
 The entire command will look something like this:
-`faraday-proxy --callsign kb1lqc --nodeid 2 --port COM23`
+`faraday-proxy --callsign kb1lqc --nodeid 2 --port COM16 --start`
+
+The `--start` option at the end will cause Proxy to actually launch the server. You can configure the program without this option if you don't want to start the server immediately. When fully configured one only needs to run `faraday-proxy --start`.
 
 ![Proxy Configuration Example](images/proxy-configuration.jpg "Proxy configuration")
 
-Proxy will automatically start when this command is run. Once configured you do not have to reconfigured unless desired and can start Proxy with `faraday-proxy`.
+Proxy will automatically start when this command is run since we included the `--start` option.
 
 > * Linux users may have a port value such as `--port /dev/ttyUSB0`
 > * Max OS X users may have a port value such as `--port /dev/cu.usbserial-40`
