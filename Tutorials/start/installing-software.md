@@ -62,7 +62,7 @@ Now you can use faraday the same as performing a `pip install faraday` however a
 ### Linux (Debian-Based)
 This guide assumes [Git is installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
-1. Create suitable folder for Faraday software. I.e. ```mkdir -pit/faradayrf```
+1. Create suitable folder for Faraday software. I.e. ```mkdir -p git/faradayrf```
 2. Navigate to the new folder ```cd git/faradayrf```
 3. Clone latest master branch ```git clone https://github.com/FaradayRF/Faraday-Software.git software```
 4. Navigate to the software `cd software`
