@@ -4,17 +4,13 @@
 #
 # Author:      Bryce Salmi
 #
-# Created:     7/12/2017
+# Created:     7/18/2017
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
 import logging.config
-#import threading
 import ConfigParser
-#import socket
-#import requests
 import os
-#from time import sleep
 import sys
 import argparse
 import shutil
@@ -41,7 +37,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('BSL')
 
-#Create APRS configuration file path
+#Create bsl configuration file path
 bslConfigPath = os.path.join(path, "bsl.ini")
 logger.debug('bsl.ini PATH: ' + bslConfigPath)
 
@@ -51,13 +47,12 @@ bslConfig.read(bslConfigPath)
 # Command line input
 parser = argparse.ArgumentParser(description='BSL will Boostrap load firmware onto Faraday via USB connection. Requires http://www.ftdichip.com/Drivers/D2XX.htm')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize BSL configuration file')
-parser.add_argument('--start', action='store_true', help='Start APRS server')
+parser.add_argument('--start', action='store_true', help='Start Boostrap loader')
 parser.add_argument('--getmaster', action='store_true', help='Download newest firmware from master firmware repository')
 parser.add_argument('--port', help='Set UART port to bootstrap load firmware')
 
 # Parse the arguments
 args = parser.parse_args()
-
 
 def initializeBSLConfig():
     '''
@@ -87,15 +82,12 @@ def configureBSL(args, bslConfigPath):
     if args.port is not None:
         config.set('BOOTSTRAP', 'COM', args.port)
 
-    # if args.callsign is not None:
-    #     config.set('APRSIS', 'CALLSIGN', args.callsign)
-
     with open(bslConfigPath, 'wb') as configfile:
         config.write(configfile)
 
 def getMaster():
     '''
-    Downloads latest firmware from master github repo
+    Downloads latest firmware from master github repo, save to userspace
 
     :return: None, exits program
     '''
@@ -108,9 +100,8 @@ def getMaster():
     data = response.read()
     logger.debug(data)
 
+    # Save to file, create folders if not present
     firmwarePath = os.path.join(os.path.expanduser('~'), '.faraday', 'firmware')
-
-    # Create folders if not present
     try:
         os.makedirs(firmwarePath)
     except:
@@ -153,37 +144,31 @@ def main():
 
     logger.info('Starting Faraday Bootstrap Loader application')
 
-    #print os.path.join(path, 'firmware.txt')
-
+    # Read in configuration parameters
     filename = bslConfig.get("BOOTSTRAP", "FILENAME")
     outputFilename = bslConfig.get("BOOTSTRAP", "OUTPUTFILENAME")
     upgradeScript = bslConfig.get("BOOTSTRAP", "FIRMWAREUPGRADESCRIPT")
     bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
     port = bslConfig.get("BOOTSTRAP", "COM")
 
+    # Create TI BSL script
     script = createtiscript.CreateTiBslScript(path,
                                             filename,
                                             port,
                                             outputFilename,
                                             upgradeScript,
                                             logger)
-
     script.createscript()
 
-    #Enable BSL Mode
-    device_bsl = faradayFTDI.FtdiD2xxCbusControlObject()
-    #
-    device_bsl.EnableBslMode()
-    subprocess.call([os.path.join(path, bslExecutable), os.path.join(path, upgradeScript)])
-    device_bsl.DisableBslMode()
+    # Enable BSL Mode using FTDI drivers
+    try:
+        device_bsl = faradayFTDI.FtdiD2xxCbusControlObject()
+        device_bsl.EnableBslMode()
+        subprocess.call([os.path.join(path, bslExecutable), os.path.join(path, upgradeScript)])
+        device_bsl.DisableBslMode()
 
-
-    # Initialize local variables
-    #threads = []
-
-    # t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
-    # threads.append(t)
-    # t.start()
+    except:
+        logger.error("FTDI driver failure, make sure FTDI drivers are installed!")
 
 
 if __name__ == '__main__':
