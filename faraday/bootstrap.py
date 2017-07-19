@@ -94,7 +94,14 @@ def getMaster():
     :return: None, exits program
     '''
 
-    url = bslConfig.get("BOOTSTRAP", "MASTERURL")
+    try:
+        url = bslConfig.get("BOOTSTRAP", "MASTERURL")
+
+    except ConfigParser.Error as e:
+        logger.error(e)
+        logger.error("You must initialize faraday-bsl with --init-config!")
+        sys.exit(1)
+
     logger.info("Downloading latest Master firmware...")
 
     # Download latest firmware from url
@@ -147,11 +154,21 @@ def main():
     logger.info('Starting Faraday Bootstrap Loader application')
 
     # Read in configuration parameters
-    filename = bslConfig.get("BOOTSTRAP", "FILENAME")
-    outputFilename = bslConfig.get("BOOTSTRAP", "OUTPUTFILENAME")
-    upgradeScript = bslConfig.get("BOOTSTRAP", "FIRMWAREUPGRADESCRIPT")
-    bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
-    port = bslConfig.get("BOOTSTRAP", "COM")
+    try:
+        filename = bslConfig.get("BOOTSTRAP", "FILENAME")
+        outputFilename = bslConfig.get("BOOTSTRAP", "OUTPUTFILENAME")
+        upgradeScript = bslConfig.get("BOOTSTRAP", "FIRMWAREUPGRADESCRIPT")
+        bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
+        port = bslConfig.get("BOOTSTRAP", "COM")
+
+    except ConfigParser.Error as e:
+        logger.error(e)
+        logger.error("You must initialize faraday-bsl with --init-config!")
+        sys.exit(1)
+
+    if port == "REPLACEME":
+        logger.error("You must set the UART port with --port PORT!")
+        sys.exit(1)
 
     # Create TI BSL script
     script = createtiscript.CreateTiBslScript(path,
