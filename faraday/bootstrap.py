@@ -114,7 +114,10 @@ def main():
 
     #print os.path.join(path, 'firmware.txt')
 
-    test = createtiscript.CreateTiBslScript(path, 'firmware.txt', 'COM24')
+    filename = bslConfig.get("BOOTSTRAP", "FILENAME")
+    port = bslConfig.get("BOOTSTRAP", "PORT")
+
+    test = createtiscript.CreateTiBslScript(path, filename, port)
 
     test.createscript()
 
