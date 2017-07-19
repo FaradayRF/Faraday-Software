@@ -19,6 +19,7 @@ import sys
 import argparse
 import shutil
 import subprocess
+import urllib2
 
 from classes import createtiscript
 from classes import faradayFTDI
@@ -51,6 +52,7 @@ bslConfig.read(bslConfigPath)
 parser = argparse.ArgumentParser(description='BSL will Boostrap load firmware onto Faraday via USB connection. Requires http://www.ftdichip.com/Drivers/D2XX.htm')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize BSL configuration file')
 parser.add_argument('--start', action='store_true', help='Start APRS server')
+parser.add_argument('--getmaster', action='store_true', help='Download newest firmware from master firmware repository')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -87,6 +89,37 @@ def configureBSL(args, bslConfigPath):
     with open(bslConfigPath, 'wb') as configfile:
         config.write(configfile)
 
+def getMaster():
+    '''
+    Downloads latest firmware from master github repo
+
+    :return: None, exits program
+    '''
+
+    url = bslConfig.get("BOOTSTRAP", "MASTERURL")
+    logger.info("Downloading latest Master firmware...")
+
+    # Download latest firmware from url
+    response = urllib2.urlopen(url)
+    data = response.read()
+    logger.debug(data)
+
+    firmwarePath = os.path.join(os.path.expanduser('~'), '.faraday', 'firmware')
+
+    # Create folders if not present
+    try:
+        os.makedirs(firmwarePath)
+    except:
+        pass
+
+    # Create master.txt if it doesn't exist, otherwise write over it
+    firmware = os.path.join(firmwarePath, 'master.txt')
+    f = open(firmware, 'w+')
+    f.write(data)
+    f.close()
+
+    logger.info("Download complete")
+
 
 # Now act upon the command line arguments
 # Initialize and configure bsl
@@ -96,6 +129,10 @@ configureBSL(args, bslConfigPath)
 
 # Read in BSL configuration parameters
 bslFile = bslConfig.read(bslConfigPath)
+
+# Check for --getmaster
+if args.getmaster:
+    getMaster()
 
 # Check for --start option and exit if not present
 if not args.start:
