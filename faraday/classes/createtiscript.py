@@ -13,9 +13,9 @@ import os
 import sys
 
 class CreateTiBslScript(object):
-    '''
+    """
     This class creates a TI Bootstrap Loader script file from a text file of Faraday firmware
-    '''
+    """
 
     def __init__(self, path, filename, comport, outputfilename, upgradeScript, logger):
         """
