@@ -12,6 +12,7 @@ import ctypes
 import ctypes.wintypes
 import time
 
+
 class FtdiD2xxCbusControlObject(object):
     """
     This class controls the FTDI FT230X during bootloading

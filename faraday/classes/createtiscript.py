@@ -12,6 +12,7 @@ import array
 import os
 import sys
 
+
 class CreateTiBslScript(object):
     """
     This class creates a TI Bootstrap Loader script file from a text file of Faraday firmware
@@ -39,7 +40,7 @@ class CreateTiBslScript(object):
         """
 
         try:
-            f = open(os.path.join(self.path,self._filename), 'r')
+            f = open(os.path.join(self.path, self._filename), 'r')
             file_program_hex = f.read()
 
         except:
@@ -51,7 +52,6 @@ class CreateTiBslScript(object):
         self.ParseTiTxtHexFile(file_program_hex)
         self.CreateOutputFile(self._outputfilename)
         self.CreateBslScript(self._upgradeScript)
-
 
     def ParseTiTxtHexFile(self, input_file):
         """
@@ -103,7 +103,7 @@ class CreateTiBslScript(object):
         :return: CRC value
         """
 
-        textfile = open(os.path.join(self.path,filename), 'w')
+        textfile = open(os.path.join(self.path, filename), 'w')
         for i in range(0, len(self.mem_addr_index)):
             final_addr = self.mem_addr_index[i].encode('hex')
             final_len = hex(len(self.section_data_index[i]))
@@ -127,7 +127,7 @@ class CreateTiBslScript(object):
         :return: CRC value
         """
 
-        textfile = open(os.path.join(self.path,filename), 'w')
+        textfile = open(os.path.join(self.path, filename), 'w')
         textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))

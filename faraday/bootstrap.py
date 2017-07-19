@@ -54,6 +54,7 @@ parser.add_argument('--port', help='Set UART port to bootstrap load firmware')
 # Parse the arguments
 args = parser.parse_args()
 
+
 def initializeBSLConfig():
     '''
     Initialize BSL configuration file from bsl.sample.ini
@@ -84,6 +85,7 @@ def configureBSL(args, bslConfigPath):
 
     with open(bslConfigPath, 'wb') as configfile:
         config.write(configfile)
+
 
 def getMaster():
     '''
@@ -153,11 +155,11 @@ def main():
 
     # Create TI BSL script
     script = createtiscript.CreateTiBslScript(path,
-                                            filename,
-                                            port,
-                                            outputFilename,
-                                            upgradeScript,
-                                            logger)
+                                              filename,
+                                              port,
+                                              outputFilename,
+                                              upgradeScript,
+                                              logger)
     script.createscript()
 
     # Enable BSL Mode using FTDI drivers
