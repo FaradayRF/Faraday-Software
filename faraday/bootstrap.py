@@ -48,7 +48,7 @@ bslConfig = ConfigParser.RawConfigParser()
 bslConfig.read(bslConfigPath)
 
 # Command line input
-parser = argparse.ArgumentParser(description='BSL will Boostrap load firmware onto Faraday via USB connection')
+parser = argparse.ArgumentParser(description='BSL will Boostrap load firmware onto Faraday via USB connection. Requires http://www.ftdichip.com/Drivers/D2XX.htm')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize BSL configuration file')
 parser.add_argument('--start', action='store_true', help='Start APRS server')
 
