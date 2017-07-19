@@ -120,13 +120,13 @@ def main():
     bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
     port = bslConfig.get("BOOTSTRAP", "PORT")
 
-    test = createtiscript.CreateTiBslScript(path,
+    script = createtiscript.CreateTiBslScript(path,
                                             filename,
                                             port,
                                             outputFilename,
                                             upgradeScript)
 
-    test.createscript()
+    script.createscript()
 
     #Enable BSL Mode
     device_bsl = faradayFTDI.FtdiD2xxCbusControlObject()
