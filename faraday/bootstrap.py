@@ -53,6 +53,7 @@ parser = argparse.ArgumentParser(description='BSL will Boostrap load firmware on
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize BSL configuration file')
 parser.add_argument('--start', action='store_true', help='Start APRS server')
 parser.add_argument('--getmaster', action='store_true', help='Download newest firmware from master firmware repository')
+parser.add_argument('--port', help='Set UART port to bootstrap load firmware')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -82,6 +83,9 @@ def configureBSL(args, bslConfigPath):
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(path, "bsl.ini"))
+
+    if args.port is not None:
+        config.set('BOOTSTRAP', 'COM', args.port)
 
     # if args.callsign is not None:
     #     config.set('APRSIS', 'CALLSIGN', args.callsign)
@@ -155,7 +159,7 @@ def main():
     outputFilename = bslConfig.get("BOOTSTRAP", "OUTPUTFILENAME")
     upgradeScript = bslConfig.get("BOOTSTRAP", "FIRMWAREUPGRADESCRIPT")
     bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
-    port = bslConfig.get("BOOTSTRAP", "PORT")
+    port = bslConfig.get("BOOTSTRAP", "COM")
 
     script = createtiscript.CreateTiBslScript(path,
                                             filename,
