@@ -26,19 +26,21 @@ import os
 
 class CreateTiBslScript(object):
 
-    def __init__(self, path, filename, comport):
+    def __init__(self, path, filename, comport, outputfilename, upgradeScript):
         self.path = path
         self.filename = filename
         self.comport = comport
         self.mem_addr_index = []
         self.section_data_index = []
+        self._outputfilename = outputfilename
+        self._upgradeScript = upgradeScript
 
     def createscript(self):
         f = open(os.path.join(self.path,self.filename), 'r')
         file_program_hex = f.read()
         self.ParseTiTxtHexFile(file_program_hex)
-        self.CreateOutputFile()
-        self.CreateBslScript()
+        self.CreateOutputFile(self._outputfilename)
+        self.CreateBslScript(self._upgradeScript)
 
     # ParseTiTxtHexFile(file_program_hex)
     # CreateOutputFile()
@@ -72,8 +74,8 @@ class CreateTiBslScript(object):
 
     crc_script_index = []
 
-    def CreateOutputFile(self):
-        textfile = open(os.path.join(self.path,'programCRCCalculations.txt'), 'w')
+    def CreateOutputFile(self, filename):
+        textfile = open(os.path.join(self.path,filename), 'w')
         for i in range(0, len(self.mem_addr_index)):
             final_addr = self.mem_addr_index[i].encode('hex')
             final_len = hex(len(self.section_data_index[i]))
@@ -89,10 +91,10 @@ class CreateTiBslScript(object):
             textfile.writelines(('\n', script_index_crc))
             textfile.writelines('\n\n')
 
-    def CreateBslScript(self):
+    def CreateBslScript(self, filename):
         #global device_com_port
         #com_string = 'MODE 6xx UART 9600 COM%d PARITY' % device_com_port
-        textfile = open(os.path.join(self.path,'faradayFirmwareUpgradeScript.txt'), 'w')
+        textfile = open(os.path.join(self.path,filename), 'w')
         textfile.writelines(("MODE 6xx UART 9600 ", str(self.comport), " PARITY", '\n'))
         textfile.writelines(("CHANGE_BAUD_RATE 115200", '\n'))
         textfile.writelines(("VERBOSE", '\n'))

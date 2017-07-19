@@ -115,9 +115,16 @@ def main():
     #print os.path.join(path, 'firmware.txt')
 
     filename = bslConfig.get("BOOTSTRAP", "FILENAME")
+    outputFilename = bslConfig.get("BOOTSTRAP", "OUTPUTFILENAME")
+    upgradeScript = bslConfig.get("BOOTSTRAP", "FIRMWAREUPGRADESCRIPT")
+    bslExecutable = bslConfig.get("BOOTSTRAP", "BSLEXECUTABLE")
     port = bslConfig.get("BOOTSTRAP", "PORT")
 
-    test = createtiscript.CreateTiBslScript(path, filename, port)
+    test = createtiscript.CreateTiBslScript(path,
+                                            filename,
+                                            port,
+                                            outputFilename,
+                                            upgradeScript)
 
     test.createscript()
 
@@ -125,7 +132,7 @@ def main():
     device_bsl = faradayFTDI.FtdiD2xxCbusControlObject()
     #
     device_bsl.EnableBslMode()
-    subprocess.call([os.path.join(path, 'bsl-scripter-windows.exe'), os.path.join(path, 'faradayFirmwareUpgradeScript.txt')])
+    subprocess.call([os.path.join(path, bslExecutable), os.path.join(path, upgradeScript)])
     device_bsl.DisableBslMode()
 
 
