@@ -165,7 +165,8 @@ def main():
                                             filename,
                                             port,
                                             outputFilename,
-                                            upgradeScript)
+                                            upgradeScript,
+                                            logger)
 
     script.createscript()
 

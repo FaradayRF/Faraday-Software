@@ -10,6 +10,7 @@
 #-------------------------------------------------------------------------------
 import array
 import os
+import sys
 
 #filename = sys.argv[1]
 # filename = 'RF_Test_Firmware_1-17-17.txt'
@@ -26,7 +27,7 @@ import os
 
 class CreateTiBslScript(object):
 
-    def __init__(self, path, filename, comport, outputfilename, upgradeScript):
+    def __init__(self, path, filename, comport, outputfilename, upgradeScript, logger):
         self.path = path
         self._filename = os.path.join(os.path.expanduser('~'), '.faraday', 'firmware', filename)
         self.comport = comport
@@ -34,10 +35,19 @@ class CreateTiBslScript(object):
         self.section_data_index = []
         self._outputfilename = outputfilename
         self._upgradeScript = upgradeScript
+        self.logger = logger
 
     def createscript(self):
-        f = open(os.path.join(self.path,self._filename), 'r')
-        file_program_hex = f.read()
+        try:
+            f = open(os.path.join(self.path,self._filename), 'r')
+            file_program_hex = f.read()
+
+        except:
+            # File likely doesn't exist, warn user and exit
+            self.logger.error('{0} doesn\'t exist!'.format(self._filename))
+            self.logger.error('try --getmaster')
+            sys.exit(1)
+
         self.ParseTiTxtHexFile(file_program_hex)
         self.CreateOutputFile(self._outputfilename)
         self.CreateBslScript(self._upgradeScript)
