@@ -86,7 +86,7 @@ def initializeTelemetryLog(config):
 
     logger.info("Initializing Telemetry Log File")
     log = config.get("DATABASE", "filename")
-    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    logpath = os.path.join(faradayHelper.userPath, 'lib', log)
     os.remove(logpath)
     logger.info("Log initialization complete")
 
@@ -101,8 +101,8 @@ def saveTelemetryLog(name, config):
     '''
 
     log = config.get("DATABASE", "filename")
-    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
-    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
+    oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
+    newpath = os.path.join(faradayHelper.userPath, 'lib', name)
     shutil.move(oldpath, newpath)
     sys.exit(0)
 
@@ -115,7 +115,7 @@ def showTelemetryLogs():
     '''
 
     logger.info("The following logs exist for Telemetry...")
-    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    path = os.path.join(faradayHelper.userPath, 'lib')
     for file in os.listdir(path):
         if file.endswith(".db"):
             logger.info(file)
