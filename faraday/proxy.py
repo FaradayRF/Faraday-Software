@@ -26,24 +26,27 @@ from flask import Flask
 from flask import request
 
 from faraday.uart import layer_4_service
+from classes import helper
 
 # Start logging after importing modules
+faradayHelper = helper.Helper("Proxy")
+logger = faradayHelper.getLogger()
 
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
-
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('Proxy')
+# relpath1 = os.path.join('etc', 'faraday')
+# relpath2 = os.path.join('..', 'etc', 'faraday')
+# setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+# userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+# path = ''
+#
+# for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+#     try:
+#         logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+#         path = location
+#         break
+#     except ConfigParser.NoSectionError:
+#         pass
+#
+# logger = logging.getLogger('Proxy')
 
 # Set werkzeug logging level
 
@@ -51,7 +54,7 @@ werkzeuglog = logging.getLogger('werkzeug')
 werkzeuglog.setLevel(logging.ERROR)
 
 #Create Proxy configuration file path
-proxyConfigPath = os.path.join(path, "proxy.ini")
+proxyConfigPath = os.path.join(faradayHelper.path, "proxy.ini")
 logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
 
 # Command line input
@@ -158,7 +161,7 @@ def configureProxy(args, proxyConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "proxy.ini"))
+    config.read(os.path.join(faradayHelper.path, "proxy.ini"))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -658,7 +661,7 @@ def initDB():
         dbFilename = dbPath
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(path, dbSchema)
+        dbSchema = os.path.join(faradayHelper.path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))

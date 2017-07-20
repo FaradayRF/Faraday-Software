@@ -13,6 +13,9 @@ import base64
 import time
 import logging
 
+sys.path.insert(0, '../')
+from classes import helper
+
 
 class proxyio(object):
     """
@@ -35,6 +38,8 @@ class proxyio(object):
         self.TELEMETRY_PORT = 5  #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2  #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124  #123
+
+        self.helper = helper.Helper
 
         if logger is not None:
             self._logger = logger
@@ -114,6 +119,7 @@ class proxyio(object):
          {u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/',
           u'port': 5}]
         """
+        print "test"
         url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
 
         # If limit is provided, check that it's positive and add to url
