@@ -32,24 +32,6 @@ from classes import helper
 faradayHelper = helper.Helper("Proxy")
 logger = faradayHelper.getLogger()
 
-# relpath1 = os.path.join('etc', 'faraday')
-# relpath2 = os.path.join('..', 'etc', 'faraday')
-# setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-# userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-# path = ''
-#
-# for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-#     try:
-#         logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-#         path = location
-#         break
-#     except ConfigParser.NoSectionError:
-#         pass
-#
-# logger = logging.getLogger('Proxy')
-
-# Set werkzeug logging level
-
 werkzeuglog = logging.getLogger('werkzeug')
 werkzeuglog.setLevel(logging.ERROR)
 
