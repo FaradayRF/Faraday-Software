@@ -54,9 +54,10 @@ class Helper:
 
     def initializeConfig(self,configTruth,configFile):
         """
+        Use self.path obtained from getLogger() to copy the truth configuration file to a
+        second location that can then be edited.
         """
 
-        self._logger.debug("Initializing {0}".format(self._name))
+        self._logger.info("Initializing {0}".format(self._name))
         shutil.copy(os.path.join(self.path, configTruth), os.path.join(self.path, configFile))
-        self._logger.debug("Initialization complete")
-        sys.exit(0)
+        self._logger.info("Initialization complete")
