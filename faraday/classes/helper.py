@@ -23,6 +23,7 @@ class Helper:
         """
         # Class variables
         self.path = ''
+        self.userPath = os.path.join(os.path.expanduser('~'), '.faraday.')
 
         # Local variables
         self._name = name

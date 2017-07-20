@@ -94,7 +94,7 @@ def initializeProxyLog(config):
 
     logger.info("Initializing Proxy Log File")
     log = config.get("DATABASE", "filename")
-    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    logpath = os.path.join(faradayHelper.userPath, 'lib', log)
     os.remove(logpath)
     logger.info("Log initialization complete")
 
@@ -109,8 +109,8 @@ def saveProxyLog(name, config):
     '''
 
     log = config.get("DATABASE", "filename")
-    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
-    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
+    oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
+    newpath = os.path.join(faradayHelper.userPath, 'lib', name)
     shutil.move(oldpath, newpath)
     sys.exit(0)
 
@@ -123,7 +123,7 @@ def showProxyLogs():
     '''
 
     logger.info("The following logs exist for Proxy...")
-    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    path = os.path.join(faradayHelper.userPath, 'lib')
     for file in os.listdir(path):
         if file.endswith(".db"):
             logger.info(file)
@@ -629,14 +629,14 @@ def initDB():
     """
     # make directory tree, necessary?
     try:
-        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+        os.makedirs(os.path.join(faradayHelper.userPath, 'lib'))
     except:
         pass
 
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Proxy Database: " + dbPath)
         dbFilename = dbPath
 
@@ -678,7 +678,7 @@ def openTestDB():
     # Obtain configuration file names
     try:
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', testDbFilename)
         logger.debug("Proxy Test Database: " + dbPath)
         testDbFilename = dbPath
 
@@ -737,7 +737,7 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Proxy Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 
