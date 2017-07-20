@@ -13,6 +13,7 @@ import sys
 import ConfigParser
 import shutil
 
+
 class Helper:
     """
     test
@@ -28,7 +29,6 @@ class Helper:
         # Local variables
         self._name = name
         self._logger = ''
-
 
     def getLogger(self):
         """
@@ -53,7 +53,7 @@ class Helper:
         self._logger = logging.getLogger(self._name)
         return self._logger
 
-    def initializeConfig(self,configTruth,configFile):
+    def initializeConfig(self, configTruth, configFile):
         """
         Use self.path obtained from getLogger() to copy the truth configuration file to a
         second location that can then be edited.

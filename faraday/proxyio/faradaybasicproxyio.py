@@ -13,9 +13,6 @@ import base64
 import time
 import logging
 
-sys.path.insert(0, '../')
-from classes import helper
-
 
 class proxyio(object):
     """
@@ -38,8 +35,6 @@ class proxyio(object):
         self.TELEMETRY_PORT = 5  #Faraday Transport "Service Number"
         self.CMD_UART_PORT = 2  #Faraday COMMAND "Service Number"
         self.MAXPOSTPAYLOADLEN = 124  #123
-
-        self.helper = helper.Helper
 
         if logger is not None:
             self._logger = logger
