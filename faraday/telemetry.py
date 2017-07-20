@@ -72,9 +72,7 @@ def initializeTelemetryConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Telemetry")
-    shutil.copy(os.path.join(faradayHelper.path, "telemetry.sample.ini"), os.path.join(faradayHelper.path, "telemetry.ini"))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
