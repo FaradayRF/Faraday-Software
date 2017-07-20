@@ -36,10 +36,6 @@ configFile = "telemetry.ini"
 faradayHelper = helper.Helper("Telemetry")
 logger = faradayHelper.getLogger()
 
-# Create Telemery configuration file path
-telemetryConfigPath = os.path.join(faradayHelper.path, "telemetry.ini")
-logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
-
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
 
@@ -128,12 +124,11 @@ def showTelemetryLogs():
     sys.exit(0)
 
 
-def configureTelemetry(args, telemetryConfigPath):
+def configureTelemetry(args):
     '''
     Configure telemetry configuration file from command line
 
     :param args: argparse arguments
-    :param telemetryConfigPath: Path to telemetry.ini file
     :return: None
     '''
 
@@ -167,7 +162,8 @@ def configureTelemetry(args, telemetryConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
-    with open(telemetryConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -175,10 +171,10 @@ def configureTelemetry(args, telemetryConfigPath):
 # Initialize and configure telemetry
 if args.init:
     initializeTelemetryConfig()
-configureTelemetry(args, telemetryConfigPath)
+configureTelemetry(args)
 
 # Read in telemetry configuration parameters
-telemetryFile = telemetryConfig.read(telemetryConfigPath)
+telemetryFile = telemetryConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Initialize Telemetry log database
 if args.initlog:
