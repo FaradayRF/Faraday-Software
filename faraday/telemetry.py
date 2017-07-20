@@ -10,7 +10,6 @@
 #-------------------------------------------------------------------------------
 
 import time
-import logging.config
 import threading
 import ConfigParser
 from collections import deque
@@ -116,6 +115,7 @@ def saveTelemetryLog(name, config):
         logger.error(e)
     except IOError as e:
         logger.error(e)
+
 
 def showTelemetryLogs():
     '''
