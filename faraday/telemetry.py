@@ -87,8 +87,13 @@ def initializeTelemetryLog(config):
     logger.info("Initializing Telemetry Log File")
     log = config.get("DATABASE", "filename")
     logpath = os.path.join(faradayHelper.userPath, 'lib', log)
-    os.remove(logpath)
-    logger.info("Log initialization complete")
+
+    try:
+        os.remove(logpath)
+        logger.info("Log initialization complete")
+
+    except OSError as e:
+        logger.error(e)
 
 
 def saveTelemetryLog(name, config):
