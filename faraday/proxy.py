@@ -35,10 +35,6 @@ logger = faradayHelper.getLogger()
 werkzeuglog = logging.getLogger('werkzeug')
 werkzeuglog.setLevel(logging.ERROR)
 
-#Create Proxy configuration file path
-proxyConfigPath = os.path.join(faradayHelper.path, "proxy.ini")
-logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
-
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Proxy configuration file')
@@ -133,12 +129,11 @@ def showProxyLogs():
     sys.exit(0)
 
 
-def configureProxy(args, proxyConfigPath):
+def configureProxy(args):
     '''
     Configure proxy configuration file from command line
 
     :param args: argparse arguments
-    :param proxyConfigPath: Path to proxy.ini file
     :return: None
     '''
 
@@ -197,7 +192,9 @@ def configureProxy(args, proxyConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
-    with open(proxyConfigPath, 'wb') as configfile:
+    # Open proxy.ini and save configuration
+    filename = os.path.join(faradayHelper.path, "proxy.ini")
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -207,7 +204,7 @@ if args.init:
 
 # Attempt to configure proxy
 try:
-    configureProxy(args, proxyConfigPath)
+    configureProxy(args)
 
 except ConfigParser.NoSectionError as e:
     # Possible that no configuration file found
@@ -218,7 +215,7 @@ except ConfigParser.NoSectionError as e:
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read(proxyConfigPath)
+proxyConfig.read(os.path.join(faradayHelper.path, "proxy.ini"))
 
 # Initialize Proxy log database
 if args.initlog:
