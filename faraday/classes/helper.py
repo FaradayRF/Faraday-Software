@@ -11,6 +11,7 @@ import os
 import logging
 import sys
 import ConfigParser
+import shutil
 
 class Helper:
     """
@@ -50,3 +51,12 @@ class Helper:
 
         self._logger = logging.getLogger(self._name)
         return self._logger
+
+    def initializeConfig(self,configTruth,configFile):
+        """
+        """
+
+        self._logger.debug("Initializing {0}".format(self._name))
+        shutil.copy(os.path.join(self.path, configTruth), os.path.join(self.path, configFile))
+        self._logger.debug("Initialization complete")
+        sys.exit(0)

@@ -77,10 +77,11 @@ def initializeProxyConfig():
     :return: None, exits program
     '''
 
-    logger.debug("Initializing Proxy")
-    shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
-    logger.debug("Initialization complete")
-    sys.exit(0)
+    faradayHelper.initializeConfig("proxy.sample.ini", "proxy.ini")
+    # logger.debug("Initializing Proxy")
+    # shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
+    # logger.debug("Initialization complete")
+    # sys.exit(0)
 
 
 def initializeProxyLog(config):
