@@ -14,9 +14,9 @@ Just as we've done many times, we need to initialize the  `faraday-telemetry` co
 
 To configure the `faraday-telemetry` application simply tell it what the Proxy callsign and nodeid is as programmed when we configured `faraday-proxy`:
 
-* `faraday-telemetry --callsign kb1lqc --nodeid 2`
+* `faraday-telemetry --callsign kb1lqc --nodeid 1 --start`
 
-Running this command will start the Telemetry application which should be left running.
+Running this command will start the Telemetry application which should be left running. Leaving the `--start` option out will configure telemetry without starting the server.
 
 ![Faraday Telemetry](images/faraday-telemetry.jpg)
 
