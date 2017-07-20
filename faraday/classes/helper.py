@@ -25,6 +25,7 @@ class Helper:
 
         # Local variables
         self._name = name
+        self._logger = ''
 
 
     def getLogger(self):
@@ -47,4 +48,5 @@ class Helper:
             except ConfigParser.NoSectionError:
                 pass
 
-        return logging.getLogger(self._name)
+        self._logger = logging.getLogger(self._name)
+        return self._logger
