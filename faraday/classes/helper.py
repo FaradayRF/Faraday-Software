@@ -59,5 +59,11 @@ class Helper:
         """
 
         self._logger.info("Initializing {0}".format(self._name))
-        shutil.copy(os.path.join(self.path, configTruth), os.path.join(self.path, configFile))
+        try:
+            shutil.copy(os.path.join(self.path, configTruth), os.path.join(self.path, configFile))
+
+        except shutil.Error as e:
+            self._logger.error(e)
+            sys.exit(1)
+
         self._logger.info("Initialization complete")
