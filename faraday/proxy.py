@@ -28,6 +28,9 @@ from flask import request
 from faraday.uart import layer_4_service
 from classes import helper
 
+configTruthFile = "proxy.sample.ini"
+configFile = "proxy.ini"
+
 # Start logging after importing modules
 faradayHelper = helper.Helper("Proxy")
 logger = faradayHelper.getLogger()
@@ -77,7 +80,7 @@ def initializeProxyConfig():
     :return: None, exits program
     '''
 
-    faradayHelper.initializeConfig("proxy.sample.ini", "proxy.ini")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
@@ -136,7 +139,7 @@ def configureProxy(args):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(faradayHelper.path, "proxy.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -191,7 +194,7 @@ def configureProxy(args):
         config.set('FLASK', 'port', args.flaskport)
 
     # Open proxy.ini and save configuration
-    filename = os.path.join(faradayHelper.path, "proxy.ini")
+    filename = os.path.join(faradayHelper.path, configFile)
     with open(filename, 'wb') as configfile:
         config.write(configfile)
 
@@ -213,7 +216,7 @@ except ConfigParser.NoSectionError as e:
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read(os.path.join(faradayHelper.path, "proxy.ini"))
+proxyConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Initialize Proxy log database
 if args.initlog:
