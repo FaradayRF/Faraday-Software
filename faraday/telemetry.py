@@ -27,26 +27,34 @@ from flask_cors import CORS
 
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import telemetryparser
+from classes import helper
+
+configTruthFile = "telemetry.sample.ini"
+configFile = "telemetry.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
+faradayHelper = helper.Helper("Telemetry")
+logger = faradayHelper.getLogger()
 
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('Telemetry')
+# # Start logging after importing modules
+# relpath1 = os.path.join('etc', 'faraday')
+# relpath2 = os.path.join('..', 'etc', 'faraday')
+# setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
+# userpath = os.path.join(os.path.expanduser('~'), '.faraday')
+# path = ''
+#
+# for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+#     try:
+#         logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+#         path = location
+#         break
+#     except ConfigParser.NoSectionError:
+#         pass
+#
+# logger = logging.getLogger('Telemetry')
 
 # Create Telemery configuration file path
-telemetryConfigPath = os.path.join(path, "telemetry.ini")
+telemetryConfigPath = os.path.join(faradayHelper.path, "telemetry.ini")
 logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
 
 # Load Telemetry Configuration from telemetry.ini file
@@ -86,7 +94,7 @@ def initializeTelemetryConfig():
     '''
 
     logger.info("Initializing Telemetry")
-    shutil.copy(os.path.join(path, "telemetry.sample.ini"), os.path.join(path, "telemetry.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, "telemetry.sample.ini"), os.path.join(faradayHelper.path, "telemetry.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -147,7 +155,7 @@ def configureTelemetry(args, telemetryConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "telemetry.ini"))
+    config.read(os.path.join(faradayHelper.path, "telemetry.ini"))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -616,7 +624,7 @@ def initDB():
         dbFilename = dbPath
 
         dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(path, dbSchema)
+        dbSchema = os.path.join(faradayHelper.path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
