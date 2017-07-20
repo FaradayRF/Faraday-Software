@@ -108,6 +108,7 @@ def saveTelemetryLog(name, config):
     log = config.get("DATABASE", "filename")
     oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
     newpath = os.path.join(faradayHelper.userPath, 'lib', name)
+    
     try:
         shutil.move(oldpath, newpath)
         sys.exit(0)

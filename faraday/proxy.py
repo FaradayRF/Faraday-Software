@@ -111,8 +111,15 @@ def saveProxyLog(name, config):
     log = config.get("DATABASE", "filename")
     oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
     newpath = os.path.join(faradayHelper.userPath, 'lib', name)
-    shutil.move(oldpath, newpath)
-    sys.exit(0)
+
+    try:
+        shutil.move(oldpath, newpath)
+        sys.exit(0)
+
+    except shutil.Error as e:
+        logger.error(e)
+    except IOError as e:
+        logger.error(e)
 
 
 def showProxyLogs():
