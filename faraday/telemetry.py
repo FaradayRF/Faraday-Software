@@ -108,7 +108,6 @@ def saveTelemetryLog(name, config):
     log = config.get("DATABASE", "filename")
     oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
     newpath = os.path.join(faradayHelper.userPath, 'lib', name)
-    
     try:
         shutil.move(oldpath, newpath)
         sys.exit(0)
@@ -600,14 +599,14 @@ def initDB():
 
     # make directory tree, necessary?
     try:
-        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+        os.makedirs(os.path.join(faradayHelper.userPath, 'lib'))
     except:
         pass
 
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = dbPath
 
@@ -711,7 +710,7 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         db = os.path.join(dbPath)
 
@@ -825,7 +824,7 @@ def queryDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.path, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 
@@ -932,7 +931,7 @@ def queryStationsDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.path, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 
