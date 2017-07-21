@@ -13,7 +13,7 @@ import base64
 from collections import deque
 import ConfigParser
 import json
-import logging.config
+import logging
 import os
 import sqlite3
 import sys

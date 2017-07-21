@@ -8,7 +8,7 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 import os
-import logging
+import logging.config
 import sys
 import ConfigParser
 import shutil

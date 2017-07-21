@@ -9,7 +9,6 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import logging.config
 import threading
 import ConfigParser
 import socket
