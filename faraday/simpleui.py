@@ -38,9 +38,7 @@ configFile = "simpleui.ini"
 faradayHelper = helper.Helper("SimpleUI")
 logger = faradayHelper.getLogger()
 
-#Create SimpleUI configuration file path
-#simpleuiConfigPath = os.path.join(path, "simpleui.ini")
-
+#Create SimpleUI configuration object
 simpleuiConfig = ConfigParser.RawConfigParser()
 
 # Command line input
