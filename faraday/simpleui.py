@@ -140,6 +140,23 @@ except ConfigParser.Error as e:
     logger.error("Try running --init-config")
     sys.exit(1)
 
+# Check for properly configured callsign + nodeid before starting browser
+try:
+    callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
+    nodeid = int(simpleuiConfig.getint("SIMPLEUI", "NODEID"))
+
+except ValueError as e:
+    logger.error(e)
+    logger.error("Use --nodeid to set Faraday nodeid")
+    sys.exit(1)
+
+if callsign == "REPLACEME":
+    logger.error("Use --callsign to set Faraday callsign")
+    sys.exit(1)
+
+
+
+
 url = "http://" + host + ":" + port
 
 logging.debug("SimpleUI URL: " + url)
