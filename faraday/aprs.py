@@ -55,9 +55,7 @@ def initializeAPRSConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing APRS")
-    shutil.copy(os.path.join(faradayHelper.path, "aprs.sample.ini"), os.path.join(faradayHelper.path, "aprs.ini"))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
