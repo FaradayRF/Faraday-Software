@@ -827,7 +827,6 @@ def queryDb(parameters):
         dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
-        print dbFilename
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
