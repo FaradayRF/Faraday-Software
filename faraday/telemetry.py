@@ -141,7 +141,7 @@ def configureTelemetry(args):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(faradayHelper.path, "telemetry.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -824,9 +824,10 @@ def queryDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(faradayHelper.path, 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
+        print dbFilename
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -931,7 +932,7 @@ def queryStationsDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(faradayHelper.path, 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 

@@ -59,17 +59,16 @@ def initializeAPRSConfig():
     sys.exit(0)
 
 
-def configureAPRS(args, aprsConfigPath):
+def configureAPRS(args):
     '''
     Configure aprs configuration file from command line
 
     :param args: argparse arguments
-    :param aprsConfigPath: Path to aprs.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "aprs.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     if args.callsign is not None:
         config.set('APRSIS', 'CALLSIGN', args.callsign)
@@ -86,7 +85,8 @@ def configureAPRS(args, aprsConfigPath):
     if args.altcomment is not None:
         config.set('APRS', 'ALTCOMMENT', args.altcomment[:43])
 
-    with open(aprsConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -129,10 +129,10 @@ def aprs_worker(config, sock):
 # Initialize and configure aprs
 if args.init:
     initializeAPRSConfig()
-configureAPRS(args, aprsConfigPath)
+configureAPRS(args)
 
 # Read in APRS configuration parameters
-aprsFile = aprsConfig.read(aprsConfigPath)
+aprsFile = aprsConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Check for --start option and exit if not present
 if not args.start:
