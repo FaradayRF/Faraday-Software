@@ -130,8 +130,16 @@ if not args.start:
     logger.warning("--start option not present, exiting SimpleUI server!")
     sys.exit(0)
 
-host = simpleuiConfig.get("FLASK", "HOST")
-port = simpleuiConfig.get("FLASK", "PORT")
+try:
+    host = simpleuiConfig.get("FLASK", "HOST")
+    port = simpleuiConfig.get("FLASK", "PORT")
+
+except ConfigParser.Error as e:
+    # Configuration file likely not present so exit
+    logger.error(e)
+    logger.error("Try running --init-config")
+    sys.exit(1)
+
 url = "http://" + host + ":" + port
 
 logging.debug("SimpleUI URL: " + url)
