@@ -158,13 +158,11 @@ if callsign == "REPLACEME":
 
 
 url = "http://" + host + ":" + port
-
 logging.debug("SimpleUI URL: " + url)
-
 webbrowser.open_new(url)
 
-
 # Initialize Flask microframework
+# This is hardcoded and needs to be setup correctly with pbr in setup.cfg!
 app = Flask(__name__,
             static_folder='../Applications/SimpleUI/static',
             template_folder='../Applications/SimpleUI/templates')
