@@ -20,6 +20,11 @@ import sys
 import argparse
 import shutil
 
+from classes import helper
+
+configTruthFile = "aprs.sample.ini"
+configFile = "aprs.ini"
+
 # Start logging after importing modules
 relpath1 = os.path.join('etc', 'faraday')
 relpath2 = os.path.join('..', 'etc', 'faraday')
