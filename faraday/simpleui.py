@@ -17,7 +17,6 @@ import ConfigParser
 import os
 import sys
 import argparse
-import shutil
 import webbrowser
 
 from flask import Flask
@@ -151,9 +150,6 @@ except ValueError as e:
 if callsign == "REPLACEME":
     logger.error("Use --callsign to set Faraday callsign")
     sys.exit(1)
-
-
-
 
 url = "http://" + host + ":" + port
 logging.debug("SimpleUI URL: " + url)
