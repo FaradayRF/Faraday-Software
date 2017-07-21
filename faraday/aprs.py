@@ -26,28 +26,12 @@ configTruthFile = "aprs.sample.ini"
 configFile = "aprs.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
+faradayHelper = helper.Helper("APRS")
+logger = faradayHelper.getLogger()
 
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('APRS')
-
-#Create APRS configuration file path
-aprsConfigPath = os.path.join(path, "aprs.ini")
-logger.debug('aprs.ini PATH: ' + aprsConfigPath)
 
 aprsConfig = ConfigParser.RawConfigParser()
-aprsConfig.read(aprsConfigPath)
+aprsConfig.read(faradayHelper.path)
 
 # Command line input
 parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
@@ -73,7 +57,7 @@ def initializeAPRSConfig():
     '''
 
     logger.info("Initializing APRS")
-    shutil.copy(os.path.join(path, "aprs.sample.ini"), os.path.join(path, "aprs.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, "aprs.sample.ini"), os.path.join(faradayHelper.path, "aprs.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
