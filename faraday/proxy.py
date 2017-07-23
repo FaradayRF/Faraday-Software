@@ -22,6 +22,7 @@ import time
 import argparse
 import shutil
 import socket
+import struct
 
 from flask import Flask
 from flask import request
@@ -259,6 +260,29 @@ postDicts = {}
 getDicts = {}
 unitDict = {}
 
+def startServer(modem):
+    # Start socket
+    s = socket.socket()
+    host = socket.gethostname()
+    port = 10000
+    result = 0
+
+    # Check port status
+    while result == 0:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            result = sock.connect_ex((host,port))
+        except socket.error as e:
+            logger.warning(e)
+
+        logger.info(port)
+
+    logger.info("Started server on {0}:{1}".format(host,port))
+
+
+    s.bind((host,port))
+
+    return s
 
 def uart_worker(modem, getDicts, units, log):
     """
@@ -392,6 +416,44 @@ def testdb_read_worker():
 
         time.sleep(sleepTime)
         row = cursor.fetchone()
+
+def socket_worker(modem, units, log):
+    """
+    Create sockets for data connections
+
+    """
+    logger.info('Starting socket_worker thread')
+
+    # Iterate through dictionary of each unit in the dictionary creating a
+    # deque for each item
+    dataBuffer = deque([])
+    logger.info(dataBuffer)
+    server = startServer("KB1LQC-1")
+
+    server.listen(5)
+    while True:
+        c, addr = server.accept()
+        logger.info("Got connection from  {0}".format(addr))
+        while True:
+            temp = c.recv(4096)
+            temp = temp.decode('base64', 'strict')
+
+            logger.info(temp)
+            for byte in temp:
+                try:
+                    byte = struct.unpack("c",byte)[0]
+                    logger.info(byte)
+                except struct.error as e:
+                    logger.error(e)
+                logger.info(byte)
+                dataBuffer.append(byte)
+
+            logger.info(dataBuffer)
+
+        c.close()
+
+    logger.info("test")
+
 
 
 # Initialize Flask microframework
@@ -833,6 +895,10 @@ def main():
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
             t.start()
+
+            logger.info("starting socket_worker")
+            u = threading.Thread(target=socket_worker, args=(tempdict, units, log))
+            u.start()
     else:
         t = threading.Thread(target=testdb_read_worker)
         t.start()
@@ -845,19 +911,7 @@ def main():
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
 
-    # Start socket
-    s = socket.socket()
-    host = socket.gethostname()
-    logger.info(host)
-    port = 10000
-    s.bind((host,port))
 
-    s.listen(5)
-    while True:
-        c, addr = s.accept()
-        logger.info("Got connection from  {0}".format(addr))
-        c.send("Thank you for connecting to Proxy!")
-        c.close()
 
     #app.run(host=proxyHost, port=proxyPort, threaded=True)
 
