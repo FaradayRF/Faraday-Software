@@ -21,6 +21,7 @@ import threading
 import time
 import argparse
 import shutil
+import socket
 
 from flask import Flask
 from flask import request
@@ -844,7 +845,21 @@ def main():
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
 
-    app.run(host=proxyHost, port=proxyPort, threaded=True)
+    # Start socket
+    s = socket.socket()
+    host = socket.gethostname()
+    logger.info(host)
+    port = 10000
+    s.bind((host,port))
+
+    s.listen(5)
+    while True:
+        c, addr = s.accept()
+        logger.info("Got connection from  {0}".format(addr))
+        c.send("Thank you for connecting to Proxy!")
+        c.close()
+
+    #app.run(host=proxyHost, port=proxyPort, threaded=True)
 
 
 if __name__ == '__main__':
