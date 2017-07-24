@@ -445,6 +445,7 @@ def socket_worker(modem, units, log):
                     logger.info(byte)
                 except struct.error as e:
                     logger.error(e)
+                    sys.exit(1)
                 logger.info(byte)
                 dataBuffer.append(byte)
 
