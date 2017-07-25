@@ -256,7 +256,7 @@ if not args.start:
     sys.exit(0)
 
 # Create and initialize dictionary queues
-postDict = {}
+#postDict = {}
 postDicts = {}
 getDicts = {}
 unitDict = {}
@@ -306,6 +306,7 @@ def uart_worker(modem, getDicts, units, log):
         # Place data into the FIFO coming from UART
         try:
             for port in modem['com'].RxPortListOpen():
+
                 if(modem['com'].RxPortHasItem(port)):
                     for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
@@ -338,17 +339,27 @@ def uart_worker(modem, getDicts, units, log):
         # COM ports and create the necessary buffers on the fly
         for port in postDicts[modem['unit']].keys():
             try:
+
                 count = len(postDicts[modem['unit']][port])
+
             except:
                 # Port simply doesn't exist so don't bother
+
                 pass
             else:
                 for num in range(count):
                     # Data is available, pop off [unit][port] queue
                     # and convert to BASE64 before sending to UART
-                    message = postDicts[modem['unit']][port].popleft()
-                    message = base64.b64decode(message)
-                    modem['com'].POST(port, len(message), message)
+                    try:
+                        logger.info("POST Queue: {0}".format(postDicts[modem['unit']][port]))
+                        #message = ''
+                        message = postDicts[modem['unit']][port].popleft()
+                        message = base64.b64decode(message)
+                        logger.info("Message: {0}".format(message))
+                        modem['com'].POST(port, len(message), message)
+                    except StandardError as e:
+                        logger.error(e)
+
 
         # Slow down while loop to something reasonable
         time.sleep(0.01)
@@ -462,8 +473,15 @@ def socket_worker(modem, units, log):
 
     logger.info("test")
 
-def bufferWorker():
+def bufferWorker(modem, postDicts):
     logger.info("Starting bufferWorker Thread")
+    try:
+        logger.info("TEST")
+        logger.info(modem)
+
+    except:
+        logger.error("Shit happens yo")
+
     while True:
         temp = []
         logger.info("dataBuffer: {0}".format(len(dataBuffer)))
@@ -471,8 +489,9 @@ def bufferWorker():
         while True:
 
             if len(dataBuffer) > 0:
+                temp = []
                 logger.info("Length: {0}".format(len(dataBuffer)))
-                for i in range(124):
+                for i in range(123):
                     try:
                         #logger.info(i)
                         a = dataBuffer.popleft()
@@ -485,9 +504,13 @@ def bufferWorker():
 
                 try:
                     #temp = array("B",temp).tostring()
-                    logger.info(temp)
+
                     temp = ''.join(temp)
+                    logger.info("after join")
                     logger.info(temp)
+                    temp = temp.encode('base64','strict')
+                    #logger.info(len(temp))
+
 
                 except struct.error as e:
                     logger.error(e)
@@ -496,7 +519,13 @@ def bufferWorker():
                     logger.info("StandardError")
                     logger.error(e)
                     break
+                try:
+                    postDicts["KB1LQC-1"][1].append(temp)
+                except:
+                    postDicts["KB1LQC-1"][1] = deque([], maxlen=100)
+                    postDicts["KB1LQC-1"][1].append(temp)
 
+                logger.info(postDicts["KB1LQC-1"][1])
 
 
 # Initialize Flask microframework
@@ -944,8 +973,15 @@ def main():
             u.start()
 
             logger.info("starting bufferWorker")
-            v = threading.Thread(target=bufferWorker)
-            v.start()
+
+            try:
+
+                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts))
+
+                v.start()
+                logger.error("test")
+            except:
+                logger.error("crap")
     else:
         t = threading.Thread(target=testdb_read_worker)
         t.start()
