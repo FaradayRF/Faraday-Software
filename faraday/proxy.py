@@ -462,57 +462,55 @@ def socket_worker(modem, units, log):
                     logger.error(e)
                     c.close()
                     break
-                
+
 
 def bufferWorker(modem, postDicts):
     logger.info("Starting bufferWorker Thread")
 
     while True:
+        # Initialize temp list
         temp = []
-        #logger.info("dataBuffer: {0}".format(len(dataBuffer)))
-        #time.sleep(0.01)
-        while True:
 
-            if len(dataBuffer) > 0:
-                temp = []
-                #logger.info("Length: {0}".format(len(dataBuffer)))
-                for i in range(121):
-                    try:
-                        #logger.info(i)
-                        a = dataBuffer.popleft()
-                        #logger.info(type(a))
-                        temp.append(a)
-                    except StandardError as e:
-                        #logger.error(e)
-                        pass
-                #logger.info(temp)
-
+        if len(dataBuffer) > 0:
+            temp = []
+            #logger.info("Length: {0}".format(len(dataBuffer)))
+            for i in range(121):
                 try:
-                    #temp = array("B",temp).tostring()
-
-                    temp = ''.join(temp)
-                    #logger.info("after join")
-                    b = struct.pack("BB", 0,0)
-                    temp = b + temp
-                    #logger.info(repr(temp))
-                    temp = temp.encode('base64','strict')
-                    #logger.info(len(temp))
-
-
-                except struct.error as e:
-                    logger.error(e)
-                    break
+                    #logger.info(i)
+                    a = dataBuffer.popleft()
+                    #logger.info(type(a))
+                    temp.append(a)
                 except StandardError as e:
-                    logger.info("StandardError")
-                    logger.error(e)
-                    break
-                try:
-                    postDicts["KB1LQC-1"][1].append(temp)
-                except:
-                    postDicts["KB1LQC-1"][1] = deque([], maxlen=100)
-                    postDicts["KB1LQC-1"][1].append(temp)
+                    #logger.error(e)
+                    pass
+            #logger.info(temp)
 
-                #logger.info(postDicts["KB1LQC-1"][1])
+            try:
+                #temp = array("B",temp).tostring()
+
+                temp = ''.join(temp)
+                #logger.info("after join")
+                b = struct.pack("BB", 0,0)
+                temp = b + temp
+                #logger.info(repr(temp))
+                temp = temp.encode('base64','strict')
+                #logger.info(len(temp))
+
+
+            except struct.error as e:
+                logger.error(e)
+                break
+            except StandardError as e:
+                logger.info("StandardError")
+                logger.error(e)
+                break
+            try:
+                postDicts["KB1LQC-1"][1].append(temp)
+            except:
+                postDicts["KB1LQC-1"][1] = deque([], maxlen=100)
+                postDicts["KB1LQC-1"][1].append(temp)
+
+            #logger.info(postDicts["KB1LQC-1"][1])
 
 
 # Initialize Flask microframework
