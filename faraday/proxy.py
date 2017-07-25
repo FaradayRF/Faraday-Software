@@ -473,44 +473,38 @@ def bufferWorker(modem, postDicts):
 
         if len(dataBuffer) > 0:
             temp = []
-            #logger.info("Length: {0}".format(len(dataBuffer)))
+
+            # Pop off 121 bytes and append to temporary list
             for i in range(121):
                 try:
-                    #logger.info(i)
                     a = dataBuffer.popleft()
-                    #logger.info(type(a))
                     temp.append(a)
                 except StandardError as e:
-                    #logger.error(e)
                     pass
-            #logger.info(temp)
 
+            # Join list together and append two control bytes, convert to BASE64
             try:
-                #temp = array("B",temp).tostring()
-
                 temp = ''.join(temp)
-                #logger.info("after join")
                 b = struct.pack("BB", 0,0)
                 temp = b + temp
-                #logger.info(repr(temp))
                 temp = temp.encode('base64','strict')
-                #logger.info(len(temp))
-
 
             except struct.error as e:
                 logger.error(e)
                 break
+
             except StandardError as e:
                 logger.info("StandardError")
                 logger.error(e)
                 break
-            try:
-                postDicts["KB1LQC-1"][1].append(temp)
-            except:
-                postDicts["KB1LQC-1"][1] = deque([], maxlen=100)
-                postDicts["KB1LQC-1"][1].append(temp)
 
-            #logger.info(postDicts["KB1LQC-1"][1])
+            # Append formatted packet to postDicts for corrent unit/port to send
+            try:
+                # Hardcoded for port 1
+                postDicts[modem['unit']][1].append(temp)
+            except:
+                postDicts[modem['unit']][1] = deque([], maxlen=100)
+                postDicts[modem['unit']][1].append(temp)
 
 
 # Initialize Flask microframework
