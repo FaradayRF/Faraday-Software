@@ -434,12 +434,10 @@ def socket_worker(modem, units, log):
     """
     logger.info('Starting socket_worker thread')
 
-    # Iterate through dictionary of each unit in the dictionary creating a
-    # deque for each item
+    # Start a socket server for the modem
+    server = startServer(modem['unit'])
 
-    #logger.info(dataBuffer)
-    server = startServer("KB1LQC-1")
-
+    # Listen to server in infinit loop
     server.listen(5)
     while True:
         c, addr = server.accept()
@@ -451,24 +449,20 @@ def socket_worker(modem, units, log):
                 logger.error(e)
                 c.close()
                 break
+            # Expect BASE64 so decode it
             temp = temp.decode('base64', 'strict')
 
+            # Iterate through each byte of data, append to queue
             for byte in temp:
                 try:
                     byte = struct.unpack("c",byte)[0]
+                    dataBuffer.append(byte)
 
                 except struct.error as e:
                     logger.error(e)
                     c.close()
                     break
-                dataBuffer.append(byte)
-            #logger.info(len(dataBuffer))
-
-            #logger.info(dataBuffer)
-
-
-
-    #logger.info("test")
+                
 
 def bufferWorker(modem, postDicts):
     logger.info("Starting bufferWorker Thread")
