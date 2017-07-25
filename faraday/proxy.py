@@ -351,12 +351,13 @@ def uart_worker(modem, getDicts, units, log):
                     # Data is available, pop off [unit][port] queue
                     # and convert to BASE64 before sending to UART
                     try:
-                        logger.info("POST Queue: {0}".format(postDicts[modem['unit']][port]))
+                        #logger.info("POST Queue: {0}".format(postDicts[modem['unit']][port]))
                         #message = ''
                         message = postDicts[modem['unit']][port].popleft()
                         message = base64.b64decode(message)
-                        logger.info("Message: {0}".format(message))
+                        #logger.info("Message: {0}, {1}".format(len(message),message))
                         modem['com'].POST(port, len(message), message)
+                        #logger.info("After UARTworker post")
                     except StandardError as e:
                         logger.error(e)
 
@@ -471,27 +472,21 @@ def socket_worker(modem, units, log):
 
 
 
-    logger.info("test")
+    #logger.info("test")
 
 def bufferWorker(modem, postDicts):
     logger.info("Starting bufferWorker Thread")
-    try:
-        logger.info("TEST")
-        logger.info(modem)
-
-    except:
-        logger.error("Shit happens yo")
 
     while True:
         temp = []
-        logger.info("dataBuffer: {0}".format(len(dataBuffer)))
+        #logger.info("dataBuffer: {0}".format(len(dataBuffer)))
         #time.sleep(0.01)
         while True:
 
             if len(dataBuffer) > 0:
                 temp = []
-                logger.info("Length: {0}".format(len(dataBuffer)))
-                for i in range(123):
+                #logger.info("Length: {0}".format(len(dataBuffer)))
+                for i in range(121):
                     try:
                         #logger.info(i)
                         a = dataBuffer.popleft()
@@ -506,8 +501,10 @@ def bufferWorker(modem, postDicts):
                     #temp = array("B",temp).tostring()
 
                     temp = ''.join(temp)
-                    logger.info("after join")
-                    logger.info(temp)
+                    #logger.info("after join")
+                    b = struct.pack("BB", 0,0)
+                    temp = b + temp
+                    #logger.info(repr(temp))
                     temp = temp.encode('base64','strict')
                     #logger.info(len(temp))
 
@@ -525,7 +522,7 @@ def bufferWorker(modem, postDicts):
                     postDicts["KB1LQC-1"][1] = deque([], maxlen=100)
                     postDicts["KB1LQC-1"][1].append(temp)
 
-                logger.info(postDicts["KB1LQC-1"][1])
+                #logger.info(postDicts["KB1LQC-1"][1])
 
 
 # Initialize Flask microframework
