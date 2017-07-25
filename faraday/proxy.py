@@ -260,13 +260,13 @@ if not args.start:
 postDicts = {}
 getDicts = {}
 unitDict = {}
-dataBuffer = deque([])
+dataBuffer = {}
 
-def startServer(modem):
+def startServer(modem, dataPort):
     # Start socket
     s = socket.socket()
     host = socket.gethostname()
-    port = 10000
+    port = dataPort
     result = 0
 
     # Check port status
@@ -427,7 +427,7 @@ def testdb_read_worker():
         time.sleep(sleepTime)
         row = cursor.fetchone()
 
-def socket_worker(modem, units, log):
+def socket_worker(modem, units, log, dataPort):
     """
     Create sockets for data connections
 
@@ -435,7 +435,9 @@ def socket_worker(modem, units, log):
     logger.info('Starting socket_worker thread')
 
     # Start a socket server for the modem
-    server = startServer(modem['unit'])
+    server = startServer(modem['unit'], dataPort)
+
+    dataBuffer[modem['unit']] = {}
 
     # Listen to server in infinit loop
     server.listen(5)
@@ -456,12 +458,24 @@ def socket_worker(modem, units, log):
             for byte in temp:
                 try:
                     byte = struct.unpack("c",byte)[0]
-                    dataBuffer.append(byte)
+                    #logger.info(dataBuffer[modem['unit']])
+                    dataBuffer[modem['unit']].append(byte)
+                # except StandardError as e:
+                #     logger.error(e)
 
-                except struct.error as e:
-                    logger.error(e)
-                    c.close()
-                    break
+                except:
+                    logger.info(modem['unit'])
+                    # logger.info(dataBuffer[modem['unit']])
+                    dataBuffer[modem['unit']] = deque([])
+                    dataBuffer[modem['unit']].append(byte)
+
+                #
+                # except struct.error as e:
+                #     logger.error(e)
+                #     c.close()
+                #     break
+                #
+
 
 
 def bufferWorker(modem, postDicts):
@@ -470,41 +484,46 @@ def bufferWorker(modem, postDicts):
     while True:
         # Initialize temp list
         temp = []
+        #logger.info("unit : {0}".format(len(dataBuffer[modem['unit']])))
 
-        if len(dataBuffer) > 0:
-            temp = []
+        try:
+            if len(dataBuffer[modem['unit']]) > 0:
+                temp = []
 
-            # Pop off 121 bytes and append to temporary list
-            for i in range(121):
+                # Pop off 121 bytes and append to temporary list
+                for i in range(121):
+                    try:
+                        a = dataBuffer[modem['unit']].popleft()
+                        temp.append(a)
+                    except StandardError as e:
+                        pass
+
+                # Join list together and append two control bytes, convert to BASE64
                 try:
-                    a = dataBuffer.popleft()
-                    temp.append(a)
+
+                    temp = ''.join(temp)
+                    b = struct.pack("BB", 0,0)
+                    temp = b + temp
+                    temp = temp.encode('base64','strict')
+
+                except struct.error as e:
+                    logger.error(e)
+                    break
+
                 except StandardError as e:
-                    pass
+                    logger.info("StandardError")
+                    logger.error(e)
+                    break
 
-            # Join list together and append two control bytes, convert to BASE64
-            try:
-                temp = ''.join(temp)
-                b = struct.pack("BB", 0,0)
-                temp = b + temp
-                temp = temp.encode('base64','strict')
-
-            except struct.error as e:
-                logger.error(e)
-                break
-
-            except StandardError as e:
-                logger.info("StandardError")
-                logger.error(e)
-                break
-
-            # Append formatted packet to postDicts for corrent unit/port to send
-            try:
-                # Hardcoded for port 1
-                postDicts[modem['unit']][1].append(temp)
-            except:
-                postDicts[modem['unit']][1] = deque([], maxlen=100)
-                postDicts[modem['unit']][1].append(temp)
+                # Append formatted packet to postDicts for corrent unit/port to send
+                try:
+                    # Hardcoded for port 1
+                    postDicts[modem['unit']][1].append(temp)
+                except:
+                    postDicts[modem['unit']][1] = deque([], maxlen=100)
+                    postDicts[modem['unit']][1].append(temp)
+        except StandardError as e:
+            logger.info(e)
 
 
 # Initialize Flask microframework
@@ -941,14 +960,16 @@ def main():
             except:
                 logger.error('Could not connect to {0} on {1}'.format(node, values["com"]))
 
+        dataPort = 10000
         for key in unitDict:
+            logger.info(key)
             logger.info('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
             t.start()
 
             logger.info("starting socket_worker")
-            u = threading.Thread(target=socket_worker, args=(tempdict, units, log))
+            u = threading.Thread(target=socket_worker, args=(tempdict, units, log, dataPort))
             u.start()
 
             logger.info("starting bufferWorker")
@@ -961,6 +982,8 @@ def main():
                 logger.error("test")
             except:
                 logger.error("crap")
+
+            dataPort += 1
     else:
         t = threading.Thread(target=testdb_read_worker)
         t.start()
