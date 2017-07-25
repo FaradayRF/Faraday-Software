@@ -23,6 +23,7 @@ import argparse
 import shutil
 import socket
 import struct
+import array
 
 from flask import Flask
 from flask import request
@@ -259,6 +260,7 @@ postDict = {}
 postDicts = {}
 getDicts = {}
 unitDict = {}
+dataBuffer = deque([])
 
 def startServer(modem):
     # Start socket
@@ -426,8 +428,8 @@ def socket_worker(modem, units, log):
 
     # Iterate through dictionary of each unit in the dictionary creating a
     # deque for each item
-    dataBuffer = deque([])
-    logger.info(dataBuffer)
+
+    #logger.info(dataBuffer)
     server = startServer("KB1LQC-1")
 
     server.listen(5)
@@ -435,25 +437,65 @@ def socket_worker(modem, units, log):
         c, addr = server.accept()
         logger.info("Got connection from  {0}".format(addr))
         while True:
-            temp = c.recv(4096)
+            try:
+                temp = c.recv(4096)
+            except socket.error as e:
+                logger.error(e)
+                c.close()
+                break
             temp = temp.decode('base64', 'strict')
 
-            logger.info(temp)
             for byte in temp:
                 try:
                     byte = struct.unpack("c",byte)[0]
-                    logger.info(byte)
+
                 except struct.error as e:
                     logger.error(e)
-                    sys.exit(1)
-                logger.info(byte)
+                    c.close()
+                    break
                 dataBuffer.append(byte)
+            #logger.info(len(dataBuffer))
 
-            logger.info(dataBuffer)
+            #logger.info(dataBuffer)
 
-        c.close()
+
 
     logger.info("test")
+
+def bufferWorker():
+    logger.info("Starting bufferWorker Thread")
+    while True:
+        temp = []
+        logger.info("dataBuffer: {0}".format(len(dataBuffer)))
+        #time.sleep(0.01)
+        while True:
+
+            if len(dataBuffer) > 0:
+                logger.info("Length: {0}".format(len(dataBuffer)))
+                for i in range(124):
+                    try:
+                        #logger.info(i)
+                        a = dataBuffer.popleft()
+                        #logger.info(type(a))
+                        temp.append(a)
+                    except StandardError as e:
+                        #logger.error(e)
+                        pass
+                #logger.info(temp)
+
+                try:
+                    #temp = array("B",temp).tostring()
+                    logger.info(temp)
+                    temp = ''.join(temp)
+                    logger.info(temp)
+
+                except struct.error as e:
+                    logger.error(e)
+                    break
+                except StandardError as e:
+                    logger.info("StandardError")
+                    logger.error(e)
+                    break
 
 
 
@@ -900,6 +942,10 @@ def main():
             logger.info("starting socket_worker")
             u = threading.Thread(target=socket_worker, args=(tempdict, units, log))
             u.start()
+
+            logger.info("starting bufferWorker")
+            v = threading.Thread(target=bufferWorker)
+            v.start()
     else:
         t = threading.Thread(target=testdb_read_worker)
         t.start()
