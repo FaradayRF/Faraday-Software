@@ -351,13 +351,9 @@ def uart_worker(modem, getDicts, units, log):
                     # Data is available, pop off [unit][port] queue
                     # and convert to BASE64 before sending to UART
                     try:
-                        #logger.info("POST Queue: {0}".format(postDicts[modem['unit']][port]))
-                        #message = ''
                         message = postDicts[modem['unit']][port].popleft()
                         message = base64.b64decode(message)
-                        #logger.info("Message: {0}, {1}".format(len(message),message))
                         modem['com'].POST(port, len(message), message)
-                        #logger.info("After UARTworker post")
                     except StandardError as e:
                         logger.error(e)
 
