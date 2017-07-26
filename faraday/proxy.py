@@ -273,11 +273,13 @@ def startServer(modem, dataPort):
     while result == 0:
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            result = 1
             result = sock.connect_ex((host,port))
         except socket.error as e:
             logger.warning(e)
 
-        logger.info(port)
+
+        #logger.info(port)
 
     logger.info("Started server on {0}:{1}".format(host,port))
 
@@ -464,7 +466,7 @@ def socket_worker(modem, units, log, dataPort):
                 #     logger.error(e)
 
                 except:
-                    logger.info(modem['unit'])
+                    #logger.info(modem['unit'])
                     # logger.info(dataBuffer[modem['unit']])
                     dataBuffer[modem['unit']] = deque([])
                     dataBuffer[modem['unit']].append(byte)
@@ -476,6 +478,33 @@ def socket_worker(modem, units, log, dataPort):
                 #     break
                 #
 
+def socket_worker_RX(modem, units, log, dataPort):
+    """
+    Create sockets for data connections
+
+    """
+    logger.info('Starting socket_worker_RX thread')
+
+    # Start a socket server for the modem
+    server = startServer(modem['unit'], dataPort)
+
+    dataBuffer[modem['unit']] = {}
+
+    # Listen to server in infinit loop
+    server.listen(5)
+    while True:
+        c, addr = server.accept()
+        logger.info("Got RX connection from  {0}".format(addr))
+        while True:
+            time.sleep(0.05)
+            temp = getDicts[modem['unit']][1].popleft()
+            try:
+                #logger.info(temp)
+                result = c.sendall(temp['data'])
+                #logger.info(result)
+            except socket.error as e:
+                pass
+                logger.warning(e)
 
 
 def bufferWorker(modem, postDicts):
@@ -523,7 +552,8 @@ def bufferWorker(modem, postDicts):
                     postDicts[modem['unit']][1] = deque([], maxlen=100)
                     postDicts[modem['unit']][1].append(temp)
         except StandardError as e:
-            logger.info(e)
+            pass
+            # logger.info(e)
 
 
 # Initialize Flask microframework
@@ -972,8 +1002,11 @@ def main():
             u = threading.Thread(target=socket_worker, args=(tempdict, units, log, dataPort))
             u.start()
 
-            logger.info("starting bufferWorker")
+            logger.info("starting socket_worker")
+            w = threading.Thread(target=socket_worker_RX, args=(tempdict, units, log, dataPort+10))
+            w.start()
 
+            logger.info("starting bufferWorker")
             try:
 
                 v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts))
