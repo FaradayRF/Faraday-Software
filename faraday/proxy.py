@@ -441,7 +441,7 @@ def closeConnection(conn, addr):
 
 def extractBytes(data, dataBuffer, unit):
     # data is a BASE64 string with unknown length, iterate and separete
-    data = data.decode('base64', 'strict')
+    #data = data.decode('base64', 'strict')
 
     for byte in data:
         try:
@@ -481,11 +481,17 @@ def sendData(conn, addr, getDicts, unit):
         try:
             # pop off a data entry from the left of getDicts
             temp = getDicts[unit][1].popleft()
+
         except collections.error as e:
             logger.error(e)
 
         try:
-            conn.sendall(temp['data'])
+            data = temp['data'].decode('base64','strict')
+        except StandardError as e:
+            logger.error(e)
+
+        try:
+            conn.sendall(data)
         except socket.error as e:
             logger.warning(e)
             closeConnection(conn, addr)
