@@ -258,7 +258,7 @@ if not args.start:
 #postDict = {}
 postDicts = {}
 getDicts = {}
-unitDict = {}
+
 
 
 
@@ -1018,6 +1018,7 @@ def sqlInsert(data):
 
 def main():
     dataBuffer = {}
+    unitDict = {}
     try:
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
