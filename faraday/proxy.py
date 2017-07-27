@@ -471,16 +471,17 @@ def sendData(conn, addr, getDicts, unit):
     while True:
         # not sure why I need a delay... otherwise socket closes
         time.sleep(0.05)
+        dataQueue = getDicts[unit][1]
 
-        if len(getDicts) <= 0:
-            conn.sendall("No Data!")
+        if len(dataQueue) <= 0:
+            conn.sendall("No Data! Goodbye.")
             closeConnection(conn, addr)
             break
 
 
         try:
             # pop off a data entry from the left of getDicts
-            temp = getDicts[unit][1].popleft()
+            temp = dataQueue.popleft()
 
         except collections.error as e:
             logger.error(e)
