@@ -426,14 +426,14 @@ def testdb_read_worker():
         time.sleep(sleepTime)
         row = cursor.fetchone()
 
-def acceptConnection(server):
+def acceptConnection(server, faraday):
     conn, addr = server.accept()
-    logger.info("Got connection from  {0}".format(addr))
+    logger.info("Got connection from {0} on {1}".format(addr, faraday))
     return conn, addr
 
-def closeConnection(conn, addr):
+def closeConnection(conn, addr, faraday):
     # close the connection
-    logger.info("Closing connection with {0}".format(addr))
+    logger.info("Closing connection with {0} on {1}".format(addr, faraday))
     conn.close()
 
 def extractBytes(data, dataBuffer, unit):
@@ -456,10 +456,10 @@ def receiveData(conn, addr, dataBuffer, unit):
             data = conn.recv(4096)
         except socket.error as e:
             logger.error(e)
-            closeConnection(conn, addr)
+            closeConnection(conn, addr, unit)
 
         if not data:
-            closeConnection(conn,addr)
+            closeConnection(conn,addr, unit)
             break
 
         # Expect BASE64 so decode it
@@ -478,7 +478,7 @@ def sendData(conn, addr, getDicts, unit):
 
         if len(dataQueue) <= 0:
             conn.sendall("No Data! Goodbye.")
-            closeConnection(conn, addr)
+            closeConnection(conn, addr, unit)
             break
 
 
@@ -497,9 +497,9 @@ def sendData(conn, addr, getDicts, unit):
 
         try:
             conn.sendall(data)
+
         except socket.error as e:
-            logger.info(e)
-            closeConnection(conn, addr)
+            closeConnection(conn, addr, unit)
             break
 
 
@@ -519,7 +519,7 @@ def socket_worker(modem, getDicts, dataPort):
     server.listen(5)
     while True:
         # continuously accept connections and read data from socket to buffers
-        conn, addr = acceptConnection(server)
+        conn, addr = acceptConnection(server, unit)
         receiveData(conn, addr, dataBuffer, unit)
 
 def socket_worker_RX(modem, getDicts, dataPort):
@@ -538,7 +538,7 @@ def socket_worker_RX(modem, getDicts, dataPort):
     server.listen(5)
     while True:
         # continuously accept connections and send data to socket from get buffer
-        conn, addr = acceptConnection(server)
+        conn, addr = acceptConnection(server, unit)
         sendData(conn, addr, getDicts, unit)
 
 def createPacket(data, size):
