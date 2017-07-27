@@ -503,7 +503,7 @@ def sendData(conn, addr, getDicts, unit):
             break
 
 
-def socket_worker(modem, units, log, dataPort):
+def socket_worker(modem, getDicts, dataPort):
     """
     Create sockets for data connections
 
@@ -1045,7 +1045,7 @@ def main():
             t.start()
 
             logger.info("starting socket_worker")
-            u = threading.Thread(target=socket_worker, args=(tempdict, units, log, dataPort))
+            u = threading.Thread(target=socket_worker, args=(tempdict, getDicts, dataPort))
             u.start()
 
             logger.info("starting socket_worker")
