@@ -278,9 +278,6 @@ def startServer(modem, dataPort):
         except socket.error as e:
             logger.warning(e)
 
-
-        #logger.info(port)
-
     logger.info("Started server on {0}:{1}".format(host,port))
 
 
@@ -320,7 +317,7 @@ def uart_worker(modem, getDicts, units, log):
                             getDicts[modem['unit']][port].append(item)
 
                         except:
-                            getDicts[modem['unit']][port] = deque([], maxlen=100)
+                            getDicts[modem['unit']][port] = deque([])
                             getDicts[modem['unit']][port].append(item)
 
                         # Check for Proxy logging and save to SQL if true
@@ -419,7 +416,7 @@ def testdb_read_worker():
             getDicts[unit][port].append(item)
 
         except:
-            getDicts[unit][port] = deque([], maxlen=100)
+            getDicts[unit][port] = deque([])
             getDicts[unit][port].append(item)
 
         logger.debug('Appended packet: id [ {} ] port [ {} ]'
@@ -449,6 +446,7 @@ def extractBytes(data, dataBuffer, unit):
             dataBuffer[unit].append(byte)
 
         except:
+            logger.warning("Creating dataBuffer")
             dataBuffer[unit] = deque([])
             dataBuffer[unit].append(byte)
 
@@ -471,7 +469,12 @@ def sendData(conn, addr, getDicts, unit):
     while True:
         # not sure why I need a delay... otherwise socket closes
         time.sleep(0.05)
-        dataQueue = getDicts[unit][1]
+        dataQueue = []
+        try:
+            dataQueue = getDicts[unit][1]
+        except KeyError as e:
+            # Simply haven't ever received data so break
+            pass
 
         if len(dataQueue) <= 0:
             conn.sendall("No Data! Goodbye.")
@@ -483,7 +486,8 @@ def sendData(conn, addr, getDicts, unit):
             # pop off a data entry from the left of getDicts
             temp = dataQueue.popleft()
 
-        except collections.error as e:
+        except IndexError as e:
+            # Empty queue
             logger.error(e)
 
         try:
@@ -537,56 +541,66 @@ def socket_worker_RX(modem, getDicts, dataPort):
         conn, addr = acceptConnection(server)
         sendData(conn, addr, getDicts, unit)
 
+def createPacket(data, size):
+    # initialize temp variable list and packet
+    temp = []
+    packet = ''
 
+    # Pop off "size" bytes and append to temporary list
+    for i in range(size):
+        try:
+            a = data.popleft()
+            temp.append(a)
 
+        except IndexError:
+            # simply an empty queue
+            pass
+    # Join list together and append two control bytes, convert to BASE64
+    try:
+        payload = ''.join(temp)
+        preamble = struct.pack("BB", 0,0) #  Preamble is two 0's at this time
+        packet = preamble + payload
+        packet = packet.encode('base64','strict') #  Proxy expects BASE64
 
-def bufferWorker(modem, postDicts):
+    except TypeError as e:
+        logger.error(e)
+
+    except struct.error as e:
+        logger.error(e)
+
+    except UnicodeError as e:
+        logger.error(e)
+
+    except StandardError as e:
+        logger.info("StandardError")
+        logger.error(e)
+
+    return packet
+
+def stagePacket(postDicts, unit, packetData):
+    # Append formatted packet to postDicts for corrent unit/port to send
+    # Create if postDicts entry doesn't exists
+
+    try:
+        # Hardcoded for port 1
+        postDicts[unit][1].append(packetData)
+    except:
+        postDicts[unit][1] = deque([])
+        postDicts[unit][1].append(packetData)
+
+def bufferWorker(modem, postDicts, dataBuffer):
     logger.info("Starting bufferWorker Thread")
 
+    unit = modem['unit']
+
     while True:
-        # Initialize temp list
-        temp = []
-        #logger.info("unit : {0}".format(len(dataBuffer[modem['unit']])))
-
         try:
-            if len(dataBuffer[modem['unit']]) > 0:
-                temp = []
 
-                # Pop off 121 bytes and append to temporary list
-                for i in range(121):
-                    try:
-                        a = dataBuffer[modem['unit']].popleft()
-                        temp.append(a)
-                    except StandardError as e:
-                        pass
-
-                # Join list together and append two control bytes, convert to BASE64
-                try:
-
-                    temp = ''.join(temp)
-                    b = struct.pack("BB", 0,0)
-                    temp = b + temp
-                    temp = temp.encode('base64','strict')
-
-                except struct.error as e:
-                    logger.error(e)
-                    break
-
-                except StandardError as e:
-                    logger.info("StandardError")
-                    logger.error(e)
-                    break
-
-                # Append formatted packet to postDicts for corrent unit/port to send
-                try:
-                    # Hardcoded for port 1
-                    postDicts[modem['unit']][1].append(temp)
-                except:
-                    postDicts[modem['unit']][1] = deque([], maxlen=100)
-                    postDicts[modem['unit']][1].append(temp)
-        except StandardError as e:
+            if len(dataBuffer[unit]) > 0:
+                packetData = createPacket(dataBuffer[unit], 121)
+                stagePacket(postDicts, unit, packetData)
+        except:
             pass
-            # logger.info(e)
 
 
 # Initialize Flask microframework
@@ -1025,7 +1039,6 @@ def main():
 
         dataPort = 10000
         for key in unitDict:
-            logger.info(key)
             logger.info('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
@@ -1042,7 +1055,7 @@ def main():
             logger.info("starting bufferWorker")
             try:
 
-                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts))
+                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer))
 
                 v.start()
                 logger.error("test")
