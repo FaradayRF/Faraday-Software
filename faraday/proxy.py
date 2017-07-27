@@ -23,7 +23,6 @@ import argparse
 import shutil
 import socket
 import struct
-import array
 
 from flask import Flask
 from flask import request
@@ -262,6 +261,7 @@ getDicts = {}
 unitDict = {}
 dataBuffer = {}
 
+
 def startServer(modem, dataPort):
     # Start socket
     s = socket.socket()
@@ -274,16 +274,17 @@ def startServer(modem, dataPort):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             result = 1
-            result = sock.connect_ex((host,port))
+            result = sock.connect_ex((host, port))
+
         except socket.error as e:
             logger.warning(e)
 
-    logger.info("Started server on {0}:{1}".format(host,port))
+    logger.info("Started server on {0}:{1}".format(host, port))
 
-
-    s.bind((host,port))
+    s.bind((host, port))
 
     return s
+
 
 def uart_worker(modem, getDicts, units, log):
     """
@@ -356,7 +357,6 @@ def uart_worker(modem, getDicts, units, log):
                     except StandardError as e:
                         logger.error(e)
 
-
         # Slow down while loop to something reasonable
         time.sleep(0.01)
 
@@ -426,15 +426,18 @@ def testdb_read_worker():
         time.sleep(sleepTime)
         row = cursor.fetchone()
 
+
 def acceptConnection(server, faraday):
     conn, addr = server.accept()
     logger.info("Got connection from {0} on {1}".format(addr, faraday))
     return conn, addr
 
+
 def closeConnection(conn, addr, faraday):
     # close the connection
     logger.info("Closing connection with {0} on {1}".format(addr, faraday))
     conn.close()
+
 
 def extractBytes(data, dataBuffer, unit):
     # data is a BASE64 string with unknown length, iterate and separete
@@ -442,13 +445,14 @@ def extractBytes(data, dataBuffer, unit):
 
     for byte in data:
         try:
-            byte = struct.unpack("c",byte)[0]
+            byte = struct.unpack("c", byte)[0]
             dataBuffer[unit].append(byte)
 
         except:
             logger.debug("Creating dataBuffer")
             dataBuffer[unit] = deque([])
             dataBuffer[unit].append(byte)
+
 
 def receiveData(conn, addr, dataBuffer, unit):
     while True:
@@ -459,11 +463,12 @@ def receiveData(conn, addr, dataBuffer, unit):
             closeConnection(conn, addr, unit)
 
         if not data:
-            closeConnection(conn,addr, unit)
+            closeConnection(conn, addr, unit)
             break
 
         # Expect BASE64 so decode it
         extractBytes(data, dataBuffer, unit)
+
 
 def sendData(conn, addr, getDicts, unit):
     while True:
@@ -481,7 +486,6 @@ def sendData(conn, addr, getDicts, unit):
             closeConnection(conn, addr, unit)
             break
 
-
         try:
             # pop off a data entry from the left of getDicts
             temp = dataQueue.popleft()
@@ -491,7 +495,7 @@ def sendData(conn, addr, getDicts, unit):
             logger.error(e)
 
         try:
-            data = temp['data'].decode('base64','strict')
+            data = temp['data'].decode('base64', 'strict')
         except StandardError as e:
             logger.error(e)
 
@@ -522,6 +526,7 @@ def socket_worker(modem, getDicts, dataPort):
         conn, addr = acceptConnection(server, unit)
         receiveData(conn, addr, dataBuffer, unit)
 
+
 def socket_worker_RX(modem, getDicts, dataPort):
     """
     Create sockets for data connections
@@ -541,6 +546,7 @@ def socket_worker_RX(modem, getDicts, dataPort):
         conn, addr = acceptConnection(server, unit)
         sendData(conn, addr, getDicts, unit)
 
+
 def createPacket(data, size):
     # initialize temp variable list and packet
     temp = []
@@ -558,9 +564,9 @@ def createPacket(data, size):
     # Join list together and append two control bytes, convert to BASE64
     try:
         payload = ''.join(temp)
-        preamble = struct.pack("BB", 0,0) #  Preamble is two 0's at this time
+        preamble = struct.pack("BB", 0, 0)  # Preamble is two 0's at this time
         packet = preamble + payload
-        packet = packet.encode('base64','strict') #  Proxy expects BASE64
+        packet = packet.encode('base64', 'strict')  # Proxy expects BASE64
 
     except TypeError as e:
         logger.error(e)
@@ -577,6 +583,7 @@ def createPacket(data, size):
 
     return packet
 
+
 def stagePacket(postDicts, unit, packetData):
     # Append formatted packet to postDicts for corrent unit/port to send
     # Create if postDicts entry doesn't exists
@@ -587,6 +594,7 @@ def stagePacket(postDicts, unit, packetData):
     except:
         postDicts[unit][1] = deque([])
         postDicts[unit][1].append(packetData)
+
 
 def bufferWorker(modem, postDicts, dataBuffer):
     logger.debug("Starting bufferWorker Thread")
@@ -1049,7 +1057,7 @@ def main():
             u.start()
 
             logger.debug("starting socket_worker")
-            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort+10))
+            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort + 10))
             w.start()
 
             logger.debug("starting bufferWorker")
@@ -1074,9 +1082,8 @@ def main():
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
 
-
-
-    #app.run(host=proxyHost, port=proxyPort, threaded=True)
+    # Start Flask server
+    app.run(host=proxyHost, port=proxyPort, threaded=True)
 
 
 if __name__ == '__main__':
