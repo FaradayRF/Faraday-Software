@@ -429,54 +429,59 @@ def testdb_read_worker():
         time.sleep(sleepTime)
         row = cursor.fetchone()
 
+def acceptConnection(server):
+    conn, addr = server.accept()
+    logger.info("Got connection from  {0}".format(addr))
+    return conn, addr
+
+def closeConnection(conn, addr):
+    # close the connection
+    logger.info("Closing connection with {0}".format(addr))
+    conn.close()
+
+def extractBytes(data, dataBuffer, unit):
+    # data is a BASE64 string with unknown length, iterate and separete
+    data = data.decode('base64', 'strict')
+
+    for byte in data:
+        try:
+            byte = struct.unpack("c",byte)[0]
+            dataBuffer[unit].append(byte)
+
+        except:
+            dataBuffer[unit] = deque([])
+            dataBuffer[unit].append(byte)
+
+def receiveData(conn, addr, dataBuffer, unit):
+    try:
+        data = conn.recv(4096)
+    except socket.error as e:
+        logger.error(e)
+        closeConnection(conn, addr)
+    # Expect BASE64 so decode it
+    extractBytes(data, dataBuffer, unit)
+
+
 def socket_worker(modem, units, log, dataPort):
     """
     Create sockets for data connections
 
     """
     logger.info('Starting socket_worker thread')
+    unit = modem['unit']
 
     # Start a socket server for the modem
-    server = startServer(modem['unit'], dataPort)
+    server = startServer(unit, dataPort)
 
-    dataBuffer[modem['unit']] = {}
+    dataBuffer[unit] = {}
 
     # Listen to server in infinit loop
     server.listen(5)
     while True:
-        c, addr = server.accept()
-        logger.info("Got connection from  {0}".format(addr))
+        conn, addr = acceptConnection(server)
         while True:
-            try:
-                temp = c.recv(4096)
-            except socket.error as e:
-                logger.error(e)
-                c.close()
-                break
-            # Expect BASE64 so decode it
-            temp = temp.decode('base64', 'strict')
-
-            # Iterate through each byte of data, append to queue
-            for byte in temp:
-                try:
-                    byte = struct.unpack("c",byte)[0]
-                    #logger.info(dataBuffer[modem['unit']])
-                    dataBuffer[modem['unit']].append(byte)
-                # except StandardError as e:
-                #     logger.error(e)
-
-                except:
-                    #logger.info(modem['unit'])
-                    # logger.info(dataBuffer[modem['unit']])
-                    dataBuffer[modem['unit']] = deque([])
-                    dataBuffer[modem['unit']].append(byte)
-
-                #
-                # except struct.error as e:
-                #     logger.error(e)
-                #     c.close()
-                #     break
-                #
+            # connection is open, receive data until connection closes
+            receiveData(conn, addr, dataBuffer, unit)
 
 def socket_worker_RX(modem, units, log, dataPort):
     """
@@ -505,6 +510,7 @@ def socket_worker_RX(modem, units, log, dataPort):
             except socket.error as e:
                 pass
                 logger.warning(e)
+
 
 
 def bufferWorker(modem, postDicts):
