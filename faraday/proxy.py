@@ -446,7 +446,7 @@ def extractBytes(data, dataBuffer, unit):
             dataBuffer[unit].append(byte)
 
         except:
-            logger.warning("Creating dataBuffer")
+            logger.debug("Creating dataBuffer")
             dataBuffer[unit] = deque([])
             dataBuffer[unit].append(byte)
 
@@ -498,7 +498,7 @@ def sendData(conn, addr, getDicts, unit):
         try:
             conn.sendall(data)
         except socket.error as e:
-            logger.warning(e)
+            logger.info(e)
             closeConnection(conn, addr)
             break
 
@@ -508,7 +508,7 @@ def socket_worker(modem, getDicts, dataPort):
     Create sockets for data connections
 
     """
-    logger.info('Starting socket_worker thread')
+    logger.debug('Starting socket_worker thread')
     unit = modem['unit']
     dataBuffer[unit] = {}
 
@@ -527,7 +527,7 @@ def socket_worker_RX(modem, getDicts, dataPort):
     Create sockets for data connections
 
     """
-    logger.info('Starting socket_worker thread')
+    logger.debug('Starting socket_worker thread')
     unit = modem['unit']
     dataBuffer[unit] = {}
 
@@ -589,7 +589,7 @@ def stagePacket(postDicts, unit, packetData):
         postDicts[unit][1].append(packetData)
 
 def bufferWorker(modem, postDicts, dataBuffer):
-    logger.info("Starting bufferWorker Thread")
+    logger.debug("Starting bufferWorker Thread")
 
     unit = modem['unit']
 
@@ -1039,26 +1039,25 @@ def main():
 
         dataPort = 10000
         for key in unitDict:
-            logger.info('Starting Thread For Unit: {0}'.format(str(key)))
+            logger.debug('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
             t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
             t.start()
 
-            logger.info("starting socket_worker")
+            logger.debug("starting socket_worker")
             u = threading.Thread(target=socket_worker, args=(tempdict, getDicts, dataPort))
             u.start()
 
-            logger.info("starting socket_worker")
+            logger.debug("starting socket_worker")
             w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort+10))
             w.start()
 
-            logger.info("starting bufferWorker")
+            logger.debug("starting bufferWorker")
             try:
 
                 v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer))
 
                 v.start()
-                logger.error("test")
             except:
                 logger.error("crap")
 
