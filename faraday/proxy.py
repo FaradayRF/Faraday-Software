@@ -507,9 +507,8 @@ def socket_worker(modem, units, log, dataPort):
     # Listen to server in infinit loop
     server.listen(5)
     while True:
+        # continuously accept connections and read data from socket to buffers
         conn, addr = acceptConnection(server)
-
-        # connection is open, receive data until connection closes
         receiveData(conn, addr, dataBuffer, unit)
 
 def socket_worker_RX(modem, getDicts, dataPort):
@@ -527,8 +526,8 @@ def socket_worker_RX(modem, getDicts, dataPort):
     # Listen to server in infinit loop
     server.listen(5)
     while True:
+        # continuously accept connections and send data to socket from get buffer
         conn, addr = acceptConnection(server)
-
         sendData(conn, addr, getDicts, unit)
 
 
