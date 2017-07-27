@@ -467,6 +467,22 @@ def receiveData(conn, addr, dataBuffer, unit):
         # Expect BASE64 so decode it
         extractBytes(data, dataBuffer, unit)
 
+def sendData(conn, addr, getDicts, unit):
+    while True:
+        # not sure why I need a delay... otherwise socket closes
+        time.sleep(0.05)
+        try:
+            temp = getDicts[unit][1].popleft()
+        except collections.error as e:
+            logger.error(e)
+
+        try:
+            conn.sendall(temp['data'])
+
+        except socket.error as e:
+            logger.warning(e)
+            break
+
 
 def socket_worker(modem, units, log, dataPort):
     """
@@ -475,11 +491,10 @@ def socket_worker(modem, units, log, dataPort):
     """
     logger.info('Starting socket_worker thread')
     unit = modem['unit']
+    dataBuffer[unit] = {}
 
     # Start a socket server for the modem
     server = startServer(unit, dataPort)
-
-    dataBuffer[unit] = {}
 
     # Listen to server in infinit loop
     server.listen(5)
@@ -489,33 +504,25 @@ def socket_worker(modem, units, log, dataPort):
         # connection is open, receive data until connection closes
         receiveData(conn, addr, dataBuffer, unit)
 
-def socket_worker_RX(modem, units, log, dataPort):
+def socket_worker_RX(modem, getDicts, dataPort):
     """
     Create sockets for data connections
 
     """
-    logger.info('Starting socket_worker_RX thread')
+    logger.info('Starting socket_worker thread')
+    unit = modem['unit']
+    dataBuffer[unit] = {}
 
     # Start a socket server for the modem
-    server = startServer(modem['unit'], dataPort)
-
-    dataBuffer[modem['unit']] = {}
+    server = startServer(unit, dataPort)
 
     # Listen to server in infinit loop
     server.listen(5)
     while True:
-        c, addr = server.accept()
-        logger.info("Got RX connection from  {0}".format(addr))
-        while True:
-            time.sleep(0.05)
-            temp = getDicts[modem['unit']][1].popleft()
-            try:
-                #logger.info(temp)
-                result = c.sendall(temp['data'])
-                #logger.info(result)
-            except socket.error as e:
-                pass
-                logger.warning(e)
+        conn, addr = acceptConnection(server)
+
+        sendData(conn, addr, getDicts, unit)
+
 
 
 
@@ -1015,7 +1022,7 @@ def main():
             u.start()
 
             logger.info("starting socket_worker")
-            w = threading.Thread(target=socket_worker_RX, args=(tempdict, units, log, dataPort+10))
+            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort+10))
             w.start()
 
             logger.info("starting bufferWorker")
