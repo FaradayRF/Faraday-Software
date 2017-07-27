@@ -254,12 +254,10 @@ if not args.start:
     logger.warning("--start option not present, exiting Proxy server!")
     sys.exit(0)
 
-# Create and initialize dictionary queues
-#postDict = {}
+# Create and initialize dictionary queues for post/get dictionaries
+# would like to not be global but Flask currently forces this
 postDicts = {}
 getDicts = {}
-
-
 
 
 def startServer(modem, dataPort):
@@ -286,7 +284,7 @@ def startServer(modem, dataPort):
     return s
 
 
-def uart_worker(modem, getDicts, units, log):
+def uart_worker(modem, getDicts, postDicts, units, log):
     """
     Interface Faraday ports over USB UART
 
@@ -1019,6 +1017,8 @@ def sqlInsert(data):
 def main():
     dataBuffer = {}
     unitDict = {}
+
+
     try:
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
@@ -1051,7 +1051,7 @@ def main():
         for key in unitDict:
             logger.debug('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
-            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, units, log))
+            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, postDicts, units, log))
             t.start()
 
             logger.debug("starting socket_worker")
