@@ -259,7 +259,7 @@ if not args.start:
 postDicts = {}
 getDicts = {}
 unitDict = {}
-dataBuffer = {}
+
 
 
 def startServer(modem, dataPort):
@@ -507,7 +507,7 @@ def sendData(conn, addr, getDicts, unit):
             break
 
 
-def socket_worker(modem, getDicts, dataPort):
+def socket_worker(modem, getDicts, dataPort, dataBuffer):
     """
     Create sockets for data connections
 
@@ -527,7 +527,7 @@ def socket_worker(modem, getDicts, dataPort):
         receiveData(conn, addr, dataBuffer, unit)
 
 
-def socket_worker_RX(modem, getDicts, dataPort):
+def socket_worker_RX(modem, getDicts, dataPort, dataBuffer):
     """
     Create sockets for data connections
 
@@ -1017,6 +1017,7 @@ def sqlInsert(data):
 
 
 def main():
+    dataBuffer = {}
     try:
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
@@ -1053,11 +1054,11 @@ def main():
             t.start()
 
             logger.debug("starting socket_worker")
-            u = threading.Thread(target=socket_worker, args=(tempdict, getDicts, dataPort))
+            u = threading.Thread(target=socket_worker, args=(tempdict, getDicts, dataPort, dataBuffer))
             u.start()
 
             logger.debug("starting socket_worker")
-            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort + 10))
+            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort + 10, dataBuffer))
             w.start()
 
             logger.debug("starting bufferWorker")
