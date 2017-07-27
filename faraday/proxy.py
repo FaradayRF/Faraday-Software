@@ -453,13 +453,19 @@ def extractBytes(data, dataBuffer, unit):
             dataBuffer[unit].append(byte)
 
 def receiveData(conn, addr, dataBuffer, unit):
-    try:
-        data = conn.recv(4096)
-    except socket.error as e:
-        logger.error(e)
-        closeConnection(conn, addr)
-    # Expect BASE64 so decode it
-    extractBytes(data, dataBuffer, unit)
+    while True:
+        try:
+            data = conn.recv(4096)
+        except socket.error as e:
+            logger.error(e)
+            closeConnection(conn, addr)
+
+        if not data:
+            closeConnection(conn,addr)
+            break
+
+        # Expect BASE64 so decode it
+        extractBytes(data, dataBuffer, unit)
 
 
 def socket_worker(modem, units, log, dataPort):
@@ -479,9 +485,9 @@ def socket_worker(modem, units, log, dataPort):
     server.listen(5)
     while True:
         conn, addr = acceptConnection(server)
-        while True:
-            # connection is open, receive data until connection closes
-            receiveData(conn, addr, dataBuffer, unit)
+
+        # connection is open, receive data until connection closes
+        receiveData(conn, addr, dataBuffer, unit)
 
 def socket_worker_RX(modem, units, log, dataPort):
     """
