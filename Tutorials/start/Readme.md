@@ -14,7 +14,7 @@ Thank you for purchasing a Faraday radio! We truly appreciate it. Staying true t
  6. [Starting With Telemetry](telemetrystart.md)
  7. [Turn on The LED's](hello-world.md)
  8. [Configuring RF](configuring-rf-faraday.md)
- 9. [RF Playground](rfplaygrond.md)
+ 9. [RF Playground](rfplayground.md)
 
 ## Getting to Know Faraday
 We want you to understand some basics about the radio before we move on. Faraday is sectioned off into areas of operation in the image below. Each area performs a necessary function. This design also helps seperate noisy circuits from sensitive ones which improves performance. For example, the ADC inputs are as far as possible from the DC/DC switching converter.
