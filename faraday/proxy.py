@@ -29,8 +29,6 @@ from flask import request
 
 from faraday.uart import layer_4_service
 
-payloadSize_main = 39
-
 # Start logging after importing modules
 
 relpath1 = os.path.join('etc', 'faraday')
@@ -76,6 +74,7 @@ parser.add_argument('--test-mode', dest='testmode', action='store_true', help='S
 parser.add_argument('--test-callsign', dest='testcallsign', help='Set Faraday test mode callsign')
 parser.add_argument('--test-nodeid', dest='testnodeid', type=int, help='Set Faraday test mode nodeid')
 parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='Set Faraday test mode rate')
+parser.add_argument('--payload-size', dest='payloadsize', default=39, type=int, help='Set Faraday data mode payload size')
 
 # Proxy database options
 parser.add_argument('--database', help='Set Faraday Proxy database')
@@ -201,6 +200,8 @@ def configureProxy(args, proxyConfigPath):
         config.set('PROXY', 'testnodeid', args.testnodeid)
     if args.testrate:
         config.set('PROXY', 'testrate', args.testrate)
+    if args.payloadsize:
+        config.set('PROXY', 'payloadsize', args.payloadsize)
 
     #Configure Proxy databases
     if args.database is not None:
@@ -507,14 +508,11 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
         # unpack frames and retrieve data originally sent to socket
         try:
             dataList = struct.unpack("BB121s", data)
-            logger.info(len(dataList[2][:payloadSize+1]))
             dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize+1])
-            logger.info("Length: {0}". format(dataList2[0]))
             socketData = dataList2[1][:dataList2[0]]
 
         except struct.error as e:
             logger.error(e)
-            logger.error("test1")
 
         else:
             try:
@@ -545,7 +543,7 @@ def socket_worker(modem, getDicts, dataPort, dataBuffer):
         receiveData(conn, addr, dataBuffer, unit)
 
 
-def socket_worker_RX(modem, getDicts, dataPort, dataBuffer):
+def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
     """
     Create sockets for data connections
 
@@ -562,7 +560,7 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer):
     while True:
         # continuously accept connections and send data to socket from get buffer
         conn, addr = acceptConnection(server, unit)
-        sendData(conn, addr, getDicts, unit, payloadSize_main)
+        sendData(conn, addr, getDicts, unit, payloadSize)
 
 
 def createPacket(data, size):
@@ -594,7 +592,6 @@ def createPacket(data, size):
 
     except struct.error as e:
         logger.error(e)
-        logger.error("test2")
 
     except UnicodeError as e:
         logger.error(e)
@@ -1045,6 +1042,7 @@ def main():
     try:
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
+        payloadSize = proxyConfig.getint('PROXY', 'PAYLOADSIZE')
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
@@ -1081,14 +1079,14 @@ def main():
             u = threading.Thread(target=socket_worker, args=(tempdict, getDicts, dataPort, dataBuffer))
             u.start()
 
-            logger.debug("starting socket_worker")
-            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort + 10, dataBuffer))
+            logger.debug("starting socket_worker_RX")
+            w = threading.Thread(target=socket_worker_RX, args=(tempdict, getDicts, dataPort + 10, dataBuffer, payloadSize))
             w.start()
 
             logger.debug("starting bufferWorker")
             try:
 
-                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer, payloadSize_main))
+                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer, payloadSize))
 
                 v.start()
             except:
