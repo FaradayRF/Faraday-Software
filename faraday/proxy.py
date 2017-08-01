@@ -29,6 +29,8 @@ from flask import request
 
 from faraday.uart import layer_4_service
 
+payloadSize_main = 39
+
 # Start logging after importing modules
 
 relpath1 = os.path.join('etc', 'faraday')
@@ -472,7 +474,7 @@ def receiveData(conn, addr, dataBuffer, unit):
         extractBytes(data, dataBuffer, unit)
 
 
-def sendData(conn, addr, getDicts, unit):
+def sendData(conn, addr, getDicts, unit, payloadSize):
     while True:
         # not sure why I need a delay... otherwise socket closes
         time.sleep(0.05)
@@ -498,15 +500,29 @@ def sendData(conn, addr, getDicts, unit):
 
         try:
             data = temp['data'].decode('base64', 'strict')
+
         except StandardError as e:
             logger.error(e)
 
+        # unpack frames and retrieve data originally sent to socket
         try:
-            conn.sendall(data)
+            dataList = struct.unpack("BB121s", data)
+            logger.info(len(dataList[2][:payloadSize+1]))
+            dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize+1])
+            logger.info("Length: {0}". format(dataList2[0]))
+            socketData = dataList2[1][:dataList2[0]]
 
-        except socket.error as e:
-            closeConnection(conn, addr, unit)
-            break
+        except struct.error as e:
+            logger.error(e)
+            logger.error("test1")
+
+        else:
+            try:
+                conn.sendall(socketData)
+
+            except socket.error as e:
+                closeConnection(conn, addr, unit)
+                break
 
 
 def socket_worker(modem, getDicts, dataPort, dataBuffer):
@@ -546,7 +562,7 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer):
     while True:
         # continuously accept connections and send data to socket from get buffer
         conn, addr = acceptConnection(server, unit)
-        sendData(conn, addr, getDicts, unit)
+        sendData(conn, addr, getDicts, unit, payloadSize_main)
 
 
 def createPacket(data, size):
@@ -555,6 +571,7 @@ def createPacket(data, size):
     packet = ''
 
     # Pop off "size" bytes and append to temporary list
+    i = 0
     for i in range(size):
         try:
             a = data.popleft()
@@ -565,16 +582,19 @@ def createPacket(data, size):
             pass
     # Join list together and append two control bytes, convert to BASE64
     try:
+
         payload = ''.join(temp)
         preamble = struct.pack("BB", 0, 0)  # Preamble is two 0's at this time
-        packet = preamble + payload
-        packet = packet.encode('base64', 'strict')  # Proxy expects BASE64
+        size = struct.pack("B", len(payload))
+        framedPayload = size + payload
+        packet = (preamble + framedPayload).encode('base64', 'strict')  # Proxy expects BASE64
 
     except TypeError as e:
         logger.error(e)
 
     except struct.error as e:
         logger.error(e)
+        logger.error("test2")
 
     except UnicodeError as e:
         logger.error(e)
@@ -598,7 +618,7 @@ def stagePacket(postDicts, unit, packetData):
         postDicts[unit][1].append(packetData)
 
 
-def bufferWorker(modem, postDicts, dataBuffer):
+def bufferWorker(modem, postDicts, dataBuffer, payloadSize):
     logger.debug("Starting bufferWorker Thread")
 
     unit = modem['unit']
@@ -607,7 +627,7 @@ def bufferWorker(modem, postDicts, dataBuffer):
         try:
 
             if len(dataBuffer[unit]) > 0:
-                packetData = createPacket(dataBuffer[unit], 121)
+                packetData = createPacket(dataBuffer[unit], payloadSize)
                 stagePacket(postDicts, unit, packetData)
         except:
             pass
@@ -1068,7 +1088,7 @@ def main():
             logger.debug("starting bufferWorker")
             try:
 
-                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer))
+                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer, payloadSize_main))
 
                 v.start()
             except:
