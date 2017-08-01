@@ -508,7 +508,7 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
         # unpack frames and retrieve data originally sent to socket
         try:
             dataList = struct.unpack("BB121s", data)
-            dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize+1])
+            dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
             socketData = dataList2[1][:dataList2[0]]
 
         except struct.error as e:
