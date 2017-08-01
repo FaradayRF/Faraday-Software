@@ -434,7 +434,10 @@ def acceptConnection(server, faraday):
 def closeConnection(conn, addr, faraday):
     # close the connection
     logger.info("Closing connection with {0} on {1}".format(addr, faraday))
-    conn.close()
+    try:
+        conn.close()
+    except socket.error as e:
+        logger.error(e)
 
 
 def extractBytes(data, dataBuffer, unit):
@@ -459,6 +462,7 @@ def receiveData(conn, addr, dataBuffer, unit):
         except socket.error as e:
             logger.error(e)
             closeConnection(conn, addr, unit)
+            break
 
         if not data:
             closeConnection(conn, addr, unit)
