@@ -476,7 +476,8 @@ def receiveData(conn, addr, dataBuffer, unit):
 
 
 def sendData(conn, addr, getDicts, unit, payloadSize):
-    while True:
+    while len(getDicts[unit][1]):
+        logger.info(len(getDicts[unit][1]))
         # not sure why I need a delay... otherwise socket closes
         time.sleep(0.05)
         dataQueue = []
@@ -583,10 +584,16 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
 
     # Listen to server in infinit loop
     server.listen(5)
+    try:
+        conn, addr = acceptConnection(server, unit)
+
+    except IOError as e:
+        logger.error(e)
+
     while True:
         # continuously accept connections and send data to socket from get buffer
-        conn, addr = acceptConnection(server, unit)
         sendData(conn, addr, getDicts, unit, payloadSize)
+        logger.info("Looped socketworkerrx")
 
 
 def createPacket(data, size):
