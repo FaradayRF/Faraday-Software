@@ -1110,13 +1110,8 @@ def main():
             w.start()
 
             logger.debug("starting bufferWorker")
-            try:
-
-                v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer, payloadSize))
-
-                v.start()
-            except:
-                logger.error("crap")
+            v = threading.Thread(target=bufferWorker, args=(tempdict, postDicts, dataBuffer, payloadSize))
+            v.start()
 
             dataPort += 1
     else:
