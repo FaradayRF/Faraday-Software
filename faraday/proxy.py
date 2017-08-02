@@ -606,9 +606,9 @@ def createPacket(data, size):
             pass
     # Join list together and append two control bytes, convert to BASE64
     try:
-
+        # TODO: Use better method of MSP430 header allocation
         payload = ''.join(temp)
-        preamble = struct.pack("BB", 0, 0)  # Preamble is two 0's at this time
+        preamble = struct.pack("BB", 0, 0)  # Header for MSP430 firmware
         size = struct.pack("B", len(payload))
         framedPayload = size + payload
         packet = (preamble + framedPayload).encode('base64', 'strict')  # Proxy expects BASE64
