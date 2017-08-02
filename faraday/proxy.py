@@ -608,7 +608,6 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
             closeConnection(conn, addr, unit)
 
 
-
 def createPacket(data, size):
     # initialize temp variable list and packet
     temp = []
