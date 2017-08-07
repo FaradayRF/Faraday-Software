@@ -478,35 +478,32 @@ def receiveData(conn, addr, dataBuffer, unit):
 
 
 def sendData(conn, addr, getDicts, unit, payloadSize):
+    # Enter infinite loop serving up data as it arrives until socket closes
     while True:
+        # clear list every cycle
         dataQueue = []
-        getDictsFlag = 1
+
+        # Check if getDicts[unit][1] exists
         try:
             dataQueue = getDicts[unit][1]
         except KeyError:
-            getDictsFlag = 0
-        except StandardError as e:
-            # Simply haven't ever received data so break
-            pass
-
-        if len(dataQueue) <= 0 or getDictsFlag == 0:
+            #  Port 1 data doesn't exist yet
+            logger.debug("port 1 doesn't exist")
             pass
 
         if len(dataQueue) > 0:
             try:
                 # pop off a data entry from the left of getDicts
                 temp = dataQueue.popleft()
-
             except IndexError as e:
                 # Empty queue
-                logger.error("IndexError")
                 logger.error(e)
 
             try:
+                # We have a data item so decode it
                 data = temp['data'].decode('base64', 'strict')
 
-            except StandardError as e:
-                logger.error("STANDARDERROR")
+            except UnicodeError as e:
                 logger.error(e)
 
             # unpack frames and retrieve data originally sent to socket
