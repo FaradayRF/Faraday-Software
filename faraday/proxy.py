@@ -436,11 +436,13 @@ def acceptConnection(server, faraday):
 
 def closeConnection(conn, addr, faraday):
     # close the connection
-    logger.debug("Closing connection with {0} on {1}".format(addr, faraday))
+    logger.info("Closing connection with {0} on {1}".format(addr, faraday))
+    time.sleep(0.01) #  Need to give time for any TX to finish
     try:
         conn.close()
     except IOError as e:
         logger.error(e)
+    logger.info("Closed")
 
 
 def extractBytes(data, dataBuffer, unit):
@@ -477,77 +479,88 @@ def receiveData(conn, addr, dataBuffer, unit):
 
 def sendData(conn, addr, getDicts, unit, payloadSize):
     while True:
-        conn.sendall("Test...")
+        # conn.sendall("Test...")
     # while len(getDicts[unit][1]):
     #     # not sure why I need a delay... otherwise socket closes
-    #     dataQueue = []
-    #     try:
-    #         dataQueue = getDicts[unit][1]
-    #     except KeyError as e:
-    #         # Simply haven't ever received data so break
-    #         pass
-    #
-    #     if len(dataQueue) <= 0:
-    #         conn.sendall("No Data! Goodbye.")
-    #         closeConnection(conn, addr, unit)
-    #         break
-    #
-    #     try:
-    #         # pop off a data entry from the left of getDicts
-    #         temp = dataQueue.popleft()
-    #
-    #     except IndexError as e:
-    #         # Empty queue
-    #         logger.error(e)
-    #
-    #     try:
-    #         data = temp['data'].decode('base64', 'strict')
-    #
-    #     except StandardError as e:
-    #         logger.error(e)
-    #
-    #     # unpack frames and retrieve data originally sent to socket
-    #     if len(data) == 123:
-    #         try:
-    #             logger.debug(len(data))
-    #             logger.debug(repr(data))
-    #             dataList = struct.unpack("BB121s", data)
-    #             dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
-    #             socketData = dataList2[1][:dataList2[0]]
-    #
-    #         except struct.error as e:
-    #             logger.warning(e)
-    #             logger.warning(len(data))
-    #             logger.warning(repr(data))
-    #
-    #         else:
-    #             try:
-    #                 conn.sendall(socketData)
-    #
-    #             except IOError as e:
-    #                 closeConnection(conn, addr, unit)
-    #                 break
-    #
-    #     if len(data) == 42:
-    #         try:
-    #             logger.debug(len(data))
-    #             logger.debug(repr(data))
-    #             dataList = struct.unpack("BB{0}s".format(payloadSize + 1), data)
-    #             dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
-    #             socketData = dataList2[1][:dataList2[0]]
-    #
-    #         except struct.error as e:
-    #             logger.warning(e)
-    #             logger.warning(len(data))
-    #             logger.warning(repr(data))
-    #
-    #         else:
-    #             try:
-    #                 conn.sendall(socketData)
-    #
-    #             except IOError as e:
-    #                 closeConnection(conn, addr, unit)
-    #                 break
+        dataQueue = []
+        getDictsFlag = 1
+        try:
+            dataQueue = getDicts[unit][1]
+        except KeyError:
+            getDictsFlag = 0
+        except StandardError as e:
+            # Simply haven't ever received data so break
+            logger.error(type(e).__name__)
+            pass
+
+        if len(dataQueue) <= 0 or getDictsFlag == 0:
+
+            conn.sendall("No Data! Goodbye.")
+            logger.info("No Data")
+            closeConnection(conn, addr, unit)
+            break
+
+        try:
+            # pop off a data entry from the left of getDicts
+            temp = dataQueue.popleft()
+
+        except IndexError as e:
+            # Empty queue
+            logger.error("IndexError")
+            logger.error(e)
+
+        try:
+            data = temp['data'].decode('base64', 'strict')
+
+        except StandardError as e:
+            logger.error("STANDARDERROR")
+            logger.error(e)
+
+        # unpack frames and retrieve data originally sent to socket
+        if len(data) == 123:
+            try:
+                logger.debug(len(data))
+                logger.debug(repr(data))
+                dataList = struct.unpack("BB121s", data)
+                dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
+                socketData = dataList2[1][:dataList2[0]]
+
+            except struct.error as e:
+                logger.warning(e)
+                logger.warning(len(data))
+                logger.warning(repr(data))
+
+            else:
+                try:
+                    conn.sendall(socketData)
+
+                except IOError as e:
+                    logger.error("IOERROR1")
+                    closeConnection(conn, addr, unit)
+                    break
+
+        if len(data) == 42:
+            try:
+                logger.debug(len(data))
+                logger.debug(repr(data))
+                dataList = struct.unpack("BB{0}s".format(payloadSize + 1), data)
+                dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
+                socketData = dataList2[1][:dataList2[0]]
+
+            except struct.error as e:
+                logger.warning(e)
+                logger.warning(len(data))
+                logger.warning(repr(data))
+
+            else:
+                try:
+                    conn.sendall(socketData)
+
+                except IOError as e:
+                    logger.error("IOERROR2")
+                    closeConnection(conn, addr, unit)
+                    break
+    logger.info("endofsend")
 
 
 def socket_worker(modem, getDicts, dataPort, dataBuffer):
