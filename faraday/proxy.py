@@ -617,25 +617,6 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
             # Reached the end of the loop, exit
             break
 
-    # while True:
-    #     # continuously accept connections and send data to socket from get buffer
-    #     try:
-    #         try:
-    #             getDicts[unit][1]
-    #         except:
-    #             # No data received yet so dictionary item doesn't exist
-    #             time.sleep(1)
-    #         else:
-    #             try:
-    #                 sendData(conn, addr, getDicts, unit, payloadSize)
-    #             except:
-    #                 logger.warning("closing connection...")
-    #                 closeConnection(conn, addr, unit)
-    #     except socket.error as e:
-    #         logger.warning(e)
-    #         closeConnection(conn, addr, unit)
-
-
 def createPacket(data, size):
     # initialize temp variable list and packet
     temp = []
