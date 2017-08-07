@@ -571,11 +571,8 @@ def socket_worker(modem, getDicts, dataPort, dataBuffer):
     server.listen(5)
     while True:
         # continuously accept connections and read data from socket to buffers
-        # TODO, move accept code
         conn, addr = acceptConnection(server, unit)
         receiveData(conn, addr, dataBuffer, unit)
-        logger.info("TX Test")
-    logger.info("Out of loop[]")
 
 
 def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
