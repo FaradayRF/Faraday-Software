@@ -506,11 +506,9 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
             except UnicodeError as e:
                 logger.error(e)
 
-            # unpack frames and retrieve data originally sent to socket
+            # unpack 123 byte frames and retrieve data originally sent to socket
             if len(data) == 123:
                 try:
-                    logger.debug(len(data))
-                    logger.debug(repr(data))
                     dataList = struct.unpack("BB121s", data)
                     dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
                     socketData = dataList2[1][:dataList2[0]]
@@ -520,19 +518,21 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
                     logger.warning(len(data))
                     logger.warning(repr(data))
 
+                except StandardError as e:
+                    logger.warning(e)
+
                 else:
+                    # If previous try is successful, then send data
                     try:
                         conn.sendall(socketData)
 
                     except IOError as e:
-                        logger.error("IOERROR1")
-                        #closeConnection(conn, addr, unit)
+                        # Socket has probably closed, break out of loop
                         break
 
+            # unpack 42 byte frames and retrieve data originally sent to socket
             if len(data) == 42:
                 try:
-                    logger.debug(len(data))
-                    logger.debug(repr(data))
                     dataList = struct.unpack("BB{0}s".format(payloadSize + 1), data)
                     dataList2 = struct.unpack("B{0}s".format(payloadSize), dataList[2][:payloadSize + 1])
                     socketData = dataList2[1][:dataList2[0]]
@@ -542,13 +542,16 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
                     logger.warning(len(data))
                     logger.warning(repr(data))
 
+                except StandardError as e:
+                    logger.warning(e)
+
                 else:
+                    # If previous try is successful, then send data
                     try:
                         conn.sendall(socketData)
 
                     except IOError as e:
-                        logger.error("IOERROR2")
-                        closeConnection(conn, addr, unit)
+                        # Socket has probably closed, break out of loop
                         break
 
 
