@@ -479,9 +479,6 @@ def receiveData(conn, addr, dataBuffer, unit):
 
 def sendData(conn, addr, getDicts, unit, payloadSize):
     while True:
-        # conn.sendall("Test...")
-    # while len(getDicts[unit][1]):
-    #     # not sure why I need a delay... otherwise socket closes
         dataQueue = []
         getDictsFlag = 1
         try:
@@ -494,14 +491,8 @@ def sendData(conn, addr, getDicts, unit, payloadSize):
 
         if len(dataQueue) <= 0 or getDictsFlag == 0:
             pass
-            #conn.sendall("No Data! Goodbye.")
-            #logger.info("No Data")
-            #closeConnection(conn, addr, unit)
-            #break
 
         if len(dataQueue) > 0:
-            #logger.info(len(dataQueue))
-            #logger.info(dataQueue[""])
             try:
                 # pop off a data entry from the left of getDicts
                 temp = dataQueue.popleft()
