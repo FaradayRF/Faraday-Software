@@ -436,13 +436,12 @@ def acceptConnection(server, faraday):
 
 def closeConnection(conn, addr, faraday):
     # close the connection
-    logger.info("Closing connection with {0} on {1}".format(addr, faraday))
+    logger.info("Closing connection with {0} on {1}".format(addr[0], faraday))
     time.sleep(0.01) #  Need to give time for any TX to finish
     try:
         conn.close()
     except IOError as e:
         logger.error(e)
-    logger.info("Closed")
 
 
 def extractBytes(data, dataBuffer, unit):
@@ -572,7 +571,7 @@ def socket_worker(modem, getDicts, dataPort, dataBuffer):
     while True:
         # continuously accept connections and read data from socket to buffers
         conn, addr = acceptConnection(server, unit)
-        logger.info("Connected {0} to {1} on IP port {2}".format(addr[0],unit,dataPort))
+        logger.info("Connected TX data thread for {0} to {1} on IP port {2}".format(addr[0],unit,dataPort))
         receiveData(conn, addr, dataBuffer, unit)
 
 
@@ -592,7 +591,7 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
     server.listen(5)
     while True:
         conn, addr = acceptConnection(server, unit)
-        logger.info("Connected {0} to {1} on IP port {2}".format(addr[0],unit,dataPort))
+        logger.info("Connected RX data thread for {0} to {1} on IP port {2}".format(addr[0],unit,dataPort))
         while True:
             try:
                 sendData(conn, addr, getDicts, unit, payloadSize)
