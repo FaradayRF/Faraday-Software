@@ -605,6 +605,7 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
                 break
 
             # Reached the end of the loop, exit
+            closeConnection(conn, addr, unit)
             break
 
 def createPacket(data, size):
