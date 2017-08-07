@@ -601,27 +601,20 @@ def socket_worker_RX(modem, getDicts, dataPort, dataBuffer, payloadSize):
 
     # Listen to server in infinit loop
     server.listen(5)
-    # try:
-    #     conn, addr = acceptConnection(server, unit)
-    #     logger.info(conn)
-    # except IOError as e:
-    #     logger.error(e)
-
     while True:
         conn, addr = acceptConnection(server, unit)
         while True:
             try:
                 sendData(conn, addr, getDicts, unit, payloadSize)
             except socket.error as e:
-                pass
                 logger.info(e)
                 break
             except StandardError as e:
                 logger.error("Type")
                 logger.error(type(e).__name__)
                 break
-            #logger.info("End of sendata loop")
-            logger.info(conn)
+
+            # Reached the end of the loop, exit
             break
 
     # while True:
