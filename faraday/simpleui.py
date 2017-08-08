@@ -45,12 +45,8 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
     except ConfigParser.NoSectionError:
         pass
 
-logger = logging.getLogger('SimpleUI')
 
-templatesFolder = os.path.join(path, "..","..","templates")
-staticFolder = os.path.join(path, "..","..","static")
-#logger.info(os.path.isfolder(templatesFolder))
-#logger.info(os.path.isfile(staticFolder))
+logger = logging.getLogger('SimpleUI')
 
 #Create SimpleUI configuration file path
 simpleuiConfigPath = os.path.join(path, "simpleui.ini")
@@ -158,9 +154,6 @@ webbrowser.open_new(url)
 
 # Initialize Flask microframework
 app = Flask(__name__)
-            # app = Flask(__name__,
-            #             static_folder=staticFolder,
-            #             template_folder=templatesFolder)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -178,12 +171,9 @@ def simpleui():
         nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
 
         #Return HTML/Javascript template
-        try:
-            return render_template('index.html',
-                                   callsign=callsign,
-                                   nodeid=nodeid)
-        except:
-            logger.error(str(os.getcwd()))
+        return render_template('index.html',
+                               callsign=callsign,
+                               nodeid=nodeid)
 
     if request.method == "POST":
         # Setup a Faraday IO object
