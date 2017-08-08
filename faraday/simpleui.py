@@ -47,6 +47,11 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
 
 logger = logging.getLogger('SimpleUI')
 
+templatesFolder = os.path.join(path, "..","..","templates")
+staticFolder = os.path.join(path, "..","..","static")
+#logger.info(os.path.isfolder(templatesFolder))
+#logger.info(os.path.isfile(staticFolder))
+
 #Create SimpleUI configuration file path
 simpleuiConfigPath = os.path.join(path, "simpleui.ini")
 logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
@@ -152,9 +157,10 @@ webbrowser.open_new(url)
 
 
 # Initialize Flask microframework
-app = Flask(__name__,
-            static_folder='../Applications/SimpleUI/static',
-            template_folder='../Applications/SimpleUI/templates')
+app = Flask(__name__)
+            # app = Flask(__name__,
+            #             static_folder=staticFolder,
+            #             template_folder=templatesFolder)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -172,9 +178,12 @@ def simpleui():
         nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
 
         #Return HTML/Javascript template
-        return render_template('index.html',
-                               callsign=callsign,
-                               nodeid=nodeid)
+        try:
+            return render_template('index.html',
+                                   callsign=callsign,
+                                   nodeid=nodeid)
+        except:
+            logger.error(str(os.getcwd()))
 
     if request.method == "POST":
         # Setup a Faraday IO object
