@@ -14,7 +14,7 @@ Additionally we need to initialize the faraday radio configuration file. This is
 ![Device Configuration Initialization](images/deviceconfiguration-init.jpg)
 
 ## Configuring Device Configuration
-Now we need to tell the `faraday-deviceconfiguration` program where to find Proxy and what to configure the radio with. At this time the resulting command can be long so please be careful. Here are the configuration options:
+Now we need to tell the `faraday-deviceconfiguration` program where to find Proxy and what to configure the radio with. At this time the resulting command can be long so please be careful. Here are the configuration options shown when running `faraday-deviceconfiguration --help`:
 
 ![Device Configuration options](images/deviceconfiguration-options.jpg)
 
@@ -45,7 +45,7 @@ An example configuration command would be:
  faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
  ```
 
-Please remember if you already configured a setting it does not need to be set again in future executions of `faraday-deviceconfiguration`. You may check the current Faraday configuration file by running `--faradayconfig` which will print out the file contents.
+Please remember if you already configured a setting it does not need to be set again in future executions of `faraday-deviceconfiguration --start`. You may check the current Faraday configuration file by running `--faradayconfig` which will print out the file contents. You always need to add `--start` if you want the server to start up.
 
 ## Programming Faraday
 You're almost there! One more step. We've configured the `faraday-deviceconfiguration` server and told it what values to program the radio with. Now it's time to actually program Faraday. We do this by interfacing the `faraday-deviceconfiguration` API to "kick" off the programming using a script provided with faraday called `faraday-simpleconfig`.
@@ -53,14 +53,16 @@ You're almost there! One more step. We've configured the `faraday-deviceconfigur
 ### Reading the CC430 FLASH Configuration
 We've added a useful feature to SimpleConfig which lets you query Faraday without programming it. Therefore you can see what the current FLASH configuration is. You must have `faraday-proxy` and `faraday-deviceconfiguration` running to perform this action.
 
-* `faraday-simpleconfig --read`
+* `faraday-simpleconfig --read --start`
 
 ![SimpleConfig read](images/simpleconfig.jpg)
+
+The `--read` command doesn't allow the script to program Faraday but does allow it to run the end of programming query to read the on-board FLASH memory of the CC430.
 
 ### Programming CC430 FLASH configuration
 Now the time has come to actually program Faraday. To do so you simply run SimpleConfig which results in Device Configuration sending a POST request to Proxy to program the radio. After waiting five seconds, SimpleConfig will also send a GET request to query the contents of the CC430 FLASH memory helping confirm the intended settings.
 
-* `faraday-simpleconfig`
+* `faraday-simpleconfig --start`
 
 ## Proxy Considerations
 Once you configure your hardware it will report as the new callsign-nodeid. Proxy will operate regardless of the reported station credentials. We recommended keeping Proxy and all relevant Proxy configurations updated with the latest station credentials. This means your proxy will run just fine after programming even if callsign-nodeid are different.

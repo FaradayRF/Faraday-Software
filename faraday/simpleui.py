@@ -38,6 +38,21 @@ faradayHelper = helper.Helper("SimpleUI")
 logger = faradayHelper.getLogger()
 
 #Create SimpleUI configuration object
+for location in os.curdir, relpath1, relpath2, setuppath, userpath:
+    try:
+        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
+        path = location
+        break
+    except ConfigParser.NoSectionError:
+        pass
+
+
+logger = logging.getLogger('SimpleUI')
+
+#Create SimpleUI configuration file path
+simpleuiConfigPath = os.path.join(path, "simpleui.ini")
+logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
+
 simpleuiConfig = ConfigParser.RawConfigParser()
 
 # Command line input
@@ -132,23 +147,7 @@ try:
     port = simpleuiConfig.get("FLASK", "PORT")
 
 except ConfigParser.Error as e:
-    # Configuration file likely not present so exit
     logger.error(e)
-    logger.error("Try running --init-config")
-    sys.exit(1)
-
-# Check for properly configured callsign + nodeid before starting browser
-try:
-    callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
-    nodeid = int(simpleuiConfig.getint("SIMPLEUI", "NODEID"))
-
-except ValueError as e:
-    logger.error(e)
-    logger.error("Use --nodeid to set Faraday nodeid")
-    sys.exit(1)
-
-if callsign == "REPLACEME":
-    logger.error("Use --callsign to set Faraday callsign")
     sys.exit(1)
 
 url = "http://" + host + ":" + port
@@ -156,10 +155,7 @@ logging.debug("SimpleUI URL: " + url)
 webbrowser.open_new(url)
 
 # Initialize Flask microframework
-# This is hardcoded and needs to be setup correctly with pbr in setup.cfg!
-app = Flask(__name__,
-            static_folder='../Applications/SimpleUI/static',
-            template_folder='../Applications/SimpleUI/templates')
+app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -173,13 +169,26 @@ def simpleui():
     """
     if request.method == "GET":
         # Obtain telemetry station from config file
-        callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
-        nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+        try:
+            callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
+            nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+            if callsign == "REPLACEME":
+                raise ConfigParser.Error("Please configure SimpleUI --callsign and --nodeid")
 
-        #Return HTML/Javascript template
-        return render_template('index.html',
-                               callsign=callsign,
-                               nodeid=nodeid)
+        except ConfigParser.Error as e:
+            logger.error(e)
+            return('')
+
+        except ValueError as e:
+            logger.error(e)
+            logger.error("Please configure SimpleUI --callsign and --nodeid")
+            return('')
+
+        else:
+            #Return HTML/Javascript template
+            return render_template('index.html',
+                                   callsign=callsign,
+                                   nodeid=nodeid)
 
     if request.method == "POST":
         # Setup a Faraday IO object
