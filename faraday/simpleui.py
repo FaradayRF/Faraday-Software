@@ -37,23 +37,9 @@ configFile = "simpleui.ini"
 faradayHelper = helper.Helper("SimpleUI")
 logger = faradayHelper.getLogger()
 
-#Create SimpleUI configuration object
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-
-logger = logging.getLogger('SimpleUI')
-
-#Create SimpleUI configuration file path
-simpleuiConfigPath = os.path.join(path, "simpleui.ini")
-logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
-
 simpleuiConfig = ConfigParser.RawConfigParser()
+simpleuiConfig.read(faradayHelper.path)
+
 
 # Command line input
 parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
