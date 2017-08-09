@@ -45,6 +45,7 @@ for location in os.curdir, relpath1, relpath2, setuppath, userpath:
     except ConfigParser.NoSectionError:
         pass
 
+
 logger = logging.getLogger('SimpleUI')
 
 #Create SimpleUI configuration file path
@@ -142,8 +143,14 @@ if not args.start:
     logger.warning("--start option not present, exiting SimpleUI server!")
     sys.exit(0)
 
-host = simpleuiConfig.get("FLASK", "HOST")
-port = simpleuiConfig.get("FLASK", "PORT")
+try:
+    host = simpleuiConfig.get("FLASK", "HOST")
+    port = simpleuiConfig.get("FLASK", "PORT")
+
+except ConfigParser.Error as e:
+    logger.error(e)
+    sys.exit(1)
+
 url = "http://" + host + ":" + port
 
 logging.debug("SimpleUI URL: " + url)
@@ -152,9 +159,7 @@ webbrowser.open_new(url)
 
 
 # Initialize Flask microframework
-app = Flask(__name__,
-            static_folder='../Applications/SimpleUI/static',
-            template_folder='../Applications/SimpleUI/templates')
+app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -168,13 +173,26 @@ def simpleui():
     """
     if request.method == "GET":
         # Obtain telemetry station from config file
-        callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
-        nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+        try:
+            callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
+            nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+            if callsign == "REPLACEME":
+                raise ConfigParser.Error("Please configure SimpleUI --callsign and --nodeid")
 
-        #Return HTML/Javascript template
-        return render_template('index.html',
-                               callsign=callsign,
-                               nodeid=nodeid)
+        except ConfigParser.Error as e:
+            logger.error(e)
+            return('')
+
+        except ValueError as e:
+            logger.error(e)
+            logger.error("Please configure SimpleUI --callsign and --nodeid")
+            return('')
+
+        else:
+            #Return HTML/Javascript template
+            return render_template('index.html',
+                                   callsign=callsign,
+                                   nodeid=nodeid)
 
     if request.method == "POST":
         # Setup a Faraday IO object
