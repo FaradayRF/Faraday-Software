@@ -27,32 +27,17 @@ from flask import request
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
 from faraday.proxyio import deviceconfig
+from classes import helper
+
+configTruthFile = "deviceconfiguration.sample.ini"
+configFile = "deviceconfiguration.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
+faradayHelper = helper.Helper("DeviceConfiguration")
+logger = faradayHelper.getLogger()
 
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('DeviceConfiguration')
-
-# Create Device Configuration configuration file path
-deviceConfigurationConfigPath = os.path.join(path, "deviceconfiguration.ini")
-faradayConfigPath = os.path.join(path, "faraday_config.ini")
-logger.debug('deviceconfiguration.ini PATH: ' + deviceConfigurationConfigPath)
-logger.debug('faraday_config.ini PATH: ' + faradayConfigPath)
-
-# Load Device Configuration Configuration from deviceconfiguration.ini file
-deviceConfig = ConfigParser.RawConfigParser()
+deviceConfigurationConfig = ConfigParser.RawConfigParser()
+deviceConfigurationConfig.read(faradayHelper.path)
 
 # Command line input
 parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
@@ -117,7 +102,7 @@ def initializeDeviceConfigurationConfig():
     '''
 
     logger.info("Initializing Device Configuration")
-    shutil.copy(os.path.join(path, "deviceconfiguration.sample.ini"), os.path.join(path, "deviceconfiguration.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, "deviceconfiguration.sample.ini"), os.path.join(faradayHelper.path, "deviceconfiguration.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -130,7 +115,7 @@ def initializeFaradayConfig():
     '''
 
     logger.info("Initializing Faraday Configuration")
-    shutil.copy(os.path.join(path, "faraday_config.sample.ini"), os.path.join(path, "faraday_config.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, "faraday_config.sample.ini"), os.path.join(faradayHelper.path, "faraday_config.ini"))
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -144,7 +129,7 @@ def programFaraday(deviceConfigurationConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "deviceconfiguration.ini"))
+    config.read(os.path.join(faradayHelper.path, "deviceconfiguration.ini"))
 
     # Variables
     local_device_callsign = config.get("DEVICES", "CALLSIGN")
@@ -192,17 +177,16 @@ def eightBitListToInt(list):
         return int(''.join(str(e) for e in list), 2)
 
 
-def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath):
+def configureDeviceConfiguration(args, faradayConfigPath):
     '''
     Configure device configuration configuration file from command line
 
     :param args: argparse arguments
-    :param deviceConfigurationConfigPath: Path to deviceconfiguration.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(deviceConfigurationConfigPath)
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     fconfig = ConfigParser.RawConfigParser()
     fconfig.read(faradayConfigPath)
@@ -376,7 +360,8 @@ def configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayCon
         fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.rfinterval)
 
     # Save device configuration
-    with open(deviceConfigurationConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
     # Save Faraday configuration
@@ -394,26 +379,23 @@ if args.faradayconfig:
     displayConfig(faradayConfigPath)
 
 # Check if configuration file is present
-if not os.path.isfile(deviceConfigurationConfigPath):
-    logger.error("Please initialize device configuration with \'--init-config\' option")
-    sys.exit(0)
+# if not os.path.isfile(deviceConfigurationConfigPath):
+#     logger.error("Please initialize device configuration with \'--init-config\' option")
+#     sys.exit(0)
 
 # Check if configuration file is present
-faradayConfigPath = os.path.join(path, "faraday_config.ini")
+faradayConfigPath = os.path.join(faradayHelper.path, "faraday_config.ini")
 if not os.path.isfile(faradayConfigPath):
     logger.error("Please initialize Faraday configuration with \'--init-faraday-config\' option")
     sys.exit(0)
 
 # Configure configuration file
-configureDeviceConfiguration(args, deviceConfigurationConfigPath, faradayConfigPath)
+configureDeviceConfiguration(args, faradayConfigPath)
 
 # Check for --start option and exit if not present
 if not args.start:
     logger.warning("--start option not present, exiting Device Configuration server!")
     sys.exit(0)
-
-# Load configuration from deviceconfiguration.ini file
-deviceConfig.read(deviceConfigurationConfigPath)
 
 # Global Constants
 UART_PORT_APP_COMMAND = 2
@@ -445,7 +427,7 @@ def unitconfig():
             nodeid = request.args.get("nodeid", "%")
 
             # Read Faraday device configuration file
-            faradayConfigPath = os.path.join(path, "faraday_config.ini")
+            faradayConfigPath = os.path.join(faradayHelper.path, "faraday_config.ini")
             logger.debug('faraday_config.ini PATH: ' + faradayConfigPath)
 
             # Read configuration file
@@ -597,8 +579,8 @@ def main():
     logger.info('Starting deviceconfiguration server')
 
     # Start the flask server
-    deviceConfigHost = deviceConfig.get("FLASK", "HOST")
-    deviceConfigPort = deviceConfig.getint("FLASK", "PORT")
+    deviceConfigHost = deviceConfigurationConfig.get("FLASK", "HOST")
+    deviceConfigPort = deviceConfigurationConfig.getint("FLASK", "PORT")
 
     app.run(host=deviceConfigHost, port=deviceConfigPort, threaded=True)
 
