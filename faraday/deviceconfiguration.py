@@ -28,6 +28,7 @@ from faraday.proxyio import faradaycommands
 from faraday.proxyio import deviceconfig
 from classes import helper
 
+# Global Filenames
 configTruthFile = "deviceconfiguration.sample.ini"
 configFile = "deviceconfiguration.ini"
 faradayTruthFile = "faraday_config.sample.ini"
@@ -106,9 +107,7 @@ def initializeDeviceConfigurationConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Device Configuration")
-    shutil.copy(os.path.join(faradayHelper.path, configTruthFile), deviceConfigPath)
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
@@ -119,9 +118,7 @@ def initializeFaradayConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Faraday Configuration")
-    shutil.copy(os.path.join(faradayHelper.path, faradayTruthFile), os.path.join(faradayHelper.path, faradayFile))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(faradayTruthFile, faradayFile)
     sys.exit(0)
 
 
