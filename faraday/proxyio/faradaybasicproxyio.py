@@ -110,7 +110,7 @@ class proxyio(object):
         The example below retrieves two data packets waiting from the "Telemetry" UART port (Port 5 in this example).
 
         >>> faraday_1 = faradaybasicproxyio.proxyio()
-        >>> faraday_1.GET("KB1LQD", 1, FARADAY_TELEMETRY_UART_PORT)
+        >>> faraday_1.GET(host, "KB1LQD", 1, FARADAY_TELEMETRY_UART_PORT)
         [{u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQwME4GBzkpFhIACeAHMzM1Mi40MjAxTjExODIyLjYwNDhXMzQuNjIwMDBNMC4yNzAyMC45MgAXYAjdCKoICQe8B/sIFgAAAB4K/gAAHCAAAAAARgYHS0IxTFFEAAAABgcTKRYSABZf',
           u'port': 5},
          {u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/',
@@ -118,13 +118,13 @@ class proxyio(object):
         """
 
         # here is where I want to use a value passed to the function for a IP/hostname
-        #Should also change to better .format string generation
-        url = 'http://' + host + ':' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
+        url = 'http://{0}:{1}/?port={2}&callsign={3}&nodeid={4}'.format(host, self.FLASK_PORT, uart_service_number, local_device_callsign, local_device_id)
 
         # If limit is provided, check that it's positive and add to url
+        # TODO: Does this actually do much?
         if limit is not None:
             if int(limit) >= 0:
-                url = url + "&limit=" + str(limit)
+                url = "{0}&limit={1}".format(url,str(limit))
 
         try:
             response = requests.get(url)  #calling IP address directly is much faster than localhost lookup
