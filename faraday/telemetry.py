@@ -247,6 +247,7 @@ def telemetry_worker(config):
         try:
             callsign = config.get("TELEMETRY", "UNIT" + str(num) + "CALL").upper()
             nodeid = config.get("TELEMETRY", "UNIT" + str(num) + "ID")
+            proxyHost = str(config.get("TELEMETRY", "proxyhost"))
 
         except ConfigParser.Error as e:
             #  Error reading in configs so get stuck in infinite loop indicating problem
@@ -263,7 +264,7 @@ def telemetry_worker(config):
         for radio in range(count):
             callsign = stations["UNIT" + str(num) + "CALL"]
             nodeid = stations["UNIT" + str(num) + "ID"]
-            data = proxy.GET(str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
+            data = proxy.GET(proxyHost, str(callsign), str(nodeid), int(proxy.TELEMETRY_PORT))
 
             if type(data) is dict:
                 #  A dict means something is wrong with GET, print error JSON

@@ -83,16 +83,18 @@ class proxyio(object):
             payload = {'data': [b64_data]}
 
             #POST data to UART service port
+            # here is where I want to use a value passed to the function for a IP/hostname
             status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json=payload)  #Sends Base64 config flash update packet to Faraday
 
             #Return
             return status
 
-    def GET(self, local_device_callsign, local_device_id, uart_service_number, limit=None):
+    def GET(self, host, local_device_callsign, local_device_id, uart_service_number, limit=None):
         """
         This function returns a dictionary of all data packets waiting a Flask API interface queue as specified by the supplied
         UART Port (Service Number).
 
+        :param host: Hostname or IP address of server to query
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
@@ -114,7 +116,10 @@ class proxyio(object):
          {u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/',
           u'port': 5}]
         """
-        url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
+
+        # here is where I want to use a value passed to the function for a IP/hostname
+        #Should also change to better .format string generation
+        url = 'http://' + host + ':' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
 
         # If limit is provided, check that it's positive and add to url
         if limit is not None:
