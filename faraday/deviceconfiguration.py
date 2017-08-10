@@ -17,7 +17,6 @@ import json
 import ConfigParser
 import base64
 import argparse
-import shutil
 import requests
 
 from flask import Flask
