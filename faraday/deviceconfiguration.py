@@ -11,7 +11,6 @@
 #-------------------------------------------------------------------------------
 
 import time
-import logging.config
 import os
 import sys
 import json
@@ -368,7 +367,6 @@ def configureDeviceConfiguration(args, faradayConfigPath):
     # Save device configuration
     with open(deviceConfigPath, 'wb') as configfile:
         config.write(configfile)
-
 
     # Save Faraday configuration
     with open(faradayConfigPath, 'wb') as configfile:
