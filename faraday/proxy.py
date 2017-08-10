@@ -13,7 +13,7 @@ import base64
 from collections import deque
 import ConfigParser
 import json
-import logging.config
+import logging
 import os
 import sqlite3
 import sys
@@ -28,33 +28,17 @@ from flask import Flask
 from flask import request
 
 from faraday.uart import layer_4_service
+from classes import helper
+
+configTruthFile = "proxy.sample.ini"
+configFile = "proxy.ini"
 
 # Start logging after importing modules
-
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
-
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('Proxy')
-
-# Set werkzeug logging level
+faradayHelper = helper.Helper("Proxy")
+logger = faradayHelper.getLogger()
 
 werkzeuglog = logging.getLogger('werkzeug')
 werkzeuglog.setLevel(logging.ERROR)
-
-#Create Proxy configuration file path
-proxyConfigPath = os.path.join(path, "proxy.ini")
-logger.debug('Proxy.ini PATH: ' + proxyConfigPath)
 
 # Command line input
 parser = argparse.ArgumentParser(description='Proxy application interfaces a Faraday radio over USB UART')
@@ -99,9 +83,7 @@ def initializeProxyConfig():
     :return: None, exits program
     '''
 
-    logger.debug("Initializing Proxy")
-    shutil.copy(os.path.join(path, "proxy.sample.ini"), os.path.join(path, "proxy.ini"))
-    logger.debug("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
@@ -115,7 +97,7 @@ def initializeProxyLog(config):
 
     logger.info("Initializing Proxy Log File")
     log = config.get("DATABASE", "filename")
-    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
+    logpath = os.path.join(faradayHelper.userPath, 'lib', log)
     os.remove(logpath)
     logger.info("Log initialization complete")
 
@@ -130,10 +112,17 @@ def saveProxyLog(name, config):
     '''
 
     log = config.get("DATABASE", "filename")
-    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
-    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
-    shutil.move(oldpath, newpath)
-    sys.exit(0)
+    oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
+    newpath = os.path.join(faradayHelper.userPath, 'lib', name)
+
+    try:
+        shutil.move(oldpath, newpath)
+        sys.exit(0)
+
+    except shutil.Error as e:
+        logger.error(e)
+    except IOError as e:
+        logger.error(e)
 
 
 def showProxyLogs():
@@ -144,24 +133,23 @@ def showProxyLogs():
     '''
 
     logger.info("The following logs exist for Proxy...")
-    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    path = os.path.join(faradayHelper.userPath, 'lib')
     for file in os.listdir(path):
         if file.endswith(".db"):
             logger.info(file)
     sys.exit(0)
 
 
-def configureProxy(args, proxyConfigPath):
+def configureProxy(args):
     '''
     Configure proxy configuration file from command line
 
     :param args: argparse arguments
-    :param proxyConfigPath: Path to proxy.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "proxy.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -217,7 +205,9 @@ def configureProxy(args, proxyConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
-    with open(proxyConfigPath, 'wb') as configfile:
+    # Open proxy.ini and save configuration
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -227,7 +217,7 @@ if args.init:
 
 # Attempt to configure proxy
 try:
-    configureProxy(args, proxyConfigPath)
+    configureProxy(args)
 
 except ConfigParser.NoSectionError as e:
     # Possible that no configuration file found
@@ -238,7 +228,7 @@ except ConfigParser.NoSectionError as e:
 
 # Load Proxy Configuration from proxy.ini file
 proxyConfig = ConfigParser.RawConfigParser()
-proxyConfig.read(proxyConfigPath)
+proxyConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Initialize Proxy log database
 if args.initlog:
@@ -928,19 +918,19 @@ def initDB():
     """
     # make directory tree, necessary?
     try:
-        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+        os.makedirs(os.path.join(faradayHelper.userPath, 'lib'))
     except:
         pass
 
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Proxy Database: " + dbPath)
         dbFilename = dbPath
 
         dbSchema = proxyConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(path, dbSchema)
+        dbSchema = os.path.join(faradayHelper.path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -977,7 +967,7 @@ def openTestDB():
     # Obtain configuration file names
     try:
         testDbFilename = proxyConfig.get("TESTDATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', testDbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', testDbFilename)
         logger.debug("Proxy Test Database: " + dbPath)
         testDbFilename = dbPath
 
@@ -1036,7 +1026,7 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = proxyConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Proxy Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 

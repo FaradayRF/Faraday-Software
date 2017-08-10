@@ -17,7 +17,6 @@ import ConfigParser
 import os
 import sys
 import argparse
-import shutil
 import webbrowser
 
 from flask import Flask
@@ -29,30 +28,18 @@ from flask import redirect
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
 from faraday.proxyio import gpioallocations
+from classes import helper
+
+configTruthFile = "simpleui.sample.ini"
+configFile = "simpleui.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
-
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-
-logger = logging.getLogger('SimpleUI')
-
-#Create SimpleUI configuration file path
-simpleuiConfigPath = os.path.join(path, "simpleui.ini")
-logger.debug('simpleui.ini PATH: ' + simpleuiConfigPath)
+faradayHelper = helper.Helper("SimpleUI")
+logger = faradayHelper.getLogger()
 
 simpleuiConfig = ConfigParser.RawConfigParser()
+simpleuiConfig.read(faradayHelper.path)
+
 
 # Command line input
 parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
@@ -82,23 +69,20 @@ def initializeSimpleUIConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing SimpleUI")
-    shutil.copy(os.path.join(path, "simpleui.sample.ini"), os.path.join(path, "simpleui.ini"))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
-def configureSimpleUI(args, simpleuiConfigPath):
+def configureSimpleUI(args):
     '''
     Configure SimpleUI configuration file from command line
 
     :param args: argparse arguments
-    :param SimpleUIConfigPath: Path to simpleui.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "simpleui.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     if args.callsign is not None:
         config.set('SIMPLEUI', 'CALLSIGN', args.callsign)
@@ -125,7 +109,8 @@ def configureSimpleUI(args, simpleuiConfigPath):
     if args.telemetryport is not None:
         config.set('TELEMETRY', 'PORT', args.telemetryport)
 
-    with open(simpleuiConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -133,10 +118,10 @@ def configureSimpleUI(args, simpleuiConfigPath):
 # Initialize and configure SimpleUI
 if args.init:
     initializeSimpleUIConfig()
-configureSimpleUI(args, simpleuiConfigPath)
+configureSimpleUI(args)
 
 # Read in configuration file settings
-simpleuiConfig.read(simpleuiConfigPath)
+simpleuiConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Check for --start option and exit if not present
 if not args.start:
@@ -152,11 +137,8 @@ except ConfigParser.Error as e:
     sys.exit(1)
 
 url = "http://" + host + ":" + port
-
 logging.debug("SimpleUI URL: " + url)
-
 webbrowser.open_new(url)
-
 
 # Initialize Flask microframework
 app = Flask(__name__)

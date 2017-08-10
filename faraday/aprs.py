@@ -9,7 +9,6 @@
 # Licence:     GPLv3
 #-------------------------------------------------------------------------------
 
-import logging.config
 import threading
 import ConfigParser
 import socket
@@ -18,31 +17,19 @@ import os
 from time import sleep
 import sys
 import argparse
-import shutil
+
+from classes import helper
+
+configTruthFile = "aprs.sample.ini"
+configFile = "aprs.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
+faradayHelper = helper.Helper("APRS")
+logger = faradayHelper.getLogger()
 
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('APRS')
-
-#Create APRS configuration file path
-aprsConfigPath = os.path.join(path, "aprs.ini")
-logger.debug('aprs.ini PATH: ' + aprsConfigPath)
 
 aprsConfig = ConfigParser.RawConfigParser()
-aprsConfig.read(aprsConfigPath)
+aprsConfig.read(faradayHelper.path)
 
 # Command line input
 parser = argparse.ArgumentParser(description='APRS application queries Faraday telemetry server and uploads data to APRS-IS')
@@ -67,23 +54,20 @@ def initializeAPRSConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing APRS")
-    shutil.copy(os.path.join(path, "aprs.sample.ini"), os.path.join(path, "aprs.ini"))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
-def configureAPRS(args, aprsConfigPath):
+def configureAPRS(args):
     '''
     Configure aprs configuration file from command line
 
     :param args: argparse arguments
-    :param aprsConfigPath: Path to aprs.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "aprs.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     if args.callsign is not None:
         config.set('APRSIS', 'CALLSIGN', args.callsign)
@@ -100,7 +84,8 @@ def configureAPRS(args, aprsConfigPath):
     if args.altcomment is not None:
         config.set('APRS', 'ALTCOMMENT', args.altcomment[:43])
 
-    with open(aprsConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -143,10 +128,10 @@ def aprs_worker(config, sock):
 # Initialize and configure aprs
 if args.init:
     initializeAPRSConfig()
-configureAPRS(args, aprsConfigPath)
+configureAPRS(args)
 
 # Read in APRS configuration parameters
-aprsFile = aprsConfig.read(aprsConfigPath)
+aprsFile = aprsConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Check for --start option and exit if not present
 if not args.start:

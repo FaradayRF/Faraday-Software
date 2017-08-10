@@ -10,7 +10,6 @@
 #-------------------------------------------------------------------------------
 
 import time
-import logging.config
 import threading
 import ConfigParser
 from collections import deque
@@ -27,27 +26,14 @@ from flask_cors import CORS
 
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import telemetryparser
+from classes import helper
+
+configTruthFile = "telemetry.sample.ini"
+configFile = "telemetry.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
-
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
-
-logger = logging.getLogger('Telemetry')
-
-# Create Telemery configuration file path
-telemetryConfigPath = os.path.join(path, "telemetry.ini")
-logger.debug('telemetry.ini PATH: ' + telemetryConfigPath)
+faradayHelper = helper.Helper("Telemetry")
+logger = faradayHelper.getLogger()
 
 # Load Telemetry Configuration from telemetry.ini file
 telemetryConfig = ConfigParser.RawConfigParser()
@@ -85,9 +71,7 @@ def initializeTelemetryConfig():
     :return: None, exits program
     '''
 
-    logger.info("Initializing Telemetry")
-    shutil.copy(os.path.join(path, "telemetry.sample.ini"), os.path.join(path, "telemetry.ini"))
-    logger.info("Initialization complete")
+    faradayHelper.initializeConfig(configTruthFile, configFile)
     sys.exit(0)
 
 
@@ -101,9 +85,14 @@ def initializeTelemetryLog(config):
 
     logger.info("Initializing Telemetry Log File")
     log = config.get("DATABASE", "filename")
-    logpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
-    os.remove(logpath)
-    logger.info("Log initialization complete")
+    logpath = os.path.join(faradayHelper.userPath, 'lib', log)
+
+    try:
+        os.remove(logpath)
+        logger.info("Log initialization complete")
+
+    except OSError as e:
+        logger.error(e)
 
 
 def saveTelemetryLog(name, config):
@@ -116,10 +105,16 @@ def saveTelemetryLog(name, config):
     '''
 
     log = config.get("DATABASE", "filename")
-    oldpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', log)
-    newpath = os.path.join(os.path.expanduser('~'), '.faraday', 'lib', name)
-    shutil.move(oldpath, newpath)
-    sys.exit(0)
+    oldpath = os.path.join(faradayHelper.userPath, 'lib', log)
+    newpath = os.path.join(faradayHelper.userPath, 'lib', name)
+    try:
+        shutil.move(oldpath, newpath)
+        sys.exit(0)
+
+    except shutil.Error as e:
+        logger.error(e)
+    except IOError as e:
+        logger.error(e)
 
 
 def showTelemetryLogs():
@@ -130,24 +125,23 @@ def showTelemetryLogs():
     '''
 
     logger.info("The following logs exist for Telemetry...")
-    path = os.path.join(os.path.expanduser('~'), '.faraday', 'lib')
+    path = os.path.join(faradayHelper.userPath, 'lib')
     for file in os.listdir(path):
         if file.endswith(".db"):
             logger.info(file)
     sys.exit(0)
 
 
-def configureTelemetry(args, telemetryConfigPath):
+def configureTelemetry(args):
     '''
     Configure telemetry configuration file from command line
 
     :param args: argparse arguments
-    :param telemetryConfigPath: Path to telemetry.ini file
     :return: None
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(path, "telemetry.ini"))
+    config.read(os.path.join(faradayHelper.path, configFile))
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
@@ -176,7 +170,8 @@ def configureTelemetry(args, telemetryConfigPath):
     if args.flaskport is not None:
         config.set('FLASK', 'port', args.flaskport)
 
-    with open(telemetryConfigPath, 'wb') as configfile:
+    filename = os.path.join(faradayHelper.path, configFile)
+    with open(filename, 'wb') as configfile:
         config.write(configfile)
 
 
@@ -184,10 +179,10 @@ def configureTelemetry(args, telemetryConfigPath):
 # Initialize and configure telemetry
 if args.init:
     initializeTelemetryConfig()
-configureTelemetry(args, telemetryConfigPath)
+configureTelemetry(args)
 
 # Read in telemetry configuration parameters
-telemetryFile = telemetryConfig.read(telemetryConfigPath)
+telemetryFile = telemetryConfig.read(os.path.join(faradayHelper.path, configFile))
 
 # Initialize Telemetry log database
 if args.initlog:
@@ -604,19 +599,19 @@ def initDB():
 
     # make directory tree, necessary?
     try:
-        os.makedirs(os.path.join(os.path.expanduser('~'), '.faraday.', 'lib'))
+        os.makedirs(os.path.join(faradayHelper.userPath, 'lib'))
     except:
         pass
 
     # Obtain configuration file names, always place at sys.prefix
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = dbPath
 
         dbSchema = telemetryConfig.get("DATABASE", "SCHEMANAME")
-        dbSchema = os.path.join(path, dbSchema)
+        dbSchema = os.path.join(faradayHelper.path, dbSchema)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
@@ -715,7 +710,7 @@ def sqlInsert(data):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         db = os.path.join(dbPath)
 
@@ -829,7 +824,7 @@ def queryDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 
@@ -936,7 +931,7 @@ def queryStationsDb(parameters):
     # Read in name of database
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(os.path.expanduser('~'), '.faraday.', 'lib', dbFilename)
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 

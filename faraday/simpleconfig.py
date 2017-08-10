@@ -17,7 +17,6 @@ import base64
 import time
 import ConfigParser
 import json
-import logging.config
 import argparse
 
 
@@ -25,28 +24,21 @@ import argparse
 from faraday.proxyio import faradaybasicproxyio
 from faraday.proxyio import faradaycommands
 from faraday.proxyio import telemetryparser
+from classes import helper
+
+# Global Filenames
+configTruthFile = "deviceconfiguration.sample.ini"
+configFile = "deviceconfiguration.ini"
 
 # Start logging after importing modules
-relpath1 = os.path.join('etc', 'faraday')
-relpath2 = os.path.join('..', 'etc', 'faraday')
-setuppath = os.path.join(sys.prefix, 'etc', 'faraday')
-userpath = os.path.join(os.path.expanduser('~'), '.faraday')
-path = ''
+faradayHelper = helper.Helper("SimpleConfig")
+logger = faradayHelper.getLogger()
 
-for location in os.curdir, relpath1, relpath2, setuppath, userpath:
-    try:
-        logging.config.fileConfig(os.path.join(location, "loggingConfig.ini"))
-        path = location
-        break
-    except ConfigParser.NoSectionError:
-        pass
+# Create configuration paths
+deviceConfigPath = os.path.join(faradayHelper.path, configFile)
 
-logger = logging.getLogger('SimpleConfig')
-
-#Open configuration INI
-config = ConfigParser.RawConfigParser()
-filename = os.path.abspath(os.path.join(path, "deviceconfiguration.ini"))
-config.read(filename)
+deviceConfigurationConfig = ConfigParser.RawConfigParser()
+deviceConfigurationConfig.read(deviceConfigPath)
 
 # Add command line options
 parser = argparse.ArgumentParser(description='SimpleConfig sends a request to faraday-deviceconfiguration to initiate a POST or GET command resulting in programming a Faraday radio and/or reading its FLASH memory configuration')
@@ -63,12 +55,12 @@ if not args.start:
     sys.exit(0)
 
 #Variables
-local_device_callsign = config.get("DEVICES", "CALLSIGN")
-local_device_node_id = config.get("DEVICES", "NODEID")
+local_device_callsign = deviceConfigurationConfig.get("DEVICES", "CALLSIGN")
+local_device_node_id = deviceConfigurationConfig.get("DEVICES", "NODEID")
 local_device_callsign = str(local_device_callsign).upper()
 
-hostname = config.get("FLASK", "HOST")
-port = config.get("FLASK", "PORT")
+hostname = deviceConfigurationConfig.get("FLASK", "HOST")
+port = deviceConfigurationConfig.get("FLASK", "PORT")
 
 #Start the proxy server after configuring the configuration file correctly
 #Setup a Faraday IO object
