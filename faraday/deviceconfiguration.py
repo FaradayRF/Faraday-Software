@@ -31,13 +31,19 @@ from classes import helper
 
 configTruthFile = "deviceconfiguration.sample.ini"
 configFile = "deviceconfiguration.ini"
+faradayTruthFile = "faraday_config.sample.ini"
+faradayFile = "faraday_config.ini"
 
 # Start logging after importing modules
 faradayHelper = helper.Helper("DeviceConfiguration")
 logger = faradayHelper.getLogger()
 
+# Create configuration paths
+deviceConfigPath = os.path.join(faradayHelper.path, configFile)
+faradayConfigPath = os.path.join(faradayHelper.path, faradayFile)
+
 deviceConfigurationConfig = ConfigParser.RawConfigParser()
-deviceConfigurationConfig.read(faradayHelper.path)
+deviceConfigurationConfig.read(deviceConfigPath)
 
 # Command line input
 parser = argparse.ArgumentParser(description='Device Configuration application provides a Flask server to program Faraday radios via an API')
@@ -102,7 +108,7 @@ def initializeDeviceConfigurationConfig():
     '''
 
     logger.info("Initializing Device Configuration")
-    shutil.copy(os.path.join(faradayHelper.path, "deviceconfiguration.sample.ini"), os.path.join(faradayHelper.path, "deviceconfiguration.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, configTruthFile), deviceConfigPath)
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -115,7 +121,7 @@ def initializeFaradayConfig():
     '''
 
     logger.info("Initializing Faraday Configuration")
-    shutil.copy(os.path.join(faradayHelper.path, "faraday_config.sample.ini"), os.path.join(faradayHelper.path, "faraday_config.ini"))
+    shutil.copy(os.path.join(faradayHelper.path, faradayTruthFile), os.path.join(faradayHelper.path, faradayFile))
     logger.info("Initialization complete")
     sys.exit(0)
 
@@ -129,7 +135,7 @@ def programFaraday(deviceConfigurationConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(faradayHelper.path, "deviceconfiguration.ini"))
+    config.read(deviceConfigPath)
 
     # Variables
     local_device_callsign = config.get("DEVICES", "CALLSIGN")
@@ -186,7 +192,7 @@ def configureDeviceConfiguration(args, faradayConfigPath):
     '''
 
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(faradayHelper.path, configFile))
+    config.read(deviceConfigPath)
 
     fconfig = ConfigParser.RawConfigParser()
     fconfig.read(faradayConfigPath)
@@ -360,9 +366,9 @@ def configureDeviceConfiguration(args, faradayConfigPath):
         fconfig.set('TELEMETRY', 'telemetry_default_rf_interval', args.rfinterval)
 
     # Save device configuration
-    filename = os.path.join(faradayHelper.path, configFile)
-    with open(filename, 'wb') as configfile:
+    with open(deviceConfigPath, 'wb') as configfile:
         config.write(configfile)
+
 
     # Save Faraday configuration
     with open(faradayConfigPath, 'wb') as configfile:
@@ -379,12 +385,11 @@ if args.faradayconfig:
     displayConfig(faradayConfigPath)
 
 # Check if configuration file is present
-# if not os.path.isfile(deviceConfigurationConfigPath):
-#     logger.error("Please initialize device configuration with \'--init-config\' option")
-#     sys.exit(0)
+if not os.path.isfile(deviceConfigPath):
+    logger.error("Please initialize device configuration with \'--init-config\' option")
+    sys.exit(0)
 
 # Check if configuration file is present
-faradayConfigPath = os.path.join(faradayHelper.path, "faraday_config.ini")
 if not os.path.isfile(faradayConfigPath):
     logger.error("Please initialize Faraday configuration with \'--init-faraday-config\' option")
     sys.exit(0)
@@ -427,8 +432,6 @@ def unitconfig():
             nodeid = request.args.get("nodeid", "%")
 
             # Read Faraday device configuration file
-            faradayConfigPath = os.path.join(faradayHelper.path, "faraday_config.ini")
-            logger.debug('faraday_config.ini PATH: ' + faradayConfigPath)
 
             # Read configuration file
             faradayConfig = ConfigParser.RawConfigParser()
