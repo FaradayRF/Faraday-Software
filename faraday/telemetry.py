@@ -1060,7 +1060,7 @@ def main():
     threads.append(t)
     t.start()
 
-    # Start the flask server on localhost:8001
+    # Start the flask server on host:port
     try:
         telemetryHost = telemetryConfig.get("FLASK", "HOST")
         telemetryPort = telemetryConfig.getint("FLASK", "PORT")

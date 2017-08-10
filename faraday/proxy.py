@@ -1128,7 +1128,7 @@ def main():
         t.start()
 
     try:
-        # Start the flask server on localhost:8000
+        # Start the flask server on host:port
         proxyHost = proxyConfig.get("FLASK", "host")
         proxyPort = proxyConfig.getint("FLASK", "port")
     except ConfigParser.Error as e:
