@@ -48,6 +48,7 @@ parser.add_argument('--callsign', help='Set Faraday callsign in Proxy to connect
 parser.add_argument('--nodeid', type=int, help='Set Faraday node ID in Proxy to connect to')
 parser.add_argument('--unit', type=int, default=0, help='Specify Faraday unit to configure')
 parser.add_argument('--start', action='store_true', help='Start Telemetry server')
+parser.add_argument('--proxyhost', help='Set hostname/IP of Proxy to connect to')
 
 # Telemetry database options
 parser.add_argument('--database', help='Set Telemetry database name')
@@ -157,6 +158,8 @@ def configureTelemetry(args):
         config.set('TELEMETRY', unit + 'CALL', args.callsign)
     if args.nodeid is not None:
         config.set('TELEMETRY', unit + 'ID', args.nodeid)
+    if args.proxyhost is not None:
+        config.set('TELEMETRY', 'proxyhost', args.proxyhost)
 
     #Configure Telemetry databases
     if args.database is not None:
