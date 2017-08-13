@@ -84,7 +84,13 @@ class proxyio(object):
 
             #POST data to UART service port
             url = 'http://{0}:{1}/?port={2}&callsign={3}&nodeid={4}'.format(host, self.FLASK_PORT, uart_port, local_device_callsign, local_device_id)
-            status = requests.post(url, json=payload)  #Sends Base64 config flash update packet to Faraday
+            try:
+                status = requests.post(url, json=payload)  #Sends Base64 config flash update packet to Faraday
+
+            except requests.ConnectionError as e:
+                self._logger.error(e)
+                self._logger.error(url)
+                return ''
 
             #Return
             return status
