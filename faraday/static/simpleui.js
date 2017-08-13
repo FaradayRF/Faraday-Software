@@ -8,7 +8,12 @@ function getTelemetry(){
 
         // Build URL for Telemetry db query, then retrieve data
         // TODO: update for dynamic URL
-        var url = "http://localhost:8001/?limit=1&callsign=" +
+
+        var url = "http://" +
+            host +
+            ":" +
+            port +
+            "/?limit=1&callsign=" +
             callsign + // jshint ignore:line
             "&nodeid=" +
             nodeid; // jshint ignore:line

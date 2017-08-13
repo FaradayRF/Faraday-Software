@@ -158,6 +158,8 @@ def simpleui():
         try:
             callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
             nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+            telemetryHost = simpleuiConfig.get("TELEMETRY", "HOST")
+            telemetryPort = simpleuiConfig.get("TELEMETRY", "PORT")
             if callsign == "REPLACEME":
                 raise ConfigParser.Error("Please configure SimpleUI --callsign and --nodeid")
 
@@ -173,6 +175,8 @@ def simpleui():
         else:
             #Return HTML/Javascript template
             return render_template('index.html',
+                                   host=telemetryHost,
+                                   port=telemetryPort,
                                    callsign=callsign,
                                    nodeid=nodeid)
 
