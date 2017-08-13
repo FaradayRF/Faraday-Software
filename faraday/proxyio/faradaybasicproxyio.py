@@ -130,7 +130,7 @@ class proxyio(object):
         # TODO: Does this actually do much?
         if limit is not None:
             if int(limit) >= 0:
-                url = "{0}&limit={1}".format(url,str(limit))
+                url = "{0}&limit={1}".format(url, str(limit))
 
         try:
             response = requests.get(url)  #calling IP address directly is much faster than localhost lookup
