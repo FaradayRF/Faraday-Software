@@ -453,7 +453,8 @@ def simpleui():
                                                                                                remotenodeid))
 
         # Send POST command for remote station control
-        faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
+        proxyHost = simpleuiConfig.get("PROXY", "HOST")
+        faraday_1.POST(proxyHost, callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
         # Return to simple user interface page after commanding
         return redirect("http://localhost/", code=302)

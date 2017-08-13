@@ -44,7 +44,7 @@ class proxyio(object):
 
     #Functions
 
-    def POST(self, local_device_callsign, local_device_id, uart_port, data):
+    def POST(self, host, local_device_callsign, local_device_id, uart_port, data):
         """
         The POST function is a python function that interacts with the Faraday RESTful API and "POSTS" (puts into) data into the transmit queue. Data provided to this function will be transmitted
         to a local Faraday device over UART (as specified by the arguments) over the intended Faraday transport layer "Service Port."
@@ -83,8 +83,8 @@ class proxyio(object):
             payload = {'data': [b64_data]}
 
             #POST data to UART service port
-            # here is where I want to use a value passed to the function for a IP/hostname
-            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json=payload)  #Sends Base64 config flash update packet to Faraday
+            url = 'http://{0}:{1}/?port={2}&callsign={3}&nodeid={4}'.format(host, self.FLASK_PORT, uart_port, local_device_callsign, local_device_id)
+            status = requests.post(url, json=payload)  #Sends Base64 config flash update packet to Faraday
 
             #Return
             return status
