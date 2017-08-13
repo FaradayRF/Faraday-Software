@@ -42,7 +42,7 @@ simpleuiConfig.read(faradayHelper.path)
 
 
 # Command line input
-parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
+parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/ or other defined web address')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
 parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
 parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
@@ -461,7 +461,8 @@ def simpleui():
         faraday_1.POST(proxyHost, callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
         # Return to simple user interface page after commanding
-        return redirect("http://localhost/", code=302)
+        host = simpleuiConfig.get("FLASK", "HOST")
+        return redirect("http://{0}/".format(host), code=302)
 
 
 @app.errorhandler(404)
