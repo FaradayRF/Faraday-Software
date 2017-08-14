@@ -301,9 +301,17 @@ def simpleui():
             logger.debug("Local {0}-{1} HAB timer idle commanded".format(callsign, nodeid))
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
-        # Obtain remote station from config file, check form data for intended command
-        remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
-        remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
+        try:
+            # Obtain remote station from config file, check form data for intended command
+            remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
+            remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
+
+        except ValueError as e:
+            logger.error(e)
+
+            # Return to simple user interface page after commanding
+            host = simpleuiConfig.get("FLASK", "HOST")
+            return redirect("http://{0}/".format(host), code=302)
 
         if request.form["IO"] == "LED1R ON":
             logger.debug("Remote {0}-{1} LED1 commanded ON".format(remotecallsign, remotenodeid))
