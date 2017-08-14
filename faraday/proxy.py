@@ -277,7 +277,7 @@ def startServer(modem, dataPort):
     return s
 
 
-def uart_worker(modem, getDicts, postDicts, units, log):
+def uart_worker(modem, getDicts, postDicts, units, log, disabletx):
     """
     Interface Faraday ports over USB UART
 
@@ -328,27 +328,28 @@ def uart_worker(modem, getDicts, postDicts, units, log):
 
         # Check for data in the POST FIFO queue. This needs to check for
         # COM ports and create the necessary buffers on the fly
-        for port in postDicts[modem['unit']].keys():
-            try:
+        if not disabletx:
+            for port in postDicts[modem['unit']].keys():
+                try:
 
-                count = len(postDicts[modem['unit']][port])
+                    count = len(postDicts[modem['unit']][port])
 
-            except:
-                # Port simply doesn't exist so don't bother
+                except:
+                    # Port simply doesn't exist so don't bother
 
-                pass
-            else:
-                for num in range(count):
-                    # Data is available, pop off [unit][port] queue
-                    # and convert to BASE64 before sending to UART
-                    try:
-                        message = postDicts[modem['unit']][port].popleft()
-                        message = base64.b64decode(message)
-                        modem['com'].POST(port, len(message), message)
-                    except StandardError as e:
-                        logger.error(e)
+                    pass
+                else:
+                    for num in range(count):
+                        # Data is available, pop off [unit][port] queue
+                        # and convert to BASE64 before sending to UART
+                        try:
+                            message = postDicts[modem['unit']][port].popleft()
+                            message = base64.b64decode(message)
+                            modem['com'].POST(port, len(message), message)
+                        except StandardError as e:
+                            logger.error(e)
 
-        # Slow down while loop to something reasonable
+            # Slow down while loop to something reasonable
         time.sleep(0.01)
 
 
@@ -682,6 +683,7 @@ def proxy():
     raw bytes.
     """
     if request.method == "POST":
+
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
             port = request.args.get("port")
@@ -845,6 +847,7 @@ def proxy():
             return json.dumps({"error": str(e)}), 400
         # Return data from queue to RESTapi
         # If data is in port queu, turn it into JSON and return
+
         try:
             if (len(getDicts[callsign + "-" + str(nodeid)][port]) > 0):
                 data = []
@@ -1078,9 +1081,13 @@ def main():
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
         payloadSize = proxyConfig.getint('PROXY', 'PAYLOADSIZE')
+        disabletx = proxyConfig.getint('PROXY', 'DISABLETX')
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
+
+    if disabletx:
+        logger.warning("Proxy Transmissions disabled!")
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -1107,7 +1114,7 @@ def main():
         for key in unitDict:
             logger.debug('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
-            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, postDicts, units, log))
+            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, postDicts, units, log, disabletx))
             t.start()
 
             logger.debug("starting socket_worker")
