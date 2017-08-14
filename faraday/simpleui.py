@@ -186,8 +186,16 @@ def simpleui():
         faraday_cmd = faradaycommands.faraday_commands()
 
         # Obtain local station from config file, check form data for intended command
-        callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
-        nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
+        try:
+            callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
+            nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
+
+        except ValueError as e:
+            logger.error(e)
+
+            # Return to simple user interface page after commanding
+            host = simpleuiConfig.get("FLASK", "HOST")
+            return redirect("http://{0}/".format(host), code=302)
 
         if request.form["IO"] == "LED1 ON":
             logger.debug("Local {0}-{1} LED1 commanded ON".format(callsign, nodeid))
