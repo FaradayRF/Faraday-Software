@@ -59,6 +59,7 @@ parser.add_argument('--test-callsign', dest='testcallsign', help='Set Faraday te
 parser.add_argument('--test-nodeid', dest='testnodeid', type=int, help='Set Faraday test mode nodeid')
 parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='Set Faraday test mode rate')
 parser.add_argument('--payload-size', dest='payloadsize', default=39, type=int, help='Set Faraday data mode payload size')
+parser.add_argument('--disabletx', type=int, default=0, help='Disable proxy from POSTing to Faraday thus preventing transmissions')
 
 # Proxy database options
 parser.add_argument('--database', help='Set Faraday Proxy database')
@@ -190,6 +191,8 @@ def configureProxy(args):
         config.set('PROXY', 'testrate', args.testrate)
     if args.payloadsize:
         config.set('PROXY', 'payloadsize', args.payloadsize)
+    if args.disabletx is not None:
+        config.set('PROXY', 'disabletx', args.disabletx)
 
     #Configure Proxy databases
     if args.database is not None:
