@@ -59,7 +59,6 @@ parser.add_argument('--test-callsign', dest='testcallsign', help='Set Faraday te
 parser.add_argument('--test-nodeid', dest='testnodeid', type=int, help='Set Faraday test mode nodeid')
 parser.add_argument('--test-rate', dest='testrate', default=1, type=int, help='Set Faraday test mode rate')
 parser.add_argument('--payload-size', dest='payloadsize', default=39, type=int, help='Set Faraday data mode payload size')
-parser.add_argument('--disabletx', type=int, default=0, help='Disable proxy from POSTing to Faraday thus preventing transmissions')
 
 # Proxy database options
 parser.add_argument('--database', help='Set Faraday Proxy database')
@@ -191,8 +190,6 @@ def configureProxy(args):
         config.set('PROXY', 'testrate', args.testrate)
     if args.payloadsize:
         config.set('PROXY', 'payloadsize', args.payloadsize)
-    if args.disabletx is not None:
-        config.set('PROXY', 'disabletx', args.disabletx)
 
     #Configure Proxy databases
     if args.database is not None:
@@ -280,7 +277,7 @@ def startServer(modem, dataPort):
     return s
 
 
-def uart_worker(modem, getDicts, postDicts, units, log, disabletx):
+def uart_worker(modem, getDicts, postDicts, units, log):
     """
     Interface Faraday ports over USB UART
 
@@ -331,26 +328,25 @@ def uart_worker(modem, getDicts, postDicts, units, log, disabletx):
 
         # Check for data in the POST FIFO queue. This needs to check for
         # COM ports and create the necessary buffers on the fly
-        if not disabletx:
-            for port in postDicts[modem['unit']].keys():
-                try:
+        for port in postDicts[modem['unit']].keys():
+            try:
 
-                    count = len(postDicts[modem['unit']][port])
+                count = len(postDicts[modem['unit']][port])
 
-                except:
-                    # Port simply doesn't exist so don't bother
+            except:
+                # Port simply doesn't exist so don't bother
 
-                    pass
-                else:
-                    for num in range(count):
-                        # Data is available, pop off [unit][port] queue
-                        # and convert to BASE64 before sending to UART
-                        try:
-                            message = postDicts[modem['unit']][port].popleft()
-                            message = base64.b64decode(message)
-                            modem['com'].POST(port, len(message), message)
-                        except StandardError as e:
-                            logger.error(e)
+                pass
+            else:
+                for num in range(count):
+                    # Data is available, pop off [unit][port] queue
+                    # and convert to BASE64 before sending to UART
+                    try:
+                        message = postDicts[modem['unit']][port].popleft()
+                        message = base64.b64decode(message)
+                        modem['com'].POST(port, len(message), message)
+                    except StandardError as e:
+                        logger.error(e)
 
             # Slow down while loop to something reasonable
         time.sleep(0.01)
@@ -1084,13 +1080,9 @@ def main():
         log = proxyConfig.getboolean('PROXY', 'LOG')
         testmode = proxyConfig.getboolean('PROXY', 'TESTMODE')
         payloadSize = proxyConfig.getint('PROXY', 'PAYLOADSIZE')
-        disabletx = proxyConfig.getint('PROXY', 'DISABLETX')
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         sys.exit(1)  # Sys.exit(1) is an error
-
-    if disabletx:
-        logger.warning("Proxy Transmissions disabled!")
 
     """Main function which starts UART Worker thread + Flask server."""
     logger.info('Starting proxy server')
@@ -1117,7 +1109,7 @@ def main():
         for key in unitDict:
             logger.debug('Starting Thread For Unit: {0}'.format(str(key)))
             tempdict = {"unit": key, 'com': unitDict[key]}
-            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, postDicts, units, log, disabletx))
+            t = threading.Thread(target=uart_worker, args=(tempdict, getDicts, postDicts, units, log))
             t.start()
 
             logger.debug("starting socket_worker")
