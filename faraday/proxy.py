@@ -348,7 +348,7 @@ def uart_worker(modem, getDicts, postDicts, units, log):
                     except StandardError as e:
                         logger.error(e)
 
-        # Slow down while loop to something reasonable
+            # Slow down while loop to something reasonable
         time.sleep(0.01)
 
 
@@ -682,6 +682,7 @@ def proxy():
     raw bytes.
     """
     if request.method == "POST":
+
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
             port = request.args.get("port")
@@ -845,6 +846,7 @@ def proxy():
             return json.dumps({"error": str(e)}), 400
         # Return data from queue to RESTapi
         # If data is in port queu, turn it into JSON and return
+
         try:
             if (len(getDicts[callsign + "-" + str(nodeid)][port]) > 0):
                 data = []
@@ -1128,7 +1130,7 @@ def main():
         t.start()
 
     try:
-        # Start the flask server on localhost:8000
+        # Start the flask server on host:port
         proxyHost = proxyConfig.get("FLASK", "host")
         proxyPort = proxyConfig.getint("FLASK", "port")
     except ConfigParser.Error as e:

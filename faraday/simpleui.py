@@ -42,7 +42,7 @@ simpleuiConfig.read(faradayHelper.path)
 
 
 # Command line input
-parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/')
+parser = argparse.ArgumentParser(description='SimpleUI application provides a simple user interface for Faraday radios at http://localhost/ or other defined web address')
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize SimpleUI configuration file')
 parser.add_argument('--callsign', help='Set Local SimpleUI callsign for data display')
 parser.add_argument('--nodeid', help='Set Local SimpleUI nodeid for data display')
@@ -158,6 +158,8 @@ def simpleui():
         try:
             callsign = simpleuiConfig.get("SIMPLEUI", "CALLSIGN").upper()
             nodeid = simpleuiConfig.getint("SIMPLEUI", "NODEID")
+            telemetryHost = simpleuiConfig.get("TELEMETRY", "HOST")
+            telemetryPort = simpleuiConfig.get("TELEMETRY", "PORT")
             if callsign == "REPLACEME":
                 raise ConfigParser.Error("Please configure SimpleUI --callsign and --nodeid")
 
@@ -173,6 +175,8 @@ def simpleui():
         else:
             #Return HTML/Javascript template
             return render_template('index.html',
+                                   host=telemetryHost,
+                                   port=telemetryPort,
                                    callsign=callsign,
                                    nodeid=nodeid)
 
@@ -182,8 +186,16 @@ def simpleui():
         faraday_cmd = faradaycommands.faraday_commands()
 
         # Obtain local station from config file, check form data for intended command
-        callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
-        nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
+        try:
+            callsign = simpleuiConfig.get("SIMPLEUI", "LOCALCALLSIGN").upper()
+            nodeid = simpleuiConfig.getint("SIMPLEUI", "LOCALNODEID")
+
+        except ValueError as e:
+            logger.error(e)
+
+            # Return to simple user interface page after commanding
+            host = simpleuiConfig.get("FLASK", "HOST")
+            return redirect("http://{0}/".format(host), code=302)
 
         if request.form["IO"] == "LED1 ON":
             logger.debug("Local {0}-{1} LED1 commanded ON".format(callsign, nodeid))
@@ -289,9 +301,17 @@ def simpleui():
             logger.debug("Local {0}-{1} HAB timer idle commanded".format(callsign, nodeid))
             command = faraday_cmd.CommandLocalHABResetCutdownIdle()
 
-        # Obtain remote station from config file, check form data for intended command
-        remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
-        remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
+        try:
+            # Obtain remote station from config file, check form data for intended command
+            remotecallsign = simpleuiConfig.get("SIMPLEUI", "REMOTECALLSIGN").upper()
+            remotenodeid = simpleuiConfig.getint("SIMPLEUI", "REMOTENODEID")
+
+        except ValueError as e:
+            logger.error(e)
+
+            # Return to simple user interface page after commanding
+            host = simpleuiConfig.get("FLASK", "HOST")
+            return redirect("http://{0}/".format(host), code=302)
 
         if request.form["IO"] == "LED1R ON":
             logger.debug("Remote {0}-{1} LED1 commanded ON".format(remotecallsign, remotenodeid))
@@ -453,10 +473,12 @@ def simpleui():
                                                                                                remotenodeid))
 
         # Send POST command for remote station control
-        faraday_1.POST(callsign, nodeid, faraday_1.CMD_UART_PORT, command)
+        proxyHost = simpleuiConfig.get("PROXY", "HOST")
+        faraday_1.POST(proxyHost, callsign, nodeid, faraday_1.CMD_UART_PORT, command)
 
         # Return to simple user interface page after commanding
-        return redirect("http://localhost/", code=302)
+        host = simpleuiConfig.get("FLASK", "HOST")
+        return redirect("http://{0}/".format(host), code=302)
 
 
 @app.errorhandler(404)

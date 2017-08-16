@@ -44,7 +44,7 @@ class proxyio(object):
 
     #Functions
 
-    def POST(self, local_device_callsign, local_device_id, uart_port, data):
+    def POST(self, host, local_device_callsign, local_device_id, uart_port, data):
         """
         The POST function is a python function that interacts with the Faraday RESTful API and "POSTS" (puts into) data into the transmit queue. Data provided to this function will be transmitted
         to a local Faraday device over UART (as specified by the arguments) over the intended Faraday transport layer "Service Port."
@@ -83,16 +83,24 @@ class proxyio(object):
             payload = {'data': [b64_data]}
 
             #POST data to UART service port
-            status = requests.post("http://127.0.0.1:" + str(self.FLASK_PORT) + "/?" + "callsign=" + str(local_device_callsign).upper() + '&port=' + str(uart_port) + '&' + 'nodeid=' + str(local_device_id), json=payload)  #Sends Base64 config flash update packet to Faraday
+            url = 'http://{0}:{1}/?port={2}&callsign={3}&nodeid={4}'.format(host, self.FLASK_PORT, uart_port, local_device_callsign, local_device_id)
+            try:
+                status = requests.post(url, json=payload)  #Sends Base64 config flash update packet to Faraday
+
+            except requests.ConnectionError as e:
+                self._logger.error(e)
+                self._logger.error(url)
+                return ''
 
             #Return
             return status
 
-    def GET(self, local_device_callsign, local_device_id, uart_service_number, limit=None):
+    def GET(self, host, local_device_callsign, local_device_id, uart_service_number, limit=None):
         """
         This function returns a dictionary of all data packets waiting a Flask API interface queue as specified by the supplied
         UART Port (Service Number).
 
+        :param host: Hostname or IP address of server to query
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
@@ -108,18 +116,21 @@ class proxyio(object):
         The example below retrieves two data packets waiting from the "Telemetry" UART port (Port 5 in this example).
 
         >>> faraday_1 = faradaybasicproxyio.proxyio()
-        >>> faraday_1.GET("KB1LQD", 1, FARADAY_TELEMETRY_UART_PORT)
+        >>> faraday_1.GET(host, "KB1LQD", 1, FARADAY_TELEMETRY_UART_PORT)
         [{u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQwME4GBzkpFhIACeAHMzM1Mi40MjAxTjExODIyLjYwNDhXMzQuNjIwMDBNMC4yNzAyMC45MgAXYAjdCKoICQe8B/sIFgAAAB4K/gAAHCAAAAAARgYHS0IxTFFEAAAABgcTKRYSABZf',
           u'port': 5},
          {u'data': u'AwBhS0IxTFFEBXsDBgdLQjFMUUQFewMGBxIqFhIACeAHMzM1Mi40MjAzTjExODIyLjYwNDdXMzQuNTIwMDBNMC4yNzAyMC45MAAXYAjeCKoICQe5B/oIGAAAAB4LAwAAHCAAAAAAAABGBgdLQjFMUUQAAAAGBxMpFhT/',
           u'port': 5}]
         """
-        url = 'http://127.0.0.1:' + str(self.FLASK_PORT) + "/" + "?port=" + str(uart_service_number) + "&callsign=" + str(local_device_callsign) + "&nodeid=" + str(local_device_id)
+
+        # here is where I want to use a value passed to the function for a IP/hostname
+        url = 'http://{0}:{1}/?port={2}&callsign={3}&nodeid={4}'.format(host, self.FLASK_PORT, uart_service_number, local_device_callsign, local_device_id)
 
         # If limit is provided, check that it's positive and add to url
+        # TODO: Does this actually do much?
         if limit is not None:
             if int(limit) >= 0:
-                url = url + "&limit=" + str(limit)
+                url = "{0}&limit={1}".format(url, str(limit))
 
         try:
             response = requests.get(url)  #calling IP address directly is much faster than localhost lookup
