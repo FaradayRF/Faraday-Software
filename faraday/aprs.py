@@ -17,6 +17,7 @@ import os
 from time import sleep
 import sys
 import argparse
+from aprslib import base91
 
 from classes import helper
 
@@ -273,8 +274,16 @@ def sendPositions(stations, socket):
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
+        # Generate BASE91 telemetry
+        b91a = base91.from_decimal(station["ADC0"])
+        logger.info("ADC0 - {0}".format(b91a))
+
         # Convert position to APRS-IS compliant string
         latString, lonString = nmeaToDegDecMin(latitude, longitude)
+
+        #dev
+        latString = '3359.00'
+        lonString = '11825.00'
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -416,11 +425,11 @@ def sendtelemetry(stations, telemSequence, socket):
                 node,
                 destAddress,
                 str(telemSequence).zfill(3),
-                str(station["ADC0"] / 16).zfill(3),
-                str(station["ADC1"] / 16).zfill(3),
-                str(station["ADC3"] / 16).zfill(3),
-                str(station["ADC6"] / 16).zfill(3),
-                str(station["BOARDTEMP"] / 16).zfill(3),
+                str(4095),
+                str(4095),
+                str(4095),
+                str(4095),
+                str(4095),
                 ioList)
 
             logger.debug(telemetry)
