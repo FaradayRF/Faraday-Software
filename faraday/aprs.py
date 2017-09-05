@@ -117,6 +117,7 @@ def aprs_worker(config, sock):
         # Iterate through all stations sending telemetry and position data
         # TODO update sequencer with 0x1FFF wrapper per BASE91 APRS spec
         sendPositions(telemSequence, stationData, sock)
+        telemSequence += 1
         #telemSequence = sendtelemetry(stationData, telemSequence, sock)
         sendTelemLabels(stationData, sock)
         sendParameters(stationData, sock)
@@ -276,18 +277,27 @@ def sendPositions(telemSequence, stations, socket):
         destNode = destinationCallsign + "-" + str(destinationID)
 
         # Generate BASE91 telemetry
-        b91seq = base91.from_decimal(telemSequence)
-        b91a = base91.from_decimal(station["ADC0"])
-        b91b = base91.from_decimal(station["ADC1"])
-        b91c = base91.from_decimal(station["ADC3"])
-        b91d = base91.from_decimal(station["ADC6"])
-        b91e = base91.from_decimal(station["BOARDTEMP"])
+        # station["ADC0"] = 1472
+        # station["ADC1"] = 1564
+        # station["ADC3"] = 1656
+        # station["ADC6"] = 1748
+        # station["BOARDTEMP"] = 1840
+        b91seq = base91.from_decimal(telemSequence).rjust(2,"!")
+        b91a = base91.from_decimal(station["ADC0"]).rjust(2,"!")
+        b91b = base91.from_decimal(station["ADC1"]).rjust(2,"!")
+        b91c = base91.from_decimal(station["ADC3"]).rjust(2,"!")
+        b91d = base91.from_decimal(station["ADC6"]).rjust(2,"!")
+        b91e = base91.from_decimal(station["BOARDTEMP"]).rjust(2,"!")
         logger.info("sequence - {0}".format(b91seq))
         logger.info("ADC0 - {0}".format(b91a))
         logger.info("ADC1 - {0}".format(b91b))
         logger.info("ADC3 - {0}".format(b91c))
         logger.info("ADC6 - {0}".format(b91d))
         logger.info("BOARDTEMP - {0}".format(b91e))
+
+        altComment = "|{0}{1}{2}{3}{4}{5}|".format(b91seq,b91a,b91b,b91c,b91d,b91e)
+        #altComment = "|{0}{1}{2}|".format(b91seq,b91a,b91b)
+        logger.info(altComment)
 
         # Convert position to APRS-IS compliant string
         latString, lonString = nmeaToDegDecMin(latitude, longitude)
@@ -325,14 +335,23 @@ def sendPositions(telemSequence, stations, socket):
                     longitudeDir,
                     symbol])
 
-                positionString = '{}>{},{},{}:{}.../{}/A={}{}\r'.format(
+                # positionString = '{}>{},{},{}:{}.../{}/A={}{}\r'.format(
+                #     node,
+                #     destAddress,
+                #     qConstruct,
+                #     destNode,
+                #     aprsPosition,
+                #     speed,
+                #     altitude,
+                #     comment)
+
+                positionString = '{}>{},{},{}:{}.../{}/{}\r'.format(
                     node,
                     destAddress,
                     qConstruct,
                     destNode,
                     aprsPosition,
                     speed,
-                    altitude,
                     comment)
 
                 logger.debug(positionString)
