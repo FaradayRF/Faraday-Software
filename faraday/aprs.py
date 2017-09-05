@@ -282,12 +282,12 @@ def sendPositions(telemSequence, stations, socket):
         # station["ADC3"] = 1656
         # station["ADC6"] = 1748
         # station["BOARDTEMP"] = 1840
-        b91seq = base91.from_decimal(telemSequence).rjust(2,"!")
-        b91a = base91.from_decimal(station["ADC0"]).rjust(2,"!")
-        b91b = base91.from_decimal(station["ADC1"]).rjust(2,"!")
-        b91c = base91.from_decimal(station["ADC3"]).rjust(2,"!")
-        b91d = base91.from_decimal(station["ADC6"]).rjust(2,"!")
-        b91e = base91.from_decimal(station["BOARDTEMP"]).rjust(2,"!")
+        b91seq = base91.from_decimal(telemSequence, 2)
+        b91a = base91.from_decimal(station["ADC0"], 2)
+        b91b = base91.from_decimal(station["ADC1"], 2)
+        b91c = base91.from_decimal(station["ADC3"], 2)
+        b91d = base91.from_decimal(station["ADC6"], 2)
+        b91e = base91.from_decimal(station["BOARDTEMP"], 2)
         logger.info("sequence - {0}".format(b91seq))
         logger.info("ADC0 - {0}".format(b91a))
         logger.info("ADC1 - {0}".format(b91b))
