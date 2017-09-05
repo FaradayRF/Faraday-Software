@@ -115,8 +115,9 @@ def aprs_worker(config, sock):
         logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data
-        sendPositions(stationData, sock)
-        telemSequence = sendtelemetry(stationData, telemSequence, sock)
+        # TODO update sequencer with 0x1FFF wrapper per BASE91 APRS spec
+        sendPositions(telemSequence, stationData, sock)
+        #telemSequence = sendtelemetry(stationData, telemSequence, sock)
         sendTelemLabels(stationData, sock)
         sendParameters(stationData, sock)
         sendEquations(stationData, sock)
@@ -232,7 +233,7 @@ def nmeaToDegDecMin(latitude, longitude):
     return [latString, lonString]
 
 
-def sendPositions(stations, socket):
+def sendPositions(telemSequence, stations, socket):
     """
     Constructs an APRS position string for station and sends to a socket
 
@@ -275,11 +276,13 @@ def sendPositions(stations, socket):
         destNode = destinationCallsign + "-" + str(destinationID)
 
         # Generate BASE91 telemetry
+        b91seq = base91.from_decimal(telemSequence)
         b91a = base91.from_decimal(station["ADC0"])
         b91b = base91.from_decimal(station["ADC1"])
         b91c = base91.from_decimal(station["ADC3"])
         b91d = base91.from_decimal(station["ADC6"])
         b91e = base91.from_decimal(station["BOARDTEMP"])
+        logger.info("sequence - {0}".format(b91seq))
         logger.info("ADC0 - {0}".format(b91a))
         logger.info("ADC1 - {0}".format(b91b))
         logger.info("ADC3 - {0}".format(b91c))
