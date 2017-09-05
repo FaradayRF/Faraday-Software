@@ -276,35 +276,22 @@ def sendPositions(telemSequence, stations, socket):
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
 
-        # Generate BASE91 telemetry
-        # station["ADC0"] = 1472
-        # station["ADC1"] = 1564
-        # station["ADC3"] = 1656
-        # station["ADC6"] = 1748
-        # station["BOARDTEMP"] = 1840
+        # Generate BASE91 telemetry with aprslib using a width of 2
         b91seq = base91.from_decimal(telemSequence, 2)
         b91a = base91.from_decimal(station["ADC0"], 2)
         b91b = base91.from_decimal(station["ADC1"], 2)
         b91c = base91.from_decimal(station["ADC3"], 2)
         b91d = base91.from_decimal(station["ADC6"], 2)
         b91e = base91.from_decimal(station["BOARDTEMP"], 2)
-        logger.info("sequence - {0}".format(b91seq))
-        logger.info("ADC0 - {0}".format(b91a))
-        logger.info("ADC1 - {0}".format(b91b))
-        logger.info("ADC3 - {0}".format(b91c))
-        logger.info("ADC6 - {0}".format(b91d))
-        logger.info("BOARDTEMP - {0}".format(b91e))
 
-        altComment = "|{0}{1}{2}{3}{4}{5}|".format(b91seq,b91a,b91b,b91c,b91d,b91e)
-        #altComment = "|{0}{1}{2}|".format(b91seq,b91a,b91b)
-        logger.info(altComment)
+        b91Tlm = "|{0}{1}{2}{3}{4}{5}|".format(b91seq,b91a,b91b,b91c,b91d,b91e)
+
+        # add telemetry to comments
+        comment = comment + b91Tlm
+        altComment = altComment + b91Tlm
 
         # Convert position to APRS-IS compliant string
         latString, lonString = nmeaToDegDecMin(latitude, longitude)
-
-        #dev
-        latString = '3359.00'
-        lonString = '11825.00'
 
         # Convert altitude and speed to APRS compliant values
         try:
@@ -335,23 +322,14 @@ def sendPositions(telemSequence, stations, socket):
                     longitudeDir,
                     symbol])
 
-                # positionString = '{}>{},{},{}:{}.../{}/A={}{}\r'.format(
-                #     node,
-                #     destAddress,
-                #     qConstruct,
-                #     destNode,
-                #     aprsPosition,
-                #     speed,
-                #     altitude,
-                #     comment)
-
-                positionString = '{}>{},{},{}:{}.../{}/{}\r'.format(
+                positionString = '{}>{},{},{}:{}.../{}/A={}{}\r'.format(
                     node,
                     destAddress,
                     qConstruct,
                     destNode,
                     aprsPosition,
                     speed,
+                    altitude,
                     comment)
 
                 logger.debug(positionString)
