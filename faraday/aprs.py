@@ -276,7 +276,15 @@ def sendPositions(stations, socket):
 
         # Generate BASE91 telemetry
         b91a = base91.from_decimal(station["ADC0"])
+        b91b = base91.from_decimal(station["ADC1"])
+        b91c = base91.from_decimal(station["ADC3"])
+        b91d = base91.from_decimal(station["ADC6"])
+        b91e = base91.from_decimal(station["BOARDTEMP"])
         logger.info("ADC0 - {0}".format(b91a))
+        logger.info("ADC1 - {0}".format(b91b))
+        logger.info("ADC3 - {0}".format(b91c))
+        logger.info("ADC6 - {0}".format(b91d))
+        logger.info("BOARDTEMP - {0}".format(b91e))
 
         # Convert position to APRS-IS compliant string
         latString, lonString = nmeaToDegDecMin(latitude, longitude)
