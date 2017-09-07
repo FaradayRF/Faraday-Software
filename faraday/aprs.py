@@ -115,13 +115,14 @@ def aprs_worker(config, sock):
         logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data
-        # TODO update sequencer with 0x1FFF wrapper per BASE91 APRS spec
         sendPositions(telemSequence, stationData, sock)
+
+        # Just send labels, Parameters, and Equations during first sequence
+        if telemSequence == 0:
+            sendTelemLabels(stationData, sock)
+            sendParameters(stationData, sock)
+            sendEquations(stationData, sock)
         telemSequence += 1
-        #telemSequence = sendtelemetry(stationData, telemSequence, sock)
-        sendTelemLabels(stationData, sock)
-        sendParameters(stationData, sock)
-        sendEquations(stationData, sock)
 
         # Sleep for intended update rate (seconds)
         sleep(rate)
