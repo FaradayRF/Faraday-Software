@@ -271,10 +271,21 @@ def sendPositions(telemSequence, stations, socket):
         altSymbol = aprsConfig.get('APRS', 'ALTSYMBOL')
         comment = aprsConfig.get('APRS', 'COMMENT')
         altComment = aprsConfig.get('APRS', 'ALTCOMMENT')
+        ioSource = aprsConfig.get('APRS', 'IOSOURCE').upper()
 
         # Create nodes from GPS data
         node = sourceCallsign + "-" + str(sourceID)
         destNode = destinationCallsign + "-" + str(destinationID)
+
+        #Obtain GPIO data
+        gpioValues = station["GPIOSTATE"]
+        rfValues = station["RFSTATE"]
+
+        # Extract IO data
+        if ioSource == 'GPIO':
+            ioList = gpioValues
+        elif ioSource == 'RF':
+            ioList = rfValues
 
         # Generate BASE91 telemetry with aprslib using a width of 2
         b91seq = base91.from_decimal(telemSequence, 2)
@@ -283,8 +294,9 @@ def sendPositions(telemSequence, stations, socket):
         b91c = base91.from_decimal(station["ADC3"], 2)
         b91d = base91.from_decimal(station["ADC6"], 2)
         b91e = base91.from_decimal(station["BOARDTEMP"], 2)
+        b91f = base91.from_decimal(ioList, 2)
 
-        b91Tlm = "|{0}{1}{2}{3}{4}{5}|".format(b91seq,b91a,b91b,b91c,b91d,b91e)
+        b91Tlm = "|{0}{1}{2}{3}{4}{5}{6}|".format(b91seq,b91a,b91b,b91c,b91d,b91e,b91f)
 
         # add telemetry to comments
         comment = comment + b91Tlm
