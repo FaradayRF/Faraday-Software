@@ -237,8 +237,10 @@ def nmeaToDegDecMin(latitude, longitude):
 
 def sendPositions(telemSequence, stations, socket):
     """
-    Constructs an APRS position string for station and sends to a socket
+    Constructs an APRS position string for station and sends to a socket.
+    Includes BASE91 comment telemetry functionality as well.
 
+    :param telemSequence: Telemetry sequence number
     :param stations: List of dictionary organized station data
     :param socket: APRS-IS server internet socket
     :return: None
