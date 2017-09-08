@@ -247,6 +247,16 @@ def nmeaToDegDecMin(latitude, longitude):
     return [latString, lonString]
 
 def sendAPRSPacket(socket, packet):
+        """
+        Sends an APRS packet (just a string) to the socket specified. If an
+        error occurs a False is returned while a True is returned if successful.
+        On an error, the socket is closed as it is no longer useful.
+
+        :param telemSequence: Telemetry sequence number
+        :param stations: List of dictionary organized station data
+        :param socket: APRS-IS server internet socket
+        :return: None
+        """
     try:
         socket.sendall(packet)
         return True
@@ -374,14 +384,6 @@ def sendPositions(telemSequence, stations, socket):
                 status = sendAPRSPacket(socket,positionString)
                 return status
 
-                # try:
-                #     socket.sendall(positionString)
-                #     return True
-                #
-                # except IOError as e:
-                #     logger.error(e)
-                #     socket.close()
-                #     return False
 
             elif node == destNode:
                 # APRS string is for local node
@@ -405,15 +407,6 @@ def sendPositions(telemSequence, stations, socket):
 
                 status = sendAPRSPacket(socket,positionString)
                 return status
-
-                # try:
-                #     socket.sendall(positionString)
-                #     return True
-                #
-                # except IOError as e:
-                #     logger.error(e)
-                #     socket.close()
-                #     return False
 
 
 def sendtelemetry(stations, telemSequence, socket):
