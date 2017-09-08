@@ -246,6 +246,16 @@ def nmeaToDegDecMin(latitude, longitude):
 
     return [latString, lonString]
 
+def sendAPRSPacket(socket, packet):
+    try:
+        socket.sendall(packet)
+        return True
+
+    except IOError as e:
+        logger.error(e)
+        socket.close()
+        return False
+
 
 def sendPositions(telemSequence, stations, socket):
     """
@@ -361,14 +371,17 @@ def sendPositions(telemSequence, stations, socket):
 
                 logger.debug(positionString)
 
-                try:
-                    socket.sendall(positionString)
-                    return True
+                status = sendAPRSPacket(socket,positionString)
+                return status
 
-                except IOError as e:
-                    logger.error(e)
-                    socket.close()
-                    return False
+                # try:
+                #     socket.sendall(positionString)
+                #     return True
+                #
+                # except IOError as e:
+                #     logger.error(e)
+                #     socket.close()
+                #     return False
 
             elif node == destNode:
                 # APRS string is for local node
@@ -389,14 +402,18 @@ def sendPositions(telemSequence, stations, socket):
                     altComment)
                 logger.debug(positionString)
 
-                try:
-                    socket.sendall(positionString)
-                    return True
 
-                except IOError as e:
-                    logger.error(e)
-                    socket.close()
-                    return False
+                status = sendAPRSPacket(socket,positionString)
+                return status
+
+                # try:
+                #     socket.sendall(positionString)
+                #     return True
+                #
+                # except IOError as e:
+                #     logger.error(e)
+                #     socket.close()
+                #     return False
 
 
 def sendtelemetry(stations, telemSequence, socket):
