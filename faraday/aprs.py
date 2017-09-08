@@ -448,11 +448,11 @@ def sendtelemetry(stations, telemSequence, socket):
                 node,
                 destAddress,
                 str(telemSequence).zfill(3),
-                str(4095),
-                str(4095),
-                str(4095),
-                str(4095),
-                str(4095),
+                str(station["ADC0"] / 16).zfill(3),
+                str(station["ADC1"] / 16).zfill(3),
+                str(station["ADC3"] / 16).zfill(3),
+                str(station["ADC6"] / 16).zfill(3),
+                str(station["BOARDTEMP"] / 16).zfill(3),
                 ioList)
 
             logger.debug(telemetry)
