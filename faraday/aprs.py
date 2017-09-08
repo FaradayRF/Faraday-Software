@@ -297,7 +297,7 @@ def sendPositions(telemSequence, stations, socket):
         b91e = base91.from_decimal(station["BOARDTEMP"], 2)
         b91f = base91.from_decimal(ioList, 2)
 
-        b91Tlm = "|{0}{1}{2}{3}{4}{5}{6}|".format(b91seq,b91a,b91b,b91c,b91d,b91e,b91f)
+        b91Tlm = "|{0}{1}{2}{3}{4}{5}{6}|".format(b91seq, b91a, b91b, b91c, b91d, b91e, b91f)
 
         # add telemetry to comments
         comment = comment + b91Tlm
