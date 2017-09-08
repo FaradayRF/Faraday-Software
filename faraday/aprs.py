@@ -125,8 +125,8 @@ def aprs_worker(config, sock):
         try:
             conn = sendPositions(telemSequence, stationData, sock)
 
-            # Just send labels, Parameters, and Equations during first sequence
-            # if telemSequence == 0:
+            # Just send labels, Parameters, and Equations every 10th loop
+            # if telemSequence % 10 == 0:
             #
             #     sendTelemLabels(stationData, sock)
             #     sendParameters(stationData, sock)
