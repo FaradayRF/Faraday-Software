@@ -366,7 +366,6 @@ def sendPositions(telemSequence, stations, socket):
                     return True
 
                 except IOError as e:
-                    logger.info("'test sendPositions'")
                     logger.error(e)
                     socket.close()
                     return False
