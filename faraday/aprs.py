@@ -104,6 +104,11 @@ def aprs_worker(config, sock):
     # Local variable initialization
     telemSequence = 0
 
+    #dev
+    sock = ''
+    sock = connectAPRSIS()
+    conn = True
+
     # Start infinite loop to send station data to APRS-IS
     while True:
         # Query telemetry database for station data
@@ -115,14 +120,21 @@ def aprs_worker(config, sock):
         logger.info(str.format(len(stations)))
 
         # Iterate through all stations sending telemetry and position data
-        sendPositions(telemSequence, stationData, sock)
+        if not conn:
+            sock = connectAPRSIS()
+        try:
+            conn = sendPositions(telemSequence, stationData, sock)
 
-        # Just send labels, Parameters, and Equations during first sequence
-        if telemSequence == 0:
-            sendTelemLabels(stationData, sock)
-            sendParameters(stationData, sock)
-            sendEquations(stationData, sock)
-        telemSequence += 1
+            # Just send labels, Parameters, and Equations during first sequence
+            # if telemSequence == 0:
+            #
+            #     sendTelemLabels(stationData, sock)
+            #     sendParameters(stationData, sock)
+            #     sendEquations(stationData, sock)
+            telemSequence += 1
+
+        except StandardError as e:
+            logger.error(e)
 
         # Sleep for intended update rate (seconds)
         sleep(rate)
@@ -351,9 +363,13 @@ def sendPositions(telemSequence, stations, socket):
 
                 try:
                     socket.sendall(positionString)
+                    return True
 
                 except IOError as e:
+                    logger.info("'test sendPositions'")
                     logger.error(e)
+                    socket.close()
+                    return False
 
             elif node == destNode:
                 # APRS string is for local node
@@ -376,10 +392,12 @@ def sendPositions(telemSequence, stations, socket):
 
                 try:
                     socket.sendall(positionString)
+                    return True
 
                 except IOError as e:
-                    logger.error("SendPosition")
                     logger.error(e)
+                    socket.close()
+                    return False
 
 
 def sendtelemetry(stations, telemSequence, socket):
@@ -439,8 +457,9 @@ def sendtelemetry(stations, telemSequence, socket):
                 socket.sendall(telemetry)
 
             except IOError as e:
-                    logger.error("SendTelemetry")
-                    logger.error(e)
+                logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
         elif node == destNode:
             # APRS string is for local node
@@ -461,8 +480,9 @@ def sendtelemetry(stations, telemSequence, socket):
                 socket.sendall(telemetry)
 
             except IOError as e:
-                logger.error("Sendtelemetry")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
         # Check for telemetry sequence rollover
         if telemSequence >= 999:
@@ -529,8 +549,9 @@ def sendTelemLabels(stations, socket):
                 socket.sendall(labels)
 
             except IOError as e:
-                logger.error("SendTelemLabels")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
         elif node == destNode:
             # APRS string is for local node
@@ -542,8 +563,9 @@ def sendTelemLabels(stations, socket):
                 socket.sendall(labels)
 
             except IOError as e:
-                logger.error("SendTelemLabels")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
 
 def sendParameters(stations, socket):
@@ -601,8 +623,9 @@ def sendParameters(stations, socket):
                 socket.sendall(parameters)
 
             except IOError as e:
-                logger.error("SendParameters")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
         elif node == destNode:
             # APRS string is for local node
@@ -614,8 +637,9 @@ def sendParameters(stations, socket):
                 socket.sendall(parameters)
 
             except IOError as e:
-                logger.error("SendParameters")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
 
 def sendEquations(stations, socket):
@@ -673,8 +697,9 @@ def sendEquations(stations, socket):
                 socket.sendall(equations)
 
             except IOError as e:
-                logger.error("SendEquations")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
         elif node == destNode:
             # APRS string is for local node
@@ -686,8 +711,9 @@ def sendEquations(stations, socket):
                 socket.sendall(equations)
 
             except IOError as e:
-                logger.error("SendEquations")
                 logger.error(e)
+                socket.close()
+                sock = connectAPRSIS()
 
 
 def connectAPRSIS():
@@ -726,6 +752,8 @@ def connectAPRSIS():
 
             except IOError as e:
                 logger.error(e)
+                logger.error("testconnect")
+                aprssock.close()
 
             else:
                 logger.info("Connection successful!")
@@ -794,7 +822,8 @@ def main():
     """
 
     logger.info('Starting Faraday APRS-IS application')
-    sock = connectAPRSIS()
+    #sock = connectAPRSIS()
+    sock = ''
 
     # Initialize local variables
     threads = []
