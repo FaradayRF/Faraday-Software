@@ -252,10 +252,9 @@ def sendAPRSPacket(socket, packet):
     error occurs a False is returned while a True is returned if successful.
     On an error, the socket is closed as it is no longer useful.
 
-    :param telemSequence: Telemetry sequence number
-    :param stations: List of dictionary organized station data
     :param socket: APRS-IS server internet socket
-    :return: None
+    :param packet: String to be sent to APRS-IS
+    :return: Boolean
     """
 
     try:
