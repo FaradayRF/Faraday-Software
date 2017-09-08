@@ -246,6 +246,7 @@ def nmeaToDegDecMin(latitude, longitude):
 
     return [latString, lonString]
 
+
 def sendAPRSPacket(socket, packet):
     """
     Sends an APRS packet (just a string) to the socket specified. If an
@@ -381,9 +382,8 @@ def sendPositions(telemSequence, stations, socket):
 
                 logger.debug(positionString)
 
-                status = sendAPRSPacket(socket,positionString)
+                status = sendAPRSPacket(socket, positionString)
                 return status
-
 
             elif node == destNode:
                 # APRS string is for local node
@@ -404,8 +404,7 @@ def sendPositions(telemSequence, stations, socket):
                     altComment)
                 logger.debug(positionString)
 
-
-                status = sendAPRSPacket(socket,positionString)
+                status = sendAPRSPacket(socket, positionString)
                 return status
 
 
