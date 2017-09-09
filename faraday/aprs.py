@@ -714,16 +714,17 @@ def connectAPRSIS():
                 aprssock.sendall(logon_string)
 
             except IOError as e:
+                # Close socket and setup for next connection attempt
                 logger.error(e)
-                logger.error("testconnect")
                 aprssock.close()
+                aprssock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             else:
                 logger.info("Connection successful!")
                 return aprssock
                 break
 
-            sleep(10)  # Try to reconnect every 10 seconds
+            sleep(2)  # Try to reconnect every 10 seconds
         return aprssock
     else:
         while True:
