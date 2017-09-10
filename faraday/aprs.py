@@ -330,8 +330,8 @@ def sendPositions(telemSequence, stations, socket):
         b91Tlm = "|{0}{1}{2}{3}{4}{5}{6}|".format(b91seq, b91a, b91b, b91c, b91d, b91e, b91f)
 
         # add telemetry to comments
-        comment = comment + b91Tlm
-        altComment = altComment + b91Tlm
+        comment += b91Tlm
+        altComment += b91Tlm
 
         # Convert position to APRS-IS compliant string
         latString, lonString = nmeaToDegDecMin(latitude, longitude)
@@ -708,7 +708,7 @@ def connectAPRSIS():
                 logger.info("Connection successful!")
                 return aprssock
 
-            sleep(2)  # Try to reconnect every 10 seconds
+            sleep(2)  # Try to reconnect every 2 seconds
         return aprssock
     else:
         while True:
