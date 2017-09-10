@@ -103,11 +103,7 @@ def aprs_worker(config, sock):
 
     # Local variable initialization
     telemSequence = 0
-
-    #dev
-    sock = ''
-    sock = connectAPRSIS()
-    conn = True
+    conn = False
 
     # Start infinite loop to send station data to APRS-IS
     while True:
