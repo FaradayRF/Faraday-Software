@@ -707,7 +707,6 @@ def connectAPRSIS():
             else:
                 logger.info("Connection successful!")
                 return aprssock
-                break
 
             sleep(2)  # Try to reconnect every 10 seconds
         return aprssock
