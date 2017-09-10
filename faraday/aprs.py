@@ -377,8 +377,7 @@ def sendPositions(telemSequence, stations, socket):
 
                 logger.debug(positionString)
 
-                status = sendAPRSPacket(socket, positionString)
-                return status
+                return sendAPRSPacket(socket, positionString)
 
             elif node == destNode:
                 # APRS string is for local node
@@ -399,8 +398,7 @@ def sendPositions(telemSequence, stations, socket):
                     altComment)
                 logger.debug(positionString)
 
-                status = sendAPRSPacket(socket, positionString)
-                return status
+                return sendAPRSPacket(socket, positionString)
 
 
 def sendtelemetry(stations, telemSequence, socket):
@@ -456,8 +454,7 @@ def sendtelemetry(stations, telemSequence, socket):
 
             logger.debug(telemetry)
 
-            status = sendAPRSPacket(socket, telemetry)
-            return status
+            return sendAPRSPacket(socket, telemetry)
 
         elif node == destNode:
             # APRS string is for local node
@@ -474,8 +471,7 @@ def sendtelemetry(stations, telemSequence, socket):
 
             logger.debug(telemetry)
 
-            status = sendAPRSPacket(socket, telemetry)
-            return status
+            return sendAPRSPacket(socket, telemetry)
 
         # Check for telemetry sequence rollover
         if telemSequence >= 999:
@@ -538,16 +534,14 @@ def sendTelemLabels(stations, socket):
                 node, destAddress, qConstruct, destNode, node, unitsAndLabels)
             logger.debug(labels)
 
-            status = sendAPRSPacket(socket, labels)
-            return status
+            return sendAPRSPacket(socket, labels)
 
         elif node == destNode:
             # APRS string is for local node
             labels = '{}>{}::{} :UNIT.{}\r'.format(
                 node, destAddress, node, unitsAndLabels)
 
-            status = sendAPRSPacket(socket, labels)
-            return status
+            return sendAPRSPacket(socket, labels)
 
 
 def sendParameters(stations, socket):
@@ -600,16 +594,14 @@ def sendParameters(stations, socket):
             parameters = '{}>{},{},{}::{} :PARM.{}\r'.format(
                 node, destAddress, qConstruct, destNode, node, adcAndIoParams)
 
-            status = sendAPRSPacket(socket, parameters)
-            return status
+            return sendAPRSPacket(socket, parameters)
 
         elif node == destNode:
             # APRS string is for local node
             parameters = '{}>{}::{} :PARM.{}\r'.format(
                 node, destAddress, node, adcAndIoParams)
 
-            status = sendAPRSPacket(socket, parameters)
-            return status
+            return sendAPRSPacket(socket, parameters)
 
 
 def sendEquations(stations, socket):
@@ -662,16 +654,14 @@ def sendEquations(stations, socket):
             equations = '{}>{},{},{}::{} :EQNS.{}\r'.format(
                 node, destAddress, qConstruct, destNode, node, equationConfig)
 
-            status = sendAPRSPacket(socket, equations)
-            return status
+            return sendAPRSPacket(socket, equations)
 
         elif node == destNode:
             # APRS string is for local node
             equations = '{}>{}::{} :EQNS.{}\r'.format(
                 node, destAddress, node, equationConfig)
 
-            status = sendAPRSPacket(socket, equations)
-            return status
+            return sendAPRSPacket(socket, equations)
 
 
 def connectAPRSIS():
