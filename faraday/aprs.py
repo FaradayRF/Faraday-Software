@@ -770,11 +770,11 @@ def main():
     """
 
     logger.info('Starting Faraday APRS-IS application')
-    #sock = connectAPRSIS()
-    sock = ''
 
     # Initialize local variables
     threads = []
+    sock = ''
+
 
     t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
     threads.append(t)
