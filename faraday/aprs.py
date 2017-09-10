@@ -90,7 +90,7 @@ def configureAPRS(args):
         config.write(configfile)
 
 
-def aprs_worker(config, sock):
+def aprs_worker(config):
     """
     Obtains telemetry with infinite loop, forwards to APRS-IS server
 
@@ -773,10 +773,8 @@ def main():
 
     # Initialize local variables
     threads = []
-    sock = ''
 
-
-    t = threading.Thread(target=aprs_worker, args=(aprsConfig, sock))
+    t = threading.Thread(target=aprs_worker, args=(aprsConfig,))
     threads.append(t)
     t.start()
 
