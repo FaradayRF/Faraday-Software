@@ -79,6 +79,8 @@ def openDB():
     # Connect to database, create SQL query, execute query, and close database
     try:
         conn = sqlite3.connect(dbFilename)
+        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.commit()
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
@@ -657,6 +659,8 @@ def initDB():
                 cur = initConn.cursor()
                 schema = f.read()
                 cur.executescript(schema)
+                cur.execute("PRAGMA journal_mode=WAL;")
+                initConn.commit()
             initConn.close()
 
         except sqlite3.Error as e:
