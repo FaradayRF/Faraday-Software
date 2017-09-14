@@ -981,7 +981,7 @@ def queryStationsDb(parameters):
         logger.error(paramTuple)
         return sqlData
 
-    conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
+    queryStationsDB.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
     cur = queryStationsDB.cursor()
 
     try:
