@@ -258,10 +258,6 @@ def telemetry_worker(config):
     # Initialize Faraday parser
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
-    # open database
-    workerDB = openDB()
-    logger.info("TelemetryDB = {0}".format(workerDB))
-
     try:
         # Pragmatically create descriptors for each Faraday connected to Proxy
         count = config.getint("TELEMETRY", "UNITS")
@@ -325,6 +321,7 @@ def telemetry_worker(config):
                         logger.error("KeyError: " + str(e))
 
                     else:
+                        workerDB = openDB()
                         sqlInsert(workerDB, parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
         time.sleep(1)  # Slow down main while loop
@@ -778,11 +775,11 @@ def sqlInsert(dbConn, data):
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
             dbConn.rollback()
-            #dbConn.close()
+            dbConn.close()
             return False
 
         # Completed, close database and return True
-        #dbCconn.close()
+        dbConn.close()
         return True
 
     else:
