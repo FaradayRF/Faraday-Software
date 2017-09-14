@@ -64,6 +64,28 @@ parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Farada
 # Parse the arguments
 args = parser.parse_args()
 
+def openDB():
+    # Read in name of database
+    try:
+        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
+        logger.debug("Telemetry Database: " + dbPath)
+        dbFilename = os.path.join(dbPath)
+
+    except ConfigParser.Error as e:
+        logger.error("ConfigParse.Error: " + str(e))
+        return False
+
+    # Connect to database, create SQL query, execute query, and close database
+    try:
+        conn = sqlite3.connect(dbFilename)
+
+    except sqlite3.Error as e:
+        logger.error("Sqlite3.error: " + str(e))
+        conn.close()
+
+    return conn
+
 
 def initializeTelemetryConfig():
     '''
@@ -236,6 +258,10 @@ def telemetry_worker(config):
     # Initialize Faraday parser
     faradayParser = telemetryparser.TelemetryParse()  # Add logger?
 
+    # open database
+    workerDB = openDB()
+    logger.info("TelemetryDB = {0}".format(workerDB))
+
     try:
         # Pragmatically create descriptors for each Faraday connected to Proxy
         count = config.getint("TELEMETRY", "UNITS")
@@ -299,7 +325,7 @@ def telemetry_worker(config):
                         logger.error("KeyError: " + str(e))
 
                     else:
-                        sqlInsert(parsedTelemetry)
+                        sqlInsert(workerDB, parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
         time.sleep(1)  # Slow down main while loop
 
@@ -629,11 +655,12 @@ def initDB():
         # after connecting. Close the database when complete.
         try:
             with open(dbSchema, 'rt') as f:
-                conn = sqlite3.connect(dbFilename)
-                cur = conn.cursor()
+                #conn = sqlite3.connect(dbFilename)
+                initConn = openDB()
+                cur = initConn.cursor()
                 schema = f.read()
                 cur.executescript(schema)
-            conn.close()
+            initConn.close()
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
@@ -703,7 +730,7 @@ def createTelemetryList(data):
     return temp
 
 
-def sqlInsert(data):
+def sqlInsert(dbConn, data):
     """
     Takes in a data tuple and inserts int into the telemetry SQLite table
 
@@ -712,15 +739,15 @@ def sqlInsert(data):
     """
 
     # Read in name of database
-    try:
-        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
-        logger.debug("Telemetry Database: " + dbPath)
-        db = os.path.join(dbPath)
-
-    except ConfigParser.Error as e:
-        logger.error("ConfigParse.Error: " + str(e))
-        return False
+    # try:
+    #     dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    #     dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
+    #     logger.debug("Telemetry Database: " + dbPath)
+    #     db = os.path.join(dbPath)
+    #
+    # except ConfigParser.Error as e:
+    #     logger.error("ConfigParse.Error: " + str(e))
+    #     return False
 
     # Change dictionary into list with proper order
     telem = createTelemetryList(data)
@@ -734,28 +761,28 @@ def sqlInsert(data):
         sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
 
         # Connect to database, create SQL query, execute query, and close database
-        try:
-            conn = sqlite3.connect(db)
-
-        except sqlite3.Error as e:
-            logger.error("Sqlite3.Error: " + str(e))
-            return False
+        # try:
+        #     conn = sqlite3.connect(db)
+        #
+        # except sqlite3.Error as e:
+        #     logger.error("Sqlite3.Error: " + str(e))
+        #     return False
 
         # Connect to database, create SQL query, execute query, and close database
         try:
-            conn = sqlite3.connect(db)
+            #conn = sqlite3.connect(db)
             # Use connection as context manager to rollback automatically if error
-            with conn:
-                conn.execute(sql, telem)
+            with dbConn:
+                dbConn.execute(sql, telem)
 
         except sqlite3.Error as e:
             logger.error("Sqlite3.Error: " + str(e))
-            conn.rollback()
-            conn.close()
+            dbConn.rollback()
+            #dbConn.close()
             return False
 
         # Completed, close database and return True
-        conn.close()
+        #dbCconn.close()
         return True
 
     else:
@@ -826,27 +853,28 @@ def queryDb(parameters):
     logger.debug(sql)
 
     # Read in name of database
-    try:
-        dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-        dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
-        logger.debug("Telemetry Database: " + dbPath)
-        dbFilename = os.path.join(dbPath)
-
-    except ConfigParser.Error as e:
-        logger.error("ConfigParse.Error: " + str(e))
-        return False
+    # try:
+    #     dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
+    #     dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
+    #     logger.debug("Telemetry Database: " + dbPath)
+    #     dbFilename = os.path.join(dbPath)
+    #
+    # except ConfigParser.Error as e:
+    #     logger.error("ConfigParse.Error: " + str(e))
+    #     return False
 
     # Connect to database, create SQL query, execute query, and close database
     try:
-        conn = sqlite3.connect(dbFilename)
+        #conn = sqlite3.connect(dbFilename)
+        queryConn = openDB()
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
         return sqlData
 
-    conn.row_factory = sqlite3.Row  # Row_factory returns column/values
-    cur = conn.cursor()
+    queryConn.row_factory = sqlite3.Row  # Row_factory returns column/values
+    cur = queryConn.cursor()
 
     try:
         cur.execute(sql, paramTuple)
@@ -854,7 +882,7 @@ def queryDb(parameters):
     except sqlite3.Error as e:
         logger.error("Sqlite3.Error: " + str(e))
         logger.error(paramTuple)
-        conn.close()
+        queryConn.close()
         return sqlData
 
     # Iterate through resulting data and create a list of dictionaries for JSON
@@ -868,11 +896,11 @@ def queryDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-        conn.close()
+        queryConn.close()
         return sqlData
 
     # Completed query, close database, return sqlData list of dictionaries
-    conn.close()
+    queryConn.close()
     return sqlData
 
 
@@ -945,7 +973,8 @@ def queryStationsDb(parameters):
 
     # Connect to database, create SQL query, execute query, and close database
     try:
-        conn = sqlite3.connect(dbFilename)
+        #conn = sqlite3.connect(dbFilename)
+        queryStationsDB = openDB()
 
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
@@ -953,7 +982,7 @@ def queryStationsDb(parameters):
         return sqlData
 
     conn.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
-    cur = conn.cursor()
+    cur = queryStationsDB.cursor()
 
     try:
         cur.execute(sql, paramTuple)
@@ -961,7 +990,7 @@ def queryStationsDb(parameters):
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
         logger.error(paramTuple)
-        conn.close()
+        queryStationsDB.close()
         return sqlData
 
     # Parse through rows and create key:value dictionaries for each row.
@@ -976,11 +1005,11 @@ def queryStationsDb(parameters):
 
     except StandardError as e:
         logger.error("StandardError: " + str(e))
-        conn.close()
+        queryStationsDB.close()
         return sqlData
 
     # Completed query, close database, return list of dictionary data for JSON
-    conn.close()
+    queryStationsDB.close()
     return sqlData
 
 
