@@ -329,6 +329,7 @@ def telemetry_worker(config):
                         logger.error("KeyError: " + str(e))
 
                     else:
+                        # Successful decode, open database and save telemetry
                         workerDB = openDB()
                         sqlInsert(workerDB, parsedTelemetry)
                         telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
@@ -744,18 +745,6 @@ def sqlInsert(dbConn, data):
     :param data: Telemetry dictionary
     :return: Status True or False on SQL insertion success
     """
-
-    # Read in name of database
-    # try:
-    #     dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-    #     dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
-    #     logger.debug("Telemetry Database: " + dbPath)
-    #     db = os.path.join(dbPath)
-    #
-    # except ConfigParser.Error as e:
-    #     logger.error("ConfigParse.Error: " + str(e))
-    #     return False
-
     # Change dictionary into list with proper order
     telem = createTelemetryList(data)
 
@@ -767,22 +756,14 @@ def sqlInsert(dbConn, data):
         paramSubs = ",".join(paramSubs)
         sql = "INSERT INTO TELEMETRY VALUES(" + paramSubs + ")"
 
-        # Connect to database, create SQL query, execute query, and close database
-        # try:
-        #     conn = sqlite3.connect(db)
-        #
-        # except sqlite3.Error as e:
-        #     logger.error("Sqlite3.Error: " + str(e))
-        #     return False
-
-        # Connect to database, create SQL query, execute query, and close database
+        # Connect to database, execute query, and close database
         try:
-            #conn = sqlite3.connect(db)
-            # Use connection as context manager to rollback automatically if error
+            # Execute SQL
             with dbConn:
                 dbConn.execute(sql, telem)
 
         except sqlite3.Error as e:
+            # An error occured, rollback and close connection, return False
             logger.error("Sqlite3.Error: " + str(e))
             dbConn.rollback()
             dbConn.close()
@@ -861,7 +842,6 @@ def queryDb(parameters):
 
     # Connect to database, execute query, and close database
     try:
-        #conn = sqlite3.connect(dbFilename)
         queryConn = openDB()
 
     except sqlite3.Error as e:
@@ -967,9 +947,8 @@ def queryStationsDb(parameters):
         logger.error("ConfigParse.Error: " + str(e))
         return False
 
-    # Connect to database, create SQL query, execute query, and close database
+    # Connect to database, execute query, and close database
     try:
-        #conn = sqlite3.connect(dbFilename)
         queryStationsDB = openDB()
 
     except sqlite3.Error as e:
