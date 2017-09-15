@@ -76,12 +76,14 @@ def openDB():
         dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
         dbFilename = os.path.join(dbPath)
 
+
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         return False
 
     # Connect to database, enter WAL mode, commit SQL
     try:
+
         conn = sqlite3.connect(dbFilename)
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.commit()
@@ -330,8 +332,14 @@ def telemetry_worker(config):
 
                     else:
                         workerDB = openDB()
-                        sqlInsert(workerDB, parsedTelemetry)
-                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
+                        logger.info(workerDB)
+                        if workerDB:
+                            sqlInsert(workerDB, parsedTelemetry)
+                            telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
+                        else:
+                            # An error has occured writing to database, break
+                            logger.error("Telemetry worker database error")
+                            break
         time.sleep(1)  # Slow down main while loop
 
 
