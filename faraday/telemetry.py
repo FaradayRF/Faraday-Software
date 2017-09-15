@@ -79,7 +79,6 @@ def openDB():
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
-        return False
 
     # Connect to database, enter WAL mode, commit SQL
     try:
@@ -91,7 +90,6 @@ def openDB():
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
         conn.close()
-        return False
 
     # Return SQLite3 connection
     return conn
@@ -332,14 +330,8 @@ def telemetry_worker(config):
 
                     else:
                         workerDB = openDB()
-                        logger.info(workerDB)
-                        if workerDB:
-                            sqlInsert(workerDB, parsedTelemetry)
-                            telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
-                        else:
-                            # An error has occured writing to database, break
-                            logger.error("Telemetry worker database error")
-                            break
+                        sqlInsert(workerDB, parsedTelemetry)
+                        telemetryDicts[str(callsign) + str(nodeid)].append(parsedTelemetry)
         time.sleep(1)  # Slow down main while loop
 
 
@@ -668,7 +660,7 @@ def initDB():
         # after connecting. Close the database when complete.
         try:
             with open(dbSchema, 'rt') as f:
-                #conn = sqlite3.connect(dbFilename)
+                # Open connection to database, create table and WAL mode, close
                 initConn = openDB()
                 cur = initConn.cursor()
                 schema = f.read()
@@ -867,18 +859,7 @@ def queryDb(parameters):
     sql = sqlBeg + sqlWhereCall + sqlWhereID + sqlEpoch + sqlEnd
     logger.debug(sql)
 
-    # Read in name of database
-    # try:
-    #     dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
-    #     dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
-    #     logger.debug("Telemetry Database: " + dbPath)
-    #     dbFilename = os.path.join(dbPath)
-    #
-    # except ConfigParser.Error as e:
-    #     logger.error("ConfigParse.Error: " + str(e))
-    #     return False
-
-    # Connect to database, create SQL query, execute query, and close database
+    # Connect to database, execute query, and close database
     try:
         #conn = sqlite3.connect(dbFilename)
         queryConn = openDB()
