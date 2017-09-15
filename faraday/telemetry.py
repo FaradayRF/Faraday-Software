@@ -65,18 +65,22 @@ parser.add_argument('--flask-port', type=int, dest='flaskport', help='Set Farada
 args = parser.parse_args()
 
 def openDB():
-    # Read in name of database
+    '''
+    Open telemetry database and return a SQLite3 connection
+
+    :return: SQLite connection
+    '''
+    # Read in name of database from configuration file
     try:
         dbFilename = telemetryConfig.get("DATABASE", "FILENAME")
         dbPath = os.path.join(faradayHelper.userPath, 'lib', dbFilename)
-        logger.debug("Telemetry Database: " + dbPath)
         dbFilename = os.path.join(dbPath)
 
     except ConfigParser.Error as e:
         logger.error("ConfigParse.Error: " + str(e))
         return False
 
-    # Connect to database, create SQL query, execute query, and close database
+    # Connect to database, enter WAL mode, commit SQL
     try:
         conn = sqlite3.connect(dbFilename)
         conn.execute("PRAGMA journal_mode=WAL;")
@@ -85,7 +89,9 @@ def openDB():
     except sqlite3.Error as e:
         logger.error("Sqlite3.error: " + str(e))
         conn.close()
+        return False
 
+    # Return SQLite3 connection
     return conn
 
 
