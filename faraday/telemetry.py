@@ -957,9 +957,9 @@ def queryStationsDb(parameters):
         return sqlData
 
     queryStationsDB.row_factory = sqlite3.Row  # SQLite.Row returns columns,values
-    cur = queryStationsDB.cursor()
 
     try:
+        cur = queryStationsDB.cursor()
         cur.execute(sql, paramTuple)
 
     except sqlite3.Error as e:
