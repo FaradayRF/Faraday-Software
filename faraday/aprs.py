@@ -166,7 +166,14 @@ def getStations():
     logger.debug(url)
 
     r = requests.get(url)
-    results = r.json()
+
+    try:
+        results = r.json()
+
+    except ValueError as e:
+        # JSON ValueError error, just return a blank value
+        logger.error(e)
+        results = ''
 
     # Return extracted JSON data
     return results
