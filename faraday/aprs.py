@@ -102,37 +102,37 @@ def aprs_worker(config):
     rate = config.getint("APRSIS", "RATE")
 
     # Local variable initialization
-    telemSequence = 0
     conn = False
 
     # Start infinite loop to send station data to APRS-IS
     while True:
-        # Query telemetry database for station data
-        stations = getStations()
-        stationData = getStationData(stations)
+        # Count through 8280 telemetry sequences (BASE91 limit)
+        for sequence in range(8280):
+            # Query telemetry database for station data
+            stations = getStations()
+            stationData = getStationData(stations)
 
-        # Indicate number of stations tracking
-        str = "Tracking {0} Faraday stations..."
-        logger.info(str.format(len(stations)))
+            # Indicate number of stations tracking
+            str = "Tracking {0} Faraday stations..."
+            logger.info(str.format(len(stations)))
 
-        # Iterate through all stations sending telemetry and position data
-        if not conn:
-            sock = connectAPRSIS()
-        try:
-            conn = sendPositions(telemSequence, stationData, sock)
+            # Iterate through all stations sending telemetry and position data
+            if not conn:
+                sock = connectAPRSIS()
+            try:
+                conn = sendPositions(sequence, stationData, sock)
 
-            # Just send labels, Parameters, and Equations every 10th loop
-            if telemSequence % 10 == 0:
-                sendTelemLabels(stationData, sock)
-                sendParameters(stationData, sock)
-                sendEquations(stationData, sock)
-            telemSequence += 1
+                # Just send labels, Parameters, and Equations every 10th loop
+                if sequence % 10 == 0:
+                    sendTelemLabels(stationData, sock)
+                    sendParameters(stationData, sock)
+                    sendEquations(stationData, sock)
 
-        except StandardError as e:
-            logger.error(e)
+            except StandardError as e:
+                logger.error(e)
 
-        # Sleep for intended update rate (seconds)
-        sleep(rate)
+            # Sleep for intended update rate (seconds)
+            sleep(rate)
 
 
 # Now act upon the command line arguments
@@ -166,7 +166,14 @@ def getStations():
     logger.debug(url)
 
     r = requests.get(url)
-    results = r.json()
+
+    try:
+        results = r.json()
+
+    except ValueError as e:
+        # JSON ValueError error, just return a blank value
+        logger.error(e)
+        results = ''
 
     # Return extracted JSON data
     return results
