@@ -518,13 +518,18 @@ def unitconfig():
             callsign = request.args.get("callsign", "%")
             nodeid = request.args.get("nodeid", "%")
 
+            # Obtain configuration values
+            config = ConfigParser.RawConfigParser()
+            config.read(deviceConfigPath)
+            hostname = config.get("PROXY", "HOST")
+
             callsign = str(callsign).upper()
             nodeid = str(nodeid)
 
             # Flush all old data from recieve buffer of local unit
             proxy.FlushRxPort(callsign, nodeid, proxy.CMD_UART_PORT)
 
-            proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
+            proxy.POST(hostname, str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
                        faradayCmd.CommandLocalSendReadDeviceConfig())
 
             # Wait enough time for Faraday to respond to commanded memory read.
