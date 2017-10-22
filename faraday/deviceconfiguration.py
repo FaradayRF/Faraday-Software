@@ -425,6 +425,11 @@ def unitconfig():
             callsign = request.args.get("callsign", "%")
             nodeid = request.args.get("nodeid", "%")
 
+            # Obtain configuration values
+            config = ConfigParser.RawConfigParser()
+            config.read(deviceConfigPath)
+            hostname = config.get("PROXY", "HOST")
+
             # Read Faraday device configuration file
 
             # Read configuration file
@@ -489,7 +494,7 @@ def unitconfig():
                 device_config_packet = device_config_object.create_config_packet()
 
                 # Transmit device configuration to local unit as supplied by the function arguments
-                proxy.POST(str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
+                proxy.POST(hostname, str(callsign), int(nodeid), UART_PORT_APP_COMMAND,
                            faradayCmd.CommandLocal(faradayCmd.CMD_DEVICECONFIG, device_config_packet))
 
                 return '', 204  # nothing to return but successful transmission
