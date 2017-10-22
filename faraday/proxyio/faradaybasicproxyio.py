@@ -150,10 +150,11 @@ class proxyio(object):
         except KeyError as e:
             self._logger.error("KeyError: " + str(e))
 
-    def GETWait(self, local_device_callsign, local_device_id, uart_service_number, sec_timeout=1, debug=False, limit=None):
+    def GETWait(self, hostname, local_device_callsign, local_device_id, uart_service_number, sec_timeout=1, debug=False, limit=None):
         """
         This is an abstraction of the *GET* function that implements a timing functionality to wait until a packet has been received (if none in queue) and returns the first received packet(s) or if it times out it will return False.
 
+        :param hostname: hostname/ip of proxy to communicate with
         :param local_device_callsign: Callsign of the local Faraday device to direct the data to (allows multiple local units)
         :param local_device_id: Callsign ID number of the local Faraday device to direct the data to (allows multiple local units)
         :param uart_service_number: Intended Faraday transport layer service port to direct the supplied data to
@@ -185,7 +186,7 @@ class proxyio(object):
             time.sleep(0.01)  #Need to add sleep to allow threading to go and GET a new packet if it arrives. Why 10ms?
 
             #Attempt to get data
-            rx_data = self.GET(local_device_callsign, local_device_id, uart_service_number, limit=limit)
+            rx_data = self.GET(hostname, local_device_callsign, local_device_id, uart_service_number, limit=limit)
         #Determine if timeout or got data
         if rx_data:
             if(debug):
