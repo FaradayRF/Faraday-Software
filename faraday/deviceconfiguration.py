@@ -537,7 +537,7 @@ def unitconfig():
 
             try:
                 # Retrieve the next device configuration read packet to arrive
-                data = proxy.GETWait(str(callsign), str(nodeid), proxy.CMD_UART_PORT, 2)
+                data = proxy.GETWait(hostname, str(callsign), str(nodeid), proxy.CMD_UART_PORT, 2)
 
                 # Create device configuration module object
                 device_config_object = deviceconfig.DeviceConfigClass()
