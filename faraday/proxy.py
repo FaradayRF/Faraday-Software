@@ -298,6 +298,7 @@ def uart_worker(modem, getDicts, postDicts, units, log):
         try:
             for port in modem['com'].RxPortListOpen():
 
+
                 if(modem['com'].RxPortHasItem(port)):
                     for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
@@ -824,11 +825,8 @@ def proxy():
             try:
                 getDicts[station][port]
             except KeyError as e:
-                message = "KeyError: " +\
-                    "Callsign '{0}' or Port '{1}' does not exist"\
-                    .format(station, port)
-                logger.error(message)
-                return json.dumps({"error": message}), 400
+                # Create deque for port of requested station
+                getDicts[station][port] = deque([])
 
             if limit is None:
                 # Optional
@@ -865,7 +863,6 @@ def proxy():
                     data.append(packet)
                     if len(data) >= limit:
                         break
-
                 return json.dumps(data, indent=1), 200,\
                     {'Content-Type': 'application/json'}
             else:
