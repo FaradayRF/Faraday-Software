@@ -756,6 +756,12 @@ def proxy():
             logger.error("Error: No 'data' key in dictionary")
             return json.dumps(
                 {"error": "Error: No 'data' key in dictionary"}), 400
+
+        except TypeError:
+            logger.error("Error: No data provided in POST")
+            return json.dumps(
+                {"error": "Error: No data provided in POST"}), 400
+
         else:
             total = len(data["data"])
             sent = 0
