@@ -686,8 +686,12 @@ def proxy():
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
             port = request.args.get("port")
-            callsign = request.args.get("callsign").upper()
+            callsign = request.args.get("callsign")
             nodeid = request.args.get("nodeid")
+
+            # Convert callsign to uppercase
+            if callsign:
+                callsign = callsign.upper()
 
             # Check for parameters and ensure all required are present and of
             # acceptable values
@@ -768,10 +772,10 @@ def proxy():
     else:
         # This is the GET routine to return data to the user
         try:
-            port = request.args.get("port")
+            port = request.args.get("port", None)
             limit = request.args.get("limit", 100)
-            callsign = request.args.get("callsign").upper()
-            nodeid = request.args.get("nodeid")
+            callsign = request.args.get("callsign", None)
+            nodeid = request.args.get("nodeid", None)
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
@@ -782,6 +786,10 @@ def proxy():
         except KeyError as e:
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
+
+        # Convert callsign to uppercase
+        if callsign:
+            callsign = callsign.upper()
 
         # Check to see that required parameters are present
         try:
