@@ -297,7 +297,6 @@ def uart_worker(modem, getDicts, postDicts, units, log):
         # Place data into the FIFO coming from UART
         try:
             for port in modem['com'].RxPortListOpen():
-
                 if(modem['com'].RxPortHasItem(port)):
                     for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
@@ -685,9 +684,13 @@ def proxy():
 
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
-            port = request.args.get("port")
-            callsign = request.args.get("callsign").upper()
-            nodeid = request.args.get("nodeid")
+            port = request.args.get("port", None)
+            callsign = request.args.get("callsign", None)
+            nodeid = request.args.get("nodeid", None)
+
+            # Convert callsign to uppercase
+            if callsign:
+                callsign = callsign.upper()
 
             # Check for parameters and ensure all required are present and of
             # acceptable values
@@ -751,6 +754,12 @@ def proxy():
             logger.error("Error: No 'data' key in dictionary")
             return json.dumps(
                 {"error": "Error: No 'data' key in dictionary"}), 400
+
+        except TypeError:
+            logger.error("Error: No data provided in POST")
+            return json.dumps(
+                {"error": "Error: No data provided in POST"}), 400
+
         else:
             total = len(data["data"])
             sent = 0
@@ -768,10 +777,10 @@ def proxy():
     else:
         # This is the GET routine to return data to the user
         try:
-            port = request.args.get("port")
+            port = request.args.get("port", None)
             limit = request.args.get("limit", 100)
-            callsign = request.args.get("callsign").upper()
-            nodeid = request.args.get("nodeid")
+            callsign = request.args.get("callsign", None)
+            nodeid = request.args.get("nodeid", None)
 
         except ValueError as e:
             logger.error("ValueError: " + str(e))
@@ -782,6 +791,10 @@ def proxy():
         except KeyError as e:
             logger.error("KeyError: " + str(e))
             return json.dumps({"error": str(e)}), 400
+
+        # Convert callsign to uppercase
+        if callsign:
+            callsign = callsign.upper()
 
         # Check to see that required parameters are present
         try:
@@ -816,11 +829,8 @@ def proxy():
             try:
                 getDicts[station][port]
             except KeyError as e:
-                message = "KeyError: " +\
-                    "Callsign '{0}' or Port '{1}' does not exist"\
-                    .format(station, port)
-                logger.error(message)
-                return json.dumps({"error": message}), 400
+                # Create deque for port of requested station
+                getDicts[station][port] = deque([])
 
             if limit is None:
                 # Optional
@@ -857,7 +867,6 @@ def proxy():
                     data.append(packet)
                     if len(data) >= limit:
                         break
-
                 return json.dumps(data, indent=1), 200,\
                     {'Content-Type': 'application/json'}
             else:
