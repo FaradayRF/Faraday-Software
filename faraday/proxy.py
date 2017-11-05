@@ -297,8 +297,6 @@ def uart_worker(modem, getDicts, postDicts, units, log):
         # Place data into the FIFO coming from UART
         try:
             for port in modem['com'].RxPortListOpen():
-
-
                 if(modem['com'].RxPortHasItem(port)):
                     for i in range(0, modem['com'].RxPortItemCount(port)):
                         # Data is available
