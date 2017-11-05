@@ -685,9 +685,9 @@ def proxy():
 
         try:
             data = request.get_json(force=False)  # Requires HTTP JSON header
-            port = request.args.get("port")
-            callsign = request.args.get("callsign")
-            nodeid = request.args.get("nodeid")
+            port = request.args.get("port", None)
+            callsign = request.args.get("callsign", None)
+            nodeid = request.args.get("nodeid", None)
 
             # Convert callsign to uppercase
             if callsign:
