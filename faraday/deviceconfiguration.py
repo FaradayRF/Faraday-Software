@@ -49,8 +49,6 @@ parser = argparse.ArgumentParser(description='Device Configuration application p
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
 parser.add_argument('--start', action='store_true', help='Start Device Configuration server')
-parser.add_argument('--proxycallsign', help='Set Proxy Faraday callsign to connect to and program')
-parser.add_argument('--proxynodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
 parser.add_argument('--faradayconfig', action='store_true', help='Display Faraday configuration file contents')
 
 # Faraday Configuration
