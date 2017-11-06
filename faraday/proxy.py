@@ -667,6 +667,24 @@ def bufferWorker(modem, postDicts, dataBuffer, payloadSize):
 # Initialize Flask microframework
 app = Flask(__name__)
 
+@app.route('/config', methods=['GET'])
+def config():
+    """
+    Provides a RESTful interface to Proxy configuration'
+
+    Returns Proxy configuratation
+    """
+    if request.method == "GET":
+        sections = proxyConfig.sections()
+        matching = (s for s in sections if "UNIT" in s)
+        temp = {}
+        for item in matching:
+            temp[item] = {}
+            temp[item]["callsign"] = proxyConfig.get(item, "callsign")
+            temp[item]["nodeid"] = proxyConfig.getint(item, "nodeid")
+        return json.dumps(temp, indent=1), 200,\
+            {'Content-Type': 'application/json'}
+
 
 @app.route('/', methods=['GET', 'POST'])
 def proxy():
