@@ -49,13 +49,11 @@ parser = argparse.ArgumentParser(description='Device Configuration application p
 parser.add_argument('--init-config', dest='init', action='store_true', help='Initialize Device Configuration configuration file')
 parser.add_argument('--init-faraday-config', dest='initfaraday', action='store_true', help='Initialize Faraday configuration file')
 parser.add_argument('--start', action='store_true', help='Start Device Configuration server')
-parser.add_argument('--proxycallsign', help='Set Proxy Faraday callsign to connect to and program')
-parser.add_argument('--proxynodeid', type=int, help='Set Proxy Faraday nodeid to connect to and program')
 parser.add_argument('--faradayconfig', action='store_true', help='Display Faraday configuration file contents')
 
 # Faraday Configuration
 parser.add_argument('--callsign', help='Set Faraday radio callsign')
-parser.add_argument('--nodeid', type=int, help='Set Faraday radio nodeid')
+parser.add_argument('--nodeid', type=int, help='Set Faraday radio nodeid', default=1)
 parser.add_argument('--redledtxon', action='store_true', help='Set Faraday radio RED LED during RF transmissions ON')
 parser.add_argument('--redledtxoff', action='store_true', help='Set Faraday radio RED LED during RF transmissions OFF')
 parser.add_argument('--greenledrxon', action='store_true', help='Set Faraday radio GREEN LED during RF reception ON')
@@ -76,8 +74,8 @@ parser.add_argument('--gpiop5off', type=int, help='Set Faraday radio GPIO port 5
 parser.add_argument('--gpiop5clear', action='store_true', help='Reset Faraday radio GPIO port 5 bits to OFF')
 
 parser.add_argument('--gpiop5', type=int, help='Set Faraday radio fgpio_p5')
-parser.add_argument('--bootfrequency', type=float, help='Set Faraday radio boot frequency')
-parser.add_argument('--bootrfpower', type=int, help='Set Faraday radio boot RF power')
+parser.add_argument('--bootfrequency', type=float, help='Set Faraday radio boot frequency', default=914.5)
+parser.add_argument('--bootrfpower', type=int, help='Set Faraday radio boot RF power', default=20)
 parser.add_argument('--latitude', type=float, help='Set Faraday radio default latitude. Format \"ddmm.mmmm\"')
 parser.add_argument('--longitude', type=float, help='Set Faraday radio default longitude. Format \"dddmm.mmmm\"')
 parser.add_argument('--latitudedir', help='Set Faraday radio default latitude direction (N/S)')
@@ -92,11 +90,16 @@ parser.add_argument('--uarttelemetryenabled', action='store_true', help='Set Far
 parser.add_argument('--uarttelemetrydisabled', action='store_true', help='Set Faraday radio UART Telemetry OFF')
 parser.add_argument('--rftelemetryenabled', action='store_true', help='Set Faraday radio RF Telemetry ON')
 parser.add_argument('--rftelemetrydisabled', action='store_true', help='Set Faraday radio RF Telemetry OFF')
-parser.add_argument('--uartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds')
-parser.add_argument('--rfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds')
+parser.add_argument('--uartinterval', type=int, help='Set Faraday radio UART telemetry interval in seconds', default=5)
+parser.add_argument('--rfinterval', type=int, help='Set Faraday radio RF telemetry interval in seconds', default=3)
 
 # Parse the arguments
 args = parser.parse_args()
+
+
+def proxyConfig(host, port):
+    r = requests.get("http://{0}:{1}/config".format(host, port))
+    return r.json()
 
 
 def initializeDeviceConfigurationConfig():
@@ -193,10 +196,12 @@ def configureDeviceConfiguration(args, faradayConfigPath):
     fconfig.read(faradayConfigPath)
 
     # Obtain proxy configuration
-    if args.proxycallsign is not None:
-        config.set('DEVICES', 'CALLSIGN', args.proxycallsign)
-    if args.proxynodeid is not None:
-        config.set('DEVICES', 'NODEID', args.proxynodeid)
+    # TODO: Not hardcode
+    proxyConfiguration = proxyConfig("127.0.0.1", 8000)
+
+    #Only works for UNIT0 at this time
+    config.set('DEVICES', 'CALLSIGN', proxyConfiguration["UNIT0"].get("callsign"))
+    config.set('DEVICES', 'NODEID', proxyConfiguration["UNIT0"].get("nodeid"))
 
     # Faraday radio configuration
     if args.callsign is not None:
@@ -588,6 +593,8 @@ def main():
     # Start the flask server
     deviceConfigHost = deviceConfigurationConfig.get("FLASK", "HOST")
     deviceConfigPort = deviceConfigurationConfig.getint("FLASK", "PORT")
+
+    #proxyConfiguration = proxyConfig("127.0.0.1", 8000)
 
     app.run(host=deviceConfigHost, port=deviceConfigPort, threaded=True)
 
