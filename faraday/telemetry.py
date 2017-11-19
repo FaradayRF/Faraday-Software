@@ -165,7 +165,7 @@ def showTelemetryLogs():
 
 
 def proxyConfig(host, port):
-    r = requests.get("http://{0}:{1}/config".format(host,port))
+    r = requests.get("http://{0}:{1}/config".format(host, port))
     return r.json()
 
 
@@ -179,10 +179,10 @@ def configureTelemetry(args):
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(faradayHelper.path, configFile))
-    
+
     # Obtain proxy configuration
     # TODO: Not hardcode
-    proxyConfiguration = proxyConfig("127.0.0.1",8000)
+    proxyConfiguration = proxyConfig("127.0.0.1", 8000)
 
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)

@@ -96,9 +96,11 @@ parser.add_argument('--rfinterval', type=int, help='Set Faraday radio RF telemet
 # Parse the arguments
 args = parser.parse_args()
 
+
 def proxyConfig(host, port):
-    r = requests.get("http://{0}:{1}/config".format(host,port))
+    r = requests.get("http://{0}:{1}/config".format(host, port))
     return r.json()
+
 
 def initializeDeviceConfigurationConfig():
     '''
@@ -195,7 +197,7 @@ def configureDeviceConfiguration(args, faradayConfigPath):
 
     # Obtain proxy configuration
     # TODO: Not hardcode
-    proxyConfiguration = proxyConfig("127.0.0.1",8000)
+    proxyConfiguration = proxyConfig("127.0.0.1", 8000)
 
     #Only works for UNIT0 at this time
     config.set('DEVICES', 'CALLSIGN', proxyConfiguration["UNIT0"].get("callsign"))
@@ -592,7 +594,7 @@ def main():
     deviceConfigHost = deviceConfigurationConfig.get("FLASK", "HOST")
     deviceConfigPort = deviceConfigurationConfig.getint("FLASK", "PORT")
 
-    proxyConfiguration = proxyConfig("127.0.0.1",8000)
+    #proxyConfiguration = proxyConfig("127.0.0.1", 8000)
 
     app.run(host=deviceConfigHost, port=deviceConfigPort, threaded=True)
 

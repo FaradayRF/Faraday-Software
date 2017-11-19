@@ -667,6 +667,7 @@ def bufferWorker(modem, postDicts, dataBuffer, payloadSize):
 # Initialize Flask microframework
 app = Flask(__name__)
 
+
 @app.route('/config', methods=['GET'])
 def config():
     """
