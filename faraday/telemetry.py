@@ -19,6 +19,7 @@ import json
 import sys
 import argparse
 import shutil
+import requests
 
 from flask import Flask
 from flask import request
@@ -163,6 +164,11 @@ def showTelemetryLogs():
     sys.exit(0)
 
 
+def proxyConfig(host, port):
+    r = requests.get("http://{0}:{1}/config".format(host,port))
+    return r.json()
+
+
 def configureTelemetry(args):
     '''
     Configure telemetry configuration file from command line
@@ -173,7 +179,14 @@ def configureTelemetry(args):
 
     config = ConfigParser.RawConfigParser()
     config.read(os.path.join(faradayHelper.path, configFile))
-
+    
+    # Obtain proxy configuration
+    # TODO: Not hardcode
+    proxyConfiguration = proxyConfig("127.0.0.1",8000)
+    
+    logger.warning(proxyConfiguration["UNIT0"].get("callsign"))
+    logger.warning(proxyConfiguration["UNIT0"].get("nodeid"))
+    
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
     if args.unit is not 0:
@@ -184,10 +197,8 @@ def configureTelemetry(args):
         except ConfigParser.DuplicateSectionError:
             pass
 
-    if args.callsign is not None:
-        config.set('TELEMETRY', unit + 'CALL', args.callsign)
-    if args.nodeid is not None:
-        config.set('TELEMETRY', unit + 'ID', args.nodeid)
+    config.set('TELEMETRY', unit + 'CALL', proxyConfiguration["UNIT0"].get("callsign"))
+    config.set('TELEMETRY', unit + 'ID', proxyConfiguration["UNIT0"].get("nodeid"))
     if args.proxyhost is not None:
         config.set('TELEMETRY', 'proxyhost', args.proxyhost)
 
