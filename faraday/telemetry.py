@@ -183,10 +183,7 @@ def configureTelemetry(args):
     # Obtain proxy configuration
     # TODO: Not hardcode
     proxyConfiguration = proxyConfig("127.0.0.1",8000)
-    
-    logger.warning(proxyConfiguration["UNIT0"].get("callsign"))
-    logger.warning(proxyConfiguration["UNIT0"].get("nodeid"))
-    
+
     # Configure UNITx sections
     unit = 'UNIT' + str(args.unit)
     if args.unit is not 0:
