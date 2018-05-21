@@ -19,8 +19,6 @@ Now we need to tell the `faraday-deviceconfiguration` program where to find Prox
 ![Device Configuration options](images/deviceconfiguration-options.jpg)
 
 The options we must change include:
-* `--proxycallsign CALLSIGN`: The callsign that Proxy is using
-* `--proxynodeid NODEID`: the nodeid that Proxy is using
 * `--callsign CALLSIGN`: the callsign to program Faraday with
 * `--nodeid NODEID`: the nodeid to program Faraday with
 * `--start`: Tells `faraday-deviceconfiguration` server to start
@@ -42,7 +40,7 @@ The options you may want to change depending on hardware and needs:
 An example configuration command would be:
 
  ```
- faraday-deviceconfiguration --proxycallsign kb1lqc --proxynodeid 2 --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
+ faraday-deviceconfiguration --callsign kb1lqc --nodeid 10 --rftelemetryenable --rfinterval 2 --start
  ```
 
 Please remember if you already configured a setting it does not need to be set again in future executions of `faraday-deviceconfiguration --start`. You may check the current Faraday configuration file by running `--faradayconfig` which will print out the file contents. You always need to add `--start` if you want the server to start up.
